@@ -466,7 +466,7 @@ void retail_impact_reaction(Fighter *fighter) {
  * owns input dispatch; KO keeps the final native pose. */
 static void uppercut_recovery_input(Fighter *fighter) {
   if (fighter->health > 0 && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
-    fighter_finish_mmove(fighter, retail_controller_return);
+    fighter_execution_finish(fighter, retail_controller_return);
   }
 }
 
@@ -794,7 +794,7 @@ static void stun_reset(Fighter *fighter) {
 void retail_shake_stun(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   native_begin(fighter, 0, 74, retail_controller_return);
-  fighter->mmove_cleanup = stun_reset;
+  fighter->execution.cleanup = stun_reset;
   for (int frame = 0; frame < 75; ++frame) {
     FighterFn action = frame < 60 && frame % 6 == 0 ? stun_shift : frame < 60 && frame % 6 == 3 ? stun_reset : NULL;
     native_frame(fighter, frame, sample, action);

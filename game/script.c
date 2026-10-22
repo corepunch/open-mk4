@@ -15,9 +15,7 @@ static void bind_clip(Fighter *fighter, int clip, int count, int first) {
   fighter->playback_move.clip = clip;
   fighter->playback_move.first = 0;
   fighter->playback_move.last = count - 1;
-  fighter->playback_move.sequence = NULL;
   fighter->current_move = &fighter->playback_move;
-  fighter->sequence = NULL;
   fighter->sample_override = first;
 }
 
@@ -50,7 +48,7 @@ void mk4_mmove_blend_to(Fighter *fighter, int clip, int count, int target, q16 s
   native_begin(fighter, 1, frames, end);
   for (int frame = 1; frame <= frames; ++frame) {
     q16 weight = first + mini(frame, frames - 1) * step;
-    fighter->native.frames[frame - 1] = (mframe_t){blend_weight_frame, (float)weight, frame == frames ? blend_finish_frame : NULL};
+    fighter->execution.native_frames.frames[frame - 1] = (mframe_t){blend_weight_frame, (float)weight, frame == frames ? blend_finish_frame : NULL};
   }
   native_play(fighter, false);
 }
@@ -105,7 +103,7 @@ void mk4_script_thrown_ready(Fighter *fighter) {
   if (fighter->health > 0) {
     fighter_ready(fighter);
   } else {
-    fighter_finish_mmove(fighter, NULL);
+    fighter_execution_finish(fighter, NULL);
   }
 }
 
@@ -199,7 +197,7 @@ void mk4_script_scene_active(Fighter *fighter) {
 void mk4_mmove_thrown_finish(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(fighter, fighter->health > 0 ? fighter_ready : NULL);
 }
 
 static void throw_hold_frame(Fighter *victim) {
@@ -207,7 +205,7 @@ static void throw_hold_frame(Fighter *victim) {
   if (owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
   }
-  victim->mmove_hold = (victim->flags & FF_PAIRED) != 0;
+  victim->execution.hold = (victim->flags & FF_PAIRED) != 0;
 }
 
 static void throw_hold_cleanup(Fighter *victim) {
@@ -259,7 +257,7 @@ static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, co
 }
 
 static void captured_throw_done(Fighter *victim) {
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 static const mframe_t captured_throw_frames[] = {{.thinkfunc = throw_hold_frame}};
@@ -268,8 +266,8 @@ static const mmove_t captured_throw = {.firstframe = 0, .lastframe = 0, .frame =
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
   Fighter *victim = start_throw_pair(fighter, owner_move, victim_move, true);
   fighter_mmove_phase(victim, &captured_throw);
-  victim->mmove_cleanup = throw_hold_cleanup;
-  fighter->mmove_cleanup = mk4_script_pair_cleanup;
+  victim->execution.cleanup = throw_hold_cleanup;
+  fighter->execution.cleanup = mk4_script_pair_cleanup;
   script(fighter);
 }
 
@@ -279,8 +277,8 @@ void retail_throw_capture(Fighter *fighter, int action, bool align) {
   Fighter *victim = start_throw_pair(fighter, &owner, &victim_move, align);
   fighter->action = action;
   fighter_mmove_phase(victim, &captured_throw);
-  victim->mmove_cleanup = throw_hold_cleanup;
-  fighter->mmove_cleanup = mk4_script_pair_cleanup;
+  victim->execution.cleanup = throw_hold_cleanup;
+  fighter->execution.cleanup = mk4_script_pair_cleanup;
 }
 
 /* Native42c590's capture and original4de798 selector. No fighter clip seed. */
@@ -308,7 +306,7 @@ void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move) {
   victim->flags |= FF_PAIRED | FF_REACTING;
   victim->sample_override = 0;
   fighter_mmove_phase(victim, &captured_throw);
-  victim->mmove_cleanup = throw_hold_cleanup;
+  victim->execution.cleanup = throw_hold_cleanup;
 }
 
 /* 48f9f0 also copies the owner's facing bit, so the victim clip plays in the owner's frame. */
@@ -353,7 +351,7 @@ void mk4_script_jab_contact(Fighter *fighter) {
   if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
     return;
   }
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
+  const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
   uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_JAB_CONTACT);
   AttackRecord attack = retail_vm_attack_record(image, record * 4);
   battle_contact(fighter, &attack);
@@ -416,7 +414,7 @@ void mk4_script_scene_pose(Fighter *fighter, int clip, int sample) {
 
 static void scene_finish_all(Fighter *fighter) {
   (void)fighter;
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_end_finisher();
 }
 
@@ -488,7 +486,7 @@ void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int dura
 }
 
 static void native_ready_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void scene_task_step(Projectile *object) {
@@ -507,11 +505,11 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
 }
 
 void mk4_mmove_wait_grounded(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 void mk4_mmove_hold(Fighter *fighter) {
-  fighter->mmove_hold = true;
+  fighter->execution.hold = true;
 }
 
 /* 484f10 selects descriptor4fc8f4 at stored pose65 and finishes its131-pose
@@ -519,7 +517,7 @@ void mk4_mmove_hold(Fighter *fighter) {
 /* 42be10 ->490ab0 reads speed -0x3333 from4de358, opens descriptor53c540
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
+  const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
   fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_RETAIL_DATA_MMOVE_LK_OWNER_RETURN));
   retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN) * 4, 0);
   int last = fighter_move(fighter)->last;
@@ -547,7 +545,7 @@ static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOC
 
 void retail_crouch_return(Fighter *fighter) {
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, NULL);
+  fighter_execution_finish(fighter, NULL);
   if (fighter->health > 0) {
     fighter_enter_state(fighter, S_CROUCH);
   }
@@ -562,7 +560,7 @@ void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
+    fighter_execution_finish(fighter, NULL);
     return;
   }
   bool crouch = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;

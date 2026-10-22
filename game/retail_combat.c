@@ -7,7 +7,7 @@
 /* 470c60/470cb0: native contact rows, followed by a negative terminator
  * and native continuation. Poses and selectors stay in the retail image. */
 static void kick_row(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active && vm->native_rows++ < 64, "Unbounded native contact rows");
   int32_t pose = (int32_t)mk4_image_u32(vm->image, vm->native_cursor);
   vm->native_cursor += 4;
@@ -27,13 +27,13 @@ static void kick_row(Fighter *fighter) {
   }
   require(pose <= fighter_move(fighter)->last, "Native contact pose outside clip");
   fighter->sample_override = pose;
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   if (!vm->native_contact && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
     require(vm->native_query == RETAIL_NATIVE_CONTACT_QUERY_B, "Unimplemented native contact-row query");
     uint32_t record = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + vm->native_selector * 4);
     AttackRecord attack = retail_vm_attack_record(vm->image, record * 4);
     ContactResult result = battle_contact(fighter, &attack);
-    if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+    if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
       return;
     }
     vm->native_contact = result != CONTACT_MISS;
@@ -42,7 +42,7 @@ static void kick_row(Fighter *fighter) {
 }
 
 void retail_kick_contact_rows(Fighter *fighter, uint32_t table) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active && table >= RETAIL_SCRIPT_BEGIN && table <= RETAIL_SCRIPT_END - 12, "Native contact rows need a live retail task and data");
   vm->native_selector = mk4_image_u32(vm->image, table);
   vm->native_query = mk4_image_u32(vm->image, table + 4);
@@ -114,7 +114,7 @@ static void sweep_recover(Fighter *fighter) {
 /* 46efd0/46f080: submit the next pose and query once, repeat only on a
  * first miss, then mark recovery, wait one visit and finish the bound clip. */
 static void sweep_query(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active && vm->native_rows < 2, "Sweep query without a live native continuation");
   int pose = fighter_sample(fighter);
   if (pose < fighter_move(fighter)->last) {
@@ -122,9 +122,9 @@ static void sweep_query(Fighter *fighter) {
   }
   uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + vm->native_selector * 4);
   AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   ContactResult result = battle_contact(fighter, &attack);
-  if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+  if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
     return;
   }
   if (result != CONTACT_MISS || ++vm->native_rows == 2) {
@@ -136,9 +136,9 @@ static void sweep_query(Fighter *fighter) {
 }
 
 static void sweep_contact_start(Fighter *fighter, unsigned selector) {
-  require(fighter->retail_vm.active, "Sweep native needs a live retail task");
-  fighter->retail_vm.native_rows = 0;
-  fighter->retail_vm.native_selector = selector;
+  require(fighter->execution.script.active, "Sweep native needs a live retail task");
+  fighter->execution.script.native_rows = 0;
+  fighter->execution.script.native_selector = selector;
   sweep_query(fighter);
 }
 
@@ -169,17 +169,17 @@ void retail_press_roundhouse(Fighter *fighter) {
 
 void retail_roundhouse_start(Fighter *fighter) {
   retail_vm_enter(fighter, fighter->native_followup ? MK4_RETAIL_SCRIPT_CAGE_ROUNDHOUSE_FAST_START : MK4_RETAIL_SCRIPT_CAGE_ROUNDHOUSE_NORMAL_START,
-      fighter->retail_vm.finish);
+      fighter->execution.script.finish);
 }
 
 void retail_roundhouse_wide_start(Fighter *fighter) {
   retail_vm_enter(fighter, fighter->native_followup ? MK4_RETAIL_SCRIPT_JAX_ROUNDHOUSE_FAST_START : MK4_RETAIL_SCRIPT_JAX_ROUNDHOUSE_NORMAL_START,
-      fighter->retail_vm.finish);
+      fighter->execution.script.finish);
 }
 
 static void roundhouse_return(Fighter *fighter) {
-  FighterFn next = fighter->retail_vm.finish;
-  retail_vm_cancel(fighter);
+  FighterFn next = fighter->execution.script.finish;
+  fighter_execution_cancel(fighter);
   if (next != NULL) {
     next(fighter);
   }
@@ -188,7 +188,7 @@ static void roundhouse_return(Fighter *fighter) {
 /* 46f500 saves the query result across forward playback. Results above one
  * (ground/air hit) install the native 28-visit recovery; miss/block return. */
 static void roundhouse_recover(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   int pose = fighter_sample(fighter);
   if (pose < fighter_move(fighter)->last) {
     fighter->sample_override = pose + 1;
@@ -199,7 +199,7 @@ static void roundhouse_recover(Fighter *fighter) {
 }
 
 static void roundhouse_query(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active && vm->native_rows < 3, "Roundhouse query without a live native continuation");
   int pose = fighter_sample(fighter);
   if (pose < fighter_move(fighter)->last) {
@@ -207,9 +207,9 @@ static void roundhouse_query(Fighter *fighter) {
   }
   uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + vm->native_selector * 4);
   AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   ContactResult result = battle_contact(fighter, &attack);
-  if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+  if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
     return;
   }
   if (result != CONTACT_MISS || ++vm->native_rows == 3) {
@@ -222,9 +222,9 @@ static void roundhouse_query(Fighter *fighter) {
 }
 
 static void roundhouse_contact_start(Fighter *fighter, unsigned selector) {
-  require(fighter->retail_vm.active, "Roundhouse native needs a live retail task");
-  fighter->retail_vm.native_rows = 0;
-  fighter->retail_vm.native_selector = selector;
+  require(fighter->execution.script.active, "Roundhouse native needs a live retail task");
+  fighter->execution.script.native_rows = 0;
+  fighter->execution.script.native_selector = selector;
   roundhouse_query(fighter);
 }
 
@@ -257,7 +257,7 @@ static void lp_select(Fighter *fighter, uint32_t alternate) {
     distance2 += ((int64_t)delta * delta) >> 16;
   }
   uint32_t target = along >= 0 && distance2 < 0x280000 ? MK4_RETAIL_DATA_LP_SELECT : alternate;
-  FighterFn finish = fighter->retail_vm.active ? fighter->retail_vm.finish : fighter_ready;
+  FighterFn finish = fighter->execution.script.active ? fighter->execution.script.finish : fighter_ready;
   retail_vm_enter(fighter, target, finish);
 }
 
@@ -283,19 +283,19 @@ void retail_crouch_low_kick(Fighter *fighter) {
 }
 
 static void crouch_low_kick_recover(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_LOW_KICK_RECOVER, fighter->retail_vm.finish);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_LOW_KICK_RECOVER, fighter->execution.script.finish);
 }
 
 void retail_crouch_low_kick_tail(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active, "Crouch LK native needs a live retail task");
   ContactResult result = CONTACT_MISS;
   if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
     uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + 23 * 4);
     AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
-    uint64_t continuation = fighter->continuation;
+    uint64_t continuation = fighter->execution.generation;
     result = battle_contact(fighter, &attack);
-    if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+    if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
       return;
     }
   }
@@ -326,9 +326,9 @@ static void crouch_punch_contact(Fighter *fighter) {
     const Mk4Image *image = battle_data();
     uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE + 3 * 4);
     AttackRecord attack = retail_vm_attack_record(image, packed * 4);
-    uint64_t continuation = fighter->continuation;
+    uint64_t continuation = fighter->execution.generation;
     result = battle_contact(fighter, &attack);
-    if (fighter->continuation != continuation || fighter->pending != NULL) {
+    if (fighter->execution.generation != continuation || fighter->pending != NULL) {
       return;
     }
   }

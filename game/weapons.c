@@ -182,7 +182,7 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
   if (travel && strike->travel > 0) {
     native_schedule_speed(fighter, strike->speed, maxi(0, strike->delay - 1), strike->travel);
   }
-  fighter->mmove_cleanup = weapon_cleanup;
+  fighter->execution.cleanup = weapon_cleanup;
   native_play(fighter, false);
 }
 
@@ -363,7 +363,7 @@ static void weapon_air_query(Fighter *fighter) {
 }
 
 static void weapon_air_wait(Fighter *fighter) {
-  fighter->mmove_hold = true;
+  fighter->execution.hold = true;
   weapon_air_landing(fighter);
 }
 
@@ -592,9 +592,9 @@ static void script_strike_recover(Fighter *fighter) {
 }
 
 static void script_strike_query(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   ContactResult result = battle_contact(fighter, fighter->native_record);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
+  if (fighter->execution.generation != continuation || fighter->pending != NULL) {
     return;
   }
   if (result != CONTACT_MISS) {

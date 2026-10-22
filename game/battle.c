@@ -48,7 +48,7 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
 
 void battle_init(const Mk4Image *data, int p1, int p2) {
   require(data != NULL && data->bytes.count != 0 && data->program_words.count != 0, "Match needs MK4 data and an assembled script program");
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   memset(&g_battle, 0, sizeof g_battle);
   g_battle.data = data;
   battle_set_arena(0);
@@ -62,7 +62,7 @@ void battle_init(const Mk4Image *data, int p1, int p2) {
 }
 
 void battle_reset_match(void) {
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   g_battle.previous_animation.valid = false;
   g_battle.current_animation.valid = false;
   int i;
@@ -76,7 +76,7 @@ void battle_reset_match(void) {
 }
 
 void battle_next_round(void) {
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_event_cancel_all();
   g_battle.previous_animation.valid = false;
   g_battle.current_animation.valid = false;
@@ -226,11 +226,9 @@ static void begin_finish_window(void) {
  * Keep native continuations and airborne bodies alive until that boundary. */
 static bool defeat_settled(const Fighter *fighter) {
   const MoveDef *move = fighter_move(fighter);
-  if (fighter->pending != NULL || fighter->retail_vm.active || fighter->current_mmove != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
+  if (fighter->pending != NULL || fighter->execution.script.active || fighter->execution.frames != NULL || fighter_airborne(fighter) ||
+      fighter->body.gravity != 0) {
     return false;
-  }
-  if (fighter->sequence != NULL) {
-    return fighter->ticks >= fighter->sequence->count;
   }
   return !(move->flags & SF_REACTION) || fighter->ticks >= move->recovery;
 }
@@ -294,12 +292,11 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
   } else {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
-    if (fighter->retail_vm.active) {
+    if (fighter->execution.script.active) {
       retail_vm_step(fighter);
-    } else if (fighter->current_mmove != NULL) {
+    } else if (fighter->execution.frames != NULL) {
       fighter_step_mmove(fighter);
-    } else if (fighter->sequence != NULL) {
-      fighter_step_sequence(fighter);
+
     } else if (state->flags & SF_ATTACK) {
       int total = state->startup + state->active + state->recovery;
       if (fighter->ticks >= total)
@@ -563,7 +560,7 @@ BattleEvent *battle_event_start(Fighter *owner, BattleEventFn step, bool cancel_
       *event = (BattleEvent){.step = step,
           .generation = ++g_battle.event_generation,
           .due_tick = g_battle.ticks + 1,
-          .owner_continuation = owner->continuation,
+          .owner_continuation = owner->execution.generation,
           .owner = owner_index,
           .active = true,
           .cancel_on_owner_change = cancel_on_owner_change,
@@ -632,7 +629,7 @@ void battle_event_pump(void) {
       continue;
     }
     Fighter *owner = &g_battle.fighters[event->owner];
-    if ((event->cancel_on_ko && owner->health <= 0) || (event->cancel_on_owner_change && owner->continuation != event->owner_continuation)) {
+    if ((event->cancel_on_ko && owner->health <= 0) || (event->cancel_on_owner_change && owner->execution.generation != event->owner_continuation)) {
       battle_event_cancel(event);
       continue;
     }
@@ -727,12 +724,10 @@ static void battle_tick(const InputFrame input[2]) {
         fighter->ticks++;
         /* Finisher presentation may keep a retail pose loop after the
          * result; the next round or reset cancels its frame program. */
-        if (fighter->retail_vm.active) {
+        if (fighter->execution.script.active) {
           retail_vm_step(fighter);
-        } else if (fighter->current_mmove != NULL) {
+        } else if (fighter->execution.frames != NULL) {
           fighter_step_mmove(fighter);
-        } else if (fighter->sequence != NULL) {
-          fighter_step_sequence(fighter);
         }
         if (g_battle.phase == PHASE_MATCH_OVER && fighter->scene.clips != NULL) {
           scene_step(fighter);

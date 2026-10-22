@@ -22,7 +22,7 @@ static void cage_weapon_weapon_cleanup(Fighter *fighter) {
 
 void retail_cage_weapon_back_upper(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &cage_weapon_upper);
-  fighter->mmove_cleanup = cage_weapon_weapon_cleanup;
+  fighter->execution.cleanup = cage_weapon_weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_WEAPON_BACK_HP_UPPER, fighter_ready);
 }
@@ -112,7 +112,7 @@ static void fujin_weapon_bow_native_to(Fighter *fighter, int target, int step, F
 }
 
 static void fujin_weapon_bow_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_mmove_thrown_finish);
+  fighter_execution_finish(fighter, mk4_mmove_thrown_finish);
 }
 
 void fujin_bow_finish(Fighter *fighter) {
@@ -142,7 +142,7 @@ static void fujin_weapon_bow_start(Fighter *fighter, int variant) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &fujin_weapon_bow_move);
   fighter->body.physics = fighter->body.on_land = NULL;
-  fighter->mmove_cleanup = fujin_weapon_bow_cleanup;
+  fighter->execution.cleanup = fujin_weapon_bow_cleanup;
   fighter->native_variant = variant;
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
@@ -200,7 +200,7 @@ void fujin_bolt_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_HIT, &fujin_weapon_bolt_victim);
   fighter->flags |= FF_REACTING;
-  fighter->mmove_cleanup = fujin_weapon_bow_cleanup;
+  fighter->execution.cleanup = fujin_weapon_bow_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_BOLT_VICTIM, fighter_ready);
 }
 
@@ -221,7 +221,7 @@ static void kai_weapon_weapon_cleanup(Fighter *fighter) {
 
 void retail_kai_weapon_back_strike(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &kai_weapon_back_move);
-  fighter->mmove_cleanup = kai_weapon_weapon_cleanup;
+  fighter->execution.cleanup = kai_weapon_weapon_cleanup;
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
   native_schedule_speed(fighter, 0x1999, 7, 13);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_DRAW_WEAPON_BACK_STRIKE, mk4_mmove_thrown_finish);
@@ -282,14 +282,14 @@ static void liu_kang_weapon_sword_blend(Fighter *fighter, int ticks, FighterFn e
   native_begin(fighter, 1, ticks, end);
   for (int frame = 1; frame <= ticks; ++frame) {
     native_frame(fighter, frame, fighter->blend_sample, NULL);
-    fighter->native.frames[frame - 1].aifunc = liu_kang_weapon_sword_blend_weight;
-    fighter->native.frames[frame - 1].dist = (float)frame;
+    fighter->execution.native_frames.frames[frame - 1].aifunc = liu_kang_weapon_sword_blend_weight;
+    fighter->execution.native_frames.frames[frame - 1].dist = (float)frame;
   }
   native_play(fighter, false);
 }
 
 static void liu_kang_weapon_sword_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void liu_kang_weapon_sword_settle(Fighter *fighter) {
@@ -310,11 +310,11 @@ static void liu_kang_weapon_sword_recover(Fighter *fighter) {
   if (index == 0 && hit && liu_kang_weapon_sword_repeat(fighter)) {
     /* 496500 -> 4ec720/730, delayed travel then second strike. The move
      * rebind keeps the action's cleanup for the second strike. */
-    fighter->mmove_cleanup = NULL;
+    fighter->execution.cleanup = NULL;
     fighter->loaded_weapon_strike =
         weapon_retail_strike(MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS, MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION, ACTION_RETAIL_010E);
     fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
-    fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
+    fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
     fighter->script_phase = 1;
     fighter->weapon_strike = &fighter->loaded_weapon_strike;
     fighter->sample_override = fighter->loaded_weapon_strike.first;
@@ -369,7 +369,7 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
     native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED),
         maxi(0, (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY) - 1),
         (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION));
-    fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
+    fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SWORD_ATTACK, fighter_ready);
     return;
   }
@@ -390,7 +390,7 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
   if (fighter->weapon_strike->travel != 0) {
     liu_kang_weapon_sword_travel(fighter, fighter->weapon_strike->delay, fighter->weapon_strike->travel);
   }
-  fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
+  fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
   liu_kang_weapon_sword_strike_script(fighter);
 }
 
@@ -402,7 +402,7 @@ void retail_liu_kang_sword_high_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &liu_kang_weapon_s_sword_hp);
   fighter->weapon_strike = NULL;
   fighter->sample_override = 0;
-  fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
+  fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_SWORD_HP_REPEAT_PROGRAM, fighter_ready);
 }
 
@@ -542,7 +542,7 @@ static void reptile_weapon_flurry_continue(Fighter *fighter) {
   if (fighter->held & BUTTON_BIT(BUTTON_HIGH_PUNCH)) {
     reptile_weapon_flurry_playout(fighter);
   } else {
-    fighter_finish_mmove(fighter, reptile_weapon_flurry_ready);
+    fighter_execution_finish(fighter, reptile_weapon_flurry_ready);
   }
 }
 
@@ -564,7 +564,7 @@ static void reptile_weapon_flurry_query(Fighter *fighter) {
 static void reptile_weapon_flurry_cycle_start(Fighter *fighter) {
   battle_sound(SOUND_C, 0x1f);
   fighter_start_move(fighter, S_PUNCH, &reptile_weapon_flurry_cycle);
-  fighter->mmove_cleanup = reptile_weapon_weapon_cleanup;
+  fighter->execution.cleanup = reptile_weapon_weapon_cleanup;
   fighter->sample_override = 0;
   native_begin(fighter, 1, 6, NULL);
   for (int row = 1; row <= 6; ++row) {
@@ -591,7 +591,7 @@ void reptile_weapon_flurry(Fighter *fighter) {
 void retail_reptile_weapon_flurry(Fighter *fighter) {
   /* 495d70: action 404, attack id 314 and VM 4ec640 (clip 248 to 8). */
   fighter_start_move(fighter, S_PUNCH, &reptile_weapon_flurry_start);
-  fighter->mmove_cleanup = reptile_weapon_weapon_cleanup;
+  fighter->execution.cleanup = reptile_weapon_weapon_cleanup;
   fighter->sample_override = 0;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_WEAPON_BACK_HP_FLURRY_STARTUP, fighter_ready);
 }
@@ -626,7 +626,7 @@ static void reptile_weapon_back_low_cue(Fighter *fighter) {
 
 void retail_reptile_weapon_back_low_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reptile_weapon_back_low);
-  fighter->mmove_cleanup = reptile_weapon_weapon_cleanup;
+  fighter->execution.cleanup = reptile_weapon_weapon_cleanup;
   fighter->sample_override = 0;
   native_schedule_speed(fighter, 0x3333, 0, 7);
   static const int poses[] = {1, 2, 3, 4, 6, 8, 10, 12, 13, 13, 14, 15, 16, 16, 17, 18, 19, 20};
@@ -704,7 +704,7 @@ void scorpion_sword_spin_control(Fighter *fighter) {
     return;
   }
   if (!(fighter->held & BUTTON_BIT(BUTTON_LOW_PUNCH))) {
-    fighter_finish_mmove(fighter, scorpion_special_ready);
+    fighter_execution_finish(fighter, scorpion_special_ready);
     return;
   }
   /* 496d20: raw Left, then Right (which wins), steer at 0.1 * 0.6 along the
@@ -727,7 +727,7 @@ void scorpion_sword_spin_query(Fighter *fighter) {
 void retail_sword_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
-  fighter->mmove_cleanup = mk4_script_stop_body;
+  fighter->execution.cleanup = mk4_script_stop_body;
   retail_vm_enter(fighter, SWORD_SPIN_SCRIPT, fighter_ready);
 }
 
@@ -738,7 +738,7 @@ void retail_sword_spin(Fighter *fighter) {
 void shinnok_weapon_sweep_getup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
+    fighter_execution_finish(fighter, NULL);
     return;
   }
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_WEAPON_SWEEP_GETUP, mk4_mmove_thrown_finish);
@@ -763,7 +763,7 @@ static const MoveDef sonya_weapon_s_weapon_back_hp = {.clip = 228, .last = 39, .
 void retail_sonya_weapon_back_high_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &sonya_weapon_s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
-  fighter->mmove_cleanup = sonya_special_cleanup;
+  fighter->execution.cleanup = sonya_special_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_WEAPON_BACK_HP_ATTACKER, fighter_ready);
 }
 
@@ -885,7 +885,7 @@ static void tanya_weapon_boomerang_step(Projectile *projectile) {
 }
 
 static void tanya_weapon_boomerang_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* 497b60 at sample 7: 498480 detaches the weapon, task 51 497c50 places it

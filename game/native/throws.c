@@ -73,7 +73,7 @@ void jax_lp_throw_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* Native service cluster: 485930. */
@@ -81,7 +81,7 @@ static void liu_kang_throws_lk_thrown_turn(Fighter *victim);
 
 void liu_kang_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 static void liu_kang_throws_lk_thrown_turn(Fighter *victim) {
@@ -117,7 +117,7 @@ static const mmove_t sub_zero_throws_lk_rise = {
  * first wait on that sample as well; subsequent waits follow the same rule. */
 static void sub_zero_throws_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 static void sub_zero_throws_lk_thrown_release(Fighter *victim) {

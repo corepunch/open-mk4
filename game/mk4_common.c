@@ -48,7 +48,7 @@ void mk4_walk(Fighter *fighter) {
     if (fighter->current_move != move) {
       fighter_start_move(fighter, S_WALK, move);
     }
-    if (fighter->current_mmove == NULL) {
+    if (fighter->execution.frames == NULL) {
       if (continuing) {
         native_begin(fighter, 1, 13, NULL);
         for (int frame = 1; frame <= 13; ++frame) {
@@ -75,7 +75,7 @@ void mk4_walk(Fighter *fighter) {
     }
   }
   int count = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count : 30;
-  if (fighter->current_mmove == NULL) {
+  if (fighter->execution.frames == NULL) {
     native_begin(fighter, 1, count, NULL);
     for (int frame = 1; frame <= count; ++frame) {
       native_frame(fighter, frame, frame % count, NULL);
@@ -104,7 +104,7 @@ static void stance_blend_add(Fighter *fighter) {
 }
 
 static void stance_blend_done(Fighter *fighter) {
-  fighter_stop_mmove(fighter);
+  fighter_execution_stop(fighter);
   fighter->blend_duration = 0;
   fighter->blend_weight = -1;
   fighter->sample_override = -1;
@@ -183,7 +183,7 @@ void mk4_land(Fighter *fighter) {
 /*47dae0 runs46fd90, then returns through46f650. The shared landing
  * controller owns that continuation for every originating attack. */
 void retail_recoil_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void flip_retract(Fighter *fighter);
@@ -197,7 +197,7 @@ static void jump_whoosh(Fighter *fighter) {
 static const mframe_t jump_sound_frames[12] = {{.thinkfunc = jump_whoosh}};
 
 static void flip_ground(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.gravity != 0;
+  fighter->execution.hold = fighter->body.gravity != 0;
 }
 
 static void flip_finish(Fighter *fighter) {
@@ -295,7 +295,7 @@ static void straight_direction(Fighter *fighter) {
 }
 
 static void straight_hold(Fighter *fighter) {
-  fighter_stop_mmove(fighter);
+  fighter_execution_stop(fighter);
 }
 
 void mk4_jump_backward(Fighter *fighter) {
@@ -483,12 +483,12 @@ static bool air_frame_captured(const Fighter *victim) {
 }
 
 static void air_frame_victim_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   air_frame_victim_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
+  if (fighter->execution.generation != continuation || fighter->pending != NULL) {
     return;
   }
-  fighter->mmove_hold = !air_frame_captured(fighter);
+  fighter->execution.hold = !air_frame_captured(fighter);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -496,7 +496,7 @@ static const mframe_t air_frame_victim_frames[1] = {
   [0] = {.thinkfunc = air_frame_victim_frames_frame_0},
 };
 // clang-format on
-static const mmove_t air_frame_victim_phase = {.firstframe = 0, .lastframe = 0, .frame = air_frame_victim_frames, .endfunc = fighter_stop_mmove};
+static const mmove_t air_frame_victim_phase = {.firstframe = 0, .lastframe = 0, .frame = air_frame_victim_frames, .endfunc = fighter_execution_stop};
 
 static void air_frame_cleanup(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
@@ -536,8 +536,8 @@ void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const Move
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   victim->paired_release = victim_script;
   fighter_mmove_phase(victim, &air_frame_victim_phase);
-  victim->mmove_cleanup = air_frame_victim_cleanup;
-  fighter->mmove_cleanup = air_frame_cleanup;
+  victim->execution.cleanup = air_frame_victim_cleanup;
+  fighter->execution.cleanup = air_frame_cleanup;
   retail_vm_enter(fighter, owner_script, fighter_ready);
 }
 
@@ -550,7 +550,7 @@ bool mk4_can_sidestep(const Fighter *fighter) {
 }
 
 static void sidestep_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -579,6 +579,6 @@ void mk4_sidestep(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
   fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
   fighter->sidestep_ready = g_battle.ticks + 80;
-  fighter->mmove_cleanup = mk4_script_stop_body;
+  fighter->execution.cleanup = mk4_script_stop_body;
   fighter_mmove_phase(fighter, down ? &sidestep_forward : &sidestep_backward);
 }

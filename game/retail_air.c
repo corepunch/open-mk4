@@ -10,7 +10,7 @@
 /* Native470980's initial phase binds the descriptor in its original row. */
 void retail_air_bind_row(Fighter *fighter, uint32_t row) {
   require(row >= RETAIL_SCRIPT_BEGIN && row <= RETAIL_SCRIPT_END - 12 && row % 4 == 0, "Invalid native air parameter row");
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
+  const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
   retail_vm_bind_animation(fighter, mk4_image_u32(image, row) * 4, 0);
 }
 
@@ -154,7 +154,7 @@ static void air_contact_begin(Fighter *fighter, uint32_t row) {
   unsigned count = mk4_image_u32(battle_data(), row);
   require(count > 0 && count <= NATIVE_FRAME_CAPACITY, "Invalid native air contact budget");
   fighter->retail_air_row = row;
-  fighter->mmove_cleanup = air_cleanup;
+  fighter->execution.cleanup = air_cleanup;
   native_begin(fighter, 1, (int)count, air_contact_miss);
   for (unsigned visit = 1; visit <= count; ++visit) {
     native_frame(fighter, (int)visit, fighter_sample(fighter), air_contact_query);
@@ -181,7 +181,7 @@ static void air_open(Fighter *fighter, uint32_t row) {
   }
   require(count > 0 && count <= NATIVE_FRAME_CAPACITY, "Invalid native air opening budget");
   fighter->retail_air_row = row;
-  fighter->mmove_cleanup = air_cleanup;
+  fighter->execution.cleanup = air_cleanup;
   native_begin(fighter, 1, count, air_opened);
   for (int visit = 1; visit <= count; ++visit) {
     native_frame(fighter, visit, visit, air_open_guard);

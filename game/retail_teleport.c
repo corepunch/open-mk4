@@ -26,7 +26,7 @@ static int64_t square_sum(q16 x, q16 z) {
 }
 
 static void landing_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 /* 47c230: from the next visit, return to the controller once grounded.
@@ -47,7 +47,7 @@ static void teleport_emerge(Fighter *fighter) {
 }
 
 static void below_floor_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.pos[AXIS_Y] > fighter->body.ground;
+  fighter->execution.hold = fighter->body.pos[AXIS_Y] > fighter->body.ground;
 }
 
 /* 47c0a0 state 1: Y becomes 0 and 480b20 places the body one unit past the
@@ -73,7 +73,7 @@ static void teleport_relocate(Fighter *fighter) {
 }
 
 static void vanish_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.pos[AXIS_Y] > -0x40000;
+  fighter->execution.hold = fighter->body.pos[AXIS_Y] > -0x40000;
 }
 
 /* 47c0a0 state 0: 480cc0 snapshots the peer's X/Z, then 480a60 waits from
@@ -116,7 +116,7 @@ static void recoil_retract(Fighter *fighter) {
 
 static void recoil_gate(Fighter *fighter) {
   /* 48f490 waits for the apex, then 48f410 for Y >= -2.5. */
-  fighter->mmove_hold = fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000;
+  fighter->execution.hold = fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000;
 }
 
 /* 47fec0: blocked slam. Action 0x1011; 48fed0 places this body half a unit
@@ -181,7 +181,7 @@ static void slam_land(Fighter *fighter) {
 }
 
 static void gravity_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.gravity != 0;
+  fighter->execution.hold = fighter->body.gravity != 0;
 }
 
 /* 47c390 state 1: both bodies reappear four units up with gravity 0x51e,
@@ -197,7 +197,7 @@ static void slam_reenter(Fighter *fighter) {
 }
 
 static void slam_depth_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.pos[AXIS_Y] < 0x30000;
+  fighter->execution.hold = fighter->body.pos[AXIS_Y] < 0x30000;
 }
 
 /* 47c390 state 0: 480ac0 waits from the next visit for Y >= 3. */

@@ -39,7 +39,7 @@ bool fighter_holds_back(const Fighter *fighter) {
  * until the entry or its stance releases them. */
 void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   require(entry != NULL, "Interrupt without an entry");
-  fighter_cancel_mmove(fighter);
+  fighter_execution_cancel(fighter);
   native_motion_stop(fighter);
   fighter->avoids_high = false;
   fighter->pending = entry;

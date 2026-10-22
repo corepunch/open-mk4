@@ -145,7 +145,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
   }
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
   retail_vm_enter_then(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_DAMAGE_RELEASE, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_RETREAT_ENTRY, fighter_ready);
@@ -220,7 +220,7 @@ unsigned raiden_script_torpedo_query(Fighter *fighter) {
 }
 
 static void raiden_common_torpedo_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 void raiden_script_torpedo_miss(Fighter *fighter) {
@@ -294,7 +294,7 @@ void raiden_script_torpedo_contact(Fighter *fighter) {
   }
   Fighter *victim = fighter_peer(fighter);
   mk4_mmove_carry_victim(fighter, &raiden_common_s_torpedo_victim);
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   retail_vm_enter(victim, MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_CONTACT, fighter_ready);
   int pose = fighter_sample(fighter);
   native_begin(fighter, 1, 50, raiden_common_torpedo_release);
@@ -312,7 +312,7 @@ void raiden_torpedo(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &raiden_common_s_torpedo);
   fighter_set_speed(fighter, 0x2666);
   mk4_script_save_motion(fighter);
-  fighter->mmove_cleanup = raiden_special_cleanup;
+  fighter->execution.cleanup = raiden_special_cleanup;
   RetailScriptContinuation script = fast ? (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_FAST_STARTUP, fighter_ready}
                                          : (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_ORDINARY_STARTUP, fighter_ready};
   retail_vm_enter(fighter, script.entry, script.finish);
@@ -349,7 +349,7 @@ void scorpion_spin_script(Fighter *fighter) {
   for (int frame = 1; frame <= 12; ++frame) {
     native_frame(fighter, frame, frame % 12, frame == 12 ? scorpion_sword_spin_query : scorpion_sword_spin_control);
   }
-  fighter->native.poses[0] = 0;
+  fighter->execution.native_frames.poses[0] = 0;
   native_play(fighter, false);
   fighter->sample_override = pose;
 }
@@ -525,7 +525,7 @@ void sub_zero_ice(Fighter *fighter) {
 }
 
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {
-  fighter->mmove_cleanup = sub_zero_scene_blend_cleanup;
+  fighter->execution.cleanup = sub_zero_scene_blend_cleanup;
   native_scene_blends(fighter, clips, count, end);
 }
 

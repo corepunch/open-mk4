@@ -64,7 +64,7 @@ BINDINGS = {
                       mmove=True, evidence='45b010 clears the current actor velocity, gravity and spin through stop_motion'),
     0x46a950: Binding('mk4_script_avoid_clear', 'game/script.c', ('call',), mmove=True, evidence='46a950 clears task +5c'),
     0x46a970: Binding('mk4_script_avoid_set', 'game/script.c', ('call',), mmove=True, evidence='46a970 sets task +5c'),
-    0x46a8d0: Binding('fighter_finish_mmove', 'game/moves.c', ('tail',), flow='terminal', mmove_lowering='reverse_return',
+    0x46a8d0: Binding('fighter_execution_finish', 'game/runtime/execution.c', ('tail',), flow='terminal', mmove_lowering='reverse_return',
                       evidence='46a8d0 -> 429380/429600 decrements through sample zero then 46f650'),
     0x459800: Binding('mk4_script_attack_return', 'game/script.c', ('handler',),
                       mmove=True, evidence='459800 -> 470ed0 -> 470f00 clears busy when follow-up flag is set',
@@ -361,8 +361,8 @@ for _cid, _slug in ((1, 'raiden'), (2, 'sonya')):
 CHARACTER_BINDINGS[1][0x488590] = Binding('script_staff_victim_tail', 'game/raiden/character.c', ('tail',), evidence='488590 twenty visits of native weapon-victim motion before recovery')
 CHARACTER_BINDINGS[1][0x4889b0] = Binding('script_torpedo_victim_motion', 'game/raiden/character.c', ('physics',), evidence='4889b0 paired torpedo victim follows attacker and retains its own pose loop')
 CHARACTER_BINDINGS[2][0x488c10] = Binding('script_weapon_victim_getup', 'game/sonya/character.c', ('tail',), evidence='488c10 KO-aware front/back getup; uses shared native getup')
-BINDINGS[0x46a850] = Binding('fighter_finish_mmove', 'game/moves.c', ('tail',), flow='terminal', evidence='46a850 -> 429380 reverses the current clip then 46f650 controller return', mmove_lowering='reverse_return')
-BINDINGS[0x46a6e0] = Binding('fighter_finish_mmove', 'game/moves.c', ('tail',), flow='terminal', evidence='46a6e0 kick reversal -> 429380 then 46f650 controller return', mmove_lowering='reverse_return')
+BINDINGS[0x46a850] = Binding('fighter_execution_finish', 'game/runtime/execution.c', ('tail',), flow='terminal', evidence='46a850 -> 429380 reverses the current clip then 46f650 controller return', mmove_lowering='reverse_return')
+BINDINGS[0x46a6e0] = Binding('fighter_execution_finish', 'game/runtime/execution.c', ('tail',), flow='terminal', evidence='46a6e0 kick reversal -> 429380 then 46f650 controller return', mmove_lowering='reverse_return')
 BINDINGS[0x45bbc0] = Binding('retail_vm_step', 'game/retail_vm.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', mmove_lowering='pair_back_to', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
 
 # Reiko's selected roots share native continuations with the established

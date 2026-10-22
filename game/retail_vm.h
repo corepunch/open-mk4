@@ -16,7 +16,8 @@ void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn finish);
 void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn finish, RetailNativeFn native);
 void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry, uint32_t begin, uint32_t end, FighterFn finish, RetailNativeFn native);
 void retail_vm_step(Fighter *fighter);
-void retail_vm_cancel(Fighter *fighter);
+/* Internal playback reset; action cleanup belongs to the execution context. */
+void retail_vm_reset(Fighter *fighter);
 AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address);
 void retail_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next);
 void retail_vm_return(Fighter *fighter);

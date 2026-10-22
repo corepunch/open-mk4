@@ -39,7 +39,7 @@ void retail_air_throw_release(Fighter *fighter) {
 }
 
 void retail_air_throw_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 /* 484760 changes neither the action nor the clip before 4e9880 binds
@@ -89,7 +89,7 @@ void retail_slam_tail(Fighter *fighter) {
   fighter->body.gravity = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY);
   int sample = fighter_sample(fighter), last = fighter_move(fighter)->last;
   if (sample >= last) {
-    fighter_finish_mmove(fighter, slam_flip);
+    fighter_execution_finish(fighter, slam_flip);
     return;
   }
   native_begin(fighter, 1, last - sample, slam_flip);
@@ -100,7 +100,7 @@ void retail_slam_tail(Fighter *fighter) {
 }
 
 static void released_fall_gate(Fighter *victim) {
-  victim->mmove_hold = fighter_airborne(victim);
+  victim->execution.hold = fighter_airborne(victim);
 }
 
 /* Portable interruption policy: retail parks the captured peer inside the
@@ -155,13 +155,13 @@ void retail_air_lift_release(Fighter *fighter) {
 static void air_grab_getup_frame(Fighter *victim) {
   if (g_battle.phase == PHASE_FIGHT && victim->health > 0 && (victim->held & BUTTON_BIT(BUTTON_UP))) {
     mk4_script_stop_body(victim);
-    fighter_finish_mmove(victim, mk4_jump);
+    fighter_execution_finish(victim, mk4_jump);
   }
 }
 
 static void air_grab_getup_end(Fighter *victim) {
   mk4_script_stop_body(victim);
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 void retail_air_lift_getup(Fighter *victim) {
@@ -176,7 +176,7 @@ void retail_air_lift_getup(Fighter *victim) {
 }
 
 static void air_release_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void air_release_fall(Fighter *fighter) {
@@ -189,7 +189,7 @@ void retail_air_flip_release(Fighter *fighter) {
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = 85;
   battle_damage(victim, 0x2666);
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   retail_air_victim_flip(victim);
   native_finish_clip(fighter, air_release_fall);
 }
@@ -197,7 +197,7 @@ void retail_air_flip_release(Fighter *fighter) {
 static void air_getup_rise(Fighter *victim) {
   mk4_script_stop_body(victim);
   if (victim->health <= 0) {
-    fighter_finish_mmove(victim, NULL);
+    fighter_execution_finish(victim, NULL);
     return;
   }
   retail_vm_bind_animation(victim, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE) * 4, 0);

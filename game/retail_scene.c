@@ -42,7 +42,7 @@ void retail_fan_cycle(Fighter *fighter) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   victim->sample_override = 69;
   retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAX_FAN_FATALITY_VICTIM_RELEASE, fighter_ready);
   mk4_native_fan_rise(fighter);
@@ -57,7 +57,7 @@ void retail_fan_victory(Fighter *fighter) {
 
 void retail_fan_victim_end(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
-  fighter_finish_mmove(fighter, NULL);
+  fighter_execution_finish(fighter, NULL);
 }
 
 static void spike_script_enter(Fighter *fighter) {
@@ -91,15 +91,15 @@ void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner) {
 
 /* Native41f1b0/466df0 leaves the final rendered pose owned by the scene. */
 void retail_task_pause(Fighter *fighter) {
-  fighter_stop_mmove(fighter);
+  fighter_execution_stop(fighter);
 }
 
 /* Native49cb60 retires the task. The portable caller owns its scene-join
  * callback; native identity never depends on a roster/context switch. */
 void retail_task_retire(Fighter *fighter) {
-  FighterFn completed = fighter->retail_vm.active ? fighter->retail_vm.finish : NULL;
+  FighterFn completed = fighter->execution.script.active ? fighter->execution.script.finish : NULL;
   require(completed != fighter_ready && completed != retail_task_retire, "Task retirement needs a scene completion boundary");
-  fighter_stop_mmove(fighter);
+  fighter_execution_stop(fighter);
   if (completed != NULL) {
     completed(fighter);
   }
@@ -189,13 +189,13 @@ static bool scene_victory_join(BattleEvent *event, Fighter *owner, Fighter *peer
     return false;
   }
   if (event->phase == 0) {
-    if (owner->retail_vm.active && owner->retail_vm.entry == MK4_RETAIL_SCRIPT_RAIDEN_VICTORY) {
+    if (owner->execution.script.active && owner->execution.script.entry == MK4_RETAIL_SCRIPT_RAIDEN_VICTORY) {
       event->phase = 1;
       battle_event_delay(event, 50);
     }
     return true;
   }
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_end_finisher();
   return false;
 }
@@ -288,7 +288,7 @@ void retail_stage_impale(Fighter *fighter) {
 
 static void stage_complete(Fighter *fighter) {
   (void)fighter;
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_end_finisher();
 }
 

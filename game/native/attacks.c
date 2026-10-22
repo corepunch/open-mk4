@@ -45,7 +45,7 @@ static void groin_punch_cleanup(Fighter *fighter) {
 
 void cage_groin_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &groin_punch_move);
-  fighter->mmove_cleanup = groin_punch_cleanup;
+  fighter->execution.cleanup = groin_punch_cleanup;
   battle_sound(SOUND_C, 9);
   native_begin(fighter, 1, 5, groin_punch_choose);
   for (int sample = 1; sample <= 5; ++sample) {
@@ -145,7 +145,7 @@ void cage_cpu_kick(Fighter *fighter);
 
 static void cage_kicks_shadow_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void cage_kicks_shadow_recover(Fighter *fighter) {
@@ -209,7 +209,7 @@ static void cage_powered_punch_power_release(Fighter *fighter) {
 }
 
 static void cage_powered_punch_power_victim_ground(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 static void cage_powered_punch_power_victim_fall(Fighter *fighter) {
@@ -246,7 +246,7 @@ static void cage_powered_punch_power_ready(Fighter *fighter) {
   bool airborne = fighter_airborne(fighter);
   q16 velocity[3], gravity = fighter->body.gravity;
   memcpy(velocity, fighter->body.vel, sizeof velocity);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
   /* Native46f650 restores air control without cancelling the fall. The
    * interrupted-move cleanup still owns stopping a replaced attack. */
   if (airborne) {
@@ -314,10 +314,10 @@ static void cage_powered_punch_power_cycle(Fighter *fighter) {
 
 static void cage_powered_punch_power_rewind(Fighter *fighter) {
   if (fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000) {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
@@ -387,7 +387,7 @@ void cage_power_victim(Fighter *fighter) {
 void cage_powered_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &cage_powered_punch_s_powered_punch_script);
   fighter->native_followup = false;
-  fighter->mmove_cleanup = cage_powered_punch_power_cleanup;
+  fighter->execution.cleanup = cage_powered_punch_power_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_POWERED_PUNCH, fighter_ready);
 }
 
@@ -478,11 +478,11 @@ static void fujin_triple_kick_triple_cycle(Fighter *fighter) {
 }
 
 static void fujin_triple_kick_triple_floor_hold(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 static void fujin_triple_kick_triple_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void fujin_triple_kick_triple_blocked(Fighter *fighter) {
@@ -545,7 +545,7 @@ void fujin_triple_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &fujin_triple_kick_triple);
   fighter->native_followup = false;
-  fighter->mmove_cleanup = fujin_triple_kick_triple_cleanup;
+  fighter->execution.cleanup = fujin_triple_kick_triple_cleanup;
   battle_sound(SOUND_C, 0x42);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_TRIPLE_KICK, fighter_ready);
 }
@@ -576,7 +576,7 @@ static void fujin_wind_grab_orbit_cleanup(Fighter *fighter) {
 }
 
 static void fujin_wind_grab_grab_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_mmove_thrown_finish);
+  fighter_execution_finish(fighter, mk4_mmove_thrown_finish);
 }
 
 static void fujin_wind_grab_grab_stamp_and_return(Fighter *fighter) {
@@ -711,7 +711,7 @@ static void fujin_wind_grab_orbit_step(Fighter *victim) {
   victim->saved_motion[0] = fujin_wind_grab_angle_wrap(angle + 0x4ccc);
   radius += 0x28f;
   victim->saved_motion[1] = radius > 3 * Q16_ONE ? 5 * Q16_ONE : radius;
-  victim->mmove_hold = true;
+  victim->execution.hold = true;
   if (victim->native_variant == 0) {
     q16 y = victim->body.pos[AXIS_Y] - 0x28f;
     victim->body.pos[AXIS_Y] = y < -0x2cccc ? -0x2cccc : y;
@@ -736,7 +736,7 @@ void fujin_grab_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &fujin_wind_grab_orbit_victim);
   fighter->flags |= FF_REACTING | FF_PAIRED | FF_UNTOUCHABLE;
-  fighter->mmove_cleanup = fujin_wind_grab_orbit_cleanup;
+  fighter->execution.cleanup = fujin_wind_grab_orbit_cleanup;
   fighter->native_variant = 0;
   const Fighter *owner = fighter_opponent(fighter);
   fighter->saved_motion[0] =
@@ -751,7 +751,7 @@ void fujin_grab_victim(Fighter *fighter) {
 void fujin_wind_grab(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &fujin_wind_grab_wind_grab);
-  fighter->mmove_cleanup = fujin_wind_grab_grab_cleanup;
+  fighter->execution.cleanup = fujin_wind_grab_grab_cleanup;
   fujin_wind_grab_grab_effect_start(fighter);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_WIND_GRAB, fighter_ready);
 }
@@ -871,7 +871,7 @@ static void goro_stomp_leap_cleanup(Fighter *fighter) {
  * 4dfbb8 binds clip 601 and double-steps to 23 before 43b370. */
 void goro_leap_stomp(Fighter *fighter) {
   goro_begin_special(fighter, S_KICK, &goro_stomp_s_leap, 0x64f);
-  fighter->mmove_cleanup = goro_stomp_leap_cleanup;
+  fighter->execution.cleanup = goro_stomp_leap_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LEAP_STOMP, fighter_ready);
 }
 
@@ -899,9 +899,9 @@ static void goro_stomp_leap_rise(Fighter *fighter) {
 static void goro_stomp_leap_fall(Fighter *fighter) {
   AttackRecord goro_stomp_stomp_record = retail_vm_attack_record(battle_data(), STOMP_ATTACK_RECORD);
 
-  fighter->mmove_hold = true;
+  fighter->execution.hold = true;
   if (!fighter_airborne(fighter)) {
-    fighter->mmove_hold = false;
+    fighter->execution.hold = false;
     fighter->sample_override = GORO_STOMP_LEAP_APEX_SAMPLE;
     retail_disturb_resting_weapons();
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LEAP_STOMP_MISS_LANDING, fighter_ready);
@@ -910,7 +910,7 @@ static void goro_stomp_leap_fall(Fighter *fighter) {
   if (battle_contact(fighter, &goro_stomp_stomp_record) == CONTACT_MISS) {
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   retail_disturb_resting_weapons();
   battle_damage((Fighter *)fighter_opponent(fighter), GORO_STOMP_LEAP_DAMAGE);
   fighter->sample_override = GORO_STOMP_LEAP_APEX_SAMPLE;
@@ -939,7 +939,7 @@ void goro_script_leap_continue(Fighter *fighter) {
 void goro_script_stomp_return(Fighter *fighter) {
   goro_stomp_leap_cleanup(fighter);
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* Native service cluster: 46a950, 46a970. */
@@ -996,7 +996,7 @@ static void jax_dash_punch_dash_cleanup(Fighter *fighter) {
 }
 
 static void jax_dash_punch_dash_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* While the task waits, the +44 callback keeps advancing the looping pose.
@@ -1097,7 +1097,7 @@ static void jax_dash_punch_dash_miss(Fighter *fighter) {
  * once per visit. Both the callback and the phase-1 call advance a pose. */
 void jax_dash_punch_contact(Fighter *fighter) {
   fighter->body.physics = jax_dash_punch_dash_friction;
-  fighter->mmove_cleanup = jax_dash_punch_dash_cleanup;
+  fighter->execution.cleanup = jax_dash_punch_dash_cleanup;
   int pose = fighter_sample(fighter);
   int last = JAX_DASH_PUNCH_DASH_QUERIES + 1 + jax_dash_punch_s_dash.last;
   native_begin(fighter, 0, last, jax_dash_punch_dash_ready);
@@ -1213,7 +1213,7 @@ static void kai_aerial_punch_aerial_hit(Fighter *fighter) {
 static void kai_aerial_punch_aerial_land(Fighter *fighter) {
   /* 470e80 sets action 1006; 47bed0 runs 46fd90 landing, then 46f650. */
   fighter->action = ACTION_RETAIL_1006;
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void kai_aerial_punch_timeout_fall(Fighter *fighter) {
@@ -1276,7 +1276,7 @@ void kai_aerial_punch_contact(Fighter *fighter) {
 
 void kai_aerial_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &kai_aerial_punch_aerial_punch);
-  fighter->mmove_cleanup = kai_aerial_punch_aerial_cleanup;
+  fighter->execution.cleanup = kai_aerial_punch_aerial_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_AERIAL_PUNCH, fighter_ready);
 }
 
@@ -1311,7 +1311,7 @@ static void liu_kang_bicycle_bicycle_query(Fighter *fighter) {
 
 static void liu_kang_bicycle_bicycle_pair(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  if (victim->capture_action != ACTION_RETAIL_0206 || victim->pending != NULL || (victim->current_mmove == NULL && !victim->retail_vm.active) ||
+  if (victim->capture_action != ACTION_RETAIL_0206 || victim->pending != NULL || (victim->execution.frames == NULL && !victim->execution.script.active) ||
       !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
     liu_kang_bicycle_bicycle_carry_end(fighter);
     return;
@@ -1394,7 +1394,7 @@ void liu_kang_bicycle_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &liu_kang_bicycle_s_bicycle);
   fighter->sample_override = 0;
-  fighter->mmove_cleanup = liu_kang_bicycle_bicycle_cleanup;
+  fighter->execution.cleanup = liu_kang_bicycle_bicycle_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_BICYCLE_KICK, fighter_ready);
 }
 
@@ -1463,7 +1463,7 @@ static Projectile *stolen_weapon(const Fighter *thief) {
 }
 
 static void weapon_steal_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void weapon_steal_stop(Fighter *fighter) {
@@ -1612,7 +1612,7 @@ static void scorpion_spear_spear_cleanup(Fighter *fighter) {
 
 static void scorpion_spear_spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = fighter_peer(owner);
-  bool interrupted = fighter_move(owner)->clip != 14 || !owner->retail_vm.active || owner->pending != NULL;
+  bool interrupted = fighter_move(owner)->clip != 14 || !owner->execution.script.active || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && fighter_move(victim)->clip == 199) {
       scorpion_special_ready(victim);
@@ -1632,7 +1632,7 @@ static void scorpion_spear_spear_projectile(Projectile *p) {
       fighter_start_move(owner, S_PUNCH, &scorpion_spear_s_spear);
       owner->sample_override = 31;
       retail_vm_enter(owner, MK4_RETAIL_SCRIPT_SCORPION_SPEAR_RETURN, fighter_ready);
-      owner->retail_vm.cleanup = scorpion_spear_spear_cleanup;
+      owner->execution.cleanup = scorpion_spear_spear_cleanup;
       p->kind = 0;
     } else {
       victim->body.pos[AXIS_X] -= q16_mul(p->heading[0], 0x3333);
@@ -1706,7 +1706,7 @@ void scorpion_spear(Fighter *fighter) {
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_SPEAR, scorpion_script_spear_done);
-  fighter->retail_vm.cleanup = scorpion_spear_spear_cleanup;
+  fighter->execution.cleanup = scorpion_spear_spear_cleanup;
 }
 
 void scorpion_script_spear_done(Fighter *fighter) {
@@ -1749,7 +1749,7 @@ static void aerial_bicycle_contact(Fighter *fighter) {
 }
 
 static void aerial_bicycle_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void aerial_bicycle_fall(Fighter *fighter) {
@@ -1782,7 +1782,7 @@ void sonya_bicycle(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_JUMP, &aerial_bicycle_move);
-  fighter->mmove_cleanup = sonya_special_cleanup;
+  fighter->execution.cleanup = sonya_special_cleanup;
   aerial_bicycle_script(fighter);
 }
 
@@ -1793,7 +1793,7 @@ static void sonya_cartwheel_cartwheel_recover(Fighter *fighter);
 static const MoveDef sonya_cartwheel_s_cartwheel = {.clip = 104, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x213};
 
 static void sonya_cartwheel_cartwheel_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void sonya_cartwheel_cartwheel_stop(Fighter *fighter) {
@@ -1822,7 +1822,7 @@ void sonya_cartwheel(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_KICK, &sonya_cartwheel_s_cartwheel);
-  fighter->mmove_cleanup = sonya_special_cleanup;
+  fighter->execution.cleanup = sonya_special_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_CARTWHEEL, fighter_ready);
 }
 
@@ -1845,7 +1845,7 @@ void sonya_script_leg_victim_end(Fighter *victim) {
 
 static void sonya_leg_grab_leg_grab_done(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 void sonya_script_leg_grab_tail(Fighter *fighter) {
@@ -1885,7 +1885,7 @@ void sonya_leg_grab(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &sonya_leg_grab_s_leg_grab);
   battle_sound(SOUND_A, 9);
   battle_sound(SOUND_INDEXED, 15);
-  fighter->mmove_cleanup = sonya_special_cleanup;
+  fighter->execution.cleanup = sonya_special_cleanup;
   sonya_leg_grab_leg_grab_script(fighter);
 }
 
@@ -1926,7 +1926,7 @@ static void tanya_spin_kick_spin_cleanup(Fighter *fighter) {
 }
 
 static void tanya_spin_kick_spin_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* 479705: clear the cursor callback and motion, set no-guard, bind
@@ -1944,10 +1944,10 @@ static void tanya_spin_kick_spin_recover(Fighter *fighter) {
 
 static void tanya_spin_kick_recoil_wait(Fighter *fighter) {
   if (fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000) {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   /* 47daa0: 490720/490de0 clear spin and angles, 490bd0 faces the peer. */
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
@@ -2008,7 +2008,7 @@ static void tanya_spin_kick_spin_sounds(Fighter *fighter) {
 void tanya_spin_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &tanya_spin_kick_spin);
-  fighter->mmove_cleanup = tanya_spin_kick_spin_cleanup;
+  fighter->execution.cleanup = tanya_spin_kick_spin_cleanup;
   fighter->spin_kick_ready = g_battle.ticks + 60;
   fighter->sample_override = 0;
   fighter_set_speed(fighter, 0x2666);

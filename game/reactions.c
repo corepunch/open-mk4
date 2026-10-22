@@ -34,7 +34,7 @@ static void neutral(Fighter *fighter) {
   if (fighter->health > 0) {
     fighter_enter_state(fighter, S_IDLE);
   } else {
-    fighter_stop_mmove(fighter);
+    fighter_execution_stop(fighter);
   }
 }
 
@@ -67,8 +67,8 @@ static void wall_recoil_buttons(Fighter *fighter) {
 
 static void wall_recoil_wait(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
-  fighter->mmove_hold = (victim->flags & FF_REACTING) && fighter_airborne(victim);
-  if (!fighter->mmove_hold) {
+  fighter->execution.hold = (victim->flags & FF_REACTING) && fighter_airborne(victim);
+  if (!fighter->execution.hold) {
     fighter_neutral(fighter);
     fighter_enter_state(fighter, S_IDLE);
   }
@@ -353,8 +353,8 @@ static void frozen_play(Fighter *fighter, int sample) {
   native_begin(fighter, 1, 142, frozen_thaw);
   for (int frame = 1; frame <= 142; ++frame) {
     bool shake = (frame < 36 && frame % 6 < 3) || (frame >= 124 && frame < 142 && (frame - 124) % 6 < 3);
-    fighter->native.poses[frame - 1] = sample;
-    fighter->native.frames[frame - 1] = (mframe_t){frozen_offset, shake ? 0xccc : 0, NULL};
+    fighter->execution.native_frames.poses[frame - 1] = sample;
+    fighter->execution.native_frames.frames[frame - 1] = (mframe_t){frozen_offset, shake ? 0xccc : 0, NULL};
   }
   native_play(fighter, false);
 }

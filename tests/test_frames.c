@@ -89,13 +89,13 @@ static void mmove_frames_and_callbacks(void) {
   advance(1);
   check(fighter_sample(fighter) == 5 && frame_think_calls == 1, "frame with optional callbacks did not advance");
   advance(1);
-  check(mmove_finished == 1 && fighter->state == S_IDLE && fighter->current_mmove == NULL && frame_think_calls == 2,
+  check(mmove_finished == 1 && fighter->state == S_IDLE && fighter->execution.frames == NULL && frame_think_calls == 2,
       "mmove end callback did not run exactly once after the final frame");
 }
 
 static void held_think(Fighter *fighter) {
   frame_think(fighter);
-  fighter->mmove_hold = frame_think_calls < 4;
+  fighter->execution.hold = frame_think_calls < 4;
 }
 
 static const mframe_t held_frames[] = {{.thinkfunc = held_think}};
@@ -123,12 +123,12 @@ static void mmove_phases_and_cleanup(void) {
   fighter->flags |= FF_PAIRED;
   int action = fighter->action;
   advance(1);
-  check(fighter->current_mmove == &held_phase && frame_think_calls == 0 && cleaned[0] == 0, "phase branch advanced immediately or cleaned the action");
+  check(fighter->execution.frames == &held_phase && frame_think_calls == 0 && cleaned[0] == 0, "phase branch advanced immediately or cleaned the action");
   check(fighter->contact == CONTACT_BLOCK && fighter->buffered == BUTTON_BIT(BUTTON_HIGH_PUNCH) && (fighter->flags & FF_PAIRED) && fighter->action == action,
       "phase branch reset combat state");
   advance(3);
   fighter_step_mmove(fighter);
-  check(fighter->current_mmove == &held_phase && frame_think_calls == 3, "held frame skipped its action callback or advanced twice in a tick");
+  check(fighter->execution.frames == &held_phase && frame_think_calls == 3, "held frame skipped its action callback or advanced twice in a tick");
   advance(1);
   check(fighter->state == S_IDLE && cleaned[0] == 1 && completed[0] == 1, "held phase did not finish and clean exactly once");
   for (int kind = 0; kind < 5; ++kind) {
@@ -147,7 +147,7 @@ static void mmove_phases_and_cleanup(void) {
       battle_reset_match();
     }
     advance(8);
-    check(cleaned[0] == 1 && completed[0] == 0 && fighter->current_mmove == NULL, "cancelled mmove resumed or missed cleanup");
+    check(cleaned[0] == 1 && completed[0] == 0 && fighter->execution.frames == NULL, "cancelled mmove resumed or missed cleanup");
   }
 }
 
@@ -161,8 +161,8 @@ static void held_ai(Fighter *fighter, float distance) {
 }
 
 static void hold_then_jump(Fighter *fighter) {
-  fighter->mmove_hold = held_visits < 3;
-  if (!fighter->mmove_hold) {
+  fighter->execution.hold = held_visits < 3;
+  if (!fighter->execution.hold) {
     fighter_mmove_nextframe(fighter, 2);
   }
 }
@@ -194,9 +194,9 @@ static void mmove_hold_jump_and_loop(void) {
   check(held_visits == 4 && held_distances[3] == 1.5f, "jump to frame zero was lost or treated as a held visit");
   fighter_start_mmove(fighter, S_PUNCH, &test_move, &loop_move);
   advance(5);
-  check(fighter->current_mmove == &loop_move && fighter_sample(fighter) == 1 && cleaned[0] == 0, "unchanged move must loop without cleanup");
-  fighter_stop_mmove(fighter);
-  check(fighter->current_mmove == NULL && fighter_sample(fighter) == 1 && cleaned[0] == 1, "explicit stop must retain final pose and clean once");
+  check(fighter->execution.frames == &loop_move && fighter_sample(fighter) == 1 && cleaned[0] == 0, "unchanged move must loop without cleanup");
+  fighter_execution_stop(fighter);
+  check(fighter->execution.frames == NULL && fighter_sample(fighter) == 1 && cleaned[0] == 1, "explicit stop must retain final pose and clean once");
 }
 
 static void native_action(Fighter *fighter) {
@@ -219,9 +219,9 @@ static void native_frame_schedules(void) {
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     setup();
     Fighter *fighter = &g_battle.fighters[0];
-    fighter->mmove_cleanup = cleanup;
+    fighter->execution.cleanup = cleanup;
     native_rows(fighter);
-    check(fighter->current_mmove != NULL && cleaned[0] == 0, "native playback must retain its action cleanup");
+    check(fighter->execution.frames != NULL && cleaned[0] == 0, "native playback must retain its action cleanup");
     advance(1);
     check(event_count == 0 && fighter_sample(fighter) == 3, "native schedule ran its boundary action early");
     if (interrupted) {

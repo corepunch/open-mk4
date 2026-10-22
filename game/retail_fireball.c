@@ -115,7 +115,7 @@ void retail_air_fireball_spawn(Fighter *fighter, int task_type) {
 }
 
 static void fall_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* 480d46: landing binds sample 18 and 428d10 plays the rest of clip 310. */

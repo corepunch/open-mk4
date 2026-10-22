@@ -78,7 +78,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           mk4_script_jab_contact(fighter);
           return true;
         case RETAIL_NATIVE_JAB_REPEAT_PREDICATE:
-          fighter->retail_vm.result = mk4_script_jab_gate(fighter);
+          fighter->execution.script.result = mk4_script_jab_gate(fighter);
           return true;
         case RETAIL_NATIVE_RAIDEN_SCRIPT_TORPEDO_STEP:
           raiden_script_torpedo_step(fighter);
@@ -152,10 +152,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_task_pause(fighter);
           return true;
         case RETAIL_NATIVE_CAGE_LK_THROW_PAIRED_CONTINUATION:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_LK_THROW_DAMAGE, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_LK_THROW_DAMAGE, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_CAGE_LK_THROW_RELEASE:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_LK_THROW_RELEASE, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_LK_THROW_RELEASE, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_CAGE_LK_THROW_OWNER_RETURN:
         case RETAIL_NATIVE_JAREK_LK_THROW_OWNER_RETURN:
@@ -201,7 +201,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           liu_kang_liu_script_lk_damage(fighter);
           return true;
         case RETAIL_NATIVE_LIU_KANG_LK_THROW_RETREAT:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_RETREAT, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_RETREAT, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_SUB_ZERO_SCRIPT_LK_REBASE:
           sub_zero_script_lk_rebase(fighter);
@@ -213,13 +213,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           sub_zero_script_lk_owner_return(fighter);
           return true;
         case RETAIL_NATIVE_GORO_LP_THROW_FIVE_PHASE_SEQUENCE:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LP_THROW_REPEATED_DAMAGE, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LP_THROW_REPEATED_DAMAGE, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT:
           goro_script_lp_phase_repeat(fighter);
           return true;
         case RETAIL_NATIVE_JAX_LP_THROW_THROW_CONTINUATION:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAX_LP_THROW_FIRST_SLAM, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAX_LP_THROW_FIRST_SLAM, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_JAX_LP_SLAM_FIRST:
           jax_lp_slam_first(fighter);
@@ -456,7 +456,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           quan_chi_fatality_hit_241(fighter);
           return true;
         case RETAIL_NATIVE_QUAN_CHI_FATALITY_1_OWNER_BEAT:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_1_OWNER_BEAT, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_1_OWNER_BEAT, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_QUAN_CHI_FATALITY_BEAT:
           quan_chi_fatality_beat(fighter);
@@ -603,7 +603,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           raiden_script_second_effect(fighter);
           return true;
         case RETAIL_NATIVE_RAIDEN_FATALITY_2_HELD_POSE:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_HELD_POSE, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_HELD_POSE, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_RAIDEN_SCRIPT_SECOND_RELEASE:
           raiden_script_second_release(fighter);
@@ -621,7 +621,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           tanya_second_finish(fighter);
           return true;
         case RETAIL_NATIVE_TANYA_FATALITY_2_VICTIM_COLLAPSE:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FATALITY_2_VICTIM_COLLAPSE, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FATALITY_2_VICTIM_COLLAPSE, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_CAGE_SCRIPT_FATALITY_2_CONTINUE:
           cage_script_fatality_2_continue(fighter);
@@ -711,7 +711,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_air_slam_fall(fighter);
           return true;
         case RETAIL_NATIVE_NOOB_SAIBOT_AIR_THROW_LANDING_LINK:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_AIR_THROW_LANDING, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_AIR_THROW_LANDING, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_AIR_SLAM_END:
           retail_air_slam_end(fighter);
@@ -756,13 +756,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_weapon_draw_equip(fighter);
           return true;
         case RETAIL_NATIVE_CAGE_JAB_SECOND_PUNCH:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_SECOND_PUNCH, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_SECOND_PUNCH, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_CAGE_JAB_REPEAT:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_REPEAT, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_REPEAT, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_CAGE_JAB_RECOVERY:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_RECOVERY, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_JAB_RECOVERY, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_AIR_LK_TAIL:
           retail_air_lk_tail(fighter);
@@ -786,10 +786,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_air_hp_tail(fighter);
           return true;
         case RETAIL_NATIVE_WEAPON_AIR_HIGH_PUNCH_OPEN:
-          weapon_air_frames_native(fighter, fighter->retail_vm.selector);
+          weapon_air_frames_native(fighter, fighter->execution.script.selector);
           return true;
         case RETAIL_NATIVE_WEAPON_AIR_LOW_PUNCH_OPEN:
-          weapon_air_frames_native(fighter, fighter->retail_vm.selector);
+          weapon_air_frames_native(fighter, fighter->execution.script.selector);
           return true;
         case RETAIL_NATIVE_AIR_LP_TAIL:
           retail_air_lp_tail(fighter);
@@ -873,7 +873,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           kai_handstand_spin_begin(fighter);
           return true;
         case RETAIL_NATIVE_HANDSTAND_FRONT:
-          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_FRONT, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_FRONT, fighter->execution.script.finish);
           return true;
         case RETAIL_NATIVE_KAI_SCRIPT_CONTACT_B10_CONTINUATION:
           kai_script_contact_b10_continuation(fighter);
@@ -1347,7 +1347,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_script_reaction_dispatch(fighter, (int)(argument & 255u));
           return true;
         case RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION:
-          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) == NULL) {
+          if (retail_reaction_entry(fighter->execution.script.image, argument & 255u) == NULL) {
             return false;
           }
           retail_script_release_reaction(fighter, (int)(argument & 255u));
@@ -1361,13 +1361,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
     case RETAIL_PREDICATE:
       switch (address) {
         case RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_SWORD_GATE:
-          fighter->retail_vm.result = liu_kang_liu_script_sword_gate(fighter);
+          fighter->execution.script.result = liu_kang_liu_script_sword_gate(fighter);
           return true;
         case RETAIL_NATIVE_JAB_REPEAT_PREDICATE:
-          fighter->retail_vm.result = mk4_script_jab_gate(fighter);
+          fighter->execution.script.result = mk4_script_jab_gate(fighter);
           return true;
         case RETAIL_NATIVE_CONTACT_QUERY_D:
-          fighter->retail_vm.result = raiden_script_torpedo_query(fighter);
+          fighter->execution.script.result = raiden_script_torpedo_query(fighter);
           return true;
         default:
           return false;

@@ -148,7 +148,7 @@ static void fujin_fatality_first_explode(Fighter *victim, Fighter *owner) {
   battle_blood_hit(owner, victim, (Vec3){fighter_x(victim), q16_float(victim->body.pos[AXIS_Y]), fighter_z(victim)}, Q16_ONE);
   victim->appearance = APPEARANCE_HIDDEN;
   mk4_script_stop_body(victim);
-  fighter_stop_mmove(victim);
+  fighter_execution_stop(victim);
 }
 
 static void fujin_fatality_first_bolt_step(Projectile *bolt) {
@@ -228,7 +228,7 @@ void fujin_first_fatality(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &fujin_fatality_first_victim);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  native_begin(victim, 0, 305, fighter_stop_mmove);
+  native_begin(victim, 0, 305, fighter_execution_stop);
   for (int frame = 0; frame <= 305; ++frame) {
     FighterFn action = frame == 80                 ? fujin_fatality_first_spin_start
                        : frame == 90               ? fujin_fatality_first_start_rise
@@ -377,11 +377,11 @@ void jarek_first_victim_end(Fighter *victim) {
 }
 
 static void jarek_fatality_first_scene_wait(Fighter *victim) {
-  victim->mmove_hold = fighter_move(fighter_opponent(victim))->clip != 405;
+  victim->execution.hold = fighter_move(fighter_opponent(victim))->clip != 405;
 }
 
 static void jarek_fatality_first_scene_end(Fighter *victim) {
-  fighter_stop_mmove(victim);
+  fighter_execution_stop(victim);
   if (g_battle.phase == PHASE_FATALITY) {
     battle_end_finisher();
   }
@@ -1286,7 +1286,7 @@ void reiko_first_victim_165(Fighter *victim) {
  * 475930) and task_finish; the final pose stays in the scene. */
 void reiko_first_piece_end(Fighter *actor) {
   Fighter *owner = reiko_fatality_first_owner_of(actor);
-  fighter_stop_mmove(actor);
+  fighter_execution_stop(actor);
   int flag = FIRST_VICTIM_DONE;
   if (battle_is_scene_actor(actor)) {
     int joint = actor->subtree_joint - 1;
@@ -1730,7 +1730,7 @@ void sub_zero_script_first_victim_collapse(Fighter *victim) {
 }
 
 void sub_zero_script_first_victim_end(Fighter *victim) {
-  fighter_finish_mmove(victim, sub_zero_finish_scene);
+  fighter_execution_finish(victim, sub_zero_finish_scene);
 }
 
 void sub_zero_first_fatality(Fighter *fighter) {
@@ -1837,7 +1837,7 @@ static bool tanya_fatality_first_bob_begin(BattleEvent *event, Fighter *owner, F
 
 static void tanya_fatality_first_end(Fighter *fighter) {
   (void)fighter;
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_end_finisher();
 }
 
@@ -1954,7 +1954,7 @@ void tanya_first_owner_loop(Fighter *fighter) {
     return;
   }
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, NULL);
+  fighter_execution_finish(fighter, NULL);
 }
 
 static void tanya_fatality_first_owner_kiss_start(Fighter *fighter) {

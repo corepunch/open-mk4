@@ -285,9 +285,9 @@ static void close_followup(Fighter *fighter) {
 static bool contact(Fighter *fighter, uint32_t table, unsigned selector, ContactResult *result) {
   uint32_t packed = mk4_image_u32(battle_data(), table + selector * 4);
   AttackRecord attack = retail_vm_attack_record(battle_data(), packed * 4);
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   *result = battle_contact(fighter, &attack);
-  return fighter->continuation == continuation && fighter->pending == NULL;
+  return fighter->execution.generation == continuation && fighter->pending == NULL;
 }
 
 static void hp_reverse(Fighter *fighter) {

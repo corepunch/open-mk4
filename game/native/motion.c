@@ -36,7 +36,7 @@ bool fujin_can_dive(const Fighter *fighter) {
 
 void fujin_dive_land(Fighter *fighter) {
   /* 47bfd0 runs the shared landing entry46fd90, then controller return. */
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void fujin_dive_dive_recoil(Fighter *fighter) {
@@ -70,7 +70,7 @@ void fujin_dive_contact(Fighter *fighter) {
 void fujin_dive(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &fujin_dive_dive);
   fighter->body.physics = fighter->body.on_land = NULL;
-  fighter->mmove_cleanup = fujin_dive_dive_cleanup;
+  fighter->execution.cleanup = fujin_dive_dive_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_DIVE, fighter_ready);
 }
 
@@ -109,7 +109,7 @@ static void jarek_ball_ball_cleanup(Fighter *fighter) {
 
 static void jarek_ball_ball_startup(Fighter *fighter, const MoveDef *move, FighterFn setup, FighterFn next) {
   fighter_start_move(fighter, S_KICK, move);
-  fighter->mmove_cleanup = jarek_ball_ball_cleanup;
+  fighter->execution.cleanup = jarek_ball_ball_cleanup;
   /* 48a0d0 indexed 0x22 and 489f90 bank C 0x45 precede the clip bind. */
   battle_sound(SOUND_INDEXED, 0x22);
   battle_sound(SOUND_C, 0x45);
@@ -127,10 +127,10 @@ static void jarek_ball_ball_startup(Fighter *fighter, const MoveDef *move, Fight
 static void jarek_ball_recoil_wait(Fighter *fighter) {
   /* 48f490 holds while rising; 47da70 then holds above absolute Y -2.5. */
   if (fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000) {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   /* 47daa0: 490720/490de0 clear spin and orientation, 490bd0 faces the
    * peer, then retail 4e84b8 rewinds 301 and lands through 47dae0. */
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
@@ -182,7 +182,7 @@ static void jarek_ball_roll_query(Fighter *fighter) {
 
 static void jarek_ball_roll_ready(Fighter *fighter) {
   jarek_ball_ball_face(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void jarek_ball_roll_end(Fighter *fighter) {
@@ -228,10 +228,10 @@ static void jarek_ball_rise_land(Fighter *fighter) {
   /* 48f390 waits for gravity to clear; 479a10 then clears orientation,
    * restores the root and returns through the shared 46fd90 landing. */
   if (fighter->body.gravity != 0) {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   fighter_upright(fighter);
   fighter_neutral(fighter);
   retail_recoil_land(fighter);
@@ -243,10 +243,10 @@ static void jarek_ball_rise_query(Fighter *fighter) {
   }
   /* 479960 stops querying once the rise slows to -.01 per visit. */
   if (fighter->body.vel[AXIS_Y] < -0x28f) {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
     return;
   }
-  fighter->mmove_hold = false;
+  fighter->execution.hold = false;
   native_begin(fighter, 0, 0, NULL);
   native_frame(fighter, 0, 8, jarek_ball_rise_land);
   native_play(fighter, false);
@@ -333,7 +333,7 @@ static const MoveDef liu_kang_flying_kick_s_flying_kick = {.clip = 92, .last = 5
 static void liu_kang_flying_kick_flying_query(Fighter *fighter) {
   AttackRecord liu_kang_flying_kick_flying_record = retail_vm_attack_record(battle_data(), FLYING_ATTACK_RECORD);
 
-  fighter->mmove_hold = fighter_airborne(fighter) && battle_contact(fighter, &liu_kang_flying_kick_flying_record) == CONTACT_MISS;
+  fighter->execution.hold = fighter_airborne(fighter) && battle_contact(fighter, &liu_kang_flying_kick_flying_record) == CONTACT_MISS;
 }
 
 static void liu_kang_flying_kick_flying_branch(Fighter *fighter) {
@@ -351,7 +351,7 @@ static void liu_kang_flying_kick_flying_hold(Fighter *fighter) {
 
   if (fighter_airborne(fighter) && battle_contact(fighter, &liu_kang_flying_kick_flying_record) == CONTACT_MISS) {
     native_begin(fighter, 0, 0, liu_kang_flying_kick_flying_branch);
-    fighter->native.frames[0].thinkfunc = liu_kang_flying_kick_flying_query;
+    fighter->execution.native_frames.frames[0].thinkfunc = liu_kang_flying_kick_flying_query;
     native_play(fighter, false);
   } else {
     liu_kang_flying_kick_flying_branch(fighter);
@@ -403,7 +403,7 @@ static void quan_chi_flip_kick_flip_cleanup(Fighter *fighter) {
 
 static void quan_chi_flip_kick_flip_ready(Fighter *fighter) {
   quan_chi_flip_kick_flip_cleanup(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* 47a610 -> 428d10 plays the remaining stored samples, then 46f650. */
@@ -449,7 +449,7 @@ void quan_chi_script_flip_kick_tail(Fighter *fighter) {
 
 void quan_chi_flip_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &quan_chi_flip_kick_s_flip_kick);
-  fighter->mmove_cleanup = quan_chi_flip_kick_flip_cleanup;
+  fighter->execution.cleanup = quan_chi_flip_kick_flip_cleanup;
   fighter->body.physics = quan_chi_flip_kick_flip_decay;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FLIP_KICK, fighter_ready);
 }
@@ -520,7 +520,7 @@ static void quan_chi_teleport_teleport_sink(Fighter *fighter) {
 }
 
 static void quan_chi_teleport_teleport_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* Play the bound clip forwards from its current sample to its last one. */
@@ -606,7 +606,7 @@ static void quan_chi_teleport_teleport_hit(Fighter *fighter) {
 /* 48f410: hold until the recoil falls back below Y -2.5; 47ff80 rights the
  * body before retail 4e8818 retracts clip 301 and lands. */
 static void quan_chi_teleport_blocked_low(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.pos[AXIS_Y] < -0x28000;
+  fighter->execution.hold = fighter->body.pos[AXIS_Y] < -0x28000;
 }
 
 static void quan_chi_teleport_blocked_retract(Fighter *fighter) {
@@ -622,7 +622,7 @@ static void quan_chi_teleport_blocked_fall(Fighter *fighter) {
 
 /* 48f490: hold until the recoil reaches its apex. */
 static void quan_chi_teleport_blocked_apex(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.vel[AXIS_Y] < 0;
+  fighter->execution.hold = fighter->body.vel[AXIS_Y] < 0;
 }
 
 /* 47fe60: action 1011; 48fed0 places the blocker 0.5 ahead with friction;
@@ -662,7 +662,7 @@ static void quan_chi_teleport_teleport_query(Fighter *fighter) {
   } else if (result == CONTACT_HIT) {
     quan_chi_teleport_teleport_hit(fighter);
   } else {
-    fighter->mmove_hold = true;
+    fighter->execution.hold = true;
   }
 }
 
@@ -674,7 +674,7 @@ static void quan_chi_teleport_teleport_drop(Fighter *fighter) {
 
 /* State 2: wait while the sink callback is still installed. */
 static void quan_chi_teleport_teleport_sinking(Fighter *fighter) {
-  fighter->mmove_hold = fighter->body.physics == quan_chi_teleport_teleport_sink;
+  fighter->execution.hold = fighter->body.physics == quan_chi_teleport_teleport_sink;
 }
 
 /* State 1 (47d022): save the opponent X/Z in the task for 47d550. */
@@ -692,7 +692,7 @@ static void quan_chi_teleport_teleport_save(Fighter *fighter) {
  * indexed 22, Y velocity 0x1999 and clip 87 played to sample 15 (428d30). */
 void quan_chi_teleport_stomp(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &quan_chi_teleport_s_sink);
-  fighter->mmove_cleanup = quan_chi_teleport_teleport_cleanup;
+  fighter->execution.cleanup = quan_chi_teleport_teleport_cleanup;
   fighter->sample_override = 0;
   fighter->saved_motion[0] = fighter->body.pos[AXIS_X];
   fighter->saved_motion[1] = fighter->body.pos[AXIS_Z];
@@ -772,7 +772,7 @@ static bool air_teleport_below_ground(const Fighter *fighter) {
 }
 
 static void air_teleport_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void air_teleport_land(Fighter *fighter) {
@@ -805,7 +805,7 @@ void raiden_teleport(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_JUMP, &air_teleport_move);
   battle_sound(SOUND_A, 0x30);
-  fighter->mmove_cleanup = raiden_special_cleanup;
+  fighter->execution.cleanup = raiden_special_cleanup;
   air_teleport_script(fighter);
 }
 
@@ -1144,13 +1144,13 @@ static const MoveDef scorpion_teleport_s_teleport = {.clip = 312, .last = MOVE_E
 static const MoveDef scorpion_teleport_s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1011};
 
 static void scorpion_teleport_teleport_land_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 static void scorpion_teleport_teleport_drop(Fighter *fighter) {
   fighter->body.gravity = 0x1999;
   if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, scorpion_special_ready);
+    fighter_execution_finish(fighter, scorpion_special_ready);
     return;
   }
   native_begin(fighter, 0, 0, scorpion_special_ready);
@@ -1173,7 +1173,7 @@ static void scorpion_teleport_teleport_query(Fighter *fighter) {
   AttackRecord scorpion_teleport_teleport_record = retail_vm_attack_record(battle_data(), TELEPORT_ATTACK_RECORD);
 
   if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, scorpion_special_ready);
+    fighter_execution_finish(fighter, scorpion_special_ready);
     return;
   }
   ContactResult result = battle_contact(fighter, &scorpion_teleport_teleport_record);
@@ -1194,7 +1194,7 @@ static void scorpion_teleport_teleport_query(Fighter *fighter) {
 
 static void scorpion_teleport_teleport_vanish(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  int first = fighter->mmove_frame + 1;
+  int first = fighter->execution.frame + 1;
   /* 480140 reappears past the opponent along this fighter's pair axis, on
    * the opponent when that point leaves the arena, then travels back along
    * the pre-teleport axis. */
@@ -1282,7 +1282,7 @@ static void morph_complete(Fighter *fighter) {
    * (0..14) it equals indexed cue 4ead30[38 + roster]. */
   battle_sound(SOUND_INDEXED, 38 + fighter->roster);
   fighter->morph_tick = g_battle.ticks;
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void morph_move(Fighter *fighter, int roster) {
@@ -1362,12 +1362,12 @@ static void sonya_square_wave_square_query(Fighter *fighter) {
   AttackRecord sonya_square_wave_square_record = retail_vm_attack_record(battle_data(), SQUARE_ATTACK_RECORD);
 
   battle_contact(fighter, &sonya_square_wave_square_record);
-  fighter->mmove_hold = fighter_height(fighter) < 2.4f && !fighter->connected;
+  fighter->execution.hold = fighter_height(fighter) < 2.4f && !fighter->connected;
 }
 
 static void sonya_square_wave_square_done(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void sonya_square_wave_square_land(Fighter *fighter) {
@@ -1399,7 +1399,7 @@ void sonya_square_wave(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_JUMP, &sonya_square_wave_s_square_wave);
-  fighter->mmove_cleanup = sonya_special_cleanup;
+  fighter->execution.cleanup = sonya_special_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_SQUARE_WAVE, fighter_ready);
 }
 
@@ -1490,11 +1490,11 @@ static void ice_clone_cleanup(Fighter *fighter) {
 }
 
 static void ice_clone_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, retail_air_land);
+  fighter_execution_finish(fighter, retail_air_land);
 }
 
 static void ice_clone_wait_for_landing(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
+  fighter->execution.hold = fighter_airborne(fighter);
 }
 
 static void ice_clone_land(Fighter *fighter) {
@@ -1518,7 +1518,7 @@ static bool ice_clone_falling(const Fighter *fighter) {
 }
 
 static void ice_clone_wait_for_apex(Fighter *fighter) {
-  fighter->mmove_hold = !ice_clone_falling(fighter);
+  fighter->execution.hold = !ice_clone_falling(fighter);
 }
 
 static void ice_clone_apex_wait(Fighter *fighter) {
@@ -1555,7 +1555,7 @@ void sub_zero_clone(Fighter *fighter) {
   fighter->body.gravity = 0x28f;
   fighter->clone_ready = g_battle.ticks + 180;
   battle_sound(SOUND_C, 0xa);
-  fighter->mmove_cleanup = ice_clone_cleanup;
+  fighter->execution.cleanup = ice_clone_cleanup;
   fighter_mmove_phase(fighter, &ice_clone_start);
 }
 
@@ -1680,7 +1680,7 @@ void sub_zero_slide(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &sub_zero_slide_s_slide);
   fighter->sample_override = 0;
-  fighter->mmove_cleanup = sub_zero_slide_slide_cleanup;
+  fighter->execution.cleanup = sub_zero_slide_slide_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SLIDE, fighter_ready);
 }
 
@@ -1708,7 +1708,7 @@ static void tanya_drill_kick_drill_cleanup(Fighter *fighter) {
 }
 
 static void tanya_drill_kick_drill_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 /* 47bbd0 state 1: stop, camera shake 0, then 428cf0 finishes clip 103.
@@ -1783,6 +1783,6 @@ void tanya_drill_kick_contact(Fighter *fighter) {
 void tanya_drill_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &tanya_drill_kick_drill);
-  fighter->mmove_cleanup = tanya_drill_kick_drill_cleanup;
+  fighter->execution.cleanup = tanya_drill_kick_drill_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_DRILL_KICK, fighter_ready);
 }

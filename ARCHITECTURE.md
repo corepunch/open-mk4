@@ -144,11 +144,15 @@ lives in shared source comments and typed tooling bindings. Script entries are c
 not host function pointers. The VM implements all 118 non-null opcode slots
 in the supplied handler table; the null slot remains invalid.
 
-Each Fighter owns its VM cursor, wait/playback state, typed return and cleanup.
+Each Fighter owns one `ActionExecution`: VM state, native playback, typed
+returns, a generation counter and one cleanup callback.
+`game/runtime/execution.c` provides the shared actor step, phase reset and
+action cancellation boundary. Phase changes retain cleanup; cancellation
+detaches and invokes it once. The unused `MoveSequence` path is removed.
 The shared 60 Hz actor pump advances that state on one thread. There are no
 coroutine stacks, worker threads or raw retail task-stack emulation. Typed
 script returns remain distinct from typed native completions. Starting a new
-phase or interrupting one transfers ownership and prevents stale callbacks.
+phase or interrupting one invalidates stale callbacks.
 The simulation captures animation history after each tick (at the existing
 30 Hz animation sampling cadence), including early phase exits and resets.
 `game/draw.h` takes an explicit `const Battle *` and borrowed assets. Drawing

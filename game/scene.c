@@ -163,7 +163,7 @@ Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, 
 
 void battle_scene_actor_stop(Fighter *actor) {
   SceneActor *slot = scene_slot(actor);
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   slot->active = false;
 }
 
@@ -174,11 +174,7 @@ void battle_step_scene_actors(void) {
       continue;
     }
     Fighter *actor = &slot->actor;
-    if (actor->retail_vm.active) {
-      retail_vm_step(actor);
-    } else if (actor->current_mmove != NULL) {
-      fighter_step_mmove(actor);
-    }
+    fighter_execution_step(actor);
     if (!slot->active) {
       continue;
     }

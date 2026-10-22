@@ -65,7 +65,6 @@ enum {
 /* MoveDef.last value for the clip's final frame. */
 #define MOVE_END (-1)
 
-typedef struct MoveSequence MoveSequence;
 typedef struct mmove_s mmove_t;
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
@@ -77,9 +76,7 @@ typedef enum RetailAction {
 #undef RETAIL_ACTION
 } RetailAction;
 
-/* Immutable move and combat rules. A recovered sequence overrides generic
- * first/last playback and ends through its callback. Other moves retain the
- * approximate playback policy until their scripts are recovered. */
+/* Engine state and combat view. Script/native execution supplies playback. */
 typedef struct MoveDef {
   int clip;
   int first, last;
@@ -87,7 +84,6 @@ typedef struct MoveDef {
   int damage, stun; /* approximate moves: damage in percent of full health */
   float reach, push;
   unsigned flags;
-  const MoveSequence *sequence;
   int action; /* retail action code at controller +0x74; 0 uses the state default */
 } MoveDef;
 
@@ -282,34 +278,7 @@ typedef struct Controls {
   const ButtonTable *stances[STANCE_COUNT];
 } Controls;
 
-/* A playback segment starts at a move-relative tick. Sample progression is
- * first + step * floor((tick - at) / period), until the next segment.
- * Negative steps reverse; zero steps hold. These are sparse changes in
- * playback policy, not one record per displayed frame. */
-typedef struct MoveSegment {
-  int at, first, step, period;
-} MoveSegment;
-
-/* at is a move-relative simulation frame, not a stored pose sample. Keeping
- * the two clocks distinct allows an event during a hold or reverse segment. */
-typedef struct MoveEvent {
-  int at;
-  FighterFn think;
-} MoveEvent;
-
 typedef bool (*FighterTest)(const Fighter *fighter);
-
-/* until, when set, holds the last sample after count ticks until it holds;
- * a retail script wait such as "until landed". */
-struct MoveSequence {
-  const MoveSegment *segments;
-  int segment_count;
-  const MoveEvent *events;
-  int event_count;
-  int count;
-  FighterFn end;
-  FighterTest until;
-};
 
 typedef enum MoveListKind {
   MOVE_LIST_SPECIAL,
@@ -453,10 +422,23 @@ typedef struct RetailVm {
   unsigned native_selector, native_rows;
   int play_ticks, target, direction, stride, period, blend_ticks;
   bool active, return_after_play, parked, paired, wait_ground, native_contact, interpolated_play, interpolated_pair;
-  FighterFn finish, cleanup, native_resume;
+  FighterFn finish, native_resume;
   RetailScriptContinuation then;
-  RetailNativeFn native;
+  RetailNativeFn dispatch;
 } RetailVm;
+
+/* One action lifetime across script/native phase changes. Cleanup is detached
+ * before cancellation callbacks; generation invalidates stale callbacks. */
+typedef struct ActionExecution {
+  RetailVm script;
+  NativeFrames native_frames;
+  const mmove_t *frames;
+  int frame, nextframe;
+  bool hold;
+  FighterFn cleanup;
+  uint64_t last_tick, generation;
+  unsigned result;
+} ActionExecution;
 
 struct Fighter {
   const Assets *assets; /* borrowed decoded clips/rigs; owned by the host */
@@ -479,11 +461,8 @@ struct Fighter {
   bool avoids_high;             /* low-kick script's temporary high-punch avoidance gate */
   const Character *scene_model; /* Optional actor-owned presentation replacement; assets retain ownership. */
   const MoveDef *current_move;
-  MoveDef playback_move;        /* actor-owned clip binding for shared playback */
-  const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
-  const mmove_t *current_mmove;
-  RetailVm retail_vm;
-  NativeFrames native;
+  MoveDef playback_move; /* actor-owned clip binding for shared playback */
+  ActionExecution execution;
   NativeMotion native_motion;
   bool native_immediate;
   const void *native_context;
@@ -494,14 +473,6 @@ struct Fighter {
   bool native_followup, native_signal;
   int native_variant, native_elapsed;
   uint32_t retail_air_row;
-  int mmove_frame, mmove_nextframe; /* -1 means no pending frame jump */
-  bool mmove_hold;
-  FighterFn mmove_cleanup;
-  uint64_t mmove_last_tick;
-  unsigned mmove_result; /* Generated phase branch result, local to this action. */
-  uint64_t continuation; /* changes on move/phase replacement, even when re-entering the same phase */
-  int sequence_event_tick;
-  bool sequence_finished;
   unsigned buffered; /* pressed buttons since the current move phase began */
   ContactResult contact;
   int contact_tick;
@@ -840,16 +811,17 @@ int roster_clip(const CharacterDef *def, int state, int asset_idle);
 const Character *roster_character(const Assets *assets, int roster_index);
 void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Fighter *fighter, int state);
-void fighter_step_sequence(Fighter *fighter);
-void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
 void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove);
 void fighter_step_mmove(Fighter *fighter);
 void fighter_mmove_nextframe(Fighter *fighter, int frame);
-void fighter_stop_mmove(Fighter *fighter);
+void fighter_execution_stop(Fighter *fighter);
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase);
-void fighter_cancel_mmove(Fighter *fighter);
-void fighter_finish_mmove(Fighter *fighter, FighterFn next);
-void fighter_cancel_all_mmoves(void);
+/* Reset retains action cleanup; cancel consumes it exactly once. */
+void fighter_execution_reset(Fighter *fighter);
+bool fighter_execution_step(Fighter *fighter);
+void fighter_execution_cancel(Fighter *fighter);
+void fighter_execution_finish(Fighter *fighter, FighterFn next);
+void fighter_execution_cancel_all(void);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);

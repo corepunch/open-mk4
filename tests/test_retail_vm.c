@@ -51,8 +51,8 @@ static void press(int slot, bool crouch, int scenario) {
 
 static int recover(Fighter *owner, int slot, bool crouch, int scenario) {
   int ticks = 0;
-  while (owner->retail_vm.active && ticks < 100) {
-    check(owner->current_mmove == NULL && owner->sequence == NULL, "VM must run without a generated frame/sequence program");
+  while (owner->execution.script.active && ticks < 100) {
+    check(owner->execution.frames == NULL, "VM must run without a generated frame program");
     check(fighter_sample(owner) >= 0 && fighter_sample(owner) <= fighter_move(owner)->last, "VM pose outside decoded clip");
     InputFrame input[2] = {0};
     if (scenario == 1) {
@@ -61,7 +61,7 @@ static int recover(Fighter *owner, int slot, bool crouch, int scenario) {
     battle_step(input);
     ticks++;
   }
-  check(ticks < 100 && !owner->retail_vm.active && !owner->avoids_high, "VM must finish and retire avoidance");
+  check(ticks < 100 && !owner->execution.script.active && !owner->avoids_high, "VM must finish and retire avoidance");
   check(owner->state == S_IDLE && owner->buttons != NULL, "VM must return to the real stance controller");
   Fighter *victim = &g_battle.fighters[1 - slot];
   q16 damage = crouch ? 0x1eb8 : 0x1c28;
@@ -136,8 +136,8 @@ static void behavior(void) {
       for (int scenario = 0; scenario < 3; ++scenario) {
         Fighter *owner = setup(slot, scenario);
         press(slot, crouch != 0, scenario);
-        check(owner->retail_vm.active, "real button entry must select the runtime interpreter");
-        check(owner->retail_vm.entry == (crouch ? 0x4e6020u : 0x4e5d90u), "button entry selected the wrong retail root");
+        check(owner->execution.script.active, "real button entry must select the runtime interpreter");
+        check(owner->execution.script.entry == (crouch ? 0x4e6020u : 0x4e5d90u), "button entry selected the wrong retail root");
         recovery[scenario] = recover(owner, slot, crouch != 0, scenario);
       }
       if (!crouch) {
@@ -168,9 +168,9 @@ static void lifetimes(void) {
     for (int n = 0; n < 8; ++n) {
       tick();
     }
-    check(owner->avoids_high && owner->retail_vm.active, "low kick must enter its high-punch avoidance window");
+    check(owner->avoids_high && owner->execution.script.active, "low kick must enter its high-punch avoidance window");
     fighter_interrupt(owner, fighter_ready);
-    check(!owner->retail_vm.active && !owner->avoids_high, "interrupt must immediately cancel interpreter and avoidance");
+    check(!owner->execution.script.active && !owner->avoids_high, "interrupt must immediately cancel interpreter and avoidance");
     for (int n = 0; n < 60; ++n) {
       tick();
     }
@@ -181,17 +181,18 @@ static void lifetimes(void) {
     for (int n = 0; n < 60; ++n) {
       tick();
     }
-    check(g_battle.fighters[1 - slot].health == 0 && (!owner->retail_vm.active || (owner->state == S_VICTORY && owner->retail_vm.entry == 0x4e6a40)),
+    check(g_battle.fighters[1 - slot].health == 0 &&
+              (!owner->execution.script.active || (owner->state == S_VICTORY && owner->execution.script.entry == 0x4e6a40)),
         "KO must retire attack ownership before entering the original victory program");
     owner = setup(slot, 2);
     press(slot, true, 2);
     battle_reset_match();
-    check(!owner->retail_vm.active && !owner->avoids_high, "match reset must retire live interpreter state");
+    check(!owner->execution.script.active && !owner->avoids_high, "match reset must retire live interpreter state");
     g_battle.phase = PHASE_FIGHT;
     for (int n = 0; n < 60; ++n) {
       tick();
     }
-    check(!owner->retail_vm.active && owner->state == S_IDLE, "reset VM must stay retired");
+    check(!owner->execution.script.active && owner->state == S_IDLE, "reset VM must stay retired");
   }
 }
 
@@ -199,7 +200,7 @@ static int control_finished;
 
 static void control_end(Fighter *fighter) {
   control_finished++;
-  retail_vm_cancel(fighter);
+  fighter_execution_cancel(fighter);
 }
 
 static bool reject_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
@@ -229,7 +230,7 @@ static void control_flow(void) {
   put_word(base + 108, 0x30000000);
   control_finished = 0;
   retail_vm_start(owner, &image, base, base + 112, control_end, reject_native);
-  for (int n = 0; n < 10 && owner->retail_vm.active; ++n) {
+  for (int n = 0; n < 10 && owner->execution.script.active; ++n) {
     tick();
   }
   check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
@@ -251,8 +252,8 @@ static void playback_modes(void) {
   check(fighter_sample(owner) == 2, "optional sample descriptor must consume its operand before half-speed playback");
   tick();
   check(fighter_sample(owner) == 2, "half-speed playback must hold the first visit");
-  for (int i = 0; i < 50 && owner->retail_vm.active; ++i) {
-    check(owner->current_mmove == NULL, "playback and blend must not create generated frame programs");
+  for (int i = 0; i < 50 && owner->execution.script.active; ++i) {
+    check(owner->execution.frames == NULL, "playback and blend must not create generated frame programs");
     tick();
   }
   check(control_finished == 1 && fighter_sample(owner) == 1 && owner->blend_duration == 0 && owner->blend_weight == -1,
@@ -262,7 +263,7 @@ static void playback_modes(void) {
   put_word(base + 8, 0x30000000);
   retail_vm_start(owner, &image, base, base + 12, control_end, reject_native);
   fighter_interrupt(owner, fighter_ready);
-  check(!owner->retail_vm.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
+  check(!owner->execution.script.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
 }
 
 static bool repeat_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
@@ -288,14 +289,14 @@ static void native_repetition(void) {
   }
   control_finished = 0;
   retail_vm_start(owner, &image, 0x570000, 0x570000 + sizeof words, control_end, repeat_native);
-  for (int i = 0; i < 10 && owner->retail_vm.active; ++i) {
-    check(owner->current_mmove == NULL, "native repetition must re-enter retail words without copying frame rows");
+  for (int i = 0; i < 10 && owner->execution.script.active; ++i) {
+    check(owner->execution.frames == NULL, "native repetition must re-enter retail words without copying frame rows");
     tick();
   }
   check(control_finished == 1 && fighter_sample(owner) == 3, "native counter must repeat the source stream and resume its successor once");
   retail_vm_start(owner, &image, 0x570000, 0x570000 + sizeof words, control_end, repeat_native);
   fighter_interrupt(owner, fighter_ready);
-  check(owner->retail_vm.repeat_count == 0 && !owner->retail_vm.active, "interruption must retire the native repetition contract");
+  check(owner->execution.script.repeat_count == 0 && !owner->execution.script.active, "interruption must retire the native repetition contract");
 }
 
 static void native_row_data(void) {
@@ -314,11 +315,11 @@ static void native_row_data(void) {
   put_word(0x570000, 0x3e000000);
   retail_vm_start(owner, &image, 0x570000, 0x570004, control_end, reject_native);
   check(retail_native_vm(owner, 0x46a760, RETAIL_TAIL, 0), "native rows must use the shared address binding");
-  check(fighter_sample(owner) == 2 && owner->current_mmove == NULL, "native rows must load live poses without copying frame arrays");
+  check(fighter_sample(owner) == 2 && owner->execution.frames == NULL, "native rows must load live poses without copying frame arrays");
   tick();
-  check(owner->retail_vm.entry == 0x4e5c70 && owner->action == ACTION_RETAIL_1006, "native row terminator must select its retail continuation");
+  check(owner->execution.script.entry == 0x4e5c70 && owner->action == ACTION_RETAIL_1006, "native row terminator must select its retail continuation");
   fighter_interrupt(owner, fighter_ready);
-  check(!owner->retail_vm.active && owner->retail_vm.native_resume == NULL, "interruption must retire native row continuation state");
+  check(!owner->execution.script.active && owner->execution.script.native_resume == NULL, "interruption must retire native row continuation state");
   for (unsigned i = 0; i < 8; ++i) {
     put_word(table + i * 4, saved[i]);
   }
@@ -334,7 +335,7 @@ static void native_cursor_return(void) {
   control_finished = 0;
   retail_vm_start(owner, &image, 0x570000, 0x570004, control_end, reject_native);
   check(retail_native_vm(owner, 0x46f080, RETAIL_TAIL, 0), "native cursor query must use the shared binding");
-  check(fighter_sample(owner) == 5 && owner->current_mmove == NULL, "native query must advance the bound cursor");
+  check(fighter_sample(owner) == 5 && owner->execution.frames == NULL, "native query must advance the bound cursor");
   tick();
   check(fighter_sample(owner) == 6 && owner->action == ACTION_RETAIL_1006, "second miss must advance once and start recovery");
   for (unsigned i = 0; i < 20 && !control_finished; ++i) {
@@ -353,13 +354,13 @@ static void native_shared_record(void) {
   entry(owner);
   check(fighter_move(owner)->last == (int)mk4_image_u32(&image, 0x4fbb60) - 1, "shared native must bind the loaded descriptor length");
   bool contacted = false;
-  for (int i = 0; i < 64 && owner->current_mmove != NULL; ++i) {
+  for (int i = 0; i < 64 && owner->execution.frames != NULL; ++i) {
     check(fighter_sample(owner) >= 0 && fighter_sample(owner) <= fighter_move(owner)->last, "shared native pose must stay within its loaded descriptor");
     tick();
     contacted |= owner->connected;
   }
   check(contacted && victim->health == Q16_ONE, "native contact must use the mutated retail record rather than a C damage copy");
-  check(owner->current_mmove == NULL && owner->state == S_IDLE, "shared native must return through the normal actor controller");
+  check(owner->execution.frames == NULL && owner->state == S_IDLE, "shared native must return through the normal actor controller");
   put_word(record + 20, saved);
 }
 
@@ -465,7 +466,7 @@ static unsigned predicate_argument;
 static bool predicate_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
   predicate_argument = argument;
   check(address == 0x12345678 && kind == RETAIL_PREDICATE, "predicate must use its typed native boundary");
-  fighter->retail_vm.result = 4;
+  fighter->execution.script.result = 4;
   return true;
 }
 
@@ -489,17 +490,17 @@ static void native_handoff(void) {
     put_word(base + i * 4, words[i]);
   }
   retail_vm_start(owner, &image, base, base + sizeof words, control_end, predicate_native);
-  check(owner->retail_vm.parked, "predicate branch must skip invalid data and reach the parked continuation");
+  check(owner->execution.script.parked, "predicate branch must skip invalid data and reach the parked continuation");
   cleanup_calls = 0;
-  owner->retail_vm.cleanup = cleanup_once;
+  owner->execution.cleanup = cleanup_once;
   static const mframe_t frames[] = {{0}};
   static const mmove_t phase = {.frame = frames};
   fighter_mmove_phase(owner, &phase);
-  check(!owner->retail_vm.active && cleanup_calls == 0, "native takeover must retain action cleanup");
+  check(!owner->execution.script.active && cleanup_calls == 0, "native takeover must retain action cleanup");
   retail_vm_start_at(owner, &image, base + 16, base, base + sizeof words, control_end, predicate_native);
-  check(owner->current_mmove == NULL && cleanup_calls == 0, "retail continuation must inherit native action cleanup");
-  fighter_cancel_mmove(owner);
-  fighter_cancel_mmove(owner);
+  check(owner->execution.frames == NULL && cleanup_calls == 0, "retail continuation must inherit native action cleanup");
+  fighter_execution_cancel(owner);
+  fighter_execution_cancel(owner);
   check(cleanup_calls == 1, "interruption must release inherited cleanup exactly once");
 }
 
@@ -510,7 +511,7 @@ static void assets_bound(void) {
     Fighter *owner = setup(0, 2);
     battle_bind_assets(&assets);
     press(0, crouch != 0, 2);
-    check(owner->retail_vm.active && owner->retail_vm.image == &image, "presentation binding must retain the explicitly selected match program");
+    check(owner->execution.script.active && owner->execution.script.image == &image, "presentation binding must retain the explicitly selected match program");
     recover(owner, 0, crouch != 0, 2);
   }
   mk4_program_load(&assets.image, "build/mk4.scripts");
@@ -535,11 +536,11 @@ static void reaction_native_table(void) {
   /* Native4854e0 inherits the descriptor installed by the paired script. */
   retail_vm_bind_animation(actor, 0x4fad7c + 149 * 12, 0);
   entry(actor);
-  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4e99c0, "native reaction must execute its original script");
-  for (int visit = 0; visit < 128 && actor->retail_vm.active; ++visit) {
+  check(actor->execution.script.active && actor->execution.script.entry == 0x4e99c0, "native reaction must execute its original script");
+  for (int visit = 0; visit < 128 && actor->execution.script.active; ++visit) {
     tick();
   }
-  check(!actor->retail_vm.active, "shared native reaction must retire its continuation");
+  check(!actor->execution.script.active, "shared native reaction must retire its continuation");
   actor = setup(0, 2);
   put_word(0x4ea4e8, 0x4851d0);
   entry = retail_throw_reaction(&image, 0);
@@ -548,7 +549,7 @@ static void reaction_native_table(void) {
   for (int visit = 0; visit < 128 && actor->state != S_IDLE; ++visit) {
     tick();
   }
-  check(actor->state == S_IDLE && actor->current_mmove == NULL, "native clip/hold/getup chain must release its playback ownership");
+  check(actor->state == S_IDLE && actor->execution.frames == NULL, "native clip/hold/getup chain must release its playback ownership");
   actor = setup(0, 2);
   put_word(0x4ea4e8, 0x486230);
   battle_react(actor, 0);
@@ -570,7 +571,7 @@ static void reaction_native_table(void) {
         break;
       }
     }
-    check(actor->state == S_IDLE && !actor->retail_vm.active && actor->current_mmove == NULL,
+    check(actor->state == S_IDLE && !actor->execution.script.active && actor->execution.frames == NULL,
         "shared block script/native branches must release playback ownership");
   }
   put_word(0x4ea4e8, original);
@@ -589,8 +590,8 @@ static void native_getup_entries(void) {
     check(actor->facing == (i >= 2 ? facing : -facing), "getup native must preserve its original facing operations");
     uint32_t descriptor = mk4_image_u32(&image, row + 12) * 4;
     check(fighter_move(actor)->clip == (int)((descriptor - 0x4fad7c) / 12), "getup must select the held-down descriptor from retail data");
-    fighter_cancel_mmove(actor);
-    check(actor->current_mmove == NULL, "getup interruption must release native playback");
+    fighter_execution_cancel(actor);
+    check(actor->execution.frames == NULL, "getup interruption must release native playback");
   }
 }
 
@@ -608,7 +609,7 @@ static void native_weapon_parameters(void) {
   check(actor->weapon_strike == &actor->loaded_weapon_strike, "native strike parameters must have actor-owned lifetime");
   check(actor->weapon_strike->windup == 9 && actor->weapon_strike->record.damage == expected.damage && actor->weapon_strike->speed == 0x1234,
       "native weapon phases, selector and motion must come from the supplied retail rows");
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   put_word(parameters + 4, original_phases);
   put_word(parameters + 8, original_query);
   put_word(motion + 4, original_speed);
@@ -628,13 +629,13 @@ static void native_weapon_inventory(void) {
   retail_weapon_high_punch(actor);
   check(actor->weapon_strike != NULL && actor->weapon_strike->parameters == 0x4ec880,
       "armed input must resolve the loaded native button target rather than fighter callbacks");
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   uint32_t alternative = mk4_image_u32(&image, 0x4ec88c);
   put_word(0x4ec88c, 0x495740);
   retail_weapon_back_high_punch(actor);
   check(actor->weapon_strike->parameters == 0x4ec4b8 && actor->action == ACTION_RETAIL_0113,
       "back input must follow the original parameter alternative and native action class");
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   put_word(0x4ec88c, alternative);
   put_word(table, target);
   put_word(0x53d5c0, original);
@@ -649,13 +650,13 @@ static void native_contact_record_lifetime(void) {
   record.damage = 0;
   check(actor->native_record == &actor->native_record_value && actor->native_record->damage == damage,
       "delayed weapon contact playback must own a copy of caller-local record data");
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   record.damage = damage;
   native_query_rows(actor, &record, 2, 1, control_end);
   record.damage = 0;
   check(actor->native_record == &actor->native_record_value && actor->native_record->damage == damage,
       "shared native contact rows must retain caller data across the yielding boundary");
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
   retail_vm_bind_animation(actor, 0x4fad7c + 227 * 12, 29);
   uint32_t original = mk4_image_u32(&image, 0x53d0c0 + 11 * 4);
   uint32_t selected = mk4_image_u32(&image, 0x53d0c0);
@@ -665,7 +666,7 @@ static void native_contact_record_lifetime(void) {
   check(actor->native_record == &actor->native_record_value && actor->native_record->damage == expected.damage,
       "weapon native must read its contact selector from the loaded bank and own the decoded record");
   put_word(0x53d0c0 + 11 * 4, original);
-  fighter_cancel_mmove(actor);
+  fighter_execution_cancel(actor);
 }
 
 static void native_projectile_context(void) {
@@ -700,7 +701,7 @@ static void native_return_ownership(void) {
   actor->health = 0;
   fighter_start_move(actor, S_HIT, roster_def(actor->roster)->moves[S_HIT]);
   check(retail_native_vm(actor, 0x42ce60, RETAIL_TAIL, 0), "native KO return must resolve the shared controller boundary");
-  check(actor->health == 0 && actor->state == S_HIT && actor->current_mmove == NULL && !actor->retail_vm.active,
+  check(actor->health == 0 && actor->state == S_HIT && actor->execution.frames == NULL && !actor->execution.script.active,
       "native controller return must not revive a defeated actor");
   check(retail_native_vm(actor, 0x470420, RETAIL_TAIL, 0) && actor->state != S_IDLE, "ordinary native controller return must also preserve KO ownership");
   actor = setup(0, 2);
@@ -752,27 +753,28 @@ static void native_callback_table(void) {
     put_word(table + 4, 0x42ce80);
     native_animation_table(actor, table);
     put_word(descriptor + 4, count);
-    check(actor->native.native_end.address == 0x42ce80 && actor->native.script_end.entry == 0,
+    check(actor->execution.native_frames.native_end.address == 0x42ce80 && actor->execution.native_frames.script_end.entry == 0,
         "native animation table must own its callback separately from VM script completion");
     put_word(table + 4, 0x4e6d08);
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
     }
-    for (int visit = 0; visit < 5 && actor->current_mmove != NULL; ++visit) {
+    for (int visit = 0; visit < 5 && actor->execution.frames != NULL; ++visit) {
       tick();
     }
-    check(actor->current_mmove == NULL && !actor->retail_vm.active && actor->native.native_end.address == 0,
+    check(actor->execution.frames == NULL && !actor->execution.script.active && actor->execution.native_frames.native_end.address == 0,
         "native table completion or interruption must consume its captured callback without entering callback data as script words");
   }
   Fighter *actor = setup(0, 2);
   native_hold(actor, 2, NULL);
   native_address_end(actor, 0x42ce80);
   native_script_end(actor, 0x4e6d08, fighter_ready);
-  check(actor->native.native_end.address == 0, "script completion must replace an earlier native callback");
+  check(actor->execution.native_frames.native_end.address == 0, "script completion must replace an earlier native callback");
   native_address_end(actor, 0x42ce80);
-  check(actor->native.script_end.entry == 0, "native callback must replace an earlier script completion");
-  fighter_cancel_mmove(actor);
-  check(actor->native.script_end.entry == 0 && actor->native.native_end.address == 0, "cancellation must clear both typed completion records");
+  check(actor->execution.native_frames.script_end.entry == 0, "native callback must replace an earlier script completion");
+  fighter_execution_cancel(actor);
+  check(actor->execution.native_frames.script_end.entry == 0 && actor->execution.native_frames.native_end.address == 0,
+      "cancellation must clear both typed completion records");
 }
 
 static void native_reaction_table(void) {
@@ -785,13 +787,13 @@ static void native_reaction_table(void) {
   put_word(0x4e9bb8, 0x4fad7c / 4);
   put_word(0x4e9bbc, 0x42ce80);
   Fighter *owner = fighter_peer(actor);
-  owner->retail_vm.image = &image;
+  owner->execution.script.image = &image;
   owner->flags |= FF_PAIRED;
   actor->flags |= FF_PAIRED;
   check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100), "shared reaction handler must accept loaded native targets in any script context");
   tick();
   check(!(actor->flags & FF_PAIRED) && !(owner->flags & FF_PAIRED), "shared reaction dispatch must release captured pair ownership");
-  check(actor->native.native_end.address == 0x42ce80 && fighter_move(actor)->clip == 0 && !actor->retail_vm.active,
+  check(actor->execution.native_frames.native_end.address == 0x42ce80 && fighter_move(actor)->clip == 0 && !actor->execution.script.active,
       "reaction dispatch must use loaded native and animation/callback tables independently of roster or selector");
   fighter_interrupt(actor, fighter_ready);
   put_word(0x4ea4e8 + 100 * 4, target);
@@ -802,7 +804,7 @@ static void native_reaction_table(void) {
   put_word(0x4fc8f8, 67);
   check(retail_native_vm(owner, 0x45b230, RETAIL_HANDLER, 100), "opponent reaction handler must use the same loaded native selection");
   tick();
-  check(fighter_move(actor)->clip == (0x4fc8f4 - 0x4fad7c) / 12 && fighter_move(actor)->last == 66 && actor->native.move.lastframe <= 2,
+  check(fighter_move(actor)->clip == (0x4fc8f4 - 0x4fad7c) / 12 && fighter_move(actor)->last == 66 && actor->execution.native_frames.move.lastframe <= 2,
       "native release must load the descriptor length rather than a copied fighter frame range");
   fighter_interrupt(actor, fighter_ready);
   put_word(0x4fc8f8, count);
@@ -816,20 +818,20 @@ static void native_stagger_boundary(void) {
     Fighter *actor = setup(0, 0);
     actor->action = crouch ? 0x2001 : 0x2000;
     Fighter *owner = fighter_peer(actor);
-    uint64_t generation = owner->continuation;
-    check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100) && owner->continuation == generation && actor->pending != NULL,
+    uint64_t generation = owner->execution.generation;
+    check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100) && owner->execution.generation == generation && actor->pending != NULL,
         "script reaction dispatch must use the loaded peer native independently of owner context without interrupting the caller");
     tick();
-    check(actor->retail_vm.active && actor->retail_vm.entry == (crouch ? 0x4e9360u : 0x4e9308u) && actor->current_mmove == NULL,
+    check(actor->execution.script.active && actor->execution.script.entry == (crouch ? 0x4e9360u : 0x4e9308u) && actor->execution.frames == NULL,
         "loaded stagger native must preserve the incoming action branch and transfer playback to original script words");
     if (crouch) {
       fighter_interrupt(actor, fighter_ready);
-      check(!actor->retail_vm.active, "native-started reaction script must remain independently interruptible");
+      check(!actor->execution.script.active, "native-started reaction script must remain independently interruptible");
     } else {
-      for (int visit = 0; visit < 128 && actor->retail_vm.active; ++visit) {
+      for (int visit = 0; visit < 128 && actor->execution.script.active; ++visit) {
         tick();
       }
-      check(!actor->retail_vm.active && actor->state == S_IDLE, "native-started script playback must return through the shared controller boundary");
+      check(!actor->execution.script.active && actor->state == S_IDLE, "native-started script playback must return through the shared controller boundary");
     }
   }
   put_word(0x4ea4e8 + 100 * 4, target);
@@ -837,7 +839,7 @@ static void native_stagger_boundary(void) {
   actor->hits = 4;
   battle_react(actor, 151);
   tick();
-  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4e96e0,
+  check(actor->execution.script.active && actor->execution.script.entry == 0x4e96e0,
       "native freeze interruption must transfer to the shared fall script rather than a retired C reaction row");
   fighter_interrupt(actor, fighter_ready);
 }
@@ -854,16 +856,16 @@ static void script_landing_handoff(void) {
     actor->flags |= FF_NO_GUARD;
     actor->action = 0x1003;
     retail_vm_enter(actor, 0x4e9d38, retail_controller_return);
-    check(
-        actor->retail_vm.active && actor->current_mmove == NULL && actor->body.gravity == 0x200, "landing motion and wait must come from loaded script words");
+    check(actor->execution.script.active && actor->execution.frames == NULL && actor->body.gravity == 0x200,
+        "landing motion and wait must come from loaded script words");
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
-      check(!actor->retail_vm.active, "interruption must cancel the script-owned landing wait");
+      check(!actor->execution.script.active, "interruption must cancel the script-owned landing wait");
     }
-    for (int visit = 0; visit < 128 && (actor->retail_vm.active || actor->current_mmove != NULL || actor->pending != NULL); ++visit) {
+    for (int visit = 0; visit < 128 && (actor->execution.script.active || actor->execution.frames != NULL || actor->pending != NULL); ++visit) {
       tick();
     }
-    check(!actor->retail_vm.active && actor->current_mmove == NULL && !(actor->flags & FF_NO_GUARD),
+    check(!actor->execution.script.active && actor->execution.frames == NULL && !(actor->flags & FF_NO_GUARD),
         "landing completion or interruption must retire script/native playback and guard ownership");
   }
   put_word(0x4e9d3c, gravity);
@@ -873,8 +875,8 @@ static uint32_t returned_word;
 static unsigned returned_limit;
 
 static void counted_operand_end(Fighter *fighter) {
-  returned_word = fighter->retail_vm.returned_word;
-  returned_limit = fighter->retail_vm.playback_limit;
+  returned_word = fighter->execution.script.returned_word;
+  returned_limit = fighter->execution.script.playback_limit;
   control_end(fighter);
 }
 
@@ -890,11 +892,11 @@ static void animation_controller_opcodes(void) {
   put_word(base + 8, 0x30000000);
   retail_vm_start(actor, &image, base, base + 12, control_end, reject_native);
   tick();
-  check(actor->retail_vm.interpolated_play && actor->blend_duration == 1 && actor->blend_sample == 1 && actor->blend_weight == 0x8000,
+  check(actor->execution.script.interpolated_play && actor->blend_duration == 1 && actor->blend_sample == 1 && actor->blend_weight == 0x8000,
       "interleaved playback must submit adjacent source poses at the original half weight");
   fighter_interrupt(actor, fighter_ready);
-  check(
-      !actor->retail_vm.active && actor->blend_duration == 0 && actor->blend_weight == -1, "interruption must release interpolated pose ownership with the VM");
+  check(!actor->execution.script.active && actor->blend_duration == 0 && actor->blend_weight == -1,
+      "interruption must release interpolated pose ownership with the VM");
   for (int limited = 0; limited < 2; ++limited) {
     actor = setup(0, 2);
     fighter_start_move(actor, S_PUNCH, &locked);
@@ -904,10 +906,10 @@ static void animation_controller_opcodes(void) {
     put_word(base + 8, 0x30000000);
     control_finished = 0;
     retail_vm_start(actor, &image, base, base + 12, control_end, reject_native);
-    for (int visit = 0; visit < 32 && actor->retail_vm.active; ++visit) {
+    for (int visit = 0; visit < 32 && actor->execution.script.active; ++visit) {
       tick();
     }
-    check(control_finished == 1 && fighter_sample(actor) == (limited ? 2 : 8) && actor->current_mmove == NULL,
+    check(control_finished == 1 && fighter_sample(actor) == (limited ? 2 : 8) && actor->execution.frames == NULL,
         "native animation controllers must honor the inline source budget and loaded clip length without generated frame programs");
   }
   actor = setup(0, 2);
@@ -916,7 +918,7 @@ static void animation_controller_opcodes(void) {
   returned_word = returned_limit = 0;
   control_finished = 0;
   retail_vm_start(actor, &image, base, base + 8, counted_operand_end, reject_native);
-  check(control_finished == 1 && returned_word == 0xdeadbeef && returned_limit == 3 && !actor->retail_vm.active,
+  check(control_finished == 1 && returned_word == 0xdeadbeef && returned_limit == 3 && !actor->execution.script.active,
       "counted operand return must deliver data to its typed caller rather than execute the operand");
   put_word(descriptor + 4, count);
 }
@@ -939,12 +941,12 @@ static void motion_distance_opcodes(void) {
     fighter_start_move(actor, S_PUNCH, &locked);
     fighter_peer(actor)->facing = reverse ? 1 : -1;
     g_battle.distance = reverse ? 2 * Q16_ONE : Q16_ONE;
-    actor->retail_vm.result = 4;
+    actor->execution.script.result = 4;
     actor->native_variant = 0;
     retail_vm_start(actor, &image, base, base + sizeof words, control_end, distance_reaction_probe);
     check(actor->body.vel[AXIS_X] == (reverse ? -0x1000 : 0x1000) && actor->body.vel[AXIS_Y] == -0x2000 && actor->body.gravity == 0x100,
         "directional motion must follow peer-facing order and consume all three signed motion words");
-    check(actor->native_variant == (reverse ? 0 : 1) && actor->retail_vm.result == (reverse ? 4u : 5u),
+    check(actor->native_variant == (reverse ? 0 : 1) && actor->execution.script.result == (reverse ? 4u : 5u),
         "distance reaction must use the world distance, preserve other flags and update bit zero");
     fighter_interrupt(actor, fighter_ready);
   }
@@ -1022,10 +1024,10 @@ static void conditional_primitive_opcodes(void) {
     retail_vm_start(actor, &image, base, base + sizeof words, control_end, predicate_native);
     check(predicate_argument == 7, "inline native predicate arguments must be masked and forwarded through the typed boundary");
     if (blocked) {
-      check(actor->retail_vm.active && actor->retail_vm.wake == g_battle.ticks + 2 && actor->body.pos[AXIS_X] == x + 0x1000 &&
+      check(actor->execution.script.active && actor->execution.script.wake == g_battle.ticks + 2 && actor->body.pos[AXIS_X] == x + 0x1000 &&
                 actor->body.pos[AXIS_Y] == y - 0x2000 && g_battle.sound_count == 1 && g_battle.sounds[0].selector == 0x627,
           "block-value branch must consume signed position operands, native token and flag-selected packed wait");
-      for (int visit = 0; visit < 4 && actor->retail_vm.active; ++visit) {
+      for (int visit = 0; visit < 4 && actor->execution.script.active; ++visit) {
         tick();
       }
     }
@@ -1063,12 +1065,12 @@ static void native_task_completion(void) {
     Fighter *actor = setup(0, 2);
     control_finished = cleanup_calls = 0;
     retail_vm_start(actor, &image, base, base + 12, control_end, retail_native_vm);
-    actor->retail_vm.cleanup = cleanup_once;
+    actor->execution.cleanup = cleanup_once;
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
     }
     tick();
-    check(control_finished == (interrupted ? 0 : 1) && cleanup_calls == 1 && !actor->retail_vm.active,
+    check(control_finished == (interrupted ? 0 : 1) && cleanup_calls == 1 && !actor->execution.script.active,
         "native task retirement must consume the caller completion and cleanup once, while interruption suppresses completion");
   }
   Fighter *actor = setup(0, 2);
@@ -1077,19 +1079,20 @@ static void native_task_completion(void) {
   g_battle.winner = 0;
   battle_react(actor, 175);
   tick();
-  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4ea300, "loaded stage native must transfer victim motion and playback to original words");
+  check(actor->execution.script.active && actor->execution.script.entry == 0x4ea300,
+      "loaded stage native must transfer victim motion and playback to original words");
   for (int visit = 0; visit < 512 && g_battle.phase == PHASE_FATALITY; ++visit) {
     tick();
   }
-  check(g_battle.phase == PHASE_MATCH_OVER && !actor->retail_vm.active && actor->current_mmove == NULL,
+  check(g_battle.phase == PHASE_MATCH_OVER && !actor->execution.script.active && actor->execution.frames == NULL,
       "stage native continuations must join the battle result and retire all actor playback ownership");
   actor = setup(0, 2);
   retail_vm_bind_animation(actor, 0x4fad7c, 0);
   check(retail_native_vm(actor, 0x486000, RETAIL_TAIL, 0), "bounded shake native must use the shared typed boundary");
   tick();
   fighter_interrupt(actor, fighter_ready);
-  check(
-      actor->visual_offset[AXIS_Y] == 0 && actor->current_mmove == NULL, "interrupting a native presentation phase must remove its owned offset and playback");
+  check(actor->visual_offset[AXIS_Y] == 0 && actor->execution.frames == NULL,
+      "interrupting a native presentation phase must remove its owned offset and playback");
 }
 
 /* A native contact phase must hand recovery back to original words. */
@@ -1103,9 +1106,9 @@ static void native_script_recovery_handoff(void) {
     bool script_seen = false;
     for (int visit = 0; visit < 128 && actor->state != S_IDLE; ++visit) {
       tick();
-      script_seen |= actor->retail_vm.active && actor->retail_vm.entry == 0x4e5b98;
+      script_seen |= actor->execution.script.active && actor->execution.script.entry == 0x4e5b98;
     }
-    check(script_seen && !actor->retail_vm.active && actor->current_mmove == NULL && actor->state == S_IDLE,
+    check(script_seen && !actor->execution.script.active && actor->execution.frames == NULL && actor->state == S_IDLE,
         "native contact recovery must run original words and retire its descriptor continuation");
   }
 }
@@ -1120,9 +1123,9 @@ static void native_scene_script_handoff(void) {
   bool script_seen = false;
   for (int visit = 0; visit < 1024 && g_battle.phase != PHASE_MATCH_OVER; ++visit) {
     tick();
-    script_seen |= peer->retail_vm.active && peer->retail_vm.entry == 0x4e1fa8;
+    script_seen |= peer->execution.script.active && peer->execution.script.entry == 0x4e1fa8;
   }
-  check(script_seen && !peer->retail_vm.active && peer->current_mmove == NULL && peer->scene.clips == NULL,
+  check(script_seen && !peer->execution.script.active && peer->execution.frames == NULL && peer->scene.clips == NULL,
       "native scene blends must transfer to original script playback and consume its retirement continuation");
 }
 
@@ -1134,11 +1137,12 @@ static void native_throw_selection(void) {
   uint32_t original = mk4_image_u32(&image, 0x4ddfb8);
   put_word(0x4ddfb8, 0x42bda0);
   retail_lk_throw(owner);
-  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4de2a0, "native throw selection must follow the loaded table independently of model");
-  for (int visit = 0; visit < 256 && (owner->retail_vm.active || peer->state != S_IDLE); ++visit) {
+  check(owner->execution.script.active && owner->execution.script.entry == 0x4de2a0,
+      "native throw selection must follow the loaded table independently of model");
+  for (int visit = 0; visit < 256 && (owner->execution.script.active || peer->state != S_IDLE); ++visit) {
     tick();
   }
-  check(!owner->retail_vm.active && peer->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED),
+  check(!owner->execution.script.active && peer->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED),
       "shared capture and original victim continuation must release both contexts");
   put_word(0x4ddfb8, original);
 }
@@ -1151,11 +1155,11 @@ static void native_inherited_descriptor(void) {
   put_word(0x4e6c10, replacement);
   retail_native_entry(0x46be40)(owner);
   int clip = (int)((replacement * 4 - 0x4fad7c) / 12);
-  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e61e0 && fighter_move(owner)->clip == clip,
+  check(owner->execution.script.active && owner->execution.script.entry == 0x4e61e0 && fighter_move(owner)->clip == clip,
       "native inherited animation must come from the loaded descriptor table");
   check(
       retail_native_character_slot(16) == 2 && retail_native_character_slot(17) == 4, "native hidden-roster aliases must remain distinct from script aliases");
-  fighter_cancel_mmove(owner);
+  fighter_execution_cancel(owner);
   put_word(0x4e6c10, original);
 
   owner = setup(0, 2);
@@ -1165,10 +1169,10 @@ static void native_inherited_descriptor(void) {
   retail_vm_bind_animation(owner, descriptor, 0);
   check(retail_native_vm(owner, 0x483df0, RETAIL_TAIL, 0) && fighter_move(owner)->clip == 0,
       "shared stagger tail must retain a caller-supplied descriptor outside the historical fighter variants");
-  for (int visit = 0; visit < 32 && owner->current_mmove != NULL; ++visit) {
+  for (int visit = 0; visit < 32 && owner->execution.frames != NULL; ++visit) {
     tick();
   }
-  check(owner->current_mmove == NULL && owner->state == S_IDLE, "short inherited descriptor must complete without hard-coded clip bounds");
+  check(owner->execution.frames == NULL && owner->state == S_IDLE, "short inherited descriptor must complete without hard-coded clip bounds");
   put_word(descriptor + 4, count);
 
   owner = setup(0, 2);
@@ -1189,8 +1193,9 @@ static void native_button_table(void) {
   fighter_press(owner, BUTTON_HIGH_PUNCH);
   check(owner->pending != NULL, "loaded button controller must schedule the native entry");
   tick();
-  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e5d90, "button dispatch must read the changed native target rather than a C button row");
-  fighter_cancel_mmove(owner);
+  check(owner->execution.script.active && owner->execution.script.entry == 0x4e5d90,
+      "button dispatch must read the changed native target rather than a C button row");
+  fighter_execution_cancel(owner);
   put_word(0x4e7078, original);
 
   owner = setup(0, 2);
@@ -1202,8 +1207,8 @@ static void native_button_table(void) {
   fighter_press(owner, BUTTON_HIGH_PUNCH);
   check(owner->pending != NULL && fighter_airborne(owner), "loaded air controller must preserve airborne state");
   tick();
-  check(owner->retail_vm.entry == 0x4e61f8, "air dispatch must consume the loaded action target");
-  fighter_cancel_mmove(owner);
+  check(owner->execution.script.entry == 0x4e61f8, "air dispatch must consume the loaded action target");
+  fighter_execution_cancel(owner);
   put_word(0x4e7008, original);
 }
 
@@ -1215,14 +1220,14 @@ static void native_script_continuation(void) {
     if (interrupted) {
       fighter_interrupt(owner, fighter_ready);
     }
-    for (int visit = 0; visit < 5 && !owner->retail_vm.active; ++visit) {
+    for (int visit = 0; visit < 5 && !owner->execution.script.active; ++visit) {
       tick();
     }
-    check(owner->native.script_end.entry == 0, "native script completion data must be consumed or canceled with its phase");
+    check(owner->execution.native_frames.script_end.entry == 0, "native script completion data must be consumed or canceled with its phase");
     if (interrupted) {
-      check(!owner->retail_vm.active && owner->current_mmove == NULL, "canceled native completion must not resume a retail script");
+      check(!owner->execution.script.active && owner->execution.frames == NULL, "canceled native completion must not resume a retail script");
     } else {
-      check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e6d08,
+      check(owner->execution.script.active && owner->execution.script.entry == 0x4e6d08,
           "native completion must enter its stored original script with the typed integration context");
     }
   }
@@ -1235,18 +1240,18 @@ static void native_script_continuation(void) {
   retail_vm_enter_then(owner, 0x4e6d08, 0x4e5d90, fighter_ready);
   native_begin(owner, 0, 0, NULL);
   native_script_end(owner, 0x4e62f0, fighter_ready);
-  for (int visit = 0; visit < 5 && owner->retail_vm.entry != 0x4e5d90; ++visit) {
+  for (int visit = 0; visit < 5 && owner->execution.script.entry != 0x4e5d90; ++visit) {
     tick();
   }
-  check(owner->retail_vm.entry == 0x4e5d90 && owner->retail_vm.then.entry == 0 && owner->native.script_end.entry == 0,
+  check(owner->execution.script.entry == 0x4e5d90 && owner->execution.script.then.entry == 0 && owner->execution.native_frames.script_end.entry == 0,
       "VM return continuation must stay independent of native completion data and consume once");
 
   static const MoveDef actor_view = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK};
   Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, 0x4e6d08, fighter_ready);
-  check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->retail_vm.active,
+  check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->execution.script.active,
       "raw scene script entry must preserve model identity independently of native integration context");
   battle_reset_match();
-  check(!owner->retail_vm.active && owner->retail_vm.then.entry == 0 && !actor->retail_vm.active,
+  check(!owner->execution.script.active && owner->execution.script.then.entry == 0 && !actor->execution.script.active,
       "reset must cancel both raw scene script and VM return continuations");
   put_word(0x4e6d08, saved[0]);
   put_word(0x4e6d0c, saved[1]);
@@ -1260,7 +1265,7 @@ static void native_close_lifetimes(void) {
     for (int visit = 0; visit < 128 && owner->state != S_IDLE; ++visit) {
       tick();
     }
-    check(owner->state == S_IDLE && !owner->retail_vm.active && owner->current_mmove == NULL,
+    check(owner->state == S_IDLE && !owner->execution.script.active && owner->execution.frames == NULL,
         "native clip completion and inherited/script recovery must retire their ownership");
   }
 }
@@ -1274,10 +1279,10 @@ static void native_air_ownership(void) {
     retail_air_high_punch(owner);
     check(owner->current_move == &owner->playback_move && fighter_move(owner)->clip >= 0 && fighter_move(owner)->last != MOVE_END,
         "native air startup must bind loaded animation without a fighter C seed");
-    check(owner->retail_vm.active || owner->current_mmove != NULL, "native/script air handoff must have a playback owner");
+    check(owner->execution.script.active || owner->execution.frames != NULL, "native/script air handoff must have a playback owner");
     fighter_interrupt(owner, fighter_ready);
     tick();
-    check(!owner->retail_vm.active && owner->current_mmove == NULL, "interrupt must retire native/script air playback ownership");
+    check(!owner->execution.script.active && owner->execution.frames == NULL, "interrupt must retire native/script air playback ownership");
   }
 }
 
@@ -1290,14 +1295,14 @@ static void native_air_loaded_recovery(void) {
   owner->body.gravity = 0x28f;
   retail_air_high_punch(owner);
   unsigned visits = 0;
-  while (owner->retail_vm.entry != 0x4e64e0 && visits++ < 32) {
+  while (owner->execution.script.entry != 0x4e64e0 && visits++ < 32) {
     tick();
   }
-  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e64e0,
+  check(owner->execution.script.active && owner->execution.script.entry == 0x4e64e0,
       "native contact miss must consume its loaded callback and enter the original recovery script");
   fighter_interrupt(owner, fighter_ready);
   tick();
-  check(!owner->retail_vm.active && owner->current_mmove == NULL && owner->body.gravity != 0,
+  check(!owner->execution.script.active && owner->execution.frames == NULL && owner->body.gravity != 0,
       "interrupting scripted air recovery must retire playback and restore flight");
   put_word(0x4e6694, original);
 }
@@ -1310,11 +1315,12 @@ static void native_air_capture_lifetimes(void) {
   capture_owner->flags |= FF_PAIRED;
   battle_react(capture_peer, 84);
   tick();
-  check(capture_peer->retail_vm.active && capture_peer->retail_vm.entry == 0x4ea0f8, "capture native must transfer victim playback to its loaded script");
-  for (int visit = 0; visit < 64 && capture_peer->retail_vm.active; ++visit) {
+  check(capture_peer->execution.script.active && capture_peer->execution.script.entry == 0x4ea0f8,
+      "capture native must transfer victim playback to its loaded script");
+  for (int visit = 0; visit < 64 && capture_peer->execution.script.active; ++visit) {
     tick();
   }
-  check(capture_peer->current_mmove != NULL, "script tail must transfer ownership back to the shared native cycle");
+  check(capture_peer->execution.frames != NULL, "script tail must transfer ownership back to the shared native cycle");
   capture_owner->action = 0;
   for (int visit = 0; visit < 128 && capture_peer->state != S_IDLE; ++visit) {
     tick();
@@ -1334,12 +1340,12 @@ static void native_air_capture_lifetimes(void) {
     check((owner->flags & FF_PAIRED) && (peer->flags & FF_PAIRED), "native air capture must acquire both contexts");
     for (int visit = 0; visit < 512; ++visit) {
       tick();
-      if (ko ? peer->health == 0 && peer->current_mmove == NULL && !peer->retail_vm.active && !(owner->flags & FF_PAIRED)
+      if (ko ? peer->health == 0 && peer->execution.frames == NULL && !peer->execution.script.active && !(owner->flags & FF_PAIRED)
              : owner->state == S_IDLE && peer->state == S_IDLE) {
         break;
       }
     }
-    check((ko ? peer->health == 0 && peer->state != S_IDLE && !peer->retail_vm.active && peer->current_mmove == NULL
+    check((ko ? peer->health == 0 && peer->state != S_IDLE && !peer->execution.script.active && peer->execution.frames == NULL
               : owner->state == S_IDLE && peer->state == S_IDLE) &&
               !(owner->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED),
         "native air capture/release must retire independent contexts and preserve KO ownership");
@@ -1354,7 +1360,7 @@ int main(int argc, char **argv) {
     mk4_program_load(&image, argv[2]);
     control_finished = 0;
     retail_vm_start(owner, &image, 0x4d0000, 0x4d0008, control_end, reject_native);
-    check(owner->retail_vm.wake == g_battle.ticks + 3, "assembled wait operand must control execution");
+    check(owner->execution.script.wake == g_battle.ticks + 3, "assembled wait operand must control execution");
     for (int i = 0; i < 3; ++i) {
       g_battle.ticks++;
       retail_vm_step(owner);

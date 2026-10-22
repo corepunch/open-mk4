@@ -76,11 +76,11 @@ static void uppercut_recovery(Fighter *fighter) {
     const int *poses = delayed && repeat == 0 ? late : cycle;
     int length = delayed && repeat == 0 ? 7 : 5;
     for (int frame = 0; frame < length; ++frame) {
-      fighter->native.poses[row++] = poses[frame];
+      fighter->execution.native_frames.poses[row++] = poses[frame];
     }
   }
   for (int sample = recovery; sample <= last; ++sample) {
-    fighter->native.poses[row++] = sample;
+    fighter->execution.native_frames.poses[row++] = sample;
   }
   native_play(fighter, false);
 }

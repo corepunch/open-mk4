@@ -430,7 +430,7 @@ void retail_lk_branch_continue(Fighter *fighter) {
 }
 
 void retail_lk_victim_return(Fighter *fighter) {
-  const Mk4Image *image = fighter->retail_vm.image;
+  const Mk4Image *image = fighter->execution.script.image;
   retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_LK_VICTIM_RETURN) * 4, 0);
   retail_vm_forward_return(fighter);
 }
@@ -460,7 +460,7 @@ void retail_throw_ready(Fighter *fighter) {
     fighter_peer(fighter)->flags &= ~(unsigned)FF_PAIRED;
   }
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(fighter, fighter->health > 0 ? fighter_ready : NULL);
 }
 
 /* 42cc40 runs the peer callback cell4de664, then the original owner words. */
@@ -480,5 +480,5 @@ void retail_controller_return(Fighter *fighter) {
   fighter->body.physics = NULL;
   fighter->body.on_land = NULL;
   retail_face_peer(fighter);
-  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+  fighter_execution_finish(fighter, fighter->health > 0 ? fighter_ready : NULL);
 }

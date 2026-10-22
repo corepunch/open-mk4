@@ -7,18 +7,18 @@
 static void resume_script_return(Fighter *fighter);
 
 void retail_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next) {
-  require(fighter->retail_vm.active, "Native wait without a retail task");
-  fighter->retail_vm.parked = true;
-  fighter->retail_vm.native_resume = next;
-  fighter->retail_vm.wake = g_battle.ticks + ticks;
+  require(fighter->execution.script.active, "Native wait without a retail task");
+  fighter->execution.script.parked = true;
+  fighter->execution.script.native_resume = next;
+  fighter->execution.script.wake = g_battle.ticks + ticks;
 }
 
 static _Noreturn void vm_error(const Fighter *fighter, const char *message) {
-  fatal("Retail VM at %08x (next %08x): %s", fighter->retail_vm.instruction, fighter->retail_vm.pc, message);
+  fatal("Retail VM at %08x (next %08x): %s", fighter->execution.script.instruction, fighter->execution.script.pc, message);
 }
 
 static uint32_t fetch(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   if (vm->pc < vm->begin || vm->pc >= vm->end || vm->pc % 4 != 0) {
     vm_error(fighter, "script cursor outside reviewed range");
   }
@@ -28,7 +28,7 @@ static uint32_t fetch(Fighter *fighter) {
 }
 
 static void jump(Fighter *fighter, uint32_t packed) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   if (packed < vm->begin / 4 || packed >= vm->end / 4) {
     vm_error(fighter, "script branch outside reviewed range");
   }
@@ -36,28 +36,24 @@ static void jump(Fighter *fighter, uint32_t packed) {
 }
 
 static void finish(Fighter *fighter) {
-  FighterFn next = fighter->retail_vm.finish;
+  FighterFn next = fighter->execution.script.finish;
   next(fighter);
 }
 
 void retail_vm_return(Fighter *fighter) {
-  require(fighter->retail_vm.active, "Native return without a retail task");
+  require(fighter->execution.script.active, "Native return without a retail task");
   finish(fighter);
 }
 
-void retail_vm_cancel(Fighter *fighter) {
-  if (fighter->retail_vm.active) {
-    FighterFn cleanup = fighter->retail_vm.cleanup;
-    if (fighter->retail_vm.blend_ticks > 0 || fighter->retail_vm.interpolated_play) {
+void retail_vm_reset(Fighter *fighter) {
+  if (fighter->execution.script.active) {
+    if (fighter->execution.script.blend_ticks > 0 || fighter->execution.script.interpolated_play) {
       fighter->blend_duration = 0;
       fighter->blend_weight = -1;
     }
-    fighter->retail_vm = (RetailVm){0};
+    fighter->execution.script = (RetailVm){0};
     fighter->avoids_high = false;
-    fighter->continuation++;
-    if (cleanup != NULL) {
-      cleanup(fighter);
-    }
+    fighter->execution.generation++;
   }
 }
 
@@ -76,20 +72,18 @@ static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed,
   fighter->playback_move.clip = clip;
   fighter->playback_move.first = 0;
   fighter->playback_move.last = (int)count - 1;
-  fighter->playback_move.sequence = NULL;
   fighter->playback_move.flags |= SF_RECORD;
   fighter->current_move = &fighter->playback_move;
-  fighter->sequence = NULL;
   fighter->sample_override = first < 0 ? (int)count - 1 : first;
 }
 
 void retail_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first) {
   require(descriptor % 4 == 0, "Unaligned animation descriptor");
-  bind_image(fighter, fighter->retail_vm.active ? fighter->retail_vm.image : battle_data(), descriptor / 4, first);
+  bind_image(fighter, fighter->execution.script.active ? fighter->execution.script.image : battle_data(), descriptor / 4, first);
 }
 
 static void bind(Fighter *fighter, uint32_t packed, int first) {
-  bind_image(fighter, fighter->retail_vm.image, packed, first);
+  bind_image(fighter, fighter->execution.script.image, packed, first);
 }
 
 static void sample(Fighter *fighter, int pose) {
@@ -100,7 +94,7 @@ static void sample(Fighter *fighter, int pose) {
 }
 
 static void play(Fighter *fighter, int target, bool inclusive) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   int current = fighter_sample(fighter);
   if (target < 0 || target > fighter_move(fighter)->last + 1) {
     vm_error(fighter, "playback target outside clip");
@@ -125,7 +119,7 @@ static void optional_bind(Fighter *fighter, uint32_t word) {
 
 static void slow_play(Fighter *fighter, int target, bool inclusive) {
   play(fighter, target, inclusive);
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   vm->period = 2;
   vm->wake = g_battle.ticks + (target == fighter_sample(fighter) ? 1 : 2);
 }
@@ -133,7 +127,7 @@ static void slow_play(Fighter *fighter, int target, bool inclusive) {
 /* 45a070/45a0f0 ->45a260/45a140: full poses alternate with half-weight
  * adjacent-pose submissions, using one actor-owned source-frame budget. */
 static void interpolated_play(Fighter *fighter, unsigned limit) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
   if (first < 0 || last == MOVE_END || first > last) {
     vm_error(fighter, "interpolated playback needs a bounded cursor");
@@ -150,12 +144,12 @@ static void interpolated_play(Fighter *fighter, unsigned limit) {
 
 void retail_vm_reverse_return(Fighter *fighter) {
   play(fighter, 0, true);
-  fighter->retail_vm.return_after_play = true;
+  fighter->execution.script.return_after_play = true;
 }
 
 void retail_vm_forward_return(Fighter *fighter) {
   play(fighter, fighter_move(fighter)->last, true);
-  fighter->retail_vm.return_after_play = true;
+  fighter->execution.script.return_after_play = true;
 }
 
 AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
@@ -168,15 +162,15 @@ AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
 }
 
 static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   uint32_t packed = mk4_image_u32(vm->image, table + selector * 4);
   if (packed < RETAIL_ATTACK_RECORDS_BEGIN / 4 || packed > (RETAIL_ATTACK_RECORDS_END - RETAIL_ATTACK_RECORD_SIZE) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
   AttackRecord record = retail_vm_attack_record(vm->image, packed * 4);
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   ContactResult result = battle_contact(fighter, &record);
-  if (vm->active && fighter->continuation == continuation) {
+  if (vm->active && fighter->execution.generation == continuation) {
     vm->result = result == CONTACT_MISS ? 0u : 1u;
   }
 }
@@ -185,13 +179,9 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
   require(image != NULL && image->bytes.count != 0 && next != NULL && native != NULL, "Retail VM needs owned image and typed continuations");
   require(begin <= entry && entry < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= RETAIL_SCRIPT_END - RETAIL_SCRIPT_BEGIN,
       "Invalid reviewed retail script range");
-  RetailVm previous = fighter->retail_vm;
-  FighterFn cleanup = previous.cleanup != NULL ? previous.cleanup : fighter->mmove_cleanup;
-  fighter->retail_vm.cleanup = NULL;
-  fighter->mmove_cleanup = NULL;
-  fighter_cancel_mmove(fighter);
-  fighter->sequence = NULL;
-  fighter->retail_vm = (RetailVm){.image = image,
+  RetailVm previous = fighter->execution.script;
+  fighter_execution_reset(fighter);
+  fighter->execution.script = (RetailVm){.image = image,
       .entry = entry,
       .pc = entry,
       .begin = begin,
@@ -199,15 +189,14 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
       .active = true,
       .finish = next,
       .then = next == resume_script_return ? previous.then : (RetailScriptContinuation){0},
-      .cleanup = cleanup,
-      .native = native,
+      .dispatch = native,
       .loop_count = previous.loop_count,
       .result = previous.result,
       .selector = previous.selector,
       .repeat_count = previous.repeat_count,
       .repeat_entry = previous.repeat_entry,
       .repeat_after = previous.repeat_after};
-  fighter->continuation++;
+  fighter->execution.generation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
     bind(fighter, (RETAIL_ANIMATION_TABLE + (uint32_t)move->clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE) / 4, fighter_sample(fighter));
@@ -222,9 +211,9 @@ void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
 /* Script returns keep their own typed continuation; native addresses select
  * one implementation independently of actor/model identity. */
 static void resume_script_return(Fighter *fighter) {
-  RetailScriptContinuation next = fighter->retail_vm.then;
+  RetailScriptContinuation next = fighter->execution.script.then;
   require(next.entry != 0, "Missing retail script return continuation");
-  fighter->retail_vm.then = (RetailScriptContinuation){0};
+  fighter->execution.script.then = (RetailScriptContinuation){0};
   retail_vm_enter(fighter, next.entry, next.finish);
 }
 
@@ -232,14 +221,14 @@ static void resume_script_return(Fighter *fighter) {
  * that continuation in VM ownership, independent of native frame completion. */
 void retail_vm_enter_then(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish) {
   require(after >= RETAIL_SCRIPT_BEGIN && after < RETAIL_SCRIPT_END && after % 4 == 0 && finish != NULL, "Invalid retail script return continuation");
-  fighter->retail_vm.then = (RetailScriptContinuation){after, finish};
+  fighter->execution.script.then = (RetailScriptContinuation){after, finish};
   retail_vm_enter(fighter, entry, resume_script_return);
 }
 
 static void repeat_enter(Fighter *fighter, uint32_t entry) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   if (vm->active) {
-    retail_vm_start_at(fighter, vm->image, entry, vm->begin, vm->end, vm->finish, vm->native);
+    retail_vm_start_at(fighter, vm->image, entry, vm->begin, vm->end, vm->finish, vm->dispatch);
   } else {
     retail_vm_enter(fighter, entry, fighter_ready);
   }
@@ -247,14 +236,14 @@ static void repeat_enter(Fighter *fighter, uint32_t entry) {
 
 void retail_vm_repeat(Fighter *fighter, uint32_t entry, unsigned count, uint32_t after) {
   require(count > 0, "Native script repetition must be bounded");
-  fighter->retail_vm.repeat_count = count;
-  fighter->retail_vm.repeat_entry = entry;
-  fighter->retail_vm.repeat_after = after;
+  fighter->execution.script.repeat_count = count;
+  fighter->execution.script.repeat_entry = entry;
+  fighter->execution.script.repeat_after = after;
   repeat_enter(fighter, entry);
 }
 
 void retail_vm_repeat_next(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   require(vm->active && vm->repeat_count > 0, "Native script cycle without a live counter");
   uint32_t next = --vm->repeat_count == 0 ? vm->repeat_after : vm->repeat_entry;
   repeat_enter(fighter, next);
@@ -265,7 +254,7 @@ void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, ui
 }
 
 void retail_vm_step(Fighter *fighter) {
-  RetailVm *vm = &fighter->retail_vm;
+  RetailVm *vm = &fighter->execution.script;
   if (!vm->active || g_battle.ticks < vm->wake) {
     return;
   }
@@ -560,7 +549,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x32:
       case 0x35: {
         uint32_t address = fetch(fighter);
-        if (!vm->native(fighter, address, opcode == 0x32 ? RETAIL_TAIL : RETAIL_CALL, 0)) {
+        if (!vm->dispatch(fighter, address, opcode == 0x32 ? RETAIL_TAIL : RETAIL_CALL, 0)) {
           vm_error(fighter, "unreviewed native binding");
         }
         break;
@@ -607,20 +596,20 @@ void retail_vm_step(Fighter *fighter) {
       case 0x40: {
         unsigned type = fetch(fighter);
         uint32_t address = fetch(fighter);
-        if (!vm->native(fighter, address, RETAIL_SPAWN, type)) {
+        if (!vm->dispatch(fighter, address, RETAIL_SPAWN, type)) {
           vm_error(fighter, "unreviewed task binding");
         }
         break;
       }
       case 0x56:
       case 0x64:
-        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT : RETAIL_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, RETAIL_HANDLER, arg)) {
+        if (!vm->dispatch(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT : RETAIL_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed scene/facing binding");
         }
         break;
       case 0x41:
       case 0x1e:
-        if (!vm->native(fighter, opcode == 0x41 ? RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH : RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION, RETAIL_HANDLER, arg)) {
+        if (!vm->dispatch(fighter, opcode == 0x41 ? RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH : RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
@@ -629,11 +618,11 @@ void retail_vm_step(Fighter *fighter) {
       case 0x36: {
         uint32_t address = fetch(fighter);
         uint32_t target = fetch(fighter);
-        uint64_t continuation = fighter->continuation;
-        if (!vm->native(fighter, address, RETAIL_PREDICATE, opcode == 0x55 ? arg : 0)) {
+        uint64_t continuation = fighter->execution.generation;
+        if (!vm->dispatch(fighter, address, RETAIL_PREDICATE, opcode == 0x55 ? arg : 0)) {
           vm_error(fighter, "unreviewed predicate binding");
         }
-        if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+        if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
           return;
         }
         if (vm->result & (opcode == 0x36 ? 4u : 1u)) {
@@ -653,11 +642,11 @@ void retail_vm_step(Fighter *fighter) {
       case 0x70: {
         q16 limit = (q16)fetch(fighter);
         if (g_battle.distance <= limit) {
-          uint64_t continuation = fighter->continuation;
-          if (!vm->native(fighter, RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH, RETAIL_HANDLER, arg)) {
+          uint64_t continuation = fighter->execution.generation;
+          if (!vm->dispatch(fighter, RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH, RETAIL_HANDLER, arg)) {
             vm_error(fighter, "unreviewed distance reaction binding");
           }
-          if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+          if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
             return;
           }
           vm->result |= 1u;
@@ -675,9 +664,9 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x50: {
         uint32_t target = fetch(fighter);
-        uint64_t continuation = fighter->continuation;
+        uint64_t continuation = fighter->execution.generation;
         contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE, arg);
-        if (vm->active && fighter->continuation == continuation && (vm->result & 1u)) {
+        if (vm->active && fighter->execution.generation == continuation && (vm->result & 1u)) {
           jump(fighter, target);
         }
         break;
@@ -691,7 +680,7 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x38: {
         uint32_t address = fetch(fighter);
-        if (!vm->native(fighter, address, RETAIL_PHYSICS, 0)) {
+        if (!vm->dispatch(fighter, address, RETAIL_PHYSICS, 0)) {
           vm_error(fighter, "unreviewed physics binding");
         }
         break;

@@ -5,14 +5,14 @@
 #include <string.h>
 
 static void frame_pose(Fighter *fighter, float pose) {
-  if (!fighter->mmove_hold) {
+  if (!fighter->execution.hold) {
     fighter->sample_override = (int)pose;
   }
 }
 
 void native_begin(Fighter *fighter, int first, int last, FighterFn end) {
   require(first >= 0 && last >= first && last - first < NATIVE_FRAME_CAPACITY, "Native move exceeds frame capacity");
-  NativeFrames *program = &fighter->native;
+  NativeFrames *program = &fighter->execution.native_frames;
   program->script_end = (RetailScriptContinuation){0};
   program->native_end = (RetailNativeContinuation){0};
   int pose = fighter_sample(fighter);
@@ -24,8 +24,8 @@ void native_begin(Fighter *fighter, int first, int last, FighterFn end) {
 }
 
 static void native_script_resume(Fighter *fighter) {
-  RetailScriptContinuation next = fighter->native.script_end;
-  fighter->native.script_end = (RetailScriptContinuation){0};
+  RetailScriptContinuation next = fighter->execution.native_frames.script_end;
+  fighter->execution.native_frames.script_end = (RetailScriptContinuation){0};
   require(next.entry != 0, "Missing native script continuation");
   retail_vm_enter(fighter, next.entry, next.finish);
 }
@@ -34,27 +34,28 @@ static void native_script_resume(Fighter *fighter) {
  * owns the original address as data; no fighter-specific C thunk is needed. */
 void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish) {
   require(entry >= RETAIL_SCRIPT_BEGIN && entry < RETAIL_SCRIPT_END && entry % 4 == 0 && finish != NULL, "Invalid native script continuation");
-  fighter->native.native_end = (RetailNativeContinuation){0};
-  fighter->native.script_end = (RetailScriptContinuation){entry, finish};
-  fighter->native.move.endfunc = native_script_resume;
+  fighter->execution.native_frames.native_end = (RetailNativeContinuation){0};
+  fighter->execution.native_frames.script_end = (RetailScriptContinuation){entry, finish};
+  fighter->execution.native_frames.move.endfunc = native_script_resume;
 }
 
 static void native_address_resume(Fighter *fighter) {
-  RetailNativeContinuation next = fighter->native.native_end;
-  fighter->native.native_end = (RetailNativeContinuation){0};
+  RetailNativeContinuation next = fighter->execution.native_frames.native_end;
+  fighter->execution.native_frames.native_end = (RetailNativeContinuation){0};
   require(next.address != 0, "Missing native address continuation");
-  uint64_t continuation = fighter->continuation;
+  uint64_t continuation = fighter->execution.generation;
   require(retail_native_vm(fighter, next.address, RETAIL_TAIL, 0), "Unsupported native address continuation");
-  require(fighter->continuation != continuation || fighter->current_mmove != &fighter->native.move, "Native continuation did not transfer ownership");
+  require(fighter->execution.generation != continuation || fighter->execution.frames != &fighter->execution.native_frames.move,
+      "Native continuation did not transfer ownership");
 }
 
 /* Install after native_begin or a non-immediate native helper. Native callback
  * addresses remain distinct from script entries and are never host pointers. */
 void native_address_end(Fighter *fighter, uint32_t address) {
   require(address >= MK4_RETAIL_DATA_IMAGE_BASE && address < RETAIL_SCRIPT_BEGIN, "Invalid native address continuation");
-  fighter->native.script_end = (RetailScriptContinuation){0};
-  fighter->native.native_end = (RetailNativeContinuation){address};
-  fighter->native.move.endfunc = native_address_resume;
+  fighter->execution.native_frames.script_end = (RetailScriptContinuation){0};
+  fighter->execution.native_frames.native_end = (RetailNativeContinuation){address};
+  fighter->execution.native_frames.move.endfunc = native_address_resume;
 }
 
 /* Native4287a0 reads a packed descriptor and a byte-address callback cell,
@@ -69,7 +70,7 @@ void native_animation_table(Fighter *fighter, uint32_t table) {
 }
 
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action) {
-  NativeFrames *program = &fighter->native;
+  NativeFrames *program = &fighter->execution.native_frames;
   int index = frame - program->move.firstframe;
   require(index >= 0 && frame <= program->move.lastframe && pose >= 0, "Invalid native action frame");
   /* The source pose changes at this row's boundary, before its action. The
@@ -81,10 +82,10 @@ void native_frame(Fighter *fighter, int frame, int pose, FighterFn action) {
 }
 
 static void native_install(Fighter *fighter) {
-  fighter_mmove_phase(fighter, &fighter->native.move);
-  fighter->sample_override = fighter->native.poses[0];
+  fighter_mmove_phase(fighter, &fighter->execution.native_frames.move);
+  fighter->sample_override = fighter->execution.native_frames.poses[0];
   if (fighter->native_immediate) {
-    fighter->mmove_last_tick--;
+    fighter->execution.last_tick--;
     fighter_step_mmove(fighter);
   }
 }
@@ -109,18 +110,18 @@ void native_motion_step(Fighter *fighter) {
     return;
   }
   motion->last_tick = g_battle.ticks;
-  uint64_t generation = motion->generation, continuation = fighter->continuation;
+  uint64_t generation = motion->generation, continuation = fighter->execution.generation;
   const mframe_t *frame = &motion->frames[motion->frame];
   if (frame->aifunc != NULL) {
     frame->aifunc(fighter, frame->dist);
   }
-  if (generation != motion->generation || continuation != fighter->continuation || fighter->pending != NULL) {
+  if (generation != motion->generation || continuation != fighter->execution.generation || fighter->pending != NULL) {
     return;
   }
   if (frame->thinkfunc != NULL) {
     frame->thinkfunc(fighter);
   }
-  if (generation != motion->generation || continuation != fighter->continuation || fighter->pending != NULL) {
+  if (generation != motion->generation || continuation != fighter->execution.generation || fighter->pending != NULL) {
     return;
   }
   if (++motion->frame == motion->count) {
@@ -220,7 +221,7 @@ void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end) {
 /* Contact leaves early through the continuation, which replaces the rows. */
 static void query_continue(Fighter *fighter) {
   if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
-    fighter->native.move.endfunc(fighter);
+    fighter->execution.native_frames.move.endfunc(fighter);
   }
 }
 
@@ -242,7 +243,7 @@ void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames,
 }
 
 static void condition_frame(Fighter *fighter) {
-  fighter->mmove_hold = !fighter->native_condition(fighter);
+  fighter->execution.hold = !fighter->native_condition(fighter);
 }
 
 /* Holds the current pose until condition holds; the continuation is the end of that row. */
@@ -253,7 +254,7 @@ void native_await(Fighter *fighter, FighterTest condition, FighterFn end) {
   }
   fighter->native_condition = condition;
   native_begin(fighter, 0, 0, end);
-  fighter->native.frames[0].thinkfunc = condition_frame;
+  fighter->execution.native_frames.frames[0].thinkfunc = condition_frame;
   native_play(fighter, false);
 }
 
@@ -282,8 +283,8 @@ void native_scene_blends(Fighter *fighter, const SceneClip *clips, int count, Fi
     int frames = (Q16_ONE - clips[clip].blend_first) / clips[clip].blend_step + 1;
     for (int frame = 1; frame <= frames; ++frame) {
       q16 weight = clips[clip].blend_first + mini(frame, frames - 1) * clips[clip].blend_step;
-      fighter->native.poses[row] = clips[clip].first;
-      fighter->native.frames[row++] = (mframe_t){scene_weight_frame, (float)weight, frame == frames ? scene_blend_advance : NULL};
+      fighter->execution.native_frames.poses[row] = clips[clip].first;
+      fighter->execution.native_frames.frames[row++] = (mframe_t){scene_weight_frame, (float)weight, frame == frames ? scene_blend_advance : NULL};
     }
   }
   native_play(fighter, false);

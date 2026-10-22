@@ -26,11 +26,11 @@ static const MoveDef engine_states[S_COUNT] = {
 };
 
 static void victory_finished(Fighter *fighter) {
-  fighter_cancel_mmove(fighter);
+  fighter_execution_cancel(fighter);
 }
 
 void retail_victory_continue(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_VICTORY, fighter->retail_vm.active ? fighter->retail_vm.finish : victory_finished);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_VICTORY, fighter->execution.script.active ? fighter->execution.script.finish : victory_finished);
 }
 
 void retail_victory(Fighter *fighter) {

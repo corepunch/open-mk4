@@ -313,7 +313,7 @@ void cage_second_repeated_uppercuts(Fighter *fighter) {
 }
 
 static void cage_fatality_second_scene_end(Fighter *victim) {
-  fighter_finish_mmove(victim, NULL);
+  fighter_execution_finish(victim, NULL);
   battle_end_finisher();
 }
 
@@ -341,7 +341,7 @@ void cage_second_victim_hit(Fighter *fighter) {
   Mat3 unused;
   fighter_joint_position(fighter, 2, &neck, &unused);
   battle_blood_hit(fighter_opponent(fighter), fighter, neck, 0x3333);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_SECOND_VICTIM_HIT, fighter_stop_mmove);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_SECOND_VICTIM_HIT, fighter_execution_stop);
 }
 
 void cage_fatality_2(Fighter *fighter) {
@@ -544,7 +544,7 @@ static void jarek_fatality_second_victim_start(Fighter *victim) {
  * 4d2de0 and keeps lasing on clip 577. */
 void jarek_second_handoff(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   jarek_fatality_second_victim_start(victim);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_SECOND_HANDOFF, fighter_ready);
 }
@@ -565,7 +565,7 @@ void jarek_second_head_fall(Fighter *fighter, int task_type) {
 }
 
 static void jarek_fatality_second_end(Fighter *victim) {
-  fighter_finish_mmove(victim, NULL);
+  fighter_execution_finish(victim, NULL);
   if (g_battle.phase == PHASE_FATALITY) {
     battle_end_finisher();
   }
@@ -666,7 +666,7 @@ void jax_fatality_2_head(Fighter *victim) {
 }
 
 static void jax_fatality_second_scene_end(Fighter *victim) {
-  fighter_finish_mmove(victim, NULL);
+  fighter_execution_finish(victim, NULL);
   battle_end_finisher();
 }
 
@@ -883,7 +883,7 @@ static void liu_kang_fatality_dragon_actor_start(Fighter *fighter) {
 
 /*451190: native389/419 blends precede original4e1fa8 playback/retirement. */
 static void liu_kang_dragon_victim_script(Fighter *victim) {
-  retail_vm_enter(victim, DRAGON_VICTIM_SCRIPT, fighter_stop_mmove);
+  retail_vm_enter(victim, DRAGON_VICTIM_SCRIPT, fighter_execution_stop);
 }
 
 static void liu_kang_fatality_dragon_victim_start(Fighter *fighter) {
@@ -1246,7 +1246,7 @@ void reiko_second_stars(Fighter *fighter, int task_type) {
 
 /* 41f1b0 parks the owner on the final barrage pose. */
 static void reiko_fatality_second_arrival_gate(Fighter *victim) {
-  victim->mmove_hold = !(fighter_opponent(victim)->native_variant & SECOND_ARRIVED);
+  victim->execution.hold = !(fighter_opponent(victim)->native_variant & SECOND_ARRIVED);
 }
 
 static void reiko_fatality_second_victim_stagger(Fighter *victim) {
@@ -1259,7 +1259,7 @@ void reiko_second_victim_fall(Fighter *victim) {
 }
 
 static void reiko_fatality_second_end(Fighter *victim) {
-  fighter_stop_mmove(victim);
+  fighter_execution_stop(victim);
   if (g_battle.phase == PHASE_FATALITY) {
     battle_end_finisher();
   }
@@ -1431,7 +1431,7 @@ static void reptile_fatality_victim_impact(Fighter *victim) {
 static void reptile_fatality_victim_done(Fighter *victim) {
   /* 4541e0 retires the victim task; the portable finisher completes once
    * the last native victim phase has played. */
-  fighter_stop_mmove(victim);
+  fighter_execution_stop(victim);
   if (g_battle.phase == PHASE_FATALITY) {
     battle_end_finisher();
   }
@@ -1650,7 +1650,7 @@ void scorpion_script_burn_begin(Fighter *fighter) {
 void scorpion_script_burn_victim_start(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   victim->appearance = APPEARANCE_BURNED;
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_1_VICTIM, fighter_ready);
   battle_sound(SOUND_B, 15);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_1_OWNER_FLAME, fighter_ready);
@@ -1697,7 +1697,7 @@ void scorpion_script_burn_victim_settle(Fighter *victim) {
 }
 
 void scorpion_script_burn_victim_end(Fighter *victim) {
-  fighter_finish_mmove(victim, scorpion_fatality_finish_scene);
+  fighter_execution_finish(victim, scorpion_fatality_finish_scene);
 }
 
 /* Both scene actors have parked their frame programs; the parked poses
@@ -1716,7 +1716,7 @@ void scorpion_script_beast_begin(Fighter *fighter) {
 
 void scorpion_script_beast_attack(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  fighter_cancel_mmove(victim);
+  fighter_execution_cancel(victim);
   retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_2_VICTIM, fighter_ready);
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_2_CREATURE_ATTACK, fighter_ready);
 }
@@ -2110,7 +2110,7 @@ static void sub_zero_fatality_breath_freeze_object(Projectile *object);
 static void sub_zero_fatality_breath_resume(Fighter *fighter);
 
 void sub_zero_script_breath_victim_end(Fighter *victim) {
-  fighter_finish_mmove(victim, NULL);
+  fighter_execution_finish(victim, NULL);
 }
 
 static void sub_zero_fatality_breath_object(Projectile *p) {
@@ -2254,7 +2254,7 @@ void tanya_second_height(Fighter *fighter) {
 
 static void tanya_fatality_second_victory_finish(Fighter *fighter) {
   (void)fighter;
-  fighter_cancel_all_mmoves();
+  fighter_execution_cancel_all();
   battle_end_finisher();
 }
 

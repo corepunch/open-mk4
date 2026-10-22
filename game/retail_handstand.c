@@ -52,7 +52,7 @@ static void handstand_motion(Fighter *fighter, q16 multiplier, bool halve_retrea
 
 static bool handstand_live(Fighter *fighter) {
   if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
+    fighter_execution_finish(fighter, NULL);
     return false;
   }
   if (g_battle.phase != PHASE_FIGHT) {
@@ -87,7 +87,7 @@ static void handstand_stance(Fighter *fighter, bool walking) {
   fighter_start_move(fighter, S_KICK, walking ? &walk : &idle);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->body.gravity = 0;
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   fighter->buttons = &handstand_buttons;
   fighter->flags &= ~(unsigned)FF_BUSY;
   /* Native control and continuous presentation share the fixed-frame runner.
@@ -115,7 +115,7 @@ void kai_handstand_enter(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   if (fighter->armed) {
     kai_armed_handstand_enter(fighter);
   } else {
@@ -125,19 +125,19 @@ void kai_handstand_enter(Fighter *fighter) {
 
 void retail_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_EXIT, fighter_ready);
 }
 
 void retail_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_FRONT, fighter_ready);
 }
 
 void retail_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_REAR, fighter_ready);
 }
 
@@ -232,7 +232,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
 
 void retail_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
-  fighter->mmove_cleanup = handstand_cleanup;
+  fighter->execution.cleanup = handstand_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_SPIN, fighter_ready);
 }
 

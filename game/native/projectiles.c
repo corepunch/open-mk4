@@ -162,7 +162,7 @@ static void fujin_wind_wind_effect_step(Projectile *effect) {
 }
 
 static void fujin_wind_wind_motion_hold(Fighter *fighter) {
-  fighter->mmove_hold = !fighter->native_condition(fighter);
+  fighter->execution.hold = !fighter->native_condition(fighter);
 }
 
 static void fujin_wind_wind_wait(Fighter *fighter, FighterTest done, FighterFn end) {
@@ -206,7 +206,7 @@ static void fujin_wind_vortex_landed(Fighter *fighter) {
   if (fighter->health > 0) {
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_VORTEX_LANDED, fighter_ready);
   } else {
-    fighter_finish_mmove(fighter, NULL);
+    fighter_execution_finish(fighter, NULL);
   }
 }
 
@@ -243,7 +243,7 @@ void fujin_wind_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &fujin_wind_caught);
   fighter->flags |= FF_REACTING;
-  fighter->mmove_cleanup = fujin_wind_wind_cleanup;
+  fighter->execution.cleanup = fujin_wind_wind_cleanup;
   fighter->sample_override = 0;
   battle_sound(SOUND_C, 5);
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 400, fujin_wind_wind_effect_step);
@@ -268,7 +268,7 @@ void fujin_wind_slam_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_KNOCKDOWN, &fujin_wind_caught);
   fighter->action = 0x1002;
   fighter->flags |= FF_REACTING;
-  fighter->mmove_cleanup = fujin_wind_wind_cleanup;
+  fighter->execution.cleanup = fujin_wind_wind_cleanup;
   fighter->sample_override = 0;
   fighter->body.gravity = -0x11eb;
   native_hold(fighter, 4, fujin_wind_slam_drop);
@@ -379,7 +379,7 @@ static void goro_quake_quake_jump(Fighter *fighter) {
 void goro_quake_stomp(Fighter *fighter) {
   int source = fighter_move(fighter)->clip, sample = fighter_sample(fighter);
   goro_begin_special(fighter, S_KICK, &goro_quake_s_quake, 0x604);
-  fighter->mmove_cleanup = goro_quake_quake_cleanup;
+  fighter->execution.cleanup = goro_quake_quake_cleanup;
   mk4_mmove_bind(fighter, 602, 30, 0);
   fighter->blend_clip = source;
   fighter->blend_sample = sample;
@@ -388,7 +388,7 @@ void goro_quake_stomp(Fighter *fighter) {
   int frames = (Q16_ONE + GORO_QUAKE_QUAKE_BLEND_STEP - 1) / GORO_QUAKE_QUAKE_BLEND_STEP;
   native_begin(fighter, 1, frames, goro_quake_quake_jump);
   for (int frame = 1; frame <= frames; ++frame) {
-    fighter->native.frames[frame - 1] = (mframe_t){goro_quake_quake_weight, (float)mini(Q16_ONE, frame * GORO_QUAKE_QUAKE_BLEND_STEP), NULL};
+    fighter->execution.native_frames.frames[frame - 1] = (mframe_t){goro_quake_quake_weight, (float)mini(Q16_ONE, frame * GORO_QUAKE_QUAKE_BLEND_STEP), NULL};
   }
   native_play(fighter, false);
 }
@@ -564,7 +564,7 @@ enum {
 };
 
 static void ground_pound_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
+  fighter_execution_finish(fighter, fighter_ready);
 }
 
 static void ground_pound_impact(Fighter *fighter) {
@@ -837,7 +837,7 @@ void kai_ground_skull(Fighter *fighter) {
 }
 
 static void kai_skull_ground_fall_landed(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 static void kai_skull_ground_fall_check(Fighter *fighter) {
@@ -973,11 +973,11 @@ void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type) {
 }
 
 static void liu_kang_projectile_air_return_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 void liu_kang_liu_script_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
+  fighter_execution_finish(fighter, mk4_land);
 }
 
 void liu_kang_liu_script_air_return(Fighter *fighter) {
@@ -1339,7 +1339,7 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reptile_projectile_spit);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  fighter->mmove_cleanup = reptile_projectile_spit_cleanup;
+  fighter->execution.cleanup = reptile_projectile_spit_cleanup;
   retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_ACID_SPIT, fighter_ready);
 }
 
