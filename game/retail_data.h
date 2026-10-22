@@ -2,6 +2,10 @@
 #define MK4_RETAIL_DATA_H
 #include "game.h"
 
+enum {
+  RETAIL_REACTION_COUNT = (0x4ea7f0 - 0x4ea4e8) / 4
+};
+
 typedef struct RetailRoster {
   char name[1024];
   q16 ground;

@@ -237,7 +237,6 @@ unsigned liu_kang_liu_script_sword_gate(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_start_fatality(Fighter *fighter, int id);
-void liu_kang_throw_disarm(Fighter *victim);
 void liu_kang_thrown_finish(Fighter *victim);
 bool quan_chi_can_first_fatality(const Fighter *fighter);
 void quan_chi_fatality_beat(Fighter *fighter);

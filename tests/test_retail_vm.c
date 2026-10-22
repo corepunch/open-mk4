@@ -470,6 +470,11 @@ static void assets_bound(void) {
 
 /* A table edit must select a native service independently of model identity. */
 static void reaction_native_table(void) {
+  for (unsigned id = 0; id < RETAIL_REACTION_COUNT; ++id) {
+    if (retail_reaction_target(&image, id) != 0) {
+      check(retail_reaction_entry(&image, id) != NULL, "every loaded reaction entry needs a shared native implementation");
+    }
+  }
   Fighter *actor = setup(0, 2);
   uint32_t original = mk4_image_u32(&image, 0x4ea4e8);
   put_word(0x4ea4e8, 0x4854e0);
@@ -1181,6 +1186,25 @@ static void native_air_loaded_recovery(void) {
 }
 
 static void native_air_capture_lifetimes(void) {
+  Fighter *capture_owner = setup(0, 2);
+  Fighter *capture_peer = fighter_peer(capture_owner);
+  native_hold(capture_owner, 128, NULL);
+  capture_owner->action = ACTION_RETAIL_0206;
+  capture_owner->flags |= FF_PAIRED;
+  battle_react(capture_peer, 84);
+  tick();
+  check(capture_peer->retail_vm.active && capture_peer->retail_vm.entry == 0x4ea0f8, "capture native must transfer victim playback to its loaded script");
+  for (int visit = 0; visit < 64 && capture_peer->retail_vm.active; ++visit) {
+    tick();
+  }
+  check(capture_peer->current_mmove != NULL, "script tail must transfer ownership back to the shared native cycle");
+  capture_owner->action = 0;
+  for (int visit = 0; visit < 128 && capture_peer->state != S_IDLE; ++visit) {
+    tick();
+  }
+  check(capture_peer->state == S_IDLE && !(capture_owner->flags & FF_PAIRED) && !(capture_peer->flags & FF_PAIRED),
+      "owner exit must release both native capture contexts");
+
   const FighterFn entries[] = {retail_air_throw, retail_air_throw_lift, retail_air_throw_slam, retail_air_throw_flip, retail_air_throw_slam};
   for (unsigned index = 0; index < sizeof entries / sizeof *entries; ++index) {
     Fighter *owner = setup(0, 0);

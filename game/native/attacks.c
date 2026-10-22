@@ -1238,9 +1238,6 @@ void kai_input_47bd10(Fighter *fighter) {
 
 /* Native service cluster: 47eb30, 480e90. */
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-static void n47eb30_bicycle_victim_guard(Fighter *victim);
-static void n47eb30_bicycle_victim_cycle(Fighter *victim);
-static void n47eb30_bicycle_victim_script(Fighter *victim);
 static void n47eb30_bicycle_cleanup(Fighter *fighter);
 static void n47eb30_bicycle_query(Fighter *fighter);
 static void n47eb30_bicycle_pair(Fighter *fighter);
@@ -1251,35 +1248,11 @@ static void n47eb30_bicycle_carry_end(Fighter *fighter);
 static void n47eb30_bicycle_contact_end(Fighter *fighter);
 static void n47eb30_bicycle_motion_pose(Fighter *fighter, float pose);
 static const MoveDef n47eb30_s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .action = ACTION_RETAIL_0206};
-static const MoveDef n47eb30_s_bicycle_victim = {.clip = 136, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord n47eb30_bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
-
-static void n47eb30_bicycle_victim_guard(Fighter *victim) {
-  const Fighter *owner = fighter_opponent(victim);
-  if (victim->script_phase != 0 || owner->action != ACTION_RETAIL_0206 || owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
-    fighter_finish_mmove(victim, retail_bicycle_release);
-  }
-}
-
-static void n47eb30_bicycle_victim_cycle(Fighter *victim) {
-  native_begin(victim, 0, 19, NULL);
-  for (int frame = 0; frame < 20; ++frame) {
-    native_frame(victim, frame, 4 + (frame + 1) % 20, n47eb30_bicycle_victim_guard);
-  }
-  native_play(victim, false);
-}
-
-static void n47eb30_bicycle_victim_script(Fighter *victim) {
-  native_begin(victim, 1, 24, n47eb30_bicycle_victim_cycle);
-  for (int frame = 1; frame <= 24; ++frame) {
-    native_frame(victim, frame, frame < 24 ? frame : 4, n47eb30_bicycle_victim_guard);
-  }
-  native_play(victim, false);
-}
 
 static void n47eb30_bicycle_cleanup(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  if (victim->current_move == &n47eb30_s_bicycle_victim && (victim->flags & FF_PAIRED)) {
+  if (victim->capture_action == ACTION_RETAIL_0206 && (victim->flags & FF_PAIRED)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     victim->script_phase = 1;
   }
@@ -1293,8 +1266,8 @@ static void n47eb30_bicycle_query(Fighter *fighter) {
 
 static void n47eb30_bicycle_pair(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  if (victim->current_move != &n47eb30_s_bicycle_victim || victim->pending != NULL || victim->current_mmove == NULL || !(fighter->flags & FF_PAIRED) ||
-      !(victim->flags & FF_PAIRED)) {
+  if (victim->capture_action != ACTION_RETAIL_0206 || victim->pending != NULL || (victim->current_mmove == NULL && !victim->retail_vm.active) ||
+      !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
     n47eb30_bicycle_carry_end(fighter);
     return;
   }
@@ -1322,7 +1295,7 @@ static void n47eb30_bicycle_descend(Fighter *fighter) {
 
 static void n47eb30_bicycle_carry_end(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
-  if (victim->current_move == &n47eb30_s_bicycle_victim && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
+  if (victim->capture_action == ACTION_RETAIL_0206 && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     victim->script_phase = 1;
   }
@@ -1343,16 +1316,12 @@ static void n47eb30_bicycle_contact_end(Fighter *fighter) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  liu_kang_throw_disarm(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, &n47eb30_s_bicycle_victim);
-  victim->sample_override = 0;
   victim->reaction = 84;
-  victim->flags |= FF_PAIRED | FF_REACTING;
+  retail_bicycle_capture(victim);
   fighter->flags |= FF_PAIRED;
   fighter->body.pos[AXIS_Y] = mini(fighter->body.pos[AXIS_Y], -0x15999);
   fighter_set_speed(fighter, 0x10a3);
   fighter->body.vel[AXIS_Y] = fighter->body.gravity = 0;
-  n47eb30_bicycle_victim_script(victim);
   native_begin(fighter, 0, 57, n47eb30_bicycle_carry_end);
   for (int frame = 0; frame < 58; ++frame) {
     native_frame(fighter, frame, 7 + frame % 16, n47eb30_bicycle_pair);
@@ -1560,7 +1529,6 @@ static void n486000_spear_projectile(Projectile *p);
 static void n486000_spear_spawn(Fighter *fighter);
 static const MoveDef n486000_s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0300};
 static const MoveDef n486000_s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4000};
-static const MoveDef n486000_s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1008};
 
 void scorpion_spear_stun_script(Fighter *fighter) {
   retail_vm_wait_native(fighter, 64, scorpion_special_ready);
@@ -1612,11 +1580,7 @@ static void n486000_spear_projectile(Projectile *p) {
     /* 49b170/487350: pull along the throw direction until the pair is
      * within 0.8. */
     if (fighter_distance(owner) <= q16_float(0xcccc)) {
-      mk4_script_stop_body(victim);
-      fighter_start_move(victim, S_HIT, &n486000_s_spear_stun);
-      victim->sample_override = 0;
-      victim->flags |= FF_REACTING;
-      retail_vm_enter_owned(victim, 0x4e9f20, fighter_ready, 0);
+      retail_spear_arrival(victim);
       fighter_start_move(owner, S_PUNCH, &n486000_s_spear);
       owner->sample_override = 31;
       retail_vm_enter_owned(owner, 0x4ed4a8, fighter_ready, 0);

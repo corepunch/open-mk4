@@ -92,12 +92,6 @@ void liu_kang_thrown_finish(Fighter *victim) {
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
-void liu_kang_throw_disarm(Fighter *victim) {
-  if (victim->armed && victim->disarm != NULL) {
-    victim->disarm(victim);
-  }
-}
-
 static void n485930_lk_thrown_turn(Fighter *victim) {
   victim->facing = -victim->facing;
   liu_kang_thrown_finish(victim);

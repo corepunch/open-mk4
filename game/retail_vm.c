@@ -51,6 +51,11 @@ static void finish(Fighter *fighter) {
   next(fighter);
 }
 
+void retail_vm_return(Fighter *fighter) {
+  require(fighter->retail_vm.active, "Native return without a retail task");
+  finish(fighter);
+}
+
 void retail_vm_cancel(Fighter *fighter) {
   if (fighter->retail_vm.active) {
     FighterFn cleanup = fighter->retail_vm.cleanup;

@@ -1932,3 +1932,25 @@ Verified local native/dependency listings and mk4decomp shared contracts,
 formatting, runtime/rejections, strict audits, native gates and helper/port
 navigation. No new authored reaction tests. Four full-table native addresses
 remain unregistered and are the next work.
+
+## Complete reaction-table registration and capture joins
+
+Every non-null entry in the original 194-slot reaction table now resolves by
+its loaded native address. This is registration coverage, not a claim of exact
+native gameplay parity. Local 481dd0 enters 4e8a78, whose 481fb0 tail returns
+through the VM's typed continuation. Shared 487350/4873d0 owns spear arrival;
+487880 waits for a captured owner's action to change, then 487980 chooses the
+original airborne release stream or the controller return.
+
+Native 488870 now enters the original 4ea0f8 bicycle victim script. Its 488890
+tail reloads 53cfa0 and finishes from sample four while the capture remains
+owned. Remove the duplicate C victim intro/cycle and its MoveDef identity
+checks; capture ownership now crosses script/native boundaries explicitly.
+The owner still implements its native carry and collision routine once.
+Evidence: bounded local listings and mk4decomp guarded_sequels/BossDashCluster
+matching assembly; upstream addresses are not used as local runtime addresses.
+
+The existing runtime fixture checks complete loaded-table resolution and one
+script-to-native capture/release lifetime. No fighter timing/damage matrix was
+added. Runtime rejection checks, strict all-roster script audits and native
+source gates pass.

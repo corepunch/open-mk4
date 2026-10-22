@@ -576,7 +576,7 @@ void battle_react(Fighter *victim, int reaction) {
   uint32_t target = retail_reaction_target(retail_vm_image(), (unsigned)reaction);
   FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   q16 retained_velocity[3];
-  if (target == 0x488310) {
+  if (target == 0x488310 || target == 0x487350) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
   }
   victim->body_contact = false;
@@ -600,7 +600,7 @@ void battle_react(Fighter *victim, int reaction) {
   fighter_interrupt(victim, native);
   /* Native488310 changes gravity on the existing vortex motion. Preserve
    * that motion across cancellation of the previous portable frame action. */
-  if (target == 0x488310) {
+  if (target == 0x488310 || target == 0x487350) {
     memcpy(victim->body.vel, retained_velocity, sizeof retained_velocity);
   }
   victim->flags |= FF_REACTING;

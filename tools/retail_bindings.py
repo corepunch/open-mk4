@@ -1543,6 +1543,11 @@ def bindings_for(character):
     for address, function in ((0x467fc0, 'retail_stage_owner'), (0x483720, 'retail_stage_impale'), (0x4837c0, 'retail_stage_complete')):
         result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Bounded local stage native and mk4decomp BattleEndCluster; original4ea300/4ea330 own victim playback and waits')
+    for address, function, source in ((0x481fb0, 'retail_vm_return', 'game/retail_vm.c'),
+                                      (0x487980, 'retail_pair_release', 'game/retail_reaction.c'),
+                                      (0x488890, 'retail_bicycle_cycle', 'game/retail_reaction.c')):
+        result[address] = Binding(function, source, ('tail',), flow='terminal', mmove=True,
+                                  evidence='Bounded local native and mk4decomp matching assembly: typed return and shared capture continuation')
     result[0x486000] = Binding('retail_shake_stun', 'game/retail_reaction.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Local486000/4860d0 bounded shake and settle; one native implementation replaces an indefinite fighter-specific waiter')
     for address, target in ((0x4829e0, 0x4e91c0), (0x4829f0, 0x4e91d0), (0x482a00, 0x4e91e0)):

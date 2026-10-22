@@ -1033,6 +1033,15 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x487220:
           sub_zero_script_lk_victim_rise(fighter);
           return true;
+        case 0x481fb0:
+          retail_vm_return(fighter);
+          return true;
+        case 0x487980:
+          retail_pair_release(fighter);
+          return true;
+        case 0x488890:
+          retail_bicycle_cycle(fighter);
+          return true;
         case 0x487420:
           scorpion_spear_stun_script(fighter);
           return true;

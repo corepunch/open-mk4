@@ -433,10 +433,10 @@
       "symbol": "retail_lk_victim"
     },
     "84": {
-      "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
+      "adaptation": "Loaded native488870 starts original4ea0f8; shared488890 owns native repetition and487980 release.",
       "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
-      "source": "game/native/attacks.c",
-      "symbol": "n47eb30_bicycle_victim_script"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_bicycle_capture"
     },
     "3": {
       "source": "game/reactions.c",

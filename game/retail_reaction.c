@@ -526,6 +526,77 @@ void retail_bicycle_release(Fighter *fighter) {
   }
 }
 
+/*481dd0/481fa0: original fall stream returns through tagged481fb0. */
+static void reaction_fall_return(Fighter *fighter) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  retail_vm_enter(fighter, 0x4e8a78, mk4_mmove_thrown_finish);
+}
+
+void retail_spear_arrival(Fighter *fighter) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_1008};
+  fighter_start_move(fighter, S_HIT, &move);
+  fighter->flags |= FF_NO_GUARD | FF_REACTING;
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  retail_vm_enter(fighter, 0x4e9f20, fighter_ready);
+}
+
+static bool spear_arrived(const Fighter *fighter) {
+  return (int64_t)fighter->body.vel[AXIS_X] + fighter->body.vel[AXIS_Z] == 0 || g_battle.distance <= 0xcccc;
+}
+
+static void spear_wait(Fighter *fighter) {
+  native_await(fighter, spear_arrived, retail_spear_arrival);
+}
+
+/*487980: clear the native pair before choosing the loaded fall stream. */
+void retail_pair_release(Fighter *fighter) {
+  fighter->flags &= ~(unsigned)FF_PAIRED;
+  fighter_peer(fighter)->flags &= ~(unsigned)FF_PAIRED;
+  fighter->paired_release = NULL;
+  fighter->capture_action = 0;
+  if (fighter_airborne(fighter)) {
+    retail_vm_enter(fighter, 0x4e9f48, mk4_mmove_thrown_finish);
+  } else {
+    retail_controller_return(fighter);
+  }
+}
+
+static bool pair_owner_released(const Fighter *fighter) {
+  const Fighter *owner = fighter_opponent(fighter);
+  return fighter->capture_action == 0 || owner->action != fighter->capture_action || owner->pending != NULL || !(fighter->flags & FF_PAIRED);
+}
+
+static void pair_wait(Fighter *fighter) {
+  fighter->capture_action = fighter_peer(fighter)->action;
+  fighter->paired_release = retail_pair_release;
+  fighter->flags |= FF_PAIRED;
+  native_await(fighter, pair_owner_released, retail_pair_release);
+}
+
+/*488890 loads the descriptor anew and resumes from sample4 while captured. */
+void retail_bicycle_cycle(Fighter *fighter) {
+  if (pair_owner_released(fighter) || fighter->script_phase != 0) {
+    retail_pair_release(fighter);
+    return;
+  }
+  mk4_script_effect(fighter, 14);
+  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cfa0) * 4, 4);
+  native_finish_clip(fighter, retail_bicycle_cycle);
+}
+
+void retail_bicycle_capture(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  fighter->capture_action = ACTION_RETAIL_0206;
+  fighter->paired_release = retail_pair_release;
+  fighter->script_phase = 0;
+  fighter->flags |= FF_PAIRED | FF_REACTING;
+  retail_vm_enter(fighter, 0x4ea0f8, retail_pair_release);
+}
+
 static void torpedo_return_hold(Fighter *fighter) {
   native_hold(fighter, 64, retail_controller_return);
 }
@@ -706,6 +777,14 @@ void retail_guard_fall(Fighter *fighter) {
 
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x481dd0:
+      return reaction_fall_return;
+    case 0x487350:
+      return spear_wait;
+    case 0x487880:
+      return pair_wait;
+    case 0x488870:
+      return retail_bicycle_capture;
     case 0x481420:
       return retail_scene_explode;
     case 0x488d10:
