@@ -826,7 +826,6 @@ static const SceneClip n43c500_dragon_actor[] = {
 static const SceneClip n43c500_dragon_target[] = {
   {{.clip = 389, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
   {{.clip = 419, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
-  SCENE(419, 0, 288),
 };
 // clang-format on
 
@@ -836,12 +835,8 @@ void liu_kang_finish_scene(Fighter *fighter) {
 }
 
 static void n43c500_dragon_stream(Fighter *fighter) {
-  Fighter *victim = fighter_peer(fighter);
   if (fighter->scene.clips != NULL) {
     scene_step(fighter);
-  }
-  if (victim->scene.clips != NULL) {
-    scene_step(victim);
   }
 }
 
@@ -861,9 +856,14 @@ static void n43c500_dragon_actor_start(Fighter *fighter) {
   scene_begin(fighter, n43c500_dragon_actor, NATIVE_COUNT(n43c500_dragon_actor), 2);
 }
 
+/*451190: native389/419 blends precede original4e1fa8 playback/retirement. */
+static void n43c500_dragon_victim_script(Fighter *victim) {
+  retail_vm_enter(victim, 0x4e1fa8, fighter_stop_mmove);
+}
+
 static void n43c500_dragon_victim_start(Fighter *fighter) {
   scene_step(fighter);
-  scene_begin(fighter_peer(fighter), n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target), -1);
+  native_scene_blends(fighter_peer(fighter), n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target), n43c500_dragon_victim_script);
 }
 
 static void n43c500_dragon_tear(Fighter *fighter) {
@@ -890,7 +890,7 @@ static void n43c500_dragon_detach(Fighter *fighter) {
 static void n43c500_dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = 121 + scene_frame_count(n43c500_dragon_actor, 2);
-  int victim_end = 269 + scene_frame_count(n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target));
+  int victim_end = 269 + scene_frame_count(n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target)) + (int)mk4_image_u32(retail_vm_image(), 0x4fc120 + 4);
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {

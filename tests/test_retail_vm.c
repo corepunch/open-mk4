@@ -1038,6 +1038,22 @@ static void native_task_completion(void) {
       actor->visual_offset[AXIS_Y] == 0 && actor->current_mmove == NULL, "interrupting a native presentation phase must remove its owned offset and playback");
 }
 
+/* Native scene blends hand authored playback to the original script task. */
+static void native_scene_script_handoff(void) {
+  Fighter *owner = setup(0, 2), *peer = fighter_peer(owner);
+  g_battle.phase = PHASE_FINISH;
+  g_battle.winner = 0;
+  peer->action = 0x1009;
+  retail_native_entry(0x450930)(owner);
+  bool script_seen = false;
+  for (int visit = 0; visit < 1024 && g_battle.phase != PHASE_MATCH_OVER; ++visit) {
+    tick();
+    script_seen |= peer->retail_vm.active && peer->retail_vm.entry == 0x4e1fa8;
+  }
+  check(script_seen && !peer->retail_vm.active && peer->current_mmove == NULL && peer->scene.clips == NULL,
+      "native scene blends must transfer to original script playback and consume its retirement continuation");
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -1310,6 +1326,7 @@ int main(int argc, char **argv) {
   native_stagger_boundary();
   script_landing_handoff();
   native_task_completion();
+  native_scene_script_handoff();
   cursor_alias_opcodes();
   conditional_primitive_opcodes();
   motion_distance_opcodes();
