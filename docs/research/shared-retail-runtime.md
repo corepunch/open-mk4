@@ -1735,3 +1735,13 @@ PendingMatch_ArgSarStoreJmp and existing script/getup contracts. Verified
 formatting, shared runtime/rejections, all strict audits, native gates and
 helper/port navigation. Extended the existing loaded-getup fixture with the
 new record/address, preserving context, crouch and interruption checks.
+
+### Repair a stale freeze-to-fall continuation
+
+Found the legacy scepter freeze hit-cap branch still selecting retired
+ReactionSpec154. Local486210 and mk4decomp Phase3Packed3EntryDispatch branch
+to4835f0 once hits exceed3. It now calls the shared disarm/fall native, entering
+original4e96e0 without rewriting the reaction ID to select deleted C data.
+Verified formatting, runtime/rejections, strict audits and native gates. Added
+one transfer assertion to the existing shared native-boundary fixture to catch
+retired-row calls; no authored timing/damage matrix.

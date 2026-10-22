@@ -626,8 +626,7 @@ static void react_scepter_low(Fighter *fighter) {
 static void react_scepter_freeze(Fighter *fighter) {
   if (fighter->hits > 3) {
     /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
-    fighter->reaction = 154;
-    react_extra(fighter);
+    retail_reaction_fall(fighter);
   } else {
     react_freeze(fighter);
   }

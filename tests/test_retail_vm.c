@@ -758,6 +758,13 @@ static void native_stagger_boundary(void) {
     }
   }
   put_word(0x4ea4e8 + 100 * 4, target);
+  Fighter *actor = setup(0, 2);
+  actor->hits = 4;
+  battle_react(actor, 151);
+  tick();
+  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4e96e0,
+      "native freeze interruption must transfer to the shared fall script rather than a retired C reaction row");
+  fighter_interrupt(actor, fighter_ready);
 }
 
 static uint32_t returned_word;
