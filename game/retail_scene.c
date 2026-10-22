@@ -178,3 +178,26 @@ void retail_scene_hover(Fighter *fighter, int task_type) {
   fighter->body.gravity = -0x28f;
   event->phase = HOVER_EASE_START;
 }
+
+/* Portable scene orchestration waits for the original victory root. It
+ * belongs to the scene caller, never to4712e0 or a particular model clip. */
+static bool scene_victory_join(BattleEvent *event, Fighter *owner, Fighter *peer) {
+  (void)peer;
+  if (g_battle.phase != PHASE_FATALITY) {
+    return false;
+  }
+  if (event->phase == 0) {
+    if (owner->retail_vm.active && owner->retail_vm.entry == 0x4e6a40) {
+      event->phase = 1;
+      battle_event_delay(event, 50);
+    }
+    return true;
+  }
+  fighter_cancel_all_mmoves();
+  battle_end_finisher();
+  return false;
+}
+
+void retail_scene_join_victory(Fighter *fighter) {
+  require(battle_event_start(fighter, scene_victory_join, false, false) != NULL, "Scene needs a victory completion task");
+}

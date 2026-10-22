@@ -818,11 +818,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_controller_return(fighter);
           return true;
         case 0x4712e0:
-          if (g_battle.phase == PHASE_FATALITY && (owner & 0x10u)) {
-            sub_zero_script_victory(fighter);
-          } else {
-            retail_victory_continue(fighter);
-          }
+          retail_victory_continue(fighter);
           return true;
         case 0x478e20:
           kai_lunge_kick_contact(fighter);

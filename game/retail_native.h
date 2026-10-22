@@ -200,3 +200,5 @@ void retail_edge_push(Fighter *fighter);
 void retail_scene_hover(Fighter *fighter, int task_type);
 
 void retail_stagger_tail(Fighter *fighter);
+
+void retail_scene_join_victory(Fighter *fighter);

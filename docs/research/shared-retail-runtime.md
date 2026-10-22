@@ -1669,3 +1669,17 @@ Verified formatting, runtime/rejections, all strict audits, native gates and
 helper/port navigation. Extended the existing inherited-descriptor fixture with
 a shortened loaded descriptor and an unrelated actor context to catch fixed
 fighter clip bounds and completion errors, without authored timing assertions.
+
+### Keep victory native independent of scene orchestration
+
+Local4712e0 only enters4e6a40 (mk4decomp ArgSarStoreJmp/script entry).
+Removed the last roster branch at that native and its Sub-Zero adapter.
+The portable50-visit result wait is now an independent scene-owned join,
+installed by the existing scene caller. It recognizes the original victory
+root rather than a hard-coded model clip118 and does not replace body physics.
+This preserves the engine scene completion policy; it is not authored script
+logic or an emulation of the original scene director.
+
+Verified formatting, shared runtime, strict audits, native gates, helper/port
+navigation, SDL build and resource self-test (all18 rigs and11 arenas).
+The existing SDL deployment-version linker warning remains.

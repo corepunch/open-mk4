@@ -994,6 +994,7 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
     return;
   }
+  retail_scene_join_victory(fighter);
   Fighter *victim = fighter_peer(fighter);
   retail_scene_pose(victim, 13, 0, false);
   retail_scene_pose(fighter, 119, 0, true);
@@ -2073,8 +2074,6 @@ void sonya_second_fatality(Fighter *fighter) {
 }
 
 /* Native service cluster: native_fatality_3. */
-static void native_fatality_3_victory_finish(Fighter *fighter);
-static void native_fatality_3_victory_watch(Fighter *fighter);
 
 bool sub_zero_can_close_fatality(const Fighter *fighter) {
   return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
@@ -2089,25 +2088,6 @@ void sub_zero_scene_blend_cleanup(Fighter *fighter) {
   fighter->scene.clips = NULL;
   fighter->blend_duration = 0;
   fighter->blend_weight = -1;
-}
-
-static void native_fatality_3_victory_finish(Fighter *fighter) {
-  (void)fighter;
-  fighter_cancel_all_mmoves();
-  battle_end_finisher();
-}
-
-static void native_fatality_3_victory_watch(Fighter *fighter) {
-  if (fighter_move(fighter)->clip == 118) {
-    native_motion_begin(fighter, 50, native_fatality_3_victory_finish);
-    native_motion_play(fighter);
-    native_motion_step(fighter);
-  }
-}
-
-void sub_zero_script_victory(Fighter *fighter) {
-  fighter->body.physics = native_fatality_3_victory_watch;
-  retail_victory_continue(fighter);
 }
 
 void sub_zero_start_fatality(Fighter *fighter, int id) {

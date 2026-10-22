@@ -540,7 +540,6 @@ void sub_zero_script_lk_rebase(Fighter *fighter);
 void sub_zero_script_lk_victim_rise(Fighter *victim);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
-void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_second_fatality_script(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);

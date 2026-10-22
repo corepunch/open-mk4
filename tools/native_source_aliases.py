@@ -1,6 +1,7 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'sub_zero_script_victory': 'retail_victory_continue',
     'reiko_script_star_victim_tail': 'retail_stagger_tail',
     'reptile_acid_victim_tail': 'retail_stagger_tail',
     'scorpion_script_burn_tail': 'retail_stagger_tail',
