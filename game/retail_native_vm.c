@@ -1042,6 +1042,9 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x488890:
           retail_bicycle_cycle(fighter);
           return true;
+        case 0x483930:
+          retail_uppercut_recover(fighter);
+          return true;
         case 0x486f30:
           retail_block_cycle(fighter);
           return true;

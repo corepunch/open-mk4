@@ -1995,3 +1995,14 @@ The asset and engine fixtures now depend on shared runtime interfaces rather
 than the removed mk4_characters.h. Retail authored character behavior is not
 retested as thousands of copied C expectations. This narrows the contract suite;
 it does not substitute registration coverage for native gameplay parity.
+
+## Headless integration recovery tail
+
+The full runtime demo exposed a previously unregistered483930 tail reached by
+4e9768. Bounded local483930/483970/483a20 listings establish native double-step
+playback, nine locked visits, subsequent down-input release and the loaded
+backward getup. mk4decomp matching continuation assembly supplies the reference
+shape. Implement that native routine once; keep controller input/KO ownership
+in the existing engine boundary. This is native recovery, not translated
+script logic. The existing headless demo validates the actual script/native
+join without adding a character timing matrix.

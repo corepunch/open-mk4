@@ -447,6 +447,26 @@ void retail_impact_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
+/*483930/483970: native double-step recovery, nine locked visits, then
+ * input may select crouch before the descriptor ends. The engine controller
+ * owns input dispatch; KO keeps the final native pose. */
+static void uppercut_recovery_input(Fighter *fighter) {
+  if (fighter->health > 0 && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
+    fighter_finish_mmove(fighter, retail_controller_return);
+  }
+}
+
+void retail_uppercut_recover(Fighter *fighter) {
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  require(first >= 0 && last != MOVE_END && first <= last, "Native uppercut recovery needs a bounded descriptor");
+  int frames = maxi(9, (last - first + 1) / 2);
+  native_begin(fighter, 0, frames - 1, retail_getup_back);
+  for (int frame = 0; frame < frames; ++frame) {
+    native_frame(fighter, frame, mini(last, first + 2 * (frame + 1)), frame >= 9 ? uppercut_recovery_input : NULL);
+  }
+  native_play(fighter, false);
+}
+
 /*416e20/416e50 spawns an independent bounded hit-particle task. The
  * engine presentation service supplies its portable particle artwork. */
 static bool hit_particles(BattleEvent *event, Fighter *owner, Fighter *peer) {
