@@ -390,16 +390,16 @@
       "adaptation": "Registered directly in shared reactions[108]; the Quan Chi-owned generated victim roots run for either humanoid player slot and the homing weapon falls through the shared 494590 drop when the thief stops."
     },
     "47": {
-      "source": "game/native/contexts.c",
-      "symbol": "raiden_generated_reaction",
-      "evidence": "Weapon record W5 (4ec848) selects reaction47, the same staff LP victim root registered by Raiden.",
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_record_reaction",
+      "evidence": "Loaded4ea4e8[47] -> 488530; bounded local entry/dependency listings and mk4decomp native/script contracts.",
+      "adaptation": "Loaded native target selects the shared prelude; original words control playback and native helpers share descriptor data."
     },
     "53": {
-      "source": "game/native/contexts.c",
-      "symbol": "raiden_generated_reaction",
-      "evidence": "Weapon record W7 (4ec838) selects reaction53, the same staff travel-strike victim root registered by Raiden.",
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_record_reaction",
+      "evidence": "Loaded4ea4e8[53] -> 482450; bounded local entry/dependency listings and mk4decomp native/script contracts.",
+      "adaptation": "Loaded native target selects the shared prelude; original words control playback and native helpers share descriptor data."
     },
     "51": {
       "source": "game/retail_reaction.c",

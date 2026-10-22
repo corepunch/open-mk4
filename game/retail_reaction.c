@@ -507,8 +507,122 @@ void retail_script_reaction_dispatch(Fighter *fighter, int reaction) {
   battle_react(victim, reaction);
 }
 
+void retail_bicycle_release(Fighter *fighter) {
+  bool air = fighter->body.ground - fighter->body.pos[AXIS_Y] > 0x3333;
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_100B};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  if (air) {
+    retail_vm_enter(fighter, 0x4e9ae8, mk4_script_thrown_ready);
+  } else {
+    mk4_script_stop_body(fighter);
+    fighter->body.pos[AXIS_Y] = fighter->body.ground;
+    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9acc);
+    require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native release callback");
+    retail_vm_enter(fighter, 0x4e9ad0, mk4_script_thrown_ready);
+  }
+}
+
+static void torpedo_return_hold(Fighter *fighter) {
+  native_hold(fighter, 64, retail_controller_return);
+}
+
+void retail_torpedo_return(Fighter *fighter) {
+  native_finish_clip(fighter, torpedo_return_hold);
+}
+
+void retail_record_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  bool airborne = fighter_airborne(fighter);
+  if (entry == 0x488530 || entry == 0x482450 || entry == 0x482850 || entry == 0x482600 || entry == 0x4887c0) {
+    battle_wall_recoil(fighter);
+  }
+  if (entry != 0x488990 && entry != 0x482850) {
+    mk4_script_disarm_self(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  FighterFn finish = mk4_script_thrown_ready;
+  switch (entry) {
+    case 0x488530:
+      battle_react(fighter_peer(fighter), 161);
+      script = 0x4ea068;
+      break;
+    case 0x482450:
+      script = 0x4e8e18;
+      break;
+    case 0x486690: {
+      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9d4c);
+      require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native record callback");
+      script = 0x4e9d50;
+      break;
+    }
+    case 0x488990:
+      retail_face_peer(fighter);
+      script = 0x4ea108;
+      break;
+    case 0x485960:
+      battle_sound(SOUND_A, 0x2a);
+      mk4_script_shake(fighter, 0);
+      retail_bicycle_release(fighter);
+      return;
+    case 0x482850:
+      script = 0x4e9110;
+      break;
+    case 0x4820d0:
+      reaction_position(fighter, 0x1b333, -0x1999);
+      script = 0x4e8b38;
+      break;
+    case 0x482600:
+      battle_sound(SOUND_C, 8);
+      if (airborne) {
+        fighter->body.gravity = 0x28f;
+        fighter->body.vel[AXIS_Y] = 0x1999;
+      }
+      script = 0x4e8f50;
+      break;
+    case 0x486750:
+      script = 0x4e9de8;
+      break;
+    case 0x488a20:
+      script = 0x4ea130;
+      finish = retail_getup_front;
+      break;
+    case 0x487750:
+      retail_face_peer(fighter);
+      retail_square_victim(fighter);
+      return;
+    case 0x4887c0:
+      mk4_script_effect(fighter, 9);
+      fighter->damage_scale = 0x6666;
+      script = 0x4ea0b8;
+      break;
+    default:
+      require(false, "Unexpected record reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x488530:
+    case 0x482450:
+    case 0x486690:
+    case 0x488990:
+    case 0x485960:
+    case 0x482850:
+    case 0x4820d0:
+    case 0x482600:
+    case 0x486750:
+    case 0x488a20:
+    case 0x487750:
+    case 0x4887c0:
+      return retail_record_reaction;
+    case 0x4859b0:
+      return retail_bicycle_release;
+    case 0x488460:
+      return retail_torpedo_return;
     case 0x487330:
       return retail_snare_reaction;
     case 0x481360:

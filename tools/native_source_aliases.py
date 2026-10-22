@@ -1,6 +1,9 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'raiden_generated_reaction': 'retail_record_reaction',
+    'sonya_generated_reaction': 'retail_record_reaction',
+    'sonya_square_victim': 'retail_square_victim',
     'cage_script_current_reaction': 'retail_script_reaction_dispatch',
     'fujin_script_current_reaction': 'retail_script_reaction_dispatch',
     'jarek_script_current_reaction': 'retail_script_reaction_dispatch',

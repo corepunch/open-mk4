@@ -458,18 +458,6 @@ static void react_weapon_followup(Fighter *fighter) {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
-  [47] = raiden_generated_reaction,
-  [53] = raiden_generated_reaction,
-  [66] = raiden_generated_reaction,
-  [82] = raiden_generated_reaction,
-  [83] = raiden_generated_reaction,
-  [24] = sonya_generated_reaction,
-  [55] = sonya_generated_reaction,
-  [56] = sonya_generated_reaction,
-  [68] = sonya_generated_reaction,
-  [86] = sonya_generated_reaction,
-  [87] = sonya_generated_reaction,
-  [121] = sonya_generated_reaction,
   [117] = react_block,
   [2] = react_fireball_block,
   [9] = react_fireball_block,
@@ -562,9 +550,6 @@ void battle_react(Fighter *victim, int reaction) {
   FighterFn selected = native != NULL ? native : reactions[reaction];
   FighterFn entry =
       selected != NULL && (native != NULL || victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
-  if (victim->roster == 16 && (reaction == 24 || reaction == 55 || reaction == 56 || reaction == 68 || reaction == 86 || reaction == 87 || reaction == 121)) {
-    entry = sonya_generated_reaction;
-  }
 
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;

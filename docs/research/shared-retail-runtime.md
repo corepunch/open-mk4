@@ -1869,3 +1869,20 @@ words. Verified formatting, runtime/rejections, all strict audits, native gates
 and helper/port navigation. Reused the loaded-stagger fixture through45b1f0
 with a different native context to check peer selection and caller ownership;
 no authored move timing assertions.
+
+### Native-address record reaction registry
+
+Replaced the Raiden/Sonya reaction-ID routers and hidden-Kitana override with
+loaded native-address dispatch for twelve entries. Native preludes now preserve
+bank-specific sound, wall handling, position, loaded physics, scaling and typed
+getup completions. The square victim binds original53cf94. Bicycle release uses
+one shared4859b0 height branch and4e9acc callback from both direct native and
+reaction83 callers, removing its duplicate MoveDefs/controller. Native488530's
+peer161 continuation is registered once as inherited completion plus64-visit
+native hold. Camera/render-space geometry remains an engine adaptation.
+
+Checked bounded local entries/dependencies and mk4decomp matched native sources;
+original scripts own their authored playback. Verified formatting, runtime/
+rejections, strict audits, native gates and existing helper/port navigation.
+No new per-character tests. SDL build/resource self-test also passed at the
+preceding owner-dispatch boundary (18 rigs,11 arenas).

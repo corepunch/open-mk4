@@ -228,3 +228,8 @@ void retail_stage_complete(Fighter *fighter);
 void retail_snare_reaction(Fighter *fighter);
 void retail_script_reaction_dispatch(Fighter *fighter, int reaction);
 void retail_scene_victim_hold(Fighter *fighter);
+
+void retail_bicycle_release(Fighter *fighter);
+void retail_torpedo_return(Fighter *fighter);
+void retail_record_reaction(Fighter *fighter);
+void retail_square_victim(Fighter *fighter);

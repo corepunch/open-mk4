@@ -322,40 +322,6 @@ void raiden_script_torpedo_victim_motion(Fighter *victim) {
   victim->body.pos[AXIS_Y] = owner->body.pos[AXIS_Y];
 }
 
-void raiden_generated_reaction(Fighter *victim) {
-  RetailScriptContinuation script = {0};
-  switch (victim->reaction) {
-    case 47:
-      script = (RetailScriptContinuation){0x4ea068, mk4_script_thrown_ready, 1};
-      battle_wall_recoil(victim);
-      break;
-    case 53:
-      script = (RetailScriptContinuation){0x4e8e18, mk4_script_thrown_ready, 1};
-      break;
-    case 66:
-      script = (RetailScriptContinuation){0x4e9d50, mk4_script_thrown_ready, 1};
-      break;
-    case 82:
-      script = (RetailScriptContinuation){0x4ea108, fighter_ready, 1};
-      break;
-    case 83:
-      script = fighter_airborne(victim) ? (RetailScriptContinuation){0x4e9ae8, mk4_script_thrown_ready, 1}
-                                        : (RetailScriptContinuation){0x4e9ad0, mk4_script_thrown_ready, 1};
-      break;
-    default:
-      require(false, "Unexpected Raiden record reaction");
-      return;
-  }
-  mk4_script_disarm_self(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, roster_def(victim->roster)->moves[S_KNOCKDOWN]);
-  victim->flags |= FF_REACTING;
-  victim->sample_override = 0;
-  if (fighter_airborne(victim) && victim->body.gravity == 0) {
-    victim->body.gravity = 0x28f;
-  }
-  retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
-}
-
 /* Native service cluster: 45b230. */
 /* Native service cluster: 45b1f0, 45b230. */
 /* 45b1f0 installs a reaction on the current task's captured peer: 102
@@ -399,50 +365,6 @@ void sonya_special_cleanup(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
-  }
-}
-
-void sonya_generated_reaction(Fighter *victim) {
-  RetailScriptContinuation script = {0};
-  FighterFn native = NULL;
-  switch (victim->reaction) {
-    case 24:
-      script = (RetailScriptContinuation){0x4e9110, mk4_script_thrown_ready, 2};
-      break;
-    case 55:
-      script = (RetailScriptContinuation){0x4e8b38, mk4_script_thrown_ready, 2};
-      break;
-    case 56:
-      script = (RetailScriptContinuation){0x4e8f50, mk4_script_thrown_ready, 2};
-      break;
-    case 68:
-      script = (RetailScriptContinuation){0x4e9de8, mk4_script_thrown_ready, 2};
-      break;
-    case 86:
-      script = (RetailScriptContinuation){0x4ea130, mk4_script_thrown_ready, 2};
-      break;
-    case 87:
-      native = sonya_square_victim;
-      break;
-    case 121:
-      script = (RetailScriptContinuation){0x4ea0b8, mk4_script_thrown_ready, 2};
-      battle_wall_recoil(victim);
-      break;
-    default:
-      require(false, "Unexpected Sonya record reaction");
-      return;
-  }
-  mk4_script_disarm_self(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, roster_def(victim->roster)->moves[S_KNOCKDOWN]);
-  victim->flags |= FF_REACTING;
-  victim->sample_override = 0;
-  if (fighter_airborne(victim) && victim->body.gravity == 0) {
-    victim->body.gravity = 0x28f;
-  }
-  if (native != NULL) {
-    native(victim);
-  } else {
-    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
   }
 }
 

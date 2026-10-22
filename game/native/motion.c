@@ -1375,8 +1375,8 @@ static void n47e1d0_square_victim_guard(Fighter *victim) {
 }
 
 /* The carried pose cycle repeats until the owner leaves the square wave. */
-void sonya_square_victim(Fighter *victim) {
-  mk4_mmove_bind(victim, 136, 24, 0);
+void retail_square_victim(Fighter *victim) {
+  retail_vm_bind_animation(victim, mk4_image_u32(retail_vm_image(), 0x53cf94) * 4, 0);
   victim->flags |= FF_PAIRED;
   const Fighter *owner = fighter_opponent(victim);
   if (owner->action != 0x201 || owner->pending != NULL) {

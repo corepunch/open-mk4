@@ -481,10 +481,10 @@
       "evidence": "Blade C[4] blocked reaction2: 4ea4e8[2] ->486ca0 shared projectile block."
     },
     "68": {
-      "source": "game/native/contexts.c",
-      "symbol": "sonya_generated_reaction",
-      "evidence": "Blade C[4] hit reaction68: 4ea4e8[68] ->486750, the shared generated victim stream registered by Sonya.",
-      "adaptation": "The shared reaction table enters the existing generated reaction-68 victim program for any roster."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_record_reaction",
+      "evidence": "Loaded4ea4e8[68] -> 486750; bounded local entry/dependency listings and mk4decomp native/script contracts.",
+      "adaptation": "Loaded native target selects the shared prelude; original words control playback and native helpers share descriptor data."
     },
     "153": {
       "source": "game/retail_throw.c",

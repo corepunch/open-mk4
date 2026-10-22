@@ -1238,7 +1238,6 @@ void kai_input_47bd10(Fighter *fighter) {
 
 /* Native service cluster: 47eb30, 480e90. */
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-static void n47eb30_bicycle_release(Fighter *victim);
 static void n47eb30_bicycle_victim_guard(Fighter *victim);
 static void n47eb30_bicycle_victim_cycle(Fighter *victim);
 static void n47eb30_bicycle_victim_script(Fighter *victim);
@@ -1253,28 +1252,12 @@ static void n47eb30_bicycle_contact_end(Fighter *fighter);
 static void n47eb30_bicycle_motion_pose(Fighter *fighter, float pose);
 static const MoveDef n47eb30_s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .action = ACTION_RETAIL_0206};
 static const MoveDef n47eb30_s_bicycle_victim = {.clip = 136, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef n47eb30_s_bicycle_release = {.clip = 182, .last = 64, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
-static const MoveDef n47eb30_s_bicycle_air_release = {.clip = 183, .last = 33, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
 static const AttackRecord n47eb30_bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
-
-static void n47eb30_bicycle_release(Fighter *victim) {
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  bool air = victim->body.ground - victim->body.pos[AXIS_Y] > 0x3333;
-  fighter_start_move(victim, S_KNOCKDOWN, air ? &n47eb30_s_bicycle_air_release : &n47eb30_s_bicycle_release);
-  victim->reaction = 81;
-  victim->sample_override = 0;
-  if (air) {
-    retail_vm_enter_owned(victim, 0x4e9ae8, fighter_ready, 3);
-  } else {
-    victim->body.physics = fighter_friction;
-    retail_vm_enter_owned(victim, 0x4e9ad0, mk4_script_thrown_ready, 3);
-  }
-}
 
 static void n47eb30_bicycle_victim_guard(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   if (victim->script_phase != 0 || owner->action != ACTION_RETAIL_0206 || owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
-    fighter_finish_mmove(victim, n47eb30_bicycle_release);
+    fighter_finish_mmove(victim, retail_bicycle_release);
   }
 }
 
