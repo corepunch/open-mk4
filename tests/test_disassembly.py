@@ -197,7 +197,7 @@ class QueryTests(unittest.TestCase):
         self.assertEqual(code.count('task_slot_5c_clear();'), 2)
         self.assertLess(code.index('task_slot_5c_set_one();'), code.index('show_sample_for_ticks(14, 1);'))
         self.assertGreater(code.rindex('task_slot_5c_clear();'), code.index('show_sample_for_ticks(17, 1);'))
-        ordered = ['contact_query_b(6);', 'set_action(ACTION_RETAIL_1006);', 'release_attack_bookkeeping();',
+        ordered = ['contact_query_b(6);', 'set_action(ACTION_CODE_1006);', 'release_attack_bookkeeping();',
                    'wait_ticks(native_result_bit0() ? 8 : 5);', 'wait_pose_then_controller_return();', 'return;']
         positions = [code.index(statement) for statement in ordered]
         self.assertEqual(positions, sorted(positions))

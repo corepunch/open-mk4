@@ -1,6 +1,6 @@
 #include "game.h"
-#include "native.h"
-#include "retail_vm.h"
+#include "runtime/playback.h"
+#include "script/vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdlib.h>

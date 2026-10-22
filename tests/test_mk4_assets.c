@@ -1,6 +1,6 @@
 #include "game.h"
 #include "mk4_program.h"
-#include "retail_native.h"
+#include "native/actions.h"
 #include "mk4_assets.h"
 #include <math.h>
 #include <stdio.h>
@@ -73,9 +73,9 @@ static void fighter_render_snapshots(const Assets *assets) {
       "Reset must replace both animation snapshots");
   battle_init(&assets->image, 0, 0);
   Fighter *fighter = &g_battle.fighters[0];
-  retail_uppercut(fighter);
+  action_uppercut(fighter);
   battle_bind_assets(assets);
-  retail_high_kick(fighter);
+  action_high_kick(fighter);
   fighter->sample_override = 12;
   g_battle.ticks = 2;
   battle_capture_render_snapshot();

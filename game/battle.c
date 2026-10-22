@@ -1,6 +1,6 @@
 #include "game.h"
-#include "native.h"
-#include "retail_vm.h"
+#include "runtime/playback.h"
+#include "script/vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <string.h>
@@ -19,7 +19,7 @@ static bool locked(const Fighter *fighter) {
 void battle_set_arena(int arena) {
   /* 423690 / 4dad60, in the archive stage order. */
   require(arena >= 0 && arena < MK4_ARENA_COUNT, "Invalid battle arena");
-  q16 radius = (q16)mk4_image_u32(battle_data(), MK4_RETAIL_DATA_ARENA_RADII + (unsigned)arena * 4);
+  q16 radius = (q16)mk4_image_u32(battle_data(), MK4_DATA_ARENA_RADII + (unsigned)arena * 4);
   require(radius > 0, "Invalid retail arena radius");
   g_battle.arena = arena;
   g_battle.arena_radius = radius;
@@ -293,7 +293,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
     if (fighter->execution.script.active) {
-      retail_vm_step(fighter);
+      script_vm_step(fighter);
     } else if (fighter->execution.frames != NULL) {
       fighter_step_mmove(fighter);
 
@@ -725,7 +725,7 @@ static void battle_tick(const InputFrame input[2]) {
         /* Finisher presentation may keep a retail pose loop after the
          * result; the next round or reset cancels its frame program. */
         if (fighter->execution.script.active) {
-          retail_vm_step(fighter);
+          script_vm_step(fighter);
         } else if (fighter->execution.frames != NULL) {
           fighter_step_mmove(fighter);
         }

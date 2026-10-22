@@ -1,8 +1,8 @@
 #include "game.h"
-#include "native.h"
-#include "retail_data.h"
-#include "retail_native.h"
-#include "retail_vm.h"
+#include "runtime/playback.h"
+#include "data/tables.h"
+#include "native/actions.h"
+#include "script/vm.h"
 #include "math_util.h"
 #include <math.h>
 
@@ -66,9 +66,9 @@ static Button resolve_token(const Fighter *fighter, CommandToken token) {
 static FighterFn match_command(const Fighter *fighter, Button button, bool released) {
   const Mk4Image *image = battle_data();
   unsigned player = fighter == &g_battle.fighters[1] ? 1u : 0u;
-  RetailCommandCursor cursor = retail_command_cursor(image, (unsigned)fighter->roster, player, button, released);
-  RetailCommand command;
-  while (retail_command_next(image, &cursor, &command)) {
+  Mk4CommandCursor cursor = mk4_command_cursor(image, (unsigned)fighter->roster, player, button, released);
+  Mk4Command command;
+  while (mk4_command_next(image, &cursor, &command)) {
     if (command.pattern != 0xffffffffu) {
       CommandToken tokens[COMMAND_TOKENS];
       unsigned count = 0;
@@ -112,10 +112,10 @@ static FighterFn match_command(const Fighter *fighter, Button button, bool relea
     if (fighter->flags & (FF_BUSY | FF_REACTING)) {
       return NULL;
     }
-    if (!retail_native_gate(fighter, command.predicate)) {
+    if (!script_native_gate(fighter, command.predicate)) {
       continue;
     }
-    return retail_native_entry(command.target);
+    return script_native_entry(command.target);
   }
   return NULL;
 }
@@ -147,7 +147,7 @@ void fighter_press(Fighter *fighter, Button button) {
   if (command != NULL) {
     fighter_interrupt(fighter, command);
   } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL) {
-    retail_press_table(fighter, button);
+    action_press_table(fighter, button);
   }
   if (button == BUTTON_RUN) {
     fighter->latch[button] = g_battle.ticks;

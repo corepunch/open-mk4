@@ -52,7 +52,7 @@ full Scorpion coverage, generic tagged returns or paired-task support.
 
 ## Initial prototype (historical)
 
-`game/retail_vm.c` reads the relocated image directly. It implements only the
+`game/script/vm.c` reads the relocated image directly. It implements only the
 operations reached by the two reviewed roots. `game/scorpion/moves/retail_vm.c`
 owns the three native bindings: clear/set high-punch avoidance and reverse
 playback followed by controller return. Contact geometry, damage and reactions

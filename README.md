@@ -72,16 +72,12 @@ Output roots and generated subdirectories must not be symlinks.
 
 ## Language and architecture
 
-The game and engine use C11: plain state structs, explicit context functions,
-const tables, and caller-owned pose buffers. Fighters are rows in one roster.
-Each row points at motion, move, and command tables; spawn stores the
-row index on a fighter, and one step function reads those tables. Keyboard,
-shell keys, and the CPU each produce the same input frame. The PC retail reference is
-reconstructed in C using MSVC 5.0; the compiler product name does not make the
-game C++. Our supplied executable confirms an MSVC-era toolchain but retains
-no source filenames that distinguish `.c` from `.cpp`. See
-[ARCHITECTURE.md](ARCHITECTURE.md) for the evidence, retail subsystem map and
-behavioral gaps. This portable implementation is not a matching retail rebuild.
+The MK4 game and engine use C11, explicit state ownership and one shared
+script interpreter. Each actor owns script/native execution state; the match
+advances it at 60 Hz. The host loads resources before creating the match, and
+SDL stays outside simulation. The current module boundaries, original-source
+evidence and behavioral limitations are in [ARCHITECTURE.md](ARCHITECTURE.md).
+This portable implementation is not a matching retail rebuild.
 
 ## Shared code and executables
 
@@ -102,7 +98,8 @@ The package tool keeps its stable-snapshot watcher and extraction code separate.
 | `viewer/main.c` | Character gallery and inspection controls |
 | `fsys.cpp` | Package listing, extraction, filename recovery, polling |
 | `game/game.h`, `game/roster.c`, `game/battle.c` | Roster state tables and SDL-independent combat simulation |
-| `game/input.c` | Keyboard bindings, shell keys, and CPU input |
+| `game/input.c`, `game/sdl_input.c` | Tick input buffering and host device mapping |
+| `game/data/`, `game/script/`, `game/runtime/`, `game/native/` | MK4 tables, wordcode/native bindings, actor execution and shared gameplay capabilities |
 | `game/draw.c`, `game/main.c` | Battle presentation and game loop |
 
 `make` builds all three tools. `make fsys` builds only the dependency-free
@@ -137,12 +134,16 @@ or system font. Goro uses his
 own 21-channel animation bank. Other characters use compatible original action
 clips. All resources load directly from the read-only archive and executable.
 
-All 1,138 catalogued fighter script roots across 18 roster slots execute original
-retail words through one shared C11 interpreter. Roster, command/action, CPU
-special, native throw/combo selection, ground/follow-up button, reaction and scene-selection tables load from retail data. Generated fighter
-C/frame output and its emitter are removed. Remaining native controllers and
-state adapters are being consolidated; see the
-[migration ledger](docs/research/shared-retail-runtime.md).
+All 1,133 catalogued fighter script roots across 18 roster slots execute MK4
+wordcode assembled from checked-in [script sources](scripts/README.md).
+Edit `scripts/mk4/program.asm`, run `make scripts` (or `make game`), then launch
+`./mk4-game`. Assembly does not read the EXE. Use `--scripts PATH` to select a
+different assembled package. Original EXE tables and archive assets are still
+required; instruction fetches use only words supplied by the assembled package.
+
+Roster, command/action, CPU, native throw/combo, stance, reaction and scene
+selection tables load from MK4 data. Shared C capabilities implement native
+calls; there are no generated fighter C programs or per-fighter C modules.
 Follow the [shared runtime workflow](docs/character-script-port.md#workflow):
 check mk4decomp and matching local native listings, implement a missing runtime
 or native boundary once, and keep validation focused on our data/lifetime

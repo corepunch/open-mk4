@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def collect(image):
     symbols = {}
-    for path in ('common/mk4_retail_data_addresses.h', 'game/retail_layout.h', 'game/retail_native_addresses.h', 'game/retail_native.h'):
+    for path in ('common/mk4_addresses.h', 'game/data/layout.h', 'game/script/native_ids.h', 'game/native/actions.h'):
         for name, value in re.findall(r'\b(\w+)\s*=\s*(0x[0-9a-fA-F]+)', (ROOT / path).read_text()):
             symbols.setdefault(int(value, 16), name)
     roots = {root for c in range(18) for move in moves_for(c).values() for _, root in move['scripts']}

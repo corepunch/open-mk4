@@ -9,7 +9,6 @@
  * native playback and continuation state; battle_step runs shared combat rules.
  *
  */
-#include "retail_native_addresses.h"
 #include "mk4_assets.h"
 #include "input.h"
 #include "mk4_image.h"
@@ -70,11 +69,11 @@ typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Fighter *fighter);
 
-typedef enum RetailAction {
-#define RETAIL_ACTION(name, value, confidence, description) name = value,
-#include "retail_actions.inc"
-#undef RETAIL_ACTION
-} RetailAction;
+typedef enum Mk4Action {
+#define MK4_ACTION(name, value, confidence, description) name = value,
+#include "data/action_codes.inc"
+#undef MK4_ACTION
+} Mk4Action;
 
 /* Engine state and combat view. Script/native execution supplies playback. */
 typedef struct MoveDef {
@@ -114,19 +113,19 @@ struct mmove_s {
  * that runs independently of clip/script playback. */
 #define NATIVE_FRAME_CAPACITY 1024
 
-typedef struct RetailScriptContinuation {
+typedef struct ScriptContinuation {
   uint32_t entry;
   FighterFn finish;
-} RetailScriptContinuation;
+} ScriptContinuation;
 
-typedef struct RetailNativeContinuation {
+typedef struct NativeContinuation {
   uint32_t address;
-} RetailNativeContinuation;
+} NativeContinuation;
 
 typedef struct NativeFrames {
   mmove_t move;
-  RetailScriptContinuation script_end;
-  RetailNativeContinuation native_end;
+  ScriptContinuation script_end;
+  NativeContinuation native_end;
   mframe_t frames[NATIVE_FRAME_CAPACITY];
   int poses[NATIVE_FRAME_CAPACITY];
 } NativeFrames;
@@ -261,7 +260,7 @@ typedef struct CommandDef {
 
 /* Original six-slot native button table. A locked move installs none. */
 typedef struct ButtonTable {
-  uint32_t retail_address;
+  uint32_t table_address;
 } ButtonTable;
 
 typedef enum Stance {
@@ -402,18 +401,18 @@ enum {
   AXIS_Z
 };
 
-typedef enum RetailNativeKind {
-  RETAIL_CALL,
-  RETAIL_TAIL,
-  RETAIL_SPAWN,
-  RETAIL_HANDLER,
-  RETAIL_PREDICATE,
-  RETAIL_PHYSICS
-} RetailNativeKind;
+typedef enum ScriptNativeKind {
+  MK4_CALL,
+  MK4_TAIL,
+  MK4_SPAWN,
+  MK4_HANDLER,
+  MK4_PREDICATE,
+  MK4_PHYSICS
+} ScriptNativeKind;
 
-typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument);
+typedef bool (*ScriptNativeFn)(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument);
 
-typedef struct RetailVm {
+typedef struct ScriptVm {
   const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
   uint32_t pc, begin, end, instruction, entry;
   uint64_t wake;
@@ -423,14 +422,14 @@ typedef struct RetailVm {
   int play_ticks, target, direction, stride, period, blend_ticks;
   bool active, return_after_play, parked, paired, wait_ground, native_contact, interpolated_play, interpolated_pair;
   FighterFn finish, native_resume;
-  RetailScriptContinuation then;
-  RetailNativeFn dispatch;
-} RetailVm;
+  ScriptContinuation then;
+  ScriptNativeFn dispatch;
+} ScriptVm;
 
 /* One action lifetime across script/native phase changes. Cleanup is detached
  * before cancellation callbacks; generation invalidates stale callbacks. */
 typedef struct ActionExecution {
-  RetailVm script;
+  ScriptVm script;
   NativeFrames native_frames;
   const mmove_t *frames;
   int frame, nextframe;
@@ -472,7 +471,7 @@ struct Fighter {
   FighterTest native_condition;
   bool native_followup, native_signal;
   int native_variant, native_elapsed;
-  uint32_t retail_air_row;
+  uint32_t action_air_row;
   unsigned buffered; /* pressed buttons since the current move phase began */
   ContactResult contact;
   int contact_tick;
@@ -713,7 +712,7 @@ typedef struct BloodSplat {
 } BloodSplat;
 
 typedef struct CameraShot {
-  uint32_t retail_path;
+  uint32_t path_address;
   int hold;
   q16 step;
   int aim_joint, aim_ticks;
@@ -885,8 +884,8 @@ void fighter_render_pose(const Battle *battle, const Assets *assets, const Fight
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
-WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int action);
-void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel);
+WeaponStrike weapon_decode_strike(uint32_t parameters, uint32_t motion, int action);
+void weapon_start_encoded_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);

@@ -1,10 +1,11 @@
-#include "retail_layout.h"
+#include "script/native_ids.h"
+#include "data/layout.h"
 #include "game.h"
-#include "native.h"
-#include "retail_native.h"
-#include "retail_data.h"
-#include "retail_vm.h"
-#include "native_services.h"
+#include "runtime/playback.h"
+#include "native/actions.h"
+#include "data/tables.h"
+#include "script/vm.h"
+#include "native/capabilities.h"
 
 void reptile_reaction_40(Fighter *fighter);
 void reptile_second_victim(Fighter *fighter);
@@ -18,7 +19,7 @@ void goro_quake_victim(Fighter *fighter);
 void goro_kick_victim(Fighter *fighter);
 void goro_stomp_victim(Fighter *fighter);
 void kai_second_victim(Fighter *fighter);
-#include "script.h"
+#include "native/helpers.h"
 #include "math_util.h"
 
 /* Shared reaction phases used by script attack records. Source addresses
@@ -107,30 +108,30 @@ void battle_wall_recoil(Fighter *victim) {
 static void hit_script(Fighter *fighter, uint32_t script, FighterFn finish) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
   fighter_start_move(fighter, S_HIT, &move);
-  retail_vm_enter(fighter, script, finish);
+  script_vm_enter(fighter, script, finish);
 }
 
 static void react_jab_air(Fighter *fighter) {
-  fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
+  fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
   if (fighter->hits >= 2) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_JAB_AIR, retail_controller_return);
+  hit_script(fighter, MK4_SCRIPT_REACT_JAB_AIR, action_controller_return);
 }
 
 static void react_kick_air(Fighter *fighter) {
-  fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
+  fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
-  retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_AIR, retail_getup_roll);
+  action_native_sound_list(MK4_SOUND_KNOCKDOWN_VOICE_LIST);
+  hit_script(fighter, MK4_SCRIPT_REACT_KICK_AIR, action_getup_roll);
 }
 
 static void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_JAX_DASH_PUNCH_AIRBORNE_VICTIM_168, retail_getup_roll);
+  hit_script(fighter, MK4_SCRIPT_JAX_DASH_PUNCH_AIRBORNE_VICTIM_168, action_getup_roll);
 }
 
 static void react_kick_hit(Fighter *fighter) {
@@ -138,21 +139,21 @@ static void react_kick_hit(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
-    fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
-    hit_script(fighter, MK4_RETAIL_SCRIPT_KICK_HIT_CROUCHING_STAGGER, retail_controller_return);
-    fighter->action = ACTION_RETAIL_4005;
+    fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
+    hit_script(fighter, MK4_SCRIPT_KICK_HIT_CROUCHING_STAGGER, action_controller_return);
+    fighter->action = ACTION_CODE_4005;
   } else {
-    hit_script(fighter, MK4_RETAIL_SCRIPT_KICK_HIT_STANDING_STAGGER, retail_controller_return);
+    hit_script(fighter, MK4_SCRIPT_KICK_HIT_STANDING_STAGGER, action_controller_return);
   }
 }
 
 static void react_jab_hit(Fighter *fighter) {
-  retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-  bool crouch = fighter->action == ACTION_RETAIL_2001 || fighter->action == ACTION_RETAIL_2002;
+  action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+  bool crouch = fighter->action == ACTION_CODE_2001 || fighter->action == ACTION_CODE_2002;
   if (crouch) {
-    uint32_t physics = mk4_image_u32(battle_data(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
-    require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction callback");
-    hit_script(fighter, RETAIL_CROUCH_REACTION_SCRIPT, retail_controller_return);
+    uint32_t physics = mk4_image_u32(battle_data(), MK4_CROUCH_REACTION_PHYSICS_WORD);
+    require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction callback");
+    hit_script(fighter, MK4_CROUCH_REACTION_SCRIPT, action_controller_return);
     return;
   }
   fighter->hits = maxi(0, fighter->hits - 1);
@@ -161,7 +162,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (staggers) {
     battle_wall_recoil(fighter);
   }
-  hit_script(fighter, staggers ? MK4_RETAIL_SCRIPT_JAB_HIT_DAMAGE_STAGGER : MK4_RETAIL_SCRIPT_JAB_HIT_SHORT_RECOVERY, retail_controller_return);
+  hit_script(fighter, staggers ? MK4_SCRIPT_JAB_HIT_DAMAGE_STAGGER : MK4_SCRIPT_JAB_HIT_SHORT_RECOVERY, action_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
@@ -175,7 +176,7 @@ static void reaction_play(Fighter *fighter, int first, int last, int final, Figh
 /*486f90 uses native descriptor playback, rather than a script stream. */
 static void block_crouch_finish(Fighter *fighter) {
   mk4_script_stop_body(fighter);
-  retail_controller_return(fighter);
+  action_controller_return(fighter);
 }
 
 static void block_crouch_reverse(Fighter *fighter) {
@@ -188,97 +189,97 @@ static void block_crouch_reverse(Fighter *fighter) {
 }
 
 /*486f30: repeat the original seven-pose stream, then return to input. */
-void retail_block_cycle(Fighter *fighter) {
+void action_block_cycle(Fighter *fighter) {
   if (fighter->native_variant > 0) {
     fighter->native_variant--;
   }
   if (fighter->native_variant > 0) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, retail_controller_return);
+    script_vm_enter(fighter, MK4_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, action_controller_return);
   } else {
     mk4_script_stop_body(fighter);
-    retail_controller_return(fighter);
+    action_controller_return(fighter);
   }
 }
 
 static void react_block(Fighter *fighter) {
-  uint32_t entry = retail_reaction_native(fighter);
+  uint32_t entry = action_reaction_native(fighter);
   q16 speed = 0;
   unsigned repeat = 2, variant = 0;
   bool recoil = true, stance = false;
   switch (entry) {
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
       speed = 0xf5c;
       variant = 3;
       stance = true;
       recoil = false;
       break;
-    case RETAIL_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
+    case MK4_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
       repeat = 1;
       variant = 0x10;
       break;
-    case RETAIL_NATIVE_BLOCK_WEAPON_PUSH_0_18:
+    case MK4_NATIVE_BLOCK_WEAPON_PUSH_0_18:
       speed = 0x2e14;
       variant = 0x15;
       break;
-    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
+    case MK4_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
       speed = 0x3333;
       variant = 0x16;
       stance = true;
       break;
-    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
+    case MK4_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
       speed = 0x4000;
       repeat = 3;
       variant = 0x17;
       stance = true;
       break;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
       speed = 0x4000;
       repeat = 3;
       variant = 7;
       stance = true;
       break;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_20:
       speed = 0x3333;
       variant = 6;
       stance = true;
       break;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
       speed = 0x3333;
       variant = 6;
       stance = true;
       recoil = false;
       break;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_18:
+    case MK4_NATIVE_BLOCK_PUSH_0_18:
       speed = 0x2e14;
       variant = 5;
       break;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_15:
+    case MK4_NATIVE_BLOCK_PUSH_0_15:
       speed = 0x2666;
       variant = 4;
       break;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_06:
       speed = 0xf5c;
       variant = 3;
       stance = true;
       break;
-    case RETAIL_NATIVE_BLOCK_SINGLE_PUSH_0_24:
+    case MK4_NATIVE_BLOCK_SINGLE_PUSH_0_24:
       speed = 0x3d70;
       repeat = 1;
       variant = 1;
       break;
-    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
       repeat = 1;
       recoil = false;
       break;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
       speed = 0x2147;
       variant = 5;
       recoil = false;
       break;
-    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH:
+    case MK4_NATIVE_BLOCK_SINGLE_NO_PUSH:
       repeat = 1;
       break;
-    case RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS:
+    case MK4_NATIVE_BLOCK_STANDING_NO_PHYSICS:
       recoil = false;
       break;
     default:
@@ -291,31 +292,31 @@ static void react_block(Fighter *fighter) {
   if (recoil) {
     battle_wall_recoil(fighter);
   }
-  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_2005};
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_2005};
   fighter_start_move(fighter, S_BLOCK, &move);
-  if (entry == RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL || entry == RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06) {
-    fighter->action = ACTION_RETAIL_4004;
+  if (entry == MK4_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL || entry == MK4_NATIVE_BLOCK_STANDING_PUSH_0_06) {
+    fighter->action = ACTION_CODE_4004;
   }
-  if (entry != RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS) {
+  if (entry != MK4_NATIVE_BLOCK_STANDING_NO_PHYSICS) {
     fighter_set_speed(fighter, -speed);
-    uint32_t physics = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_BLOCK_REACTION_FRICTION_ROW);
-    require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
+    uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_BLOCK_REACTION_FRICTION_ROW);
+    require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
-    retail_native_sound_list(RETAIL_SOUND_ARMED_IMPACT_LIST);
+    action_native_sound_list(MK4_SOUND_ARMED_IMPACT_LIST);
   } else {
     if (fighter->armed || variant >= 16) {
-      retail_native_sound_list(RETAIL_SOUND_UNARMED_IMPACT_LIST);
+      action_native_sound_list(MK4_SOUND_UNARMED_IMPACT_LIST);
     }
-    retail_native_sound_list(variant % 16 < 5 ? MK4_RETAIL_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS : MK4_RETAIL_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS);
+    action_native_sound_list(variant % 16 < 5 ? MK4_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS : MK4_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS);
   }
   fighter->native_variant = repeat;
   if (crouch) {
-    uint32_t descriptor = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
-    retail_vm_bind_animation(fighter, descriptor, 0);
+    uint32_t descriptor = mk4_image_u32(battle_data(), MK4_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
+    script_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
-    retail_vm_enter(fighter, fighter->armed ? MK4_RETAIL_SCRIPT_BLOCK_ARMED_RECOVERY : MK4_RETAIL_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, retail_controller_return);
+    script_vm_enter(fighter, fighter->armed ? MK4_SCRIPT_BLOCK_ARMED_RECOVERY : MK4_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, action_controller_return);
   }
 }
 
@@ -326,19 +327,19 @@ enum {
   AIRBORNE_THAW_SCRIPT = 0x4e9d38
 };
 
-static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = ACTION_RETAIL_1003};
-static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = ACTION_RETAIL_1005};
+static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = ACTION_CODE_1003};
+static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = ACTION_CODE_1005};
 
 /*486530 runs the shared46fd90 landing native after4e9d38. */
-void retail_thaw_land(Fighter *fighter) {
+void action_thaw_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_NO_GUARD;
-  retail_recoil_land(fighter);
+  action_recoil_land(fighter);
 }
 
 static void frozen_thaw(Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   if (fighter_airborne(fighter)) {
-    retail_vm_enter(fighter, AIRBORNE_THAW_SCRIPT, retail_controller_return);
+    script_vm_enter(fighter, AIRBORNE_THAW_SCRIPT, action_controller_return);
   } else {
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
     neutral(fighter);
@@ -361,7 +362,7 @@ static void frozen_play(Fighter *fighter, int sample) {
 
 static void thaw_hop_land(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
-    retail_thaw_land(fighter);
+    action_thaw_land(fighter);
   }
 }
 
@@ -380,7 +381,7 @@ static void thaw_hop_play(Fighter *fighter) {
 }
 
 static void react_freeze(Fighter *fighter) {
-  if (fighter->action == ACTION_RETAIL_1003) {
+  if (fighter->action == ACTION_CODE_1003) {
     /* 486430 calls 480f80, which switches to the opponent: double freeze
      * backfires. It does not recursively refresh this victim's timer. */
     Fighter *attacker = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
@@ -403,7 +404,7 @@ static void react_freeze(Fighter *fighter) {
   frozen_play(fighter, sample);
   fighter->frozen_clip = clip;
   fighter->appearance = APPEARANCE_FROZEN;
-  fighter->damage_scale = fighter->hits > 0 ? RETAIL_DAMAGE_SCALE_30_PERCENT : RETAIL_DAMAGE_SCALE_50_PERCENT;
+  fighter->damage_scale = fighter->hits > 0 ? MK4_DAMAGE_SCALE_30_PERCENT : MK4_DAMAGE_SCALE_50_PERCENT;
   fighter->flags |= FF_REACTING | FF_NO_GUARD;
   fighter_visual_offset(fighter, 0xccc, 0xccc);
 }
@@ -411,7 +412,7 @@ static void react_freeze(Fighter *fighter) {
 static void react_scepter_freeze(Fighter *fighter) {
   if (fighter->hits > 3) {
     /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
-    retail_reaction_fall(fighter);
+    action_reaction_fall(fighter);
   } else {
     react_freeze(fighter);
   }
@@ -449,115 +450,115 @@ static void react_weapon_followup(Fighter *fighter) {
 }
 
 /* Native entry registry. Reaction IDs and roster dispatch stay in retail data. */
-FighterFn retail_engine_reaction(uint32_t entry) {
+FighterFn action_engine_reaction(uint32_t entry) {
   switch (entry) {
-    case RETAIL_NATIVE_CAGE_SECOND_VICTIM_HIT:
+    case MK4_NATIVE_CAGE_SECOND_VICTIM_HIT:
       return cage_second_victim_hit;
-    case RETAIL_NATIVE_JAX_FATALITY_2_HEAD:
+    case MK4_NATIVE_JAX_FATALITY_2_HEAD:
       return jax_fatality_2_head;
-    case RETAIL_NATIVE_KAI_SECOND_VICTIM:
+    case MK4_NATIVE_KAI_SECOND_VICTIM:
       return kai_second_victim;
-    case RETAIL_NATIVE_SHINNOK_SECOND_VICTIM:
+    case MK4_NATIVE_SHINNOK_SECOND_VICTIM:
       return shinnok_second_victim;
-    case RETAIL_NATIVE_REPTILE_SECOND_VICTIM:
+    case MK4_NATIVE_REPTILE_SECOND_VICTIM:
       return reptile_second_victim;
-    case RETAIL_NATIVE_FUJIN_SECOND_VICTIM:
+    case MK4_NATIVE_FUJIN_SECOND_VICTIM:
       return fujin_second_victim;
-    case RETAIL_NATIVE_REACT_KICK_AIR_IMPACT:
+    case MK4_NATIVE_REACT_KICK_AIR_IMPACT:
       return react_kick_air_impact;
-    case RETAIL_NATIVE_REACT_KICK_AIR:
+    case MK4_NATIVE_REACT_KICK_AIR:
       return react_kick_air;
-    case RETAIL_NATIVE_QUAN_CHI_FLIP_REACTION:
+    case MK4_NATIVE_QUAN_CHI_FLIP_REACTION:
       return quan_chi_flip_reaction;
-    case RETAIL_NATIVE_REACT_JAB_AIR:
+    case MK4_NATIVE_REACT_JAB_AIR:
       return react_jab_air;
-    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_REACTION_170_ENTRY:
+    case MK4_NATIVE_TANYA_WEAPON_REACTION_REACTION_170_ENTRY:
       return tanya_weapon_reaction;
-    case RETAIL_NATIVE_REACT_KICK_HIT:
+    case MK4_NATIVE_REACT_KICK_HIT:
       return react_kick_hit;
-    case RETAIL_NATIVE_REACT_WEAPON_FOLLOWUP:
+    case MK4_NATIVE_REACT_WEAPON_FOLLOWUP:
       return react_weapon_followup;
-    case RETAIL_NATIVE_KAI_HANDSTAND_REACTION_ENTRY:
+    case MK4_NATIVE_KAI_HANDSTAND_REACTION_ENTRY:
       return kai_handstand_reaction;
-    case RETAIL_NATIVE_GORO_QUAKE_VICTIM:
+    case MK4_NATIVE_GORO_QUAKE_VICTIM:
       return goro_quake_victim;
-    case RETAIL_NATIVE_REPTILE_REACTION_40:
+    case MK4_NATIVE_REPTILE_REACTION_40:
       return reptile_reaction_40;
-    case RETAIL_NATIVE_GORO_KICK_VICTIM:
+    case MK4_NATIVE_GORO_KICK_VICTIM:
       return goro_kick_victim;
-    case RETAIL_NATIVE_JAREK_BALL_VICTIM:
+    case MK4_NATIVE_JAREK_BALL_VICTIM:
       return jarek_ball_victim;
-    case RETAIL_NATIVE_CAGE_SHADOW_VICTIM:
+    case MK4_NATIVE_CAGE_SHADOW_VICTIM:
       return cage_shadow_victim;
-    case RETAIL_NATIVE_REACT_JAB_HIT:
+    case MK4_NATIVE_REACT_JAB_HIT:
       return react_jab_hit;
-    case RETAIL_NATIVE_QUAN_CHI_STEAL_REACTION:
+    case MK4_NATIVE_QUAN_CHI_STEAL_REACTION:
       return quan_chi_steal_reaction;
-    case RETAIL_NATIVE_GORO_STOMP_VICTIM:
+    case MK4_NATIVE_GORO_STOMP_VICTIM:
       return goro_stomp_victim;
-    case RETAIL_NATIVE_QUAN_CHI_STOMP_REACTION:
+    case MK4_NATIVE_QUAN_CHI_STOMP_REACTION:
       return quan_chi_stomp_reaction;
-    case RETAIL_NATIVE_QUAN_CHI_SKULL_REACTION:
+    case MK4_NATIVE_QUAN_CHI_SKULL_REACTION:
       return quan_chi_skull_reaction;
-    case RETAIL_NATIVE_REACT_SCEPTER_FREEZE:
+    case MK4_NATIVE_REACT_SCEPTER_FREEZE:
       return react_scepter_freeze;
-    case RETAIL_NATIVE_REACT_FREEZE:
+    case MK4_NATIVE_REACT_FREEZE:
       return react_freeze;
-    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_ENTRY:
+    case MK4_NATIVE_TANYA_WEAPON_REACTION_ENTRY:
       return tanya_weapon_reaction;
-    case RETAIL_NATIVE_FUJIN_BOLT_VICTIM:
+    case MK4_NATIVE_FUJIN_BOLT_VICTIM:
       return fujin_bolt_victim;
-    case RETAIL_NATIVE_JAX_DASH_VICTIM_THROW:
+    case MK4_NATIVE_JAX_DASH_VICTIM_THROW:
       return jax_dash_victim_throw;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
+    case MK4_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_WEAPON_PUSH_0_18:
+    case MK4_NATIVE_BLOCK_WEAPON_PUSH_0_18:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
+    case MK4_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
+    case MK4_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_20:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_18:
+    case MK4_NATIVE_BLOCK_PUSH_0_18:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_15:
+    case MK4_NATIVE_BLOCK_PUSH_0_15:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06:
+    case MK4_NATIVE_BLOCK_STANDING_PUSH_0_06:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_SINGLE_PUSH_0_24:
+    case MK4_NATIVE_BLOCK_SINGLE_PUSH_0_24:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
+    case MK4_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH:
+    case MK4_NATIVE_BLOCK_SINGLE_NO_PUSH:
       return react_block;
-    case RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS:
+    case MK4_NATIVE_BLOCK_STANDING_NO_PHYSICS:
       return react_block;
-    case RETAIL_NATIVE_FUJIN_GRAB_VICTIM:
+    case MK4_NATIVE_FUJIN_GRAB_VICTIM:
       return fujin_grab_victim;
-    case RETAIL_NATIVE_FUJIN_WIND_VICTIM:
+    case MK4_NATIVE_FUJIN_WIND_VICTIM:
       return fujin_wind_victim;
-    case RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM:
+    case MK4_NATIVE_FUJIN_WIND_SLAM_VICTIM:
       return fujin_wind_slam_victim;
-    case RETAIL_NATIVE_JAX_DASH_VICTIM_HIT:
+    case MK4_NATIVE_JAX_DASH_VICTIM_HIT:
       return jax_dash_victim_hit;
-    case RETAIL_NATIVE_CAGE_POWER_VICTIM:
+    case MK4_NATIVE_CAGE_POWER_VICTIM:
       return cage_power_victim;
-    case RETAIL_NATIVE_FUJIN_TRIPLE_FIRST_VICTIM:
+    case MK4_NATIVE_FUJIN_TRIPLE_FIRST_VICTIM:
       return fujin_triple_victim;
-    case RETAIL_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM:
+    case MK4_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM:
       return fujin_triple_victim;
-    case RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN:
+    case MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN:
       return kai_handstand_reaction;
-    case RETAIL_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER:
+    case MK4_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER:
       return kai_handstand_reaction;
     default:
       return NULL;
@@ -569,15 +570,15 @@ FighterFn retail_engine_reaction(uint32_t entry) {
  * reaction starts on the victim's next update. */
 void battle_react(Fighter *victim, int reaction) {
   require(reaction >= 0, "Invalid reaction id");
-  uint32_t target = retail_reaction_target(battle_data(), (unsigned)reaction);
-  FighterFn native = retail_reaction_entry(battle_data(), (unsigned)reaction);
+  uint32_t target = mk4_reaction_target(battle_data(), (unsigned)reaction);
+  FighterFn native = action_reaction_entry(battle_data(), (unsigned)reaction);
   q16 retained_velocity[3];
-  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == RETAIL_NATIVE_SPEAR_WAIT) {
+  if (target == MK4_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == MK4_NATIVE_SPEAR_WAIT) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
   }
   victim->body_contact = false;
   victim->reaction = reaction;
-  if (target != RETAIL_NATIVE_REACT_FREEZE && target != RETAIL_NATIVE_REACT_SCEPTER_FREEZE) {
+  if (target != MK4_NATIVE_REACT_FREEZE && target != MK4_NATIVE_REACT_SCEPTER_FREEZE) {
     for (int i = 0; i < 3; ++i) {
       victim->body.angle[i] = 0;
     }
@@ -596,7 +597,7 @@ void battle_react(Fighter *victim, int reaction) {
   fighter_interrupt(victim, native);
   /* Native488310 changes gravity on the existing vortex motion. Preserve
    * that motion across cancellation of the previous portable frame action. */
-  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == RETAIL_NATIVE_SPEAR_WAIT) {
+  if (target == MK4_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == MK4_NATIVE_SPEAR_WAIT) {
     memcpy(victim->body.vel, retained_velocity, sizeof retained_velocity);
   }
   victim->flags |= FF_REACTING;

@@ -4,16 +4,11 @@ Research note for this workspace. It collects language, fighter-object, and
 netplay choices. Written against commit `117a19b` (2026-10-16), then updated
 when the match code took the data-table option.
 
-The game initially implemented the table option and now adds the callback
-boundary described below. Each `game/*/character.c` owns its immutable moves
-and custom entry callbacks. `game/roster.c` registers the definitions, while
-`game/moves.c` installs `Fighter.current_move`. Shared motion and commands
-remain in `game/mk4_common.c`. `battle_step` is the shared update. Keyboard, shell keys,
-and the CPU are input sources in `game/input.c` and never share a code path
-with the rules. `GAME_WARGODS` is reserved so another Eurocom/Midway roster
-can be appended without a second battle type. Netplay is still local only.
-The asset containers in `common/` are unchanged.
-
+The current implementation is MK4-specific: checked-in wordcode assembly,
+one shared interpreter, explicit match data and one actor execution lifetime.
+Per-fighter C modules and speculative multi-game identity have been removed.
+See [the current architecture](../ARCHITECTURE.md) for the implemented
+`data`, `script`, `runtime` and `native` boundaries.
 The sections below are the survey that led to that choice. "What the last
 commit did" describes `117a19b`, not the roster change.
 

@@ -9,20 +9,20 @@
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const uint32_t weapon_descriptors[] = {
-  MK4_RETAIL_WEAPON_DESCRIPTOR_SWORD,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_SCEPTER,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_DRAGON_SWORD,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_RAIDEN_STAFF,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_SONYA,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_AXE,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_KAI,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_CAGE,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_JAREK,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_SHINNOK,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_FUJIN,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_REPTILE,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_TANYA,
-  MK4_RETAIL_WEAPON_DESCRIPTOR_QUAN_CHI
+  MK4_WEAPON_DESCRIPTOR_SWORD,
+  MK4_WEAPON_DESCRIPTOR_SCEPTER,
+  MK4_WEAPON_DESCRIPTOR_DRAGON_SWORD,
+  MK4_WEAPON_DESCRIPTOR_RAIDEN_STAFF,
+  MK4_WEAPON_DESCRIPTOR_SONYA,
+  MK4_WEAPON_DESCRIPTOR_AXE,
+  MK4_WEAPON_DESCRIPTOR_KAI,
+  MK4_WEAPON_DESCRIPTOR_CAGE,
+  MK4_WEAPON_DESCRIPTOR_JAREK,
+  MK4_WEAPON_DESCRIPTOR_SHINNOK,
+  MK4_WEAPON_DESCRIPTOR_FUJIN,
+  MK4_WEAPON_DESCRIPTOR_REPTILE,
+  MK4_WEAPON_DESCRIPTOR_TANYA,
+  MK4_WEAPON_DESCRIPTOR_QUAN_CHI
 };
 // clang-format on
 
@@ -33,7 +33,7 @@ int mk4_weapon_model_index(const Mk4Image *image, uint32_t inventory) {
       return SCENE_MODEL_SWORD + (int)i;
     }
   }
-  uint32_t extra_inventory = mk4_image_u32(image, MK4_RETAIL_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
+  uint32_t extra_inventory = mk4_image_u32(image, MK4_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
   require(object == mk4_image_u32(image, extra_inventory + 4), "Unloaded native weapon object template");
   return SCENE_MODEL_EXTRA_WEAPON;
 }
@@ -43,8 +43,8 @@ static int32_t image_s32(const Mk4Image *exe, uint32_t va) {
 }
 
 static void image_string(const Mk4Image *exe, uint32_t va, char out[1024]) {
-  require(va >= MK4_RETAIL_DATA_IMAGE_BASE, "Invalid string VA");
-  view_string(view(exe->bytes), va - MK4_RETAIL_DATA_IMAGE_BASE, out, 1024);
+  require(va >= MK4_DATA_IMAGE_BASE, "Invalid string VA");
+  view_string(view(exe->bytes), va - MK4_DATA_IMAGE_BASE, out, 1024);
 }
 
 ARRAY_TYPE(Vertices, Vertex);
@@ -308,7 +308,7 @@ static Clips load_clips(const Package *archive, const Mk4Image *exe) {
     size_t size = view_u16(ap0, p + 2);
     require(id < (int)clips.count && !seen[id], "Invalid animation index");
     seen[id] = true;
-    uint32_t desc = MK4_RETAIL_DATA_ANIMATION_TABLE + (uint32_t)id * 12;
+    uint32_t desc = MK4_DATA_ANIMATION_TABLE + (uint32_t)id * 12;
     int frames = (int)mk4_image_u32(exe, desc + 4), words = (int)(mk4_image_u32(exe, desc + 8) >> 16);
     require(frames > 0 && frames <= 600 && words >= 3 && words <= 24, "Invalid animation descriptor");
     View stream = view_sub(ap1, offset, size);
@@ -437,10 +437,10 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   Mk4Image exe = mk4_image_load(executable);
   assets->clips = load_clips(&archive, &exe);
   for (int i = 0; i < MK4_ROSTER_COUNT; ++i) {
-    uint32_t rec = MK4_RETAIL_DATA_ROSTER_RECORD_TABLE + (uint32_t)i * 32, slot = mk4_image_u32(&exe, rec) * 4;
+    uint32_t rec = MK4_DATA_ROSTER_RECORD_TABLE + (uint32_t)i * 32, slot = mk4_image_u32(&exe, rec) * 4;
     uint32_t asset = mk4_image_u32(&exe, slot), name = mk4_image_u32(&exe, asset);
     Character ch = {0};
-    image_string(&exe, mk4_image_u32(&exe, MK4_RETAIL_DATA_ROSTER_NAME_TABLE + (uint32_t)i * 4), ch.name);
+    image_string(&exe, mk4_image_u32(&exe, MK4_DATA_ROSTER_NAME_TABLE + (uint32_t)i * 4), ch.name);
     image_string(&exe, name, ch.file);
     for (size_t k = 0; ch.name[k]; ++k)
       if (ch.name[k] >= 'a' && ch.name[k] <= 'z')
@@ -456,11 +456,10 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     ch.scale = (float)mk4_image_u32(&exe, rec + 28) / 65536.f;
     /* StateDispatchTable special roster-ID stance remapping. */
     int stance_index = i == 16 ? 2 : i == 17 ? 7 : i;
-    uint32_t stance = mk4_image_u32(&exe, MK4_RETAIL_DATA_IDLE_ANIMATION_TABLE + (uint32_t)stance_index * 4) * 4;
-    require(stance >= MK4_RETAIL_DATA_ANIMATION_TABLE && (stance - MK4_RETAIL_DATA_ANIMATION_TABLE) % 12 == 0 &&
-                stance < MK4_RETAIL_DATA_ANIMATION_TABLE + 612 * 12,
+    uint32_t stance = mk4_image_u32(&exe, MK4_DATA_IDLE_ANIMATION_TABLE + (uint32_t)stance_index * 4) * 4;
+    require(stance >= MK4_DATA_ANIMATION_TABLE && (stance - MK4_DATA_ANIMATION_TABLE) % 12 == 0 && stance < MK4_DATA_ANIMATION_TABLE + 612 * 12,
         "Invalid default stance descriptor");
-    ch.idle = (int)((stance - MK4_RETAIL_DATA_ANIMATION_TABLE) / 12);
+    ch.idle = (int)((stance - MK4_DATA_ANIMATION_TABLE) / 12);
     Pose initial[MK4_MAX_BONES];
     pose(&ch, &assets->clips.data[ch.idle], 0, initial);
     for (size_t n = 0; n < ch.bones.count; ++n)
@@ -493,7 +492,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 446620 adds rig 5145bc below the detached head. Its mesh data
    * is in sz_geo.geo; clip 386 also animates the original head first. */
   Character spine = assets->characters.data[4];
-  spine.bones = load_rig(&exe, MK4_RETAIL_DATA_SPINE_RIG, MK4_RETAIL_DATA_SPINE_ASSET_SLOT, spine.meshes.count);
+  spine.bones = load_rig(&exe, MK4_DATA_SPINE_RIG, MK4_DATA_SPINE_ASSET_SLOT, spine.meshes.count);
   spine.idle = 386;
   for (size_t i = 0; i < spine.bones.count; ++i) {
     spine.bones.data[i].channel++;
@@ -513,14 +512,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.meshes = assets->hud.effects.meshes;
   statue.texture = assets->hud.effects.textures.data[0];
   statue.material_pages = assets->hud.effects.textures;
-  statue.bones = load_rig(&exe, MK4_RETAIL_DATA_ICE_CLONE_RIG, MK4_RETAIL_DATA_ICE_CLONE_ASSET_SLOT, statue.meshes.count);
+  statue.bones = load_rig(&exe, MK4_DATA_ICE_CLONE_RIG, MK4_DATA_ICE_CLONE_ASSET_SLOT, statue.meshes.count);
   PUSH(assets->scene_models, statue);
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
     uint32_t root = mk4_image_u32(&exe, descriptor + 4) * 4;
     Character weapon = statue;
-    if (descriptor == MK4_RETAIL_WEAPON_DESCRIPTOR_CAGE ||
-        descriptor == MK4_RETAIL_WEAPON_DESCRIPTOR_QUAN_CHI) { /* Cage and Quan Chi rigs are in share2_g.geo. */
+    if (descriptor == MK4_WEAPON_DESCRIPTOR_CAGE || descriptor == MK4_WEAPON_DESCRIPTOR_QUAN_CHI) { /* Cage and Quan Chi rigs are in share2_g.geo. */
       snprintf(weapon.file, sizeof weapon.file, "share2_g.geo");
       weapon.meshes = assets->hud.effects2.meshes;
       weapon.material_pages = assets->hud.effects2.textures;
@@ -530,7 +528,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
     PUSH(assets->scene_models, weapon);
   }
-  uint32_t extra_inventory = mk4_image_u32(&exe, MK4_RETAIL_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
+  uint32_t extra_inventory = mk4_image_u32(&exe, MK4_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
   uint32_t extra_root = mk4_image_u32(&exe, extra_inventory + 4) * 4;
   Character extra_weapon = statue;
   extra_weapon.bones = load_rig(&exe, extra_root, mk4_image_u32(&exe, extra_root + 4), extra_weapon.meshes.count);
@@ -543,10 +541,10 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   flesh.meshes = assets->hud.effects2.meshes;
   flesh.texture = assets->hud.effects2.textures.data[0];
   flesh.material_pages = assets->hud.effects2.textures;
-  flesh.bones = load_rig(&exe, MK4_RETAIL_DATA_FLAYED_BODY_RIG, MK4_RETAIL_DATA_FLAYED_BODY_ASSET_SLOT, flesh.meshes.count);
+  flesh.bones = load_rig(&exe, MK4_DATA_FLAYED_BODY_RIG, MK4_DATA_FLAYED_BODY_ASSET_SLOT, flesh.meshes.count);
   PUSH(assets->scene_models, flesh);
   for (uint32_t part = 0; part < 14; ++part) {
-    uint32_t root = mk4_image_u32(&exe, MK4_RETAIL_DATA_SKIN_SEVER_FIRST_RIG_WORD + part * 12) * 4;
+    uint32_t root = mk4_image_u32(&exe, MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD + part * 12) * 4;
     Character skin = flesh;
     skin.bones = load_rig(&exe, root, mk4_image_u32(&exe, root + 4), skin.meshes.count);
     PUSH(assets->scene_models, skin);
@@ -584,7 +582,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_RETAIL_DATA_SCORPION_BEAST_ASSET_SLOT)), beast->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_SCORPION_BEAST_ASSET_SLOT)), beast->file);
   snprintf(beast->name, sizeof beast->name, "SCORPION CREATURE");
   View beast_data = package_geo(&archive, beast->file);
   beast->meshes = load_meshes(beast_data);
@@ -594,7 +592,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     FREE_ARRAY(beast_pages.data[i].pixels);
   }
   FREE_ARRAY(beast_pages);
-  beast->bones = load_rig(&exe, MK4_RETAIL_DATA_SCORPION_BEAST_RIG, MK4_RETAIL_DATA_SCORPION_BEAST_ASSET_SLOT, beast->meshes.count);
+  beast->bones = load_rig(&exe, MK4_DATA_SCORPION_BEAST_RIG, MK4_DATA_SCORPION_BEAST_ASSET_SLOT, beast->meshes.count);
   beast->idle = 578;
   beast->scale = 1.f;
   int beast_channels = 0;
@@ -610,13 +608,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 450930 creates the original Liu Kang dragon rig 508204. Its
    * asset slot 5061b0 resolves to lk_fat_g.geo; IDs start at one. */
   Character *dragon = &assets->liu_dragon;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_RETAIL_DATA_LIU_KANG_DRAGON_ASSET_SLOT)), dragon->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT)), dragon->file);
   snprintf(dragon->name, sizeof dragon->name, "LIU KANG DRAGON");
   View dragon_data = package_geo(&archive, dragon->file);
   dragon->meshes = load_meshes(dragon_data);
   dragon->material_pages = load_textures(dragon_data);
   dragon->texture = dragon->material_pages.data[0];
-  dragon->bones = load_rig(&exe, MK4_RETAIL_DATA_LIU_KANG_DRAGON_RIG, MK4_RETAIL_DATA_LIU_KANG_DRAGON_ASSET_SLOT, dragon->meshes.count);
+  dragon->bones = load_rig(&exe, MK4_DATA_LIU_KANG_DRAGON_RIG, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT, dragon->meshes.count);
   dragon->idle = 418;
   dragon->scale = 1.f;
   int dragon_channels = 0;
@@ -630,13 +628,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 4556d0 and 43caa0 create rig 5083c4. Its asset slot 5061e0 resolves
    * to nf_fat_g.geo; fatality I plays clip 434 and II plays clip 541. */
   Character *hand = &assets->shinnok_hand;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_RETAIL_DATA_SHINNOK_HAND_ASSET_SLOT)), hand->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_SHINNOK_HAND_ASSET_SLOT)), hand->file);
   snprintf(hand->name, sizeof hand->name, "SHINNOK HAND");
   View hand_data = package_geo(&archive, hand->file);
   hand->meshes = load_meshes(hand_data);
   hand->material_pages = load_textures(hand_data);
   hand->texture = hand->material_pages.data[0];
-  hand->bones = load_rig(&exe, MK4_RETAIL_DATA_SHINNOK_HAND_RIG, MK4_RETAIL_DATA_SHINNOK_HAND_ASSET_SLOT, hand->meshes.count);
+  hand->bones = load_rig(&exe, MK4_DATA_SHINNOK_HAND_RIG, MK4_DATA_SHINNOK_HAND_ASSET_SLOT, hand->meshes.count);
   hand->idle = 541;
   hand->scale = 1.f;
   int hand_channels = 0;
@@ -677,7 +675,7 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   // clang-format on
   /* June 1998 stage table, verified against the supplied executable. */
   for (size_t i = 0; i < MK4_ARENA_COUNT; ++i) {
-    uint32_t rec = MK4_RETAIL_DATA_ARENA_RECORD_TABLE + (uint32_t)i * 64, slot = mk4_image_u32(&exe, rec) * 4;
+    uint32_t rec = MK4_DATA_ARENA_RECORD_TABLE + (uint32_t)i * 64, slot = mk4_image_u32(&exe, rec) * 4;
     Arena a = {0};
     snprintf(a.name, sizeof a.name, "%s", names[i]);
     image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, slot)), a.file);
@@ -695,14 +693,14 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
   // clang-format off: Keep table entries on one row, including long rows.
   const uint32_t sound_tables[] = {
-    MK4_RETAIL_DATA_SOUND_A_TABLE,
-    MK4_RETAIL_DATA_SOUND_B_TABLE,
-    MK4_RETAIL_DATA_SOUND_C_TABLE,
-    MK4_RETAIL_DATA_SOUND_INDEXED_TABLE,
-    mk4_image_u32(&exe, MK4_RETAIL_DATA_SOUND_IMPACT_VOICE_POINTER) * 4,
-    mk4_image_u32(&exe, MK4_RETAIL_DATA_ROSTER_SOUND_SELECTOR_TABLE + 8 * 4) * 4,
-    mk4_image_u32(&exe, MK4_RETAIL_DATA_SOUND_DRAW_VOICE_POINTER) * 4,
-    MK4_RETAIL_DATA_SOUND_CONTEXT_TABLE,
+    MK4_DATA_SOUND_A_TABLE,
+    MK4_DATA_SOUND_B_TABLE,
+    MK4_DATA_SOUND_C_TABLE,
+    MK4_DATA_SOUND_INDEXED_TABLE,
+    mk4_image_u32(&exe, MK4_DATA_SOUND_IMPACT_VOICE_POINTER) * 4,
+    mk4_image_u32(&exe, MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE + 8 * 4) * 4,
+    mk4_image_u32(&exe, MK4_DATA_SOUND_DRAW_VOICE_POINTER) * 4,
+    MK4_DATA_SOUND_CONTEXT_TABLE,
     0
   };
   // clang-format on
@@ -716,9 +714,9 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
         /* 489ff0: flat nonzero selector-8 list, indexed through the signed
          * roster remap (Kitana uses roster 10 for this voice family). */
         int roster = i == 16 ? 10 : i;
-        selector = view_u8(view(exe.bytes), MK4_RETAIL_DATA_SOUND_ROSTER_REMAP - MK4_RETAIL_DATA_IMAGE_BASE + (uint32_t)roster);
+        selector = view_u8(view(exe.bytes), MK4_DATA_SOUND_ROSTER_REMAP - MK4_DATA_IMAGE_BASE + (uint32_t)roster);
       }
-      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - MK4_RETAIL_DATA_IMAGE_BASE + (uint32_t)selector * 2);
+      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - MK4_DATA_IMAGE_BASE + (uint32_t)selector * 2);
     }
   }
   // clang-format off: Keep table entries on one row, including long rows.

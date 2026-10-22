@@ -39,7 +39,7 @@ class PortTests(unittest.TestCase):
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
         self.assertIn('sub_zero_ice', ice)
-        self.assertIn('retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE, fighter_ready)', ice['sub_zero_ice'][1])
+        self.assertIn('script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_ICE, fighter_ready)', ice['sub_zero_ice'][1])
         self.assertIn('sub_zero_ice_projectile', source_closure(('game/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/sub_zero/character.c', 'if'))
@@ -48,20 +48,20 @@ class PortTests(unittest.TestCase):
 
     def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
-        for value in ('retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE, fighter_ready)',
+        for value in ('script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_ICE, fighter_ready)',
                       'script_spawn_ice', 'raw_fixed=', '0x570a', '0049bc74', 'mk4decomp',
                       'Existing engine C', 'not a standalone translation unit', 'literal', 'control target'):
             self.assertIn(value, ice)
         clone = port_text(self.disassembly, 'clone', 4)
-        for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
+        for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_CODE_0406', 'Native move: no VM script root'):
             self.assertIn(value, clone)
         spear = port_text(self.disassembly, 'spear')
-        self.assertIn('retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_SPEAR, scorpion_script_spear_done)', spear)
+        self.assertIn('script_vm_enter(fighter, MK4_SCRIPT_SCORPION_SPEAR, scorpion_script_spear_done)', spear)
         self.assertIn('scheduler wait; ticks=45', spear)
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed runtime boundaries', spear)
         other = port_text(self.disassembly, 'jab', 5, 12)
-        self.assertIn('retail_normal_low_punch', other)
+        self.assertIn('action_normal_low_punch', other)
         self.assertNotIn('static void scorpion_jab(', other)
 
     def test_shared_instruction_budget_and_atomic_c_bodies(self):
@@ -95,8 +95,8 @@ class PortTests(unittest.TestCase):
         self.assertEqual(image.word(0x4ddfb8 + 4 * 4), 0x42c180)  # Native byte address, not VM code.
         self.assertEqual(moves_for(4)['lk_throw']['scripts'][0][1], 0x4de490)
         for name, fragments in (
-                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_THROW_SCRIPT')),
-                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'retail_lk_target'))):
+                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'script_vm_enter(fighter, MK4_SCRIPT_LP_THROW_SCRIPT')),
+                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'mk4_lk_target'))):
             text = port_text(self.disassembly, name, 4, 64)
             self.assertIn('Port notes', text)
             for fragment in fragments:
@@ -151,7 +151,7 @@ class PortTests(unittest.TestCase):
         base = [sys.executable, tool, '--exe', str(ROOT / 'MK4/MK-4.EXE'), '--archive', 'missing']
         with tempfile.TemporaryDirectory() as directory:
             result = subprocess.run([*base, '--character', 'sub_zero', '--move', 'ice', '--port'], cwd=directory, text=True, capture_output=True, check=True)
-            self.assertIn('retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE, fighter_ready)', result.stdout)
+            self.assertIn('script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_ICE, fighter_ready)', result.stdout)
             self.assertEqual(list(Path(directory).iterdir()), [])
             for args in (['--port'], ['--port', '--script', '4ed588'], ['--port', '--move', 'ice', '--c'],
                          ['--port', '--move', 'ice', '--raw'], ['--move', 'ice', '--port', '--limit', '0']):

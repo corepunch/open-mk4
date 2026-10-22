@@ -1,10 +1,10 @@
-#include "native_services.h"
+#include "native/capabilities.h"
 #include <math.h>
 #include <stdlib.h>
 
 /* Native service cluster: native_throws. */
 void fujin_enter_throw(Fighter *fighter) {
-  retail_lp_throw(fighter);
+  action_lp_throw(fighter);
 }
 
 /* Native service cluster: 42c820, 42c8c0, 42c8f0, 42c9f0. */
@@ -33,38 +33,38 @@ static bool jax_throws_slam_continue(Fighter *fighter) {
   if (fighter->native_variant >= JAX_THROWS_SLAM_LIMIT) {
     return false;
   }
-  uint32_t row = MK4_RETAIL_DATA_SLAM_CONTINUE_CHORDS + (uint32_t)fighter->native_variant++ * SLAM_CHORD_ROW_BYTES;
-  return retail_native_button_chord(fighter, row);
+  uint32_t row = MK4_DATA_SLAM_CONTINUE_CHORDS + (uint32_t)fighter->native_variant++ * SLAM_CHORD_ROW_BYTES;
+  return action_native_button_chord(fighter, row);
 }
 
 void jax_lp_slam_first(Fighter *fighter) {
   if (!jax_throws_slam_continue(fighter)) {
-    retail_vm_enter(fighter, SLAM_FIRST_RELEASE_SCRIPT, fighter_ready);
+    script_vm_enter(fighter, SLAM_FIRST_RELEASE_SCRIPT, fighter_ready);
     return;
   }
   /* 42c83f saves the victim group position in task +5c..+64. */
   memcpy(fighter->saved_motion, fighter_opponent(fighter)->body.pos, sizeof fighter->saved_motion);
-  retail_vm_enter(fighter, SLAM_FIRST_SCRIPT, fighter_ready);
+  script_vm_enter(fighter, SLAM_FIRST_SCRIPT, fighter_ready);
 }
 
 void jax_lp_slam_second(Fighter *fighter) {
   if (jax_throws_slam_continue(fighter)) {
-    retail_vm_enter(fighter, SLAM_SECOND_SCRIPT, fighter_ready);
+    script_vm_enter(fighter, SLAM_SECOND_SCRIPT, fighter_ready);
   } else {
-    retail_vm_enter(fighter, SLAM_SECOND_RELEASE_SCRIPT, fighter_ready);
+    script_vm_enter(fighter, SLAM_SECOND_RELEASE_SCRIPT, fighter_ready);
   }
 }
 
 void jax_lp_slam_third(Fighter *fighter) {
   if (!jax_throws_slam_continue(fighter)) {
-    retail_vm_enter(fighter, SLAM_FIRST_RELEASE_SCRIPT, fighter_ready);
+    script_vm_enter(fighter, SLAM_FIRST_RELEASE_SCRIPT, fighter_ready);
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   memcpy(victim->body.pos, fighter->saved_motion, sizeof victim->body.pos);
   fighter->sample_override = JAX_THROWS_SLAM_START;
   victim->sample_override = JAX_THROWS_SLAM_START;
-  retail_vm_enter(fighter, SLAM_FIRST_SCRIPT, fighter_ready);
+  script_vm_enter(fighter, SLAM_FIRST_SCRIPT, fighter_ready);
 }
 
 /* 42c9f0 blends into the stance (48fde0, 0xccc) and returns via 470420. */
@@ -104,7 +104,7 @@ void liu_kang_liu_script_lk_thrown_tail(Fighter *victim) {
 /* Native service cluster: 487220. */
 static void sub_zero_throws_thrown_finish(Fighter *victim);
 static void sub_zero_throws_lk_thrown_release(Fighter *victim);
-static const MoveDef sub_zero_throws_s_lk_thrown_rise = {.clip = 200, .last = 40, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef sub_zero_throws_s_lk_thrown_rise = {.clip = 200, .last = 40, .flags = SF_LOCK, .action = ACTION_CODE_4003};
 static const mframe_t sub_zero_throws_lk_thrown_release_phase_frames[5] = {{0}};
 static const mmove_t sub_zero_throws_lk_thrown_release_phase = {
     .firstframe = 42, .lastframe = 46, .frame = sub_zero_throws_lk_thrown_release_phase_frames, .endfunc = sub_zero_throws_lk_thrown_release};
@@ -123,7 +123,7 @@ static void sub_zero_throws_thrown_finish(Fighter *victim) {
 static void sub_zero_throws_lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_LK_THROWN_RELEASE, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_LK_THROWN_RELEASE, fighter_ready);
 }
 
 void sub_zero_lk_thrown_script(Fighter *victim) {

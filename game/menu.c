@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const int retail_roster[15] = {3, 7, 5, 12, 10, 0, 13, 8, 14, 11, 9, 1, 4, 6, 2};
+static const int selection_roster[15] = {3, 7, 5, 12, 10, 0, 13, 8, 14, 11, 9, 1, 4, 6, 2};
 
 enum {
   SELECT_COLUMNS = 3,
@@ -41,9 +41,9 @@ static void blit_page(Canvas *canvas, const Geometry *geometry, int page, Rect s
   canvas_blit(canvas, &geometry->textures.data[page], source, destination, false);
 }
 
-static int retail_cursor_for_roster(int roster) {
+static int selection_cursor_for_roster(int roster) {
   for (int i = 0; i < 15; ++i) {
-    if (retail_roster[i] == roster) {
+    if (selection_roster[i] == roster) {
       return i;
     }
   }
@@ -52,7 +52,7 @@ static int retail_cursor_for_roster(int roster) {
 
 static int roster_for_retail_cursor(int cursor, int current) {
   if (cursor < 15) {
-    return retail_roster[cursor];
+    return selection_roster[cursor];
   }
   if (cursor == 15) {
     return rand() % 15;
@@ -74,10 +74,10 @@ void menu_init(FrontendMenu *menu, const Mk4Image *image) {
    * lists, and five 12-byte label records. Pointers are word indices. */
   for (int i = 0; i < MENU_TOWERS; ++i) {
     MenuTower *tower = &menu->towers[i];
-    uint32_t list = mk4_image_u32(image, MK4_RETAIL_DATA_TOWER_COLUMNS + i * 16) * 4;
-    uint32_t name = mk4_image_u32(image, MK4_RETAIL_DATA_TOWER_LABELS + i * 12) * 4;
-    require(name >= MK4_RETAIL_DATA_IMAGE_BASE, "Invalid retail tower label");
-    view_string(view(image->bytes), name - MK4_RETAIL_DATA_IMAGE_BASE, tower->name, sizeof tower->name);
+    uint32_t list = mk4_image_u32(image, MK4_DATA_TOWER_COLUMNS + i * 16) * 4;
+    uint32_t name = mk4_image_u32(image, MK4_DATA_TOWER_LABELS + i * 12) * 4;
+    require(name >= MK4_DATA_IMAGE_BASE, "Invalid retail tower label");
+    view_string(view(image->bytes), name - MK4_DATA_IMAGE_BASE, tower->name, sizeof tower->name);
     while (tower->count < MENU_TOWER_FLOORS) {
       uint32_t packed = mk4_image_u32(image, list + tower->count * 4);
       if (!packed) {
@@ -140,13 +140,13 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
     } else if (menu->screen == MENU_SELECT) {
       if (menu->selecting_player == 1 && menu->mode == MENU_TEAM) {
         menu->selecting_player = 0;
-        menu->cursor = retail_cursor_for_roster(menu->p1);
+        menu->cursor = selection_cursor_for_roster(menu->p1);
       } else {
         menu->screen = MENU_MODE;
       }
     } else if (menu->screen == MENU_TOWER && !menu->climbing) {
       menu->screen = MENU_SELECT;
-      menu->cursor = retail_cursor_for_roster(menu->p1);
+      menu->cursor = selection_cursor_for_roster(menu->p1);
     } else if (menu->screen == MENU_TOWER || menu->screen == MENU_CONTINUE || menu->screen == MENU_COMPLETE) {
       menu->climbing = false;
       menu->screen = MENU_MODE;
@@ -154,7 +154,7 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
     } else if (menu->screen == MENU_ARENA) {
       menu->screen = MENU_SELECT;
       menu->selecting_player = menu->mode == MENU_TEAM ? 1 : 0;
-      menu->cursor = retail_cursor_for_roster(menu->selecting_player ? menu->p2 : menu->p1);
+      menu->cursor = selection_cursor_for_roster(menu->selecting_player ? menu->p2 : menu->p1);
     }
     return false;
   }
@@ -170,7 +170,7 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
         menu->mode = (MenuMode)menu->cursor;
         menu->screen = MENU_SELECT;
         menu->selecting_player = 0;
-        menu->cursor = retail_cursor_for_roster(menu->p1);
+        menu->cursor = selection_cursor_for_roster(menu->p1);
       }
     }
     return false;
@@ -189,7 +189,7 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
         menu->p1 = roster_for_retail_cursor(menu->cursor, menu->p1);
         if (menu->mode == MENU_TEAM) {
           menu->selecting_player = 1;
-          menu->cursor = retail_cursor_for_roster(menu->p2);
+          menu->cursor = selection_cursor_for_roster(menu->p2);
         } else {
           menu->p2 = (menu->p1 + 1) % roster_count();
           menu->screen = menu->mode == MENU_ARCADE ? MENU_TOWER : MENU_ARENA;
@@ -396,7 +396,7 @@ static void select_silhouette(Canvas *canvas, Rect area) {
 static int select_hovered(const FrontendMenu *menu, int player) {
   int current = player == 0 ? menu->p1 : menu->p2;
   if (menu->cursor < 15) {
-    return retail_roster[menu->cursor];
+    return selection_roster[menu->cursor];
   }
   return menu->cursor == 16 ? current : -1;
 }
@@ -531,7 +531,7 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
   for (int i = 0; i < 15; ++i) {
     const SelectTile *tile = &tiles[i];
     bool focused = tile->cursor == menu->cursor;
-    int cell = portrait_cells[retail_roster[tile->cursor]];
+    int cell = portrait_cells[selection_roster[tile->cursor]];
     Rect source = cell < 0 ? (Rect){168, 112, 64, 64} : (Rect){(cell % 4) * 64, (cell / 4) * 64, 64, 64};
     const Texture *page = &assets->hud.select_scene.textures.data[cell < 0 ? 1 : 3];
     uint32_t frame = 0xff14100c;

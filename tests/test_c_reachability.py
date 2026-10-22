@@ -69,7 +69,7 @@ static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
 static void lp(Fighter *fighter) { start_real_strike(fighter); }
 static const WeaponDef weapon = """ + initializer + """;
 void equip(Fighter *fighter) { fighter_equip_weapon(fighter, &weapon); }
-""", 'game/retail_native.c': 'void retail_native_entry(void) { equip(); }'})
+""", 'game/native/control.c': 'void script_native_entry(void) { equip(); }'})
                 with patch('c_reachability.workspace_graph', return_value=graph):
                     errors = unreachable_references({'character': 'example'})
                 self.assertEqual(len(errors), 1)
@@ -79,7 +79,7 @@ void equip(Fighter *fighter) { fighter_equip_weapon(fighter, &weapon); }
         graph = DefinitionGraph({'game/example/weapon.c': """
 static void hp(Fighter *fighter) { start_real_strike(fighter); }
 static const WeaponDef weapon = {0x69, hp};
-void retail_native_entry(void) { use(weapon); }
+void script_native_entry(void) { use(weapon); }
 """, 'game/other/weapon.c': """
 static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
 const WeaponDef weapon = {0x69, hp};

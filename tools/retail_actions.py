@@ -14,8 +14,8 @@ from scorpion_moves import script_program
 from retail_moves import EXE_SHA256
 
 ROOT = Path(__file__).resolve().parents[1]
-CATALOG = ROOT / 'game/retail_actions.inc'
-ROW = re.compile(r'RETAIL_ACTION\((ACTION_RETAIL_[0-9A-F]+),\s*(0x[0-9a-f]+),\s*("[^"\n]*"),\s*("[^"\n]*")\)')
+CATALOG = ROOT / 'game/data/action_codes.inc'
+ROW = re.compile(r'MK4_ACTION\((ACTION_CODE_[0-9A-F]+),\s*(0x[0-9a-f]+),\s*("[^"\n]*"),\s*("[^"\n]*")\)')
 
 
 def catalog():
@@ -23,12 +23,12 @@ def catalog():
     for line, text in enumerate(CATALOG.read_text().splitlines(), 1):
         match = ROW.fullmatch(text.strip())
         if not match:
-            if text.lstrip().startswith('RETAIL_ACTION('):
+            if text.lstrip().startswith('MK4_ACTION('):
                 raise ValueError('Invalid action catalog row %d' % line)
             continue
         name, value, confidence, description = match.groups()
         value = int(value, 16)
-        if value in result or name != 'ACTION_RETAIL_%04X' % value:
+        if value in result or name != 'ACTION_CODE_%04X' % value:
             raise ValueError('Duplicate or inconsistent action catalog value')
         result[value] = dict(name=name, confidence=ast.literal_eval(confidence),
                              description=ast.literal_eval(description), line=line)
@@ -90,7 +90,7 @@ def script_writers(image, value, character):
 def portable_references(value, entries):
     name = entries.get(value, {}).get('name')
     pattern = re.compile(r'(?:\b\w+->action|\.action|\bvictim_action\([^;\n]*?\))\s*(==|!=|=|<=|>=|<|>)\s*'
-                         r'(0x[0-9a-fA-F]+|\d+|ACTION_RETAIL_[0-9A-F]+)\b')
+                         r'(0x[0-9a-fA-F]+|\d+|ACTION_CODE_[0-9A-F]+)\b')
     rows = []
     for path in sorted([*(ROOT / 'game').rglob('*.c'), *(ROOT / 'game').rglob('*.inc')]):
         text = path.read_text()

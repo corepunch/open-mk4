@@ -1,7 +1,7 @@
 #ifndef MK4_IMAGE_H
 #define MK4_IMAGE_H
 #include "binary.h"
-#include "mk4_retail_data_addresses.h"
+#include "mk4_addresses.h"
 
 /* Relocated, non-executable retail data. VAs are checked indices, never pointers. */
 typedef struct Mk4Image {

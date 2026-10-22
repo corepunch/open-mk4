@@ -21,12 +21,12 @@ class ActionTests(unittest.TestCase):
     def test_shared_catalog_and_uncertainty(self):
         entries = catalog()
         self.assertGreaterEqual(len(entries), 53)
-        self.assertEqual(entries[0x1007]['name'], 'ACTION_RETAIL_1007')
+        self.assertEqual(entries[0x1007]['name'], 'ACTION_CODE_1007')
         self.assertEqual(entries[0x1007]['confidence'], 'inferred')
         self.assertEqual(entries[0x1003]['confidence'], 'verified')
         self.assertEqual(entries[0x100]['confidence'], 'verified')
         self.assertEqual(entries[0x1005]['confidence'], 'unresolved')
-        self.assertIn('#include "retail_actions.inc"', (ROOT / 'game/game.h').read_text())
+        self.assertIn('#include "data/action_codes.inc"', (ROOT / 'game/game.h').read_text())
 
     def test_native_evidence_matches_and_is_not_silently_trusted(self):
         for value in NATIVE:
@@ -52,13 +52,13 @@ class ActionTests(unittest.TestCase):
     def test_portable_navigation_unknown_and_limit(self):
         entries = catalog()
         refs = '\n'.join(portable_references(0x1007, entries))
-        self.assertIn('game/retail_vm.c:', refs)
+        self.assertIn('game/script/vm.c:', refs)
         self.assertNotIn('/generated/', refs)
-        self.assertIn('ACTION_RETAIL_1007', refs)
+        self.assertIn('ACTION_CODE_1007', refs)
         self.assertIn('**reader**', '\n'.join(portable_references(0x1003, entries)))
         unknown = action_text(self.image, 0xdeadbeef)
         self.assertIn('Uncatalogued action', unknown)
-        self.assertNotIn('ACTION_RETAIL_DEADBEEF', unknown)
+        self.assertNotIn('ACTION_CODE_DEADBEEF', unknown)
         limited = action_text(self.image, 0x1003, limit=1)
         self.assertEqual(limited.count('- **writer**') + limited.count('- **reader**'), 1)
         self.assertIn('omitted by --limit', limited)
@@ -74,7 +74,7 @@ class ActionTests(unittest.TestCase):
             self.assertEqual(list(Path(directory).iterdir()), [])
             output = Path(directory) / 'action.md'
             subprocess.run([*base, '--action', '0x1007', '--output', str(output)], cwd=directory, capture_output=True, text=True, check=True)
-            self.assertIn('ACTION_RETAIL_1007', output.read_text())
+            self.assertIn('ACTION_CODE_1007', output.read_text())
             for args in (['--action', '-1'], ['--action', '100000000'], ['--action', 'bad-code'],
                          ['--action', '1007', '--native', '459760'], ['--action', '1007', '--c'], ['--action', '1007', '--raw']):
                 bad = subprocess.run([*base, *args], cwd=directory, capture_output=True, text=True)

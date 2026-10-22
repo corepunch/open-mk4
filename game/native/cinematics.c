@@ -1,7 +1,7 @@
-#include "retail_layout.h"
-#include "native_services.h"
-#include "retail_data.h"
-#include "retail_data.h"
+#include "data/layout.h"
+#include "native/capabilities.h"
+#include "data/tables.h"
+#include "data/tables.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -18,7 +18,7 @@ enum {
 #define FIRST_OWNER_READY 1
 #define FIRST_VICTIM_DONE 2
 #define FIRST_TORSO_DONE 4
-static const MoveDef cage_fatality_first_body = {.clip = 408, .last = 142, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef cage_fatality_first_body = {.clip = 408, .last = 142, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip cage_fatality_owner_male[] = {
   {{.clip = 406, .last = 376, .flags = SF_LOCK | SF_RECORD}, 0, 0, 1, 0x32f1, 0x3333},
@@ -76,9 +76,9 @@ static void cage_fatality_first_native_to(Fighter *fighter, int target, int peri
 
 static void cage_fatality_first_victim_stream(Fighter *victim) {
   if (cage_fatality_female_victim(victim)) {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_FEMALE_VICTIM, fighter_ready);
+    script_vm_enter(victim, MK4_SCRIPT_CAGE_TORSO_RIP_FEMALE_VICTIM, fighter_ready);
   } else {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_MALE_VICTIM, fighter_ready);
+    script_vm_enter(victim, MK4_SCRIPT_CAGE_TORSO_RIP_MALE_VICTIM, fighter_ready);
   }
 }
 
@@ -95,7 +95,7 @@ static void cage_fatality_first_intro_complete(Fighter *fighter) {
   }
   native_hold(victim, 11, cage_fatality_first_victim_blends);
   native_hold(fighter, 16, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_CAGE_FATALITY_1_SCENE_SETUP, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_CAGE_FATALITY_1_SCENE_SETUP, fighter_ready);
 }
 
 static void cage_fatality_first_intro(Fighter *fighter) {
@@ -118,7 +118,7 @@ static void cage_fatality_first_intro(Fighter *fighter) {
 static void cage_fatality_first_owner_victory(Fighter *fighter) {
   fighter->state = S_VICTORY;
   fighter->native_variant |= FIRST_OWNER_READY;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_FATALITY_1_SCENE_LOOP, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_CAGE_FATALITY_1_SCENE_LOOP, fighter_ready);
   cage_fatality_first_maybe_complete(fighter);
 }
 
@@ -130,43 +130,43 @@ void cage_script_fatality_1_signal(Fighter *fighter) {
 void cage_first_victim_59(Fighter *victim) {
   victim->sample_override = 59;
   battle_sound(SOUND_B, 0x1c);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_59, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_59, fighter_ready);
 }
 
 void cage_first_victim_131(Fighter *victim) {
   victim->sample_override = 131;
   battle_sound(SOUND_B, 0x29);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_131, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_131, fighter_ready);
 }
 
 void cage_first_victim_148(Fighter *victim) {
   victim->sample_override = 148;
   battle_sound(SOUND_B, 0x1b);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_148, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_148, fighter_ready);
 }
 
 void cage_first_victim_166(Fighter *victim) {
   victim->sample_override = 166;
   battle_sound(SOUND_B, 0x2a);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_166, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_166, fighter_ready);
 }
 
 void cage_first_victim_185(Fighter *victim) {
   victim->sample_override = 185;
   battle_sound(SOUND_B, 0x1b);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_185, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_185, fighter_ready);
 }
 
 void cage_first_victim_206(Fighter *victim) {
   victim->sample_override = 206;
   battle_sound(SOUND_B, 0x2b);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FIRST_VICTIM_206, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FIRST_VICTIM_206, fighter_ready);
 }
 
 static void cage_fatality_first_lower_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   battle_camera_shake(5, 3, 0x2e14);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_LOWER_FINISH, retail_cage_torso_scene_complete);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_TORSO_RIP_LOWER_FINISH, action_cage_torso_scene_complete);
 }
 
 static void cage_fatality_first_lower_impact(Fighter *victim) {
@@ -180,7 +180,7 @@ void cage_first_sever(Fighter *victim) {
   Fighter *owner = (Fighter *)fighter_opponent(victim);
   victim->sample_override = 225;
   victim->hidden_joints[0] |= UINT64_C(1) << 3;
-  Fighter *torso = battle_scene_actor_start_script(owner, victim, &cage_fatality_first_body, MK4_RETAIL_SCRIPT_CAGE_FIRST_SEVER, fighter_ready);
+  Fighter *torso = battle_scene_actor_start_script(owner, victim, &cage_fatality_first_body, MK4_SCRIPT_CAGE_FIRST_SEVER, fighter_ready);
   require(torso != NULL, "Cage torso needs its bounded independent scene slot");
   /* 448af0's copied body hides the two leg subtrees11/12. The original
    * body keeps those legs and continues410/411 independently. */
@@ -195,23 +195,23 @@ void cage_first_sever(Fighter *victim) {
 
 void cage_first_torso_half(Fighter *torso) {
   cage_fatality_first_native_to(torso, 109, 2, NULL);
-  native_script_end(torso, MK4_RETAIL_SCRIPT_CAGE_FIRST_TORSO_HALF, fighter_ready);
+  native_script_end(torso, MK4_SCRIPT_CAGE_FIRST_TORSO_HALF, fighter_ready);
 }
 
 void cage_first_torso_123(Fighter *torso) {
   torso->sample_override = 123;
   battle_sound(SOUND_B, 0x17);
   battle_camera_shake(9, 3, 0x2e14);
-  retail_vm_enter(torso, MK4_RETAIL_SCRIPT_CAGE_FIRST_TORSO_123, fighter_ready);
+  script_vm_enter(torso, MK4_SCRIPT_CAGE_FIRST_TORSO_123, fighter_ready);
 }
 
 void cage_first_torso_finish(Fighter *torso) {
   battle_sound(SOUND_B, 0x17);
   battle_camera_shake(9, 3, 0x2e14);
-  retail_vm_enter(torso, MK4_RETAIL_SCRIPT_CAGE_FIRST_TORSO_FINISH, retail_cage_torso_scene_complete);
+  script_vm_enter(torso, MK4_SCRIPT_CAGE_FIRST_TORSO_FINISH, action_cage_torso_scene_complete);
 }
 
-void retail_cage_torso_scene_complete(Fighter *actor) {
+void action_cage_torso_scene_complete(Fighter *actor) {
   Fighter *owner = battle_is_scene_actor(actor) ? cage_fatality_first_body_owner(actor) : (Fighter *)fighter_opponent(actor);
   bool torso = battle_is_scene_actor(actor);
   /* Retiring the retail task leaves its final rendered body in the scene. */
@@ -226,7 +226,7 @@ void cage_fatality_1(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->native_variant = 0;
   fighter->state = S_PUNCH;
-  fighter->action = ACTION_RETAIL_0700;
+  fighter->action = ACTION_CODE_0700;
   mk4_script_scene_pose(victim, 13, 0);
   native_hold(victim, 1, NULL);
   battle_sound(SOUND_B, 0x30);
@@ -247,8 +247,8 @@ enum {
   CAGE_FATALITY_SECOND_EVENT_FATALITY_2
 };
 
-static const MoveDef cage_fatality_second_owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef cage_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef cage_fatality_second_owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef cage_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 /* 413ce0 uses4d17b8: the additive variants of the same ten share2
  * roots as Cage's orb, attached to joint10 at.7 scale. */
 static const MeshAnimation cage_fatality_second_charge_mesh = {
@@ -288,14 +288,14 @@ void cage_second_flash(Fighter *fighter, int task_type) {
 void cage_script_fatality_2_continue(Fighter *fighter) {
   /* 4658a0 -> standing dispatch ->4658d0 ->4e5880. Both actors
    * already have locked scene poses; retain this actor's frame ownership. */
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_FATALITY_2_UPPERCUT, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_CAGE_FATALITY_2_UPPERCUT, fighter_ready);
 }
 
 void cage_second_repeated_uppercuts(Fighter *fighter) {
   int sample = fighter_sample(fighter), frame = 1;
   require(fighter_move(fighter)->clip == 293 && sample == 6, "Cage repeated uppercuts require their retail six-pose startup");
   native_begin(fighter, 1, 45, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_CAGE_SECOND_REPEATED_UPPERCUTS, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_CAGE_SECOND_REPEATED_UPPERCUTS, fighter_ready);
   /* 4658f0 repeats rewind-to6/advance8 three times, then finishes293. */
   for (int repeat = 0; repeat < 3; ++repeat) {
     while (sample > 6) {
@@ -341,7 +341,7 @@ void cage_second_victim_hit(Fighter *fighter) {
   Mat3 unused;
   fighter_joint_position(fighter, 2, &neck, &unused);
   battle_blood_hit(fighter_opponent(fighter), fighter, neck, 0x3333);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_SECOND_VICTIM_HIT, fighter_execution_stop);
+  script_vm_enter(fighter, MK4_SCRIPT_CAGE_SECOND_VICTIM_HIT, fighter_execution_stop);
 }
 
 void cage_fatality_2(Fighter *fighter) {
@@ -351,15 +351,15 @@ void cage_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &cage_fatality_second_victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
   fighter_start_move(fighter, S_PUNCH, &cage_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_FATALITY_2_SCENE_ENTRY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_CAGE_FATALITY_2_SCENE_ENTRY, fighter_ready);
 }
 
 /* Native service cluster: 41ef20, 45ac30, 4816f0, 4817c0. */
-static const MoveDef fujin_fatality_second_owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef fujin_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+static const MoveDef fujin_fatality_second_owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef fujin_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
 
 /*4818f0 walks the zero-terminated retail skin rows; the native effects
  * differ in drift, spin and gravity, while joint/model order is shared. */
@@ -370,12 +370,12 @@ enum {
 };
 
 static unsigned skin_part_count(void) {
-  return retail_terminated_rows(battle_data(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
+  return mk4_terminated_rows(battle_data(), MK4_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
 }
 
 static int skin_part_joint(int index) {
   require(index >= 0 && (unsigned)index < skin_part_count(), "Invalid native skin tear phase");
-  return (int)mk4_image_u32(battle_data(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
+  return (int)mk4_image_u32(battle_data(), MK4_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
 }
 
 void fujin_second_blood(Fighter *fighter, int task_type) {
@@ -413,7 +413,7 @@ static void fujin_fatality_second_flayed(Fighter *victim) {
   if (victim->assets != NULL) {
     victim->scene_model = &victim->assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
   }
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FUJIN_FATALITY_2_VICTIM_FALL, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_FUJIN_FATALITY_2_VICTIM_FALL, fighter_ready);
 }
 
 void fujin_second_burst(Fighter *victim) {
@@ -448,7 +448,7 @@ void fujin_second_victim(Fighter *victim) {
     native_motion_frame(victim, visit, NULL, 0, action);
   }
   native_motion_play(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FUJIN_SECOND_VICTIM, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_FUJIN_SECOND_VICTIM, fighter_ready);
 }
 
 void fujin_second_fatality(Fighter *fighter) {
@@ -460,7 +460,7 @@ void fujin_second_fatality(Fighter *fighter) {
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter_start_move(fighter, S_PUNCH, &fujin_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_SECOND_FATALITY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_FUJIN_SECOND_FATALITY, fighter_ready);
 }
 
 /* Native service cluster: native_fatality. */
@@ -475,9 +475,9 @@ enum {
 
 /* U,U,F,F+BLK -> 467cd0 -> 43bd70 -> 4dfe90[12] = 41df20. After the shared
  * 41aaf0 preamble the owner runs retail 4d2db0 on clip 577. */
-static const MoveDef jarek_fatality_second_owner_pose = {.clip = 577, .last = 114, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef jarek_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef jarek_fatality_second_victim_scene = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef jarek_fatality_second_owner_pose = {.clip = 577, .last = 114, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef jarek_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef jarek_fatality_second_victim_scene = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 /* 41de30 -> 406dd0(50c604): share2 mesh 0, .113 forward of the node. */
 static const MeshAnimation jarek_fatality_second_glow_mesh = {
     .first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2, .offset = {0, 0, 0x1ced}};
@@ -537,7 +537,7 @@ static void jarek_fatality_second_victim_start(Fighter *victim) {
   battle_attach_head(victim, victim, 2);
   fighter_start_move(victim, S_KNOCKDOWN, &jarek_fatality_second_victim_scene);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_REACTING;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_START, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_VICTIM_START, fighter_ready);
 }
 
 /* 41dfc0: 48f880 replaces the victim task with 41dff0; the owner enters
@@ -546,7 +546,7 @@ void jarek_second_handoff(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_execution_cancel(victim);
   jarek_fatality_second_victim_start(victim);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_SECOND_HANDOFF, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_JAREK_SECOND_HANDOFF, fighter_ready);
 }
 
 /* 41e0e0: the separated head falls under gravity 0x20c, spinning about Z
@@ -592,7 +592,7 @@ void jarek_fatality_2(Fighter *fighter) {
   native_play(victim, false);
   fighter_start_move(fighter, S_PUNCH, &jarek_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_JAREK_FATALITY_2, fighter_ready);
 }
 
 /* Native service cluster: 412d80, 412ec0, 466a90, 466bb0, 466df0. */
@@ -602,8 +602,8 @@ void jarek_fatality_2(Fighter *fighter) {
  * current clip (4e5b38) and parks it (466df0), while 4e5a80 binds clip 284
  * on Jax, waits 20 ticks and enters 466a90: 475530 places the victim 0.85
  * units ahead, 15 ticks later 4e5a98 runs the clap. */
-static const MoveDef jax_fatality_second_owner_pose = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef jax_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef jax_fatality_second_owner_pose = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef jax_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 /* 412ec0 -> 4d1748: share2 mesh 281 for 30 ticks at joint 10, scale 0x4ccc. */
 static const MeshAnimation jax_fatality_second_flash_mesh = {
     .first = 281, .count = 1, .period = 1, .scale = 0x4ccc, .source = MESH_SHARED2, .offset = {7040, 6272, 0}, .additive = true};
@@ -645,7 +645,7 @@ void jax_fatality_2_approach(Fighter *fighter) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xd999);
   }
   native_hold(fighter, 15, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_JAX_FATALITY_2_APPROACH, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_JAX_FATALITY_2_APPROACH, fighter_ready);
 }
 
 /* 466df0 finishes only the auxiliary victim task; the body keeps its pose
@@ -662,7 +662,7 @@ void jax_fatality_2_head(Fighter *victim) {
   victim->hidden_joints[0] |= UINT64_C(1) << 2;
   mk4_script_effect(victim, 4);
   battle_blood_hit(fighter_opponent(victim), victim, neck, 0x3333);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAX_FATALITY_2_HEAD, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_JAX_FATALITY_2_HEAD, fighter_ready);
 }
 
 static void jax_fatality_second_scene_end(Fighter *victim) {
@@ -683,10 +683,10 @@ void jax_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &jax_fatality_second_victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
   fighter_start_move(fighter, S_PUNCH, &jax_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAX_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_JAX_FATALITY_2, fighter_ready);
 }
 
 /* Native service cluster: 406ba0, 43c140, 45ac30, 46a280, 46a500. */
@@ -699,8 +699,8 @@ enum {
  * The owner levitates on clips 493/486/487 (4dff88) and throws the skull
  * object 43c140; within 1.3 units it installs reaction 178 (4814c0), whose
  * head task 455bf0 and script 4ea240 -> 46a500 -> 4e5be0 fell the victim. */
-static const MoveDef kai_fatality_second_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef kai_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+static const MoveDef kai_fatality_second_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef kai_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
 /* 4dffe8 selects the skull rig 50c8f8 (share2 mesh 48): forward .2, Y -.2. */
 static const MeshAnimation kai_fatality_second_skull_mesh = {.first = 48, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2};
 
@@ -781,7 +781,7 @@ void kai_second_victim_fall(Fighter *victim) {
   kai_second_child_walk(victim);
   native_motion_begin(victim, KAI_FATALITY_SECOND_SETTLE, kai_fatality_second_complete);
   native_motion_play(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_KAI_SECOND_VICTIM_FALL, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_KAI_SECOND_VICTIM_FALL, fighter_ready);
 }
 
 void kai_second_victim(Fighter *victim) {
@@ -798,7 +798,7 @@ void kai_second_victim(Fighter *victim) {
     head->gravity = 0x20c;
   }
   battle_blood_hit(owner, victim, neck, 0x3333);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_KAI_SECOND_VICTIM, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_KAI_SECOND_VICTIM, fighter_ready);
 }
 
 void kai_fatality_2(Fighter *fighter) {
@@ -818,7 +818,7 @@ void kai_fatality_2(Fighter *fighter) {
   native_hold(victim, 1, NULL);
   fighter_start_move(fighter, S_PUNCH, &kai_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_KAI_FATALITY_2, fighter_ready);
 }
 
 /* Native service cluster: 43c500, 43c540, 45ac30, 48f9f0. */
@@ -829,7 +829,7 @@ enum {
   DRAGON_VICTIM_START_DELAY = 269
 };
 
-#define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
+#define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700}, a, b, 1, 0, 0}
 static void liu_kang_fatality_dragon_stream(Fighter *fighter);
 static void liu_kang_fatality_dragon_spawn(Fighter *fighter);
 static void liu_kang_fatality_dragon_actor_start(Fighter *fighter);
@@ -849,8 +849,8 @@ static const SceneClip liu_kang_fatality_dragon_actor[] = {
 // clang-format on
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip liu_kang_fatality_dragon_target[] = {
-  {{.clip = 389, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
-  {{.clip = 419, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 389, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 419, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 // clang-format on
 
@@ -883,7 +883,7 @@ static void liu_kang_fatality_dragon_actor_start(Fighter *fighter) {
 
 /*451190: native389/419 blends precede original4e1fa8 playback/retirement. */
 static void liu_kang_dragon_victim_script(Fighter *victim) {
-  retail_vm_enter(victim, DRAGON_VICTIM_SCRIPT, fighter_execution_stop);
+  script_vm_enter(victim, DRAGON_VICTIM_SCRIPT, fighter_execution_stop);
 }
 
 static void liu_kang_fatality_dragon_victim_start(Fighter *fighter) {
@@ -916,7 +916,7 @@ static void liu_kang_fatality_dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = DRAGON_ACTOR_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_actor, 2);
   int victim_end = DRAGON_VICTIM_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_target, NATIVE_COUNT(liu_kang_fatality_dragon_target)) +
-                   (int)mk4_image_u32(battle_data(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
+                   (int)mk4_image_u32(battle_data(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + MK4_ANIMATION_FRAME_COUNT_OFFSET);
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {
@@ -962,11 +962,11 @@ static void liu_kang_fatality_fatal_fireball_object(Projectile *p) {
 }
 
 void liu_kang_liu_script_fatal_setup(Fighter *fighter) {
-  retail_scene_pose(fighter, 537, 0, true);
-  retail_scene_pose(fighter_peer(fighter), 539, 0, false);
+  action_scene_pose(fighter, 537, 0, true);
+  action_scene_pose(fighter_peer(fighter), 539, 0, false);
   fighter->flags |= FF_PAIRED;
   fighter_peer(fighter)->flags |= FF_PAIRED;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_FIREBALL_FATALITY_PAIRED_OPENING, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_LIU_KANG_FIREBALL_FATALITY_PAIRED_OPENING, fighter_ready);
 }
 
 void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type) {
@@ -997,10 +997,10 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
     return;
   }
-  retail_scene_join_victory(fighter);
+  action_scene_join_victory(fighter);
   Fighter *victim = fighter_peer(fighter);
-  retail_scene_pose(victim, 13, 0, false);
-  retail_scene_pose(fighter, 119, 0, true);
+  action_scene_pose(victim, 13, 0, false);
+  action_scene_pose(fighter, 119, 0, true);
   if (id == FINISH_LIU_KANG_1) {
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);
@@ -1009,7 +1009,7 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   if (id == FINISH_LIU_KANG_1) {
     liu_kang_fatality_dragon_fatality_script(fighter);
   } else {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_START_FATALITY, fighter_ready);
+    script_vm_enter(fighter, MK4_SCRIPT_LIU_KANG_START_FATALITY, fighter_ready);
   }
 }
 
@@ -1031,17 +1031,17 @@ void liu_kang_second_fatality(Fighter *fighter) {
  * Chi, 43cbb0 runs his first fatality instead. The portable dispatch uses
  * the victim's original native table target, with the current actor as owner. */
 void quan_chi_second_fatality(Fighter *fighter) {
-  unsigned roster = retail_character_slot((unsigned)fighter_opponent(fighter)->roster);
+  unsigned roster = mk4_character_slot((unsigned)fighter_opponent(fighter)->roster);
   if (roster == 8) {
-    retail_finish_first(fighter);
+    action_finish_first(fighter);
     return;
   }
-  uint32_t target = retail_finish_target(battle_data(), roster, true);
+  uint32_t target = mk4_finish_target(battle_data(), roster, true);
   if (target == 0) {
     fighter_ready(fighter);
     return;
   }
-  retail_native_entry(target)(fighter);
+  script_native_entry(target)(fighter);
 }
 
 /* Native service cluster: 410380. */
@@ -1061,7 +1061,7 @@ void raiden_scene_end_watch(Fighter *fighter) {
 }
 
 void raiden_script_victory(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_VICTORY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_VICTORY, fighter_ready);
 }
 
 void raiden_script_victory_effect(Fighter *fighter) {
@@ -1072,7 +1072,7 @@ void raiden_script_victory_effect(Fighter *fighter) {
 /* Native service cluster: 427b70, 464960, 464a60, 464aa0, 464bb0, 464ee0. */
 void raiden_script_second_blend(Fighter *fighter) {
   mk4_mmove_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_FIRST_PLAYBACK, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_FIRST_PLAYBACK, fighter_ready);
 }
 
 void raiden_script_second_particles(Fighter *fighter) {
@@ -1081,22 +1081,22 @@ void raiden_script_second_particles(Fighter *fighter) {
 
 void raiden_script_second_effect(Fighter *fighter) {
   battle_particles(fighter_peer(fighter), 18, 12, true);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_REPEATED_PLAYBACK, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_REPEATED_PLAYBACK, fighter_ready);
 }
 
 void raiden_script_second_release(Fighter *fighter) {
   battle_particles(fighter_peer(fighter), 2, 24, true);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_ENDING, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_ENDING, fighter_ready);
 }
 
 void raiden_script_second_end(Fighter *fighter) {
   fighter->body.physics = raiden_scene_end_watch;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_OWNER_HOLD, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_OWNER_HOLD, fighter_ready);
 }
 
 void raiden_script_second_victim_end(Fighter *fighter) {
   battle_particles(fighter, 2, 24, true);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_VICTIM_HOLD, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_VICTIM_HOLD, fighter_ready);
 }
 
 void raiden_second_fatality(Fighter *fighter) {
@@ -1109,7 +1109,7 @@ void raiden_second_fatality(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x14000);
   }
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_SECOND_FATALITY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_SECOND_FATALITY, fighter_ready);
 }
 
 /* Native service cluster: 41c4b0, 41c4e0, 41d260, 41f1b0. */
@@ -1126,7 +1126,7 @@ enum {
 #define SECOND_ARRIVED 1
 #define SECOND_HEADSHOT 2
 
-static const MoveDef reiko_fatality_second_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef reiko_fatality_second_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 
 /* 45e530: 0x1cccc <= distance <= 0x30000, then the 45e5e0 finish window. */
 /* A star leaves the owner's hand joint (9 or 10) and homes on its target
@@ -1250,12 +1250,12 @@ static void reiko_fatality_second_arrival_gate(Fighter *victim) {
 }
 
 static void reiko_fatality_second_victim_stagger(Fighter *victim) {
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_STAGGER, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_VICTIM_STAGGER, fighter_ready);
 }
 
 /* 41c4b0: a floor pool at joint 4, then 4d2d90. */
 void reiko_second_victim_fall(Fighter *victim) {
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REIKO_SECOND_VICTIM_FALL, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_REIKO_SECOND_VICTIM_FALL, fighter_ready);
 }
 
 static void reiko_fatality_second_end(Fighter *victim) {
@@ -1289,7 +1289,7 @@ void reiko_second_fatality(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reiko_fatality_second_owner);
   fighter->sample_override = 0;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REIKO_SECOND_FATALITY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_REIKO_SECOND_FATALITY, fighter_ready);
 }
 
 #undef SECOND_ARRIVED
@@ -1303,9 +1303,9 @@ enum {
 
 /* UP record 4e4600 (gate 45e250) targets 467ce0, which selects
  * 4e0498[10] = 4539b0: Reptile's head-bite scene. */
-static const MoveDef reptile_fatality_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+static const MoveDef reptile_fatality_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
 /* 4539b0 waits 31 visits before 475250; the stance pose is not advanced. */
-static const MoveDef reptile_fatality_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef reptile_fatality_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 /* 475250 blends 4fc1bc (clip 432) at step 0x32f1 from 0x3333. */
 static const SceneClip reptile_fatality_owner_blend[] = {
@@ -1330,7 +1330,7 @@ bool reptile_can_first_fatality(const Fighter *fighter) {
 }
 
 static void reptile_fatality_owner_entry(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_ENTRY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_OWNER_ENTRY, fighter_ready);
 }
 
 static void reptile_fatality_owner_blend_start(Fighter *fighter) {
@@ -1342,7 +1342,7 @@ static void reptile_fatality_owner_blend_start(Fighter *fighter) {
 /* 453ae0: roster voice list 4 (no portable bank), cursor 11, VM 4e2e70. */
 void reptile_first_owner_cycle(Fighter *fighter) {
   fighter->sample_override = 11;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_FIRST_OWNER_CYCLE, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_REPTILE_FIRST_OWNER_CYCLE, fighter_ready);
 }
 
 /* 453b20: cursor 169, voice lists 4/12 and the 453bf0 hand-blood task,
@@ -1350,17 +1350,17 @@ void reptile_first_owner_cycle(Fighter *fighter) {
  * slot; the finisher already owns both actors' controls. */
 void reptile_first_owner_bite(Fighter *fighter) {
   fighter->sample_override = 169;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_FIRST_OWNER_BITE, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_REPTILE_FIRST_OWNER_BITE, fighter_ready);
 }
 
 /* 453ba0: cursor 294 and VM 4e2ea8, which jumps back to 4e2e98. */
 void reptile_first_owner_loop(Fighter *fighter) {
   fighter->sample_override = 294;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_FIRST_OWNER_LOOP, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_REPTILE_FIRST_OWNER_LOOP, fighter_ready);
 }
 
 static void reptile_fatality_victim_entry(Fighter *victim) {
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_ENTRY, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_VICTIM_ENTRY, fighter_ready);
 }
 
 static void reptile_fatality_victim_join(Fighter *victim) {
@@ -1403,13 +1403,13 @@ void reptile_first_victim_bite(Fighter *victim) {
   battle_blood_hit(owner, victim, reptile_fatality_neck(victim), 0x3333);
   victim->hidden_joints[0] |= UINT64_C(1) << 2;
   battle_sound(SOUND_IMPACT_VOICE, roster_def(victim->roster)->asset);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REPTILE_FIRST_VICTIM_BITE, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_REPTILE_FIRST_VICTIM_BITE, fighter_ready);
 }
 
 /* 4541b0: B[0x30], then VM 4e2ed0 repeats 85..124. */
 void reptile_first_victim_shake(Fighter *victim) {
   battle_sound(SOUND_B, 0x30);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REPTILE_FIRST_VICTIM_SHAKE, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_REPTILE_FIRST_VICTIM_SHAKE, fighter_ready);
 }
 
 static void reptile_fatality_victim_spray(Fighter *victim) {
@@ -1486,8 +1486,8 @@ enum {
 
 /* HP record 4e457c (U,D,D,D, window 50, gate 45e530) targets 467cd0, which
  * selects 4dfe90[10] = 43bf40: shared setup 41aaf0, then VM 4dff08. */
-static const MoveDef reptile_fatality_second_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef reptile_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+static const MoveDef reptile_fatality_second_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef reptile_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
 /* 41e490 droplets reuse the 4d16d0 shared meshes 340..344; 40f380 adds
  * 0x106 gravity each visit. */
 static const ParticleVisual reptile_fatality_second_acid_visual = {
@@ -1526,7 +1526,7 @@ void reptile_second_acid(Fighter *fighter, int task_type) {
  * and turns the body perpendicular to the pair, then VM 4ea290. */
 static void reptile_fatality_second_turn(Fighter *victim) {
   victim->body.angle[AXIS_Y] = -0x191eb;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REPTILE_FATALITY_2_VICTIM_MELT, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_REPTILE_FATALITY_2_VICTIM_MELT, fighter_ready);
 }
 
 void reptile_second_victim(Fighter *victim) {
@@ -1557,7 +1557,7 @@ static void reptile_fatality_second_flayed(Fighter *victim) {
   if (victim->assets != NULL) {
     victim->scene_model = &victim->assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
   }
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FUJIN_FATALITY_2_VICTIM_FALL, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_FUJIN_FATALITY_2_VICTIM_FALL, fighter_ready);
 }
 
 /* 481590: save the -0x28f drift, stop motion and run 4818f0, one joint
@@ -1586,12 +1586,12 @@ void reptile_fatality_2(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reptile_fatality_second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_REPTILE_FATALITY_2, fighter_ready);
 }
 
 /* Native service cluster: 41ea50, 41ebd0, 41ec70, 41ed80, 41f1b0, 443930, 443a30, 443a70, 443b40, 443c10, 444000, 444030, 444060, 444100, 444150, 444190, 483df0, 48a1f0. */
 #define BLEND(clip_id, cursor)                                                                                                                                 \
-  {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
+  {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700}, cursor, cursor, 1, 0x3333, 0x3333}
 static void scorpion_fatality_finish_scene(Fighter *fighter);
 static void scorpion_fatality_burn_start(Fighter *fighter);
 static void scorpion_fatality_beast_start(Fighter *fighter);
@@ -1610,14 +1610,14 @@ static void scorpion_fatality_burn_start(Fighter *fighter) {
   int frames = 8 - g_battle.phase_ticks;
   if (frames > 0) {
     native_hold(fighter, frames, NULL);
-    native_script_end(fighter, MK4_RETAIL_SCRIPT_BURN_START, fighter_ready);
+    native_script_end(fighter, MK4_SCRIPT_BURN_START, fighter_ready);
   } else {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BURN_START, fighter_ready);
+    script_vm_enter(fighter, MK4_SCRIPT_BURN_START, fighter_ready);
   }
 }
 
 static void scorpion_fatality_beast_start(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BEAST_START, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_BEAST_START, fighter_ready);
 }
 
 void scorpion_start_fatality(Fighter *fighter, int id) {
@@ -1627,8 +1627,8 @@ void scorpion_start_fatality(Fighter *fighter, int id) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  retail_scene_pose(victim, 13, 0, false);
-  retail_scene_pose(fighter, id == FINISH_BEAST ? 12 : 390, 0, true);
+  action_scene_pose(victim, 13, 0, false);
+  action_scene_pose(fighter, id == FINISH_BEAST ? 12 : 390, 0, true);
   FighterFn start = id == FINISH_BURN ? scorpion_fatality_burn_start : scorpion_fatality_beast_start;
   start(fighter);
 }
@@ -1644,56 +1644,56 @@ void scorpion_beast_fatality(Fighter *fighter) {
 void scorpion_script_burn_begin(Fighter *fighter) {
   battle_sound(SOUND_B, 14);
   battle_sound(SOUND_B, 46);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_BURN_BEGIN, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SCORPION_BURN_BEGIN, fighter_ready);
 }
 
 void scorpion_script_burn_victim_start(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   victim->appearance = APPEARANCE_BURNED;
   fighter_execution_cancel(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_1_VICTIM, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_FATALITY_1_VICTIM, fighter_ready);
   battle_sound(SOUND_B, 15);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_1_OWNER_FLAME, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SCORPION_FATALITY_1_OWNER_FLAME, fighter_ready);
 }
 
 void scorpion_script_burn_repeat1(Fighter *fighter) {
   scorpion_native_blend(fighter, scorpion_fatality_burn_repeat_blend, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_SCORPION_BURN_REPEAT1, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_SCORPION_BURN_REPEAT1, fighter_ready);
 }
 
 void scorpion_script_burn_repeat2(Fighter *fighter) {
   scorpion_native_blend(fighter, scorpion_fatality_burn_repeat_blend, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_SCORPION_BURN_REPEAT2, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_SCORPION_BURN_REPEAT2, fighter_ready);
 }
 
 void scorpion_script_burn_victory(Fighter *fighter) {
   scorpion_native_blend(fighter, scorpion_fatality_burn_victory_blend, NULL);
-  native_script_end(fighter, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTORY, fighter_ready);
+  native_script_end(fighter, MK4_SCRIPT_SCORPION_BURN_VICTORY, fighter_ready);
 }
 
 void scorpion_script_burn_victim_cue(Fighter *victim) {
   battle_sound(SOUND_B, 16);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTIM_CUE, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_BURN_VICTIM_CUE, fighter_ready);
 }
 
 void scorpion_script_burn_victim_repeat(Fighter *victim) {
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTIM_REPEAT, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_BURN_VICTIM_REPEAT, fighter_ready);
 }
 
 void scorpion_script_burn_victim_blend(Fighter *victim) {
   scorpion_native_blend(victim, scorpion_fatality_burn_victim_blend, NULL);
-  native_script_end(victim, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTIM_BLEND, fighter_ready);
+  native_script_end(victim, MK4_SCRIPT_SCORPION_BURN_VICTIM_BLEND, fighter_ready);
 }
 
 void scorpion_script_burn_victim_impact(Fighter *victim) {
   mk4_script_shake(victim, 0);
   battle_particles(victim, 0, 4, true);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTIM_IMPACT, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_BURN_VICTIM_IMPACT, fighter_ready);
 }
 
 void scorpion_script_burn_victim_settle(Fighter *victim) {
   mk4_script_shake(victim, 0);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_BURN_VICTIM_SETTLE, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_BURN_VICTIM_SETTLE, fighter_ready);
 }
 
 void scorpion_script_burn_victim_end(Fighter *victim) {
@@ -1711,19 +1711,19 @@ static void scorpion_fatality_beast_watch(Fighter *fighter) {
 void scorpion_script_beast_begin(Fighter *fighter) {
   fighter->appearance = APPEARANCE_BEAST;
   fighter->body.physics = scorpion_fatality_beast_watch;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_BEAST_BEGIN, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SCORPION_BEAST_BEGIN, fighter_ready);
 }
 
 void scorpion_script_beast_attack(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   fighter_execution_cancel(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_2_VICTIM, fighter_ready);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SCORPION_FATALITY_2_CREATURE_ATTACK, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_FATALITY_2_VICTIM, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SCORPION_FATALITY_2_CREATURE_ATTACK, fighter_ready);
 }
 
 void scorpion_script_beast_victim_pieces(Fighter *victim) {
   battle_particles(victim, 0, 12, true);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SCORPION_BEAST_VICTIM_PIECES, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SCORPION_BEAST_VICTIM_PIECES, fighter_ready);
 }
 
 void scorpion_script_beast_voice(Fighter *fighter) {
@@ -1789,7 +1789,7 @@ void shinnok_fatality_vanish_cue(Fighter *fighter) {
 /* 455190: the child cue again, then clip 436 to sample 18 (4e2f10). */
 void shinnok_fatality_return(Fighter *fighter) {
   shinnok_fatality_vanish_sound_frame(fighter);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_FATALITY_RETURN, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SHINNOK_FATALITY_RETURN, fighter_ready);
 }
 
 static void shinnok_fatality_reappear_land(Fighter *fighter) {
@@ -1806,13 +1806,13 @@ void shinnok_fatality_reappear(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x2666;
   fighter->body.gravity = 0x28f;
   fighter->body.on_land = shinnok_fatality_reappear_land;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_FATALITY_REAPPEAR, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SHINNOK_FATALITY_REAPPEAR, fighter_ready);
 }
 
 static void shinnok_fatality_victory_loop(Fighter *fighter) {
   fighter->state = S_VICTORY;
   fighter->native_variant |= SHINNOK_FATALITY_FATALITY_OWNER_READY;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_VICTORY_LOOP, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_VICTORY_LOOP, fighter_ready);
   shinnok_fatality_maybe_complete(fighter);
 }
 
@@ -1831,7 +1831,7 @@ void shinnok_fatality_maybe_complete(Fighter *owner) {
 /* Both fatalities start from a locked standing owner (stance clip 283,
  * 53d408[6]) and the dizzy victim. */
 void shinnok_fatality_begin(Fighter *fighter, unsigned done) {
-  static const MoveDef owner_pose = {.clip = 283, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+  static const MoveDef owner_pose = {.clip = 283, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
@@ -1855,8 +1855,8 @@ enum {
 /* Fatality II: 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0. The victim floats
  * up while Shinnok vanishes; two mirrored giant hands (rig 5083c4) clap
  * and burst it, then he leaps back in. */
-static const MoveDef shinnok_fatality_second_clap_hand_pose = {.clip = 541, .last = 199, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
-static const MoveDef shinnok_fatality_second_victim_pose = {.clip = 542, .last = 11, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+static const MoveDef shinnok_fatality_second_clap_hand_pose = {.clip = 541, .last = 199, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
+static const MoveDef shinnok_fatality_second_victim_pose = {.clip = 542, .last = 11, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
 
 /* Rows of the independent 46a280/46a380 lift task. */
 #define LIFT_ROWS 400
@@ -1904,18 +1904,18 @@ void shinnok_second_victim(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &shinnok_fatality_second_victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_REACTING;
   shinnok_fatality_second_lift_victim(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SHINNOK_SECOND_VICTIM, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SHINNOK_SECOND_VICTIM, fighter_ready);
 }
 
 void shinnok_second_vanish(Fighter *fighter) {
   /* 43c820 state 0 -> 4552e0. */
   shinnok_fatality_vanish_cue(fighter);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_SECOND_VANISH, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SHINNOK_SECOND_VANISH, fighter_ready);
 }
 
 void shinnok_second_vanished(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_SECOND_VANISHED, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SHINNOK_SECOND_VANISHED, fighter_ready);
 }
 
 static void shinnok_fatality_second_hand_model(Fighter *hand) {
@@ -1926,7 +1926,7 @@ static void shinnok_fatality_second_hand_model(Fighter *hand) {
 
 static void shinnok_fatality_second_first_hand_entry(Fighter *hand) {
   shinnok_fatality_second_hand_model(hand);
-  retail_vm_enter(hand, MK4_RETAIL_SCRIPT_SHINNOK_FATALITY_2_FIRST_HAND, fighter_ready);
+  script_vm_enter(hand, MK4_SCRIPT_SHINNOK_FATALITY_2_FIRST_HAND, fighter_ready);
 }
 
 static void shinnok_fatality_second_hand_entry(Fighter *hand) {
@@ -1935,7 +1935,7 @@ static void shinnok_fatality_second_hand_entry(Fighter *hand) {
   hand->facing = -hand->facing;
   hand->heading[0] = -hand->heading[0];
   hand->heading[1] = -hand->heading[1];
-  retail_vm_enter(hand, MK4_RETAIL_SCRIPT_SHINNOK_FATALITY_2_SECOND_HAND, fighter_ready);
+  script_vm_enter(hand, MK4_SCRIPT_SHINNOK_FATALITY_2_SECOND_HAND, fighter_ready);
 }
 
 /* 43caa0: rig 5083c4 at the victim's X, Z zero, with the owner's yaw and
@@ -1973,7 +1973,7 @@ void shinnok_second_clap(Fighter *hand) {
   native_motion_stop(victim);
   mk4_script_stop_body(victim);
   victim->appearance = APPEARANCE_HIDDEN;
-  retail_vm_enter(hand, MK4_RETAIL_SCRIPT_SHINNOK_SECOND_CLAP, fighter_ready);
+  script_vm_enter(hand, MK4_SCRIPT_SHINNOK_SECOND_CLAP, fighter_ready);
 }
 
 /* 41db70/41dba0/41dbd0 -> 41dc00 allocate generic flesh pieces from
@@ -1994,7 +1994,7 @@ void shinnok_fatality_2(Fighter *fighter) {
   fighter->body.pos[AXIS_X] = fighter->body.pos[AXIS_Z] = 0;
   victim->body.pos[AXIS_X] = side;
   victim->body.pos[AXIS_Z] = 0;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SHINNOK_FATALITY_2, fighter_ready);
 }
 
 #undef LIFT_ROWS
@@ -2025,34 +2025,34 @@ void sonya_script_second_pause(Fighter *fighter) {
  * that remain, and the result pose follows the second. */
 void sonya_script_second_cycle_end(Fighter *fighter) {
   if (--fighter->script_phase > 0) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_CYCLE, fighter_ready);
+    script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_CYCLE, fighter_ready);
     return;
   }
   fighter->body.physics = sonya_scene_end_watch;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_OWNER_ENDING, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_OWNER_ENDING, fighter_ready);
 }
 
 void sonya_script_second_branch(Fighter *fighter) {
   if (fighter->script_phase == 2) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_FIRST_CYCLE, fighter_ready);
+    script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_FIRST_CYCLE, fighter_ready);
   } else {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_SECOND_CYCLE, fighter_ready);
+    script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_SECOND_CYCLE, fighter_ready);
   }
 }
 
 void sonya_script_second_repeat(Fighter *fighter) {
   fighter->script_phase = 2;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_CYCLE, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_CYCLE, fighter_ready);
 }
 
 void sonya_script_second_open(Fighter *fighter) {
   battle_sound(SOUND_A, 0x62);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_OPENING, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SONYA_FATALITY_2_OPENING, fighter_ready);
 }
 
 void sonya_script_second_victim_end(Fighter *victim) {
   battle_particles(victim, 2, 12, true);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_VICTIM_END, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_SONYA_FATALITY_2_VICTIM_END, fighter_ready);
 }
 
 void sonya_second_fatality(Fighter *fighter) {
@@ -2065,7 +2065,7 @@ void sonya_second_fatality(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);
   }
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_SECOND_FATALITY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SONYA_SECOND_FATALITY, fighter_ready);
 }
 
 /* Native services: spine-pull finisher. */
@@ -2092,8 +2092,8 @@ void sub_zero_start_fatality(Fighter *fighter, int id) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  retail_scene_pose(victim, 13, 0, false);
-  retail_scene_pose(fighter, id == FINISH_SUB_ZERO_1 ? 385 : 552, 0, true);
+  action_scene_pose(victim, 13, 0, false);
+  action_scene_pose(fighter, id == FINISH_SUB_ZERO_1 ? 385 : 552, 0, true);
   if (id == FINISH_SUB_ZERO_1) {
     /* 445100 -> 475530 aligns the scene pair at 1.45 units. */
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
@@ -2115,7 +2115,7 @@ void sub_zero_script_breath_victim_end(Fighter *victim) {
 
 static void sub_zero_fatality_breath_object(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner];
-  if (owner->action != ACTION_RETAIL_0700 || fighter_move(owner)->clip != 552) {
+  if (owner->action != ACTION_CODE_0700 || fighter_move(owner)->clip != 552) {
     p->kind = 0;
     return;
   }
@@ -2143,13 +2143,13 @@ void sub_zero_script_breath_freeze(Fighter *fighter, int type) {
 }
 
 void sub_zero_script_breath_approach(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_BREATH_APPROACH, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_BREATH_APPROACH, fighter_ready);
 }
 
 static void sub_zero_fatality_breath_resume(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   fighter->script_phase = 3;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BREATH_RESUME, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_BREATH_RESUME, fighter_ready);
 }
 
 void sub_zero_breath_travel(Fighter *fighter) {
@@ -2164,13 +2164,13 @@ void sub_zero_script_breath_shatter(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   battle_particles(victim, 3, 32, true);
   battle_shatter(victim);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_BREATH_SHATTER, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_BREATH_SHATTER, fighter_ready);
 }
 
 /* Native services: freezing-breath finisher. */
 void sub_zero_second_fatality_script(Fighter *fighter) {
-  retail_vm_enter(fighter_peer(fighter), MK4_RETAIL_SCRIPT_SUB_ZERO_FATALITY_2_VICTIM, fighter_ready);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_FATALITY_2_BREATH, fighter_ready);
+  script_vm_enter(fighter_peer(fighter), MK4_SCRIPT_SUB_ZERO_FATALITY_2_VICTIM, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_SUB_ZERO_FATALITY_2_BREATH, fighter_ready);
 }
 
 void sub_zero_second_fatality(Fighter *fighter) {
@@ -2184,23 +2184,23 @@ enum {
 };
 
 /* HK D,F,D,F record 4e453c -> 467cd0 -> 43bd70 -> 4dfe90[9] = 464f30. */
-static const MoveDef tanya_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef tanya_fatality_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 /* 4611c0 selects the roster stance 53d408[9] = clip 439. */
-static const MoveDef tanya_fatality_second_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef tanya_fatality_second_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};
 
 /* 45e570: close fatality range (<= 1 unit) and the shared finish window. */
 /* Task-619 cue lists: {visits before the action, token or random list}. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const int tanya_fatality_second_owner_cue[][2] = {{33, 0xd2}, {20, 0x281}};
-static const int tanya_fatality_second_victim_cue[][2] = {{45, RETAIL_SOUND_FOOTSTEP_LIST}, {12, RETAIL_SOUND_FOOTSTEP_LIST}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
+static const int tanya_fatality_second_victim_cue[][2] = {{45, MK4_SOUND_FOOTSTEP_LIST}, {12, MK4_SOUND_FOOTSTEP_LIST}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
 // clang-format on
 
 static bool tanya_fatality_second_cue_frame(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   (void)owner;
   (void)opponent;
-  if (event->frame_value == RETAIL_SOUND_FOOTSTEP_LIST) {
+  if (event->frame_value == MK4_SOUND_FOOTSTEP_LIST) {
     /* 48a2a0 -> 489e80: one of four list 4ea8b0 tokens. */
-    retail_native_sound_list(RETAIL_SOUND_FOOTSTEP_LIST);
+    action_native_sound_list(MK4_SOUND_FOOTSTEP_LIST);
   } else {
     battle_sound(SOUND_TOKEN, event->frame_value);
   }
@@ -2249,7 +2249,7 @@ void tanya_second_height(Fighter *fighter) {
   if (roster == 2 || roster == 9 || roster == 16) {
     fighter->body.pos[AXIS_Y] += 0x147a;
   }
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_SECOND_HEIGHT, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_TANYA_SECOND_HEIGHT, fighter_ready);
 }
 
 static void tanya_fatality_second_victory_finish(Fighter *fighter) {
@@ -2270,7 +2270,7 @@ static void tanya_fatality_second_victory_watch(Fighter *fighter) {
  * ends 50 visits into that loop, as in Sub-Zero's port. */
 void tanya_script_victory(Fighter *fighter) {
   fighter->body.physics = tanya_fatality_second_victory_watch;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_VICTORY, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_VICTORY, fighter_ready);
 }
 
 static void tanya_fatality_second_victory(Fighter *fighter) {
@@ -2293,7 +2293,7 @@ void tanya_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &tanya_fatality_second_victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
+  script_vm_enter(victim, MK4_SCRIPT_CAGE_FATALITY_2_VICTIM_START, fighter_ready);
   /* 475530 places the victim 1.0 ahead; 4906c0 grounds the owner. */
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), Q16_ONE);
@@ -2301,5 +2301,5 @@ void tanya_fatality_2(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &tanya_fatality_second_owner_pose);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FATALITY_2, fighter_ready);
+  script_vm_enter(fighter, MK4_SCRIPT_TANYA_FATALITY_2, fighter_ready);
 }

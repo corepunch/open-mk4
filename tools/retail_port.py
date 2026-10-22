@@ -34,14 +34,14 @@ def masked_c(text):
 def port_entry(character, name):
     move = moves_for(character).get(name, {})
     if name in ('draw_weapon', 'weapon_followup'):
-        return ('game/retail_weapon.c', 'retail_weapon_draw')
+        return ('game/native/weapon_entries.c', 'action_weapon_draw')
     # Armed button names navigate to shared selectors; retail data chooses
     # the actual weapon routine and inventory at runtime.
     if name.startswith(('weapon_', 'sword_', 'staff_', 'scepter_', 'axe_')):
         for suffix, symbol in (('back_hp', 'back_high_punch'), ('back_lp', 'back_low_punch'),
                                ('hp', 'high_punch'), ('lp', 'low_punch')):
             if name.endswith('_' + suffix):
-                return ('game/retail_weapon.c', 'retail_weapon_' + symbol)
+                return ('game/native/weapon_entries.c', 'action_weapon_' + symbol)
     from retail_coverage import native_entries
     symbol = native_entries().get(move.get('entry'))
     if symbol:
@@ -54,7 +54,7 @@ def port_entry(character, name):
         path, symbol = helper.port
         return path, canonical_name(path, symbol)
     if move.get('scripts'):
-        return ('game/retail_vm.c', 'retail_vm_enter')
+        return ('game/script/vm.c', 'script_vm_enter')
     return None
 
 
@@ -231,7 +231,7 @@ def port_text(disassembly, name, character=0, limit=512):
     selected = {value for value, sites in NATIVE.items() if any(entry in entries for _, entry, _, _, _ in sites)}
     if port:
         text = '\n'.join(code for _, code in source_closure(port).values())
-        selected.update(int(value, 16) for value in re.findall(r'\bACTION_RETAIL_([0-9A-F]+)\b', masked_c(text)))
+        selected.update(int(value, 16) for value in re.findall(r'\bACTION_CODE_([0-9A-F]+)\b', masked_c(text)))
     for value in sorted(selected):
         entry = catalog().get(value)
         rows.append('- `%s = %#x`: %s (%s). Research: `--action %x`.' %

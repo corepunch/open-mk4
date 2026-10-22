@@ -137,7 +137,7 @@ def unreachable_references(profile):
     graph = workspace_graph()
     # Loaded roster views and the typed native registry are shared runtime
     # roots. Per-fighter CharacterDef templates no longer register gameplay.
-    reached = graph.reachable(['roster_def', 'retail_native_entry', 'retail_native_predicate', 'fighter_press'], stop={'roster'})
+    reached = graph.reachable(['roster_def', 'script_native_entry', 'script_native_predicate', 'fighter_press'], stop={'roster'})
     errors = []
     references = []
     for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings', 'runtime_scripts'):

@@ -60,8 +60,8 @@ assignments/comparisons with file/line links. `--limit` bounds displayed matches
 or upstream checkout is needed. Follow the printed native/script queries for
 context. The CLI does not accept `--c` or `--raw` for action reports.
 
-`game/retail_actions.inc` is the shared catalog, included as a C enum and read
-by `tools/retail_actions.py`. Neutral identifiers such as `ACTION_RETAIL_1007`
+`game/data/action_codes.inc` is the shared catalog, included as a C enum and read
+by `tools/retail_actions.py`. Neutral identifiers such as `ACTION_CODE_1007`
 preserve the number even when a description is inferred. Verified means the
 recorded use is established, not that every use of that value is understood.
 Unknown values remain explicitly uncatalogued. Coverage includes the

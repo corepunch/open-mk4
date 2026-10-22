@@ -1,12 +1,12 @@
 #include "game.h"
-#include "retail_vm.h"
+#include "script/vm.h"
 
 /* Cleanup is detached before calling user code, so replacement/reset cannot
  * run it twice. A phase change deliberately retains the action's cleanup. */
 void fighter_execution_reset(Fighter *fighter) {
-  retail_vm_reset(fighter);
-  fighter->execution.native_frames.script_end = (RetailScriptContinuation){0};
-  fighter->execution.native_frames.native_end = (RetailNativeContinuation){0};
+  script_vm_reset(fighter);
+  fighter->execution.native_frames.script_end = (ScriptContinuation){0};
+  fighter->execution.native_frames.native_end = (NativeContinuation){0};
   fighter->execution.frames = NULL;
   fighter->execution.hold = false;
   fighter->execution.nextframe = -1;
@@ -25,7 +25,7 @@ void fighter_execution_cancel(Fighter *fighter) {
 bool fighter_execution_step(Fighter *fighter) {
   if (fighter->execution.script.active) {
     require(fighter->execution.frames == NULL, "Script and native playback cannot both own an actor");
-    retail_vm_step(fighter);
+    script_vm_step(fighter);
     return true;
   }
   if (fighter->execution.frames != NULL) {
@@ -56,7 +56,7 @@ void fighter_execution_finish(Fighter *fighter, FighterFn next) {
 /* This changes only playback, retaining combat identity, contact, buttons,
  * paired ownership and action-local state. New phases start next actor tick. */
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
-  retail_vm_reset(fighter);
+  script_vm_reset(fighter);
   require(phase != NULL && phase->frame != NULL && phase->lastframe >= phase->firstframe, "Invalid mmove phase");
   for (int frame = phase->firstframe; frame <= phase->lastframe; ++frame) {
     if (phase->samples != NULL) {

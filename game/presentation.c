@@ -1,5 +1,5 @@
 #include "game.h"
-#include "retail_vm.h"
+#include "script/vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <string.h>
@@ -97,7 +97,7 @@ enum {
 static void camera_shot(void) {
   SceneCamera *camera = &g_battle.camera;
   const CameraShot *shot = &camera->shots[camera->shot];
-  uint32_t extent = mk4_image_u32(battle_data(), shot->retail_path);
+  uint32_t extent = mk4_image_u32(battle_data(), shot->path_address);
   require(extent > 0 && extent % Q16_ONE == 0 && extent / Q16_ONE <= CAMERA_PATH_CONTROL_CAPACITY - CAMERA_PATH_EXTRA_CONTROLS && shot->step > 0,
       "Invalid retail camera path");
   camera->path_count = (int)(extent / Q16_ONE) + CAMERA_PATH_EXTRA_CONTROLS;
@@ -142,7 +142,7 @@ static Vec3 camera_sample(const SceneCamera *camera) {
     Vec3 point = camera->path_start;
     if (i > 2) {
       int n = mini(camera->path_count - 1, i - 3);
-      uint32_t row = shot->retail_path + CAMERA_PATH_HEADER_BYTES + (unsigned)n * CAMERA_PATH_ROW_BYTES;
+      uint32_t row = shot->path_address + CAMERA_PATH_HEADER_BYTES + (unsigned)n * CAMERA_PATH_ROW_BYTES;
       const Mk4Image *image = battle_data();
       float x = q16_float((q16)mk4_image_u32(image, row));
       float z = q16_float((q16)mk4_image_u32(image, row + 4));

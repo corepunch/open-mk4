@@ -123,10 +123,23 @@ menu animation time and seeds menu selection randomness; menu code does not
 call SDL. Mapping is fixed for now; configuration and timestamped event replay
 are separate features.
 
-## Shared retail runtime
+## MK4 script and action runtime
+
+The runtime has four concrete boundaries:
+
+| Module | Responsibility |
+| --- | --- |
+| `game/data/` | Validate and decode MK4 table formats and expose the bound match data. |
+| `game/script/` | Execute MK4 instructions and resolve typed native IDs to C services. |
+| `game/runtime/` | Own actor execution lifetime and native frame playback. |
+| `game/native/` | Implement shared gameplay capabilities and native action entries. |
+
+`game/roster.c` builds engine/UI views from decoded tables. Data readers do not
+resolve host callbacks. Native IDs are included only by modules that use them,
+rather than exposed through every simulation structure.
 
 All 18 fighters run MK4 wordcode assembled from `scripts/mk4/program.asm`
-through `game/retail_vm.c`. `make scripts` builds the package without reading
+through `game/script/vm.c`. `make scripts` builds the package without reading
 the EXE. Original data tables still come from the image; script fetches require
 a word supplied by the assembled package. See [script sources](scripts/README.md).
 Roster identity, input records, action dispatch, stances, CPU choices, weapon
@@ -162,8 +175,8 @@ snapshots are interpolation history, not a detached full-scene snapshot for
 concurrent rendering. `game/game.h` depends on shared asset/pose types, not
 rasterizer or SDL interfaces.
 
-`game/retail_native.c` resolves input/native entry addresses and predicates;
-`game/retail_native_vm.c` resolves typed script-native calls, tails, handlers,
+`game/script/entries.c` resolves input/native entry addresses and predicates;
+`game/script/bindings.c` resolves typed script-native calls, tails, handlers,
 physics callbacks and independent tasks. Each address selects one shared
 implementation. Neither lookup uses roster masks or originating-fighter
 context. The actor retains its own model, assets, controls and peer identity.
@@ -171,14 +184,14 @@ context. The actor retains its own model, assets, controls and peer identity.
 ## Native engine services
 
 Retail also contains native routines. Their original logic belongs in shared
-C services, not new fighter modules. `game/native_services.h` exposes those
+C services, not new fighter modules. `game/native/capabilities.h` exposes those
 services; the capability modules under `game/native/` group attacks, motion,
 projectiles, throws, weapon attacks, cinematics, severing and shared context
 operations. Historical function names are navigation labels. A native routine
 is implemented once and reused by all retail callers.
 
 Native animation routines may assemble bounded actor-owned playback rows
-through `game/native.c`, matching their native contracts. Physics, collision,
+through `game/runtime/playback.c`, matching their native contracts. Physics, collision,
 friction and landing remain physical conditions. These rows are not generated
 from script words. Scripts always execute in the VM; no C phase may replace
 an authored script wait, branch, loop or animation command. Engine controller

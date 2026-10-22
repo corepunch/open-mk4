@@ -1,8 +1,8 @@
 #include "game.h"
 #include "math_util.h"
-#include "retail_data.h"
-#include "retail_native.h"
-#include "retail_vm.h"
+#include "data/tables.h"
+#include "native/actions.h"
+#include "script/vm.h"
 #include <math.h>
 
 /* 4ab540/570/5d0: explicit unsigned wrap, low-word scaled draws, strict
@@ -24,14 +24,14 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   FighterFn entry = def->cpu != NULL ? def->cpu->enter[action] : NULL;
   unsigned selection = action == CPU_SPECIAL_NEAR ? 0u : action == CPU_SPECIAL_1 ? 1u : action == CPU_SPECIAL_2 ? 2u : 3u;
   if (action == CPU_SPECIAL_NEAR || action == CPU_SPECIAL_1 || action == CPU_SPECIAL_2 || action == CPU_PROJECTILE) {
-    uint32_t target = retail_cpu_target(battle_data(), (unsigned)fighter->roster, selection);
-    entry = target ? retail_native_entry(target) : NULL;
+    uint32_t target = mk4_cpu_target(battle_data(), (unsigned)fighter->roster, selection);
+    entry = target ? script_native_entry(target) : NULL;
   }
   if (fighter->armed && fighter->weapon != NULL) {
     if (action == CPU_JAB || action == CPU_CLOSE_HP) {
-      entry = retail_weapon_high_punch;
+      entry = action_weapon_high_punch;
     } else if (action == CPU_HIGH_KICK || action == CPU_CLOSE_HK) {
-      entry = retail_weapon_low_punch;
+      entry = action_weapon_low_punch;
     } else if (action == CPU_WEAPON_THROW) {
       entry = weapon_throw;
     }
@@ -64,10 +64,10 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
       def->controls->stances[fighter_airborne(fighter) ? ((fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) ? STANCE_DIAGONAL_AIR : STANCE_JUMP)
                              : action == CPU_UPPERCUT || action == CPU_CROUCH_LP ? STANCE_CROUCHING
                                                                                  : STANCE_STANDING];
-  if (table != NULL && table->retail_address != 0) {
-    uint32_t target = retail_button_target(battle_data(), table->retail_address, button);
+  if (table != NULL && table->table_address != 0) {
+    uint32_t target = action_button_target(battle_data(), table->table_address, button);
     if (target != 0) {
-      retail_press_native_button(fighter, target);
+      action_press_native_button(fighter, target);
       return true;
     }
   }
@@ -265,7 +265,7 @@ static bool opponent_object(const Fighter *fighter, bool clone) {
  * fighter-authored minimum or retreat gate before entering the native scene. */
 static q16 finish_distance(const Fighter *fighter, int action) {
   if (action == CPU_FINISH_1 || action == CPU_FINISH_2) {
-    return retail_cpu_finish_distance(battle_data(), (unsigned)fighter->roster, action == CPU_FINISH_2);
+    return mk4_cpu_finish_distance(battle_data(), (unsigned)fighter->roster, action == CPU_FINISH_2);
   }
   return 0xb333;
 }

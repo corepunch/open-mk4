@@ -5,7 +5,9 @@ retail words through one C11 interpreter, with retail-loaded roster, input,
 action, stance, CPU and inventory tables. All 1,133 catalogued roots are
 interpreted. No generated script/frame C, fighter C/header modules or
 fighter-origin native dispatch context remains. Native implementations live
-once in shared capability modules. The unused frame generator is retired.
+once in shared capability modules. The unused frame generator is retired. Script words now assemble from
+[checked-in sources](../../scripts/README.md); the host explicitly binds the
+assembled package and MK4 data before creating the match.
 
 The sections below are the chronological implementation/evidence ledger;
 earlier transitional descriptions are superseded by later entries and the
@@ -14,7 +16,7 @@ registration coverage is not a claim of exact retail native gameplay parity.
 
 ## Retail table reader
 
-`game/retail_data.c` follows mk4decomp's `EventPacketDecoder` matching assembly
+`game/data/tables.c` follows mk4decomp's `EventPacketDecoder` matching assembly
 in `src/engine/input_check_cluster.c` (upstream 45de60, local 45de00): each
 record consists of pattern, extra word and action word, terminated by a zero
 pattern. An all-ones pattern is unconditional. The action word carries the
@@ -93,14 +95,14 @@ canonical script/source checks and the existing game asset self-test pass.
 
 ## Shared script entry
 
-`retail_vm_enter` now starts an original address inside the checked retail data
+`script_vm_enter` now starts an original address inside the checked retail data
 window, with an explicit native return continuation. The per-fighter 70-root
 switch and its graph-bound constants are removed. Offline inventory checks
 still verify that decoded roots lie inside the shared window and use supported
 operations. Individual entries do not need runtime C enrollment. VM state keeps
 the source entry separately from the checked data bounds for diagnostics.
 
-The native ABI glue is now a runtime module, `retail_native_vm.c`. It remains a
+The native ABI glue is now a runtime module, `script_native_dispatch.c`. It remains a
 transitional adapter to legacy native routines, not a completed native port.
 This change does not enable all other fighters' generated roots automatically:
 their remaining opcode/native semantics must still be migrated and verified.
@@ -286,7 +288,7 @@ selected-root adapter. No new tests were added.
 
 ## One native standing high-punch controller
 
-All eighteen standing high-punch integrations now call `retail_high_punch`.
+All eighteen standing high-punch integrations now call `action_high_punch`.
 The fighter-local entry/profile adapters, copied HP attack records and
 296/297 clip seeds are removed, along with the public `NativeHPProfile` API.
 The existing shared native repeat/contact phase implementation remains native
@@ -319,7 +321,7 @@ roster/source audits.
 
 ## Shared jab playback and unused adapter removal
 
-Nineteen jab playback copies now use `retail_jab`, which establishes the shared
+Nineteen jab playback copies now use `action_jab`, which establishes the shared
 native action context and enters 4e62f0 with action 010b and live commands.
 The original LP throw gates remain in the controllers; this is the post-gate
 46dcbc playback block, not a claim that the entire 46dca0 native entry is
@@ -913,7 +915,7 @@ also consumes these tables rather than the retired C callbacks. Removed120
 private air callbacks and the empty Goro throw module.
 
 Reiko/Noob47c070/47c0a0/47c2a0/47c360/47c390 natives were identical after
-actor-name normalization and now have one implementation in retail_teleport.c.
+actor-name normalization and now have one implementation in action_teleport.c.
 Original scripts bind their capture views. Shared capture accepts an original
 script VA instead of fighter-specific root adapters. Native47ffc0 now calls
 shared landing46fd90 (mk4_land); bounded local listings and mk4decomp native
@@ -1052,7 +1054,7 @@ adapter removal. Deferred callback migration is the next native lifetime step.
 
 ### Native completion owns a script address
 
-Added RetailScriptContinuation as actor-owned native phase data. A native phase
+Added ScriptContinuation as actor-owned native phase data. A native phase
 can install its original script VA, completion callback and typed integration
 context with native_script_end. Completion consumes that record once and enters
 the shared VM; replacing/canceling the phase clears it. Moved23 deferred native
@@ -1067,7 +1069,7 @@ and seven navigation checks. No per-fighter timing/damage coverage was added.
 ### No C script-root adapters remain
 
 Removed the remaining46 selected/immediate script thunks. Native selectors
-carry RetailScriptContinuation values or raw original VAs instead of C function
+carry ScriptContinuation values or raw original VAs instead of C function
 pointers. The shared axe victim service consumes that data directly. Scene
 actor allocation now has a shared raw-script entry path; the actor keeps the
 source model while entering its own native integration context.
@@ -1267,7 +1269,7 @@ spawns call49c540 and498be0, which always select the same4d1718 mesh template
 and4ed2b0/4ed2e8 waiter data.49c810 queries the C contact bank. These native
 paths contain no roster-specific cloned-actor branch. Removed the unsupported
 shadow-actor event/renderer subsystem and the remaining Kitana/Noob C units and
-private headers. One shared retail_fireball service now implements these native
+private headers. One shared action_fireball service now implements these native
 addresses for all actors.
 
 Contact selectors, origin offsets and the falling descriptor now read original
@@ -1870,7 +1872,7 @@ the owner's original paired two-pose advance; removed Liu's premature native
 two-visit victim player.481360 flips and binds loaded53cfa8 for the scene-held
 victim, with camera/result orchestration in the existing scene director.
 
-No owner bitmask or roster-dependent native handler remains in retail_native_vm.
+No owner bitmask or roster-dependent native handler remains in script_native_dispatch.
 Checked local45b1f0/480f80,487330,485910,481360,42c0d0 and original paired/victim
 words. Verified formatting, runtime/rejections, all strict audits, native gates
 and helper/port navigation. Reused the loaded-stagger fixture through45b1f0

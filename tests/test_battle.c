@@ -2,8 +2,8 @@
 #include "mk4_program.h"
 
 static Mk4Image image;
-#include "retail_native.h"
-#include "script.h"
+#include "native/actions.h"
+#include "native/helpers.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +34,7 @@ static void check_roster(void) {
   for (int i = 0; i < roster_count(); ++i) {
     const CharacterDef *view = roster_def(i);
     check(view->asset == i && view->moves != NULL && view->move_count == S_COUNT, "Retail roster views must provide bounded engine state and model identity");
-    check(view->moves[S_PUNCH]->clip == -1 && view->enter[S_PUNCH] == retail_jab, "Unstarted script states must carry no authored animation or balance");
+    check(view->moves[S_PUNCH]->clip == -1 && view->enter[S_PUNCH] == action_jab, "Unstarted script states must carry no authored animation or balance");
   }
 }
 

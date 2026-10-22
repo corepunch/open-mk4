@@ -30,6 +30,8 @@ def source_files(path):
         result.append(current)
         for include in re.findall(r'^\s*#include\s+"([^"\n]+\.inc)"', text, re.M):
             child = (current.parent / include).resolve()
+            if not child.is_file():
+                child = (ROOT / 'game' / include).resolve()
             if 'generated' not in child.parts and child.is_file():
                 visit(child)
 

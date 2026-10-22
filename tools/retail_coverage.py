@@ -115,14 +115,14 @@ def check_reference(reference, errors, label):
 
 
 def native_entries():
-    source = masked_c((ROOT / 'game/retail_native_input.inc').read_text())
+    source = masked_c((ROOT / 'game/script/entries.inc').read_text())
     table = source.split('static const NativeAction entries[] = {', 1)[1].split('};', 1)[0]
     constants = {}
-    for name in ('retail_native_addresses.h', 'retail_native.h'):
+    for name in ('script/native_ids.h', 'native/actions.h'):
         constants.update({symbol: int(value, 16) for symbol, value in re.findall(
-            r'(RETAIL_NATIVE_\w+) = (0x[0-9a-f]+)', (ROOT / 'game' / name).read_text())})
+            r'(MK4_NATIVE_\w+) = (0x[0-9a-f]+)', (ROOT / 'game' / name).read_text())})
     result = {}
-    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|RETAIL_NATIVE_\w+),\s*(\w+)\}', table):
+    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|MK4_NATIVE_\w+),\s*(\w+)\}', table):
         value = int(address, 16) if address.startswith('0x') else constants[address]
         result[value] = symbol
     return result
@@ -139,13 +139,13 @@ def audit(image, character):
     scripts = []
     for entry, names in sorted(root_names.items()):
         program = script_program(image, entry, character)
-        limits = (ROOT / 'game/retail_vm.h').read_text()
-        begin = int(re.search(r'#define RETAIL_SCRIPT_BEGIN (0x[0-9a-f]+)', limits)[1], 16)
-        end = int(re.search(r'#define RETAIL_SCRIPT_END (0x[0-9a-f]+)', limits)[1], 16)
+        limits = (ROOT / 'game/script/vm.h').read_text()
+        begin = int(re.search(r'#define SCRIPT_ADDRESS_BEGIN (0x[0-9a-f]+)', limits)[1], 16)
+        end = int(re.search(r'#define SCRIPT_ADDRESS_END (0x[0-9a-f]+)', limits)[1], 16)
         if any(int(row['va'], 16) < begin or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
                for row in program['instructions']):
             errors.append('%s: runtime data range does not contain the decoded graph' % hex(entry))
-        supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/retail_vm.c').read_text())}
+        supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/script/vm.c').read_text())}
         if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
             errors.append('%s: runtime opcode is unsupported' % hex(entry))
         for row in program['instructions']:

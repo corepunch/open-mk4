@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-NATIVE = ('native.c', 'native_combat.c', 'script.c', 'mk4_common.c', 'reactions.c', 'weapons.c', 'retail_combat.c', 'retail_scene.c', 'retail_native.c', 'retail_native_vm.c')
+NATIVE = ('runtime/playback.c', 'reactions.c', 'weapons.c', 'script/bindings.c')
 
 
 def masked(text):
@@ -40,7 +40,6 @@ def audit_text(path, text):
 
 def main():
     paths = sorted((ROOT / 'game').glob('native/*.c'))
-    paths += sorted((ROOT / 'game').glob('retail_*.c'))
     paths += [ROOT / 'game' / name for name in NATIVE]
     paths = sorted(set(paths))
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]

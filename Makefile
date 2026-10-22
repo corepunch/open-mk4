@@ -7,7 +7,7 @@ LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
 export CLANG_FORMAT
-FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
+FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_program.c common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
@@ -74,9 +74,9 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c) game/mk4_common.c
-ROSTER_SOURCES = game/runtime/execution.c game/data_context.c game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_data.c game/retail_native.c game/retail_native_vm.c game/retail_scene.c game/retail_combat.c game/retail_air.c game/retail_air_throw.c game/retail_teleport.c game/retail_handstand.c game/retail_fireball.c game/retail_weapon.c game/retail_controls.c game/retail_throw.c game/retail_reaction.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
-GAME_HEADERS = game/draw.h game/input.h game/sdl_input.h game/host_commands.h $(wildcard game/native/*.[ch]) game/native_services.h game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_layout.h game/retail_native.h game/retail_native_addresses.h game/retail_native_input.inc game/game.h game/menu.h game/native_services.h game/audio.h game/retail_actions.inc
+NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c)
+ROSTER_SOURCES = $(wildcard game/data/*.c game/script/*.c game/runtime/*.c) game/roster.c game/moves.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
+GAME_HEADERS = $(wildcard game/*.h game/*/*.h game/*/*.inc)
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)

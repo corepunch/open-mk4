@@ -1,5 +1,5 @@
 #include "game.h"
-#include "retail_vm.h"
+#include "script/vm.h"
 
 /* Playback records for native scene continuations. Independent scene actors
  * can also resume their retail script through the shared interpreter. */
@@ -156,7 +156,7 @@ Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const M
 Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, const MoveDef *move, uint32_t entry, FighterFn finish) {
   Fighter *actor = scene_actor_allocate(owner, source, move);
   if (actor != NULL) {
-    retail_vm_enter(actor, entry, finish);
+    script_vm_enter(actor, entry, finish);
   }
   return actor;
 }
