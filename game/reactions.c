@@ -16,7 +16,6 @@ void fujin_triple_victim(Fighter *fighter);
 void fujin_grab_victim(Fighter *fighter);
 void fujin_second_victim(Fighter *fighter);
 void goro_quake_victim(Fighter *fighter);
-void goro_punch_victim(Fighter *fighter);
 void goro_kick_victim(Fighter *fighter);
 void goro_stomp_victim(Fighter *fighter);
 void goro_uppercut_victim(Fighter *fighter);
@@ -351,16 +350,11 @@ static const ReactionSpec extra_reactions[256] = {
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
   [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
-  [48] = {R(180, 19, 0x4001), 0, 6, -1, 0, 0x3333, 0, 0, 0, true, false},
-  [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
-  [51] = {R(319, 82, 0x4003), 0, 0, 34, 328, -0x1999, -0x2147, 0x20c, 0, false, false},
   [52] = {R(181, 82, 0x4003), 0, 0, 51, 328, 0x7ae, -0x3851, 0x20c, 0x6666, false, false},
   [54] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
   [59] = {R(189, 30, 0x4003), 0, 0, 30, 191, 0x3d7, -0x3851, 0x28f, 0x8000, false, false},
-  [60] = {R(311, 18, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [90] = {.move = R(311, 18, 0x4001), .land_at = -1},
-  [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
   [129] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0xa3d, 0, 0, 0, false, false},
   [130] = {R(179, 53, 0x100a), 0, 0, 39, 328, -0x51e, -0x4ccc, 0x353, 0, false, false},
@@ -449,9 +443,7 @@ static void react_extra(Fighter *fighter) {
     case 26:
     case 28:
     case 29:
-    case 51:
     case 52:
-    case 99:
       battle_wall_recoil(fighter);
       break;
     default:
@@ -821,7 +813,6 @@ static const FighterFn reactions[256] = {
   [121] = sonya_generated_reaction,
   [54] = react_extra,
   [59] = react_extra,
-  [60] = react_extra,
   [62] = jarek_weapon_reaction,
   [117] = react_block,
   [19] = react_liu_record,
@@ -841,9 +832,6 @@ static const FighterFn reactions[256] = {
   [26] = react_extra,
   [32] = react_extra,
   [39] = react_extra,
-  [48] = react_extra,
-  [50] = react_extra,
-  [51] = react_extra,
   [52] = react_extra,
   [150] = react_scepter_low,
   [151] = react_scepter_freeze,
@@ -858,7 +846,6 @@ static const FighterFn reactions[256] = {
   [98] = fujin_grab_victim,
   [181] = fujin_second_victim,
   [179] = shinnok_second_victim,
-  [99] = react_extra,
   [101] = fujin_bolt_victim,
   [122] = react_extra,
   [155] = react_extra,
@@ -906,7 +893,6 @@ static const FighterFn reactions[256] = {
   [141] = shinnok_weapon_reaction,
   [185] = cage_second_victim_hit,
   [136] = goro_quake_victim,
-  [189] = goro_punch_victim,
   [190] = goro_kick_victim,
   [191] = goro_stomp_victim,
   [192] = goro_uppercut_victim,

@@ -384,9 +384,10 @@
       "symbol": "react_block"
     },
     "60": {
-      "evidence": "4ea4e8[60] -> 0x482260; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[60] -> 482260; bounded local native hands playback to original4e8c78; mk4decomp script entry/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "61": {
       "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",

@@ -353,9 +353,10 @@
       "symbol": "react_extra_block"
     },
     "50": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[50] -> 482770; bounded local native hands playback to original4e90b0; mk4decomp script entry/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "6": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -391,9 +392,10 @@
       "symbol": "react_extra"
     },
     "99": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[99] -> 482410; bounded local native hands playback to original4e8da8; mk4decomp script entry/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "3": {
       "source": "game/reactions.c",

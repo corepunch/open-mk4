@@ -1683,3 +1683,19 @@ logic or an emulation of the original scene director.
 Verified formatting, shared runtime, strict audits, native gates, helper/port
 navigation, SDL build and resource self-test (all18 rigs and11 arenas).
 The existing SDL deployment-version linker warning remains.
+
+### Remove five copied reaction programs
+
+Loaded native targets482260/482410/482420/482580/482770 now enter their
+original4e8c78/4e8da8/4e8dd0/4e8ee0/4e90b0 words after only native preludes.
+Removed ReactionSpec48/50/51/60/99 and the separate Goro189 punch adapter;
+51 and189 resolve the same original482420. No fighter/model gate remains
+for these reactions. Native482580 loads its physics callback from4e8edc
+(currently4913a0) instead of copying friction behavior into the reaction row.
+
+Checked bounded local entries, mk4decomp EightEntryAlarmDispatch and
+StageGameProgressCluster matching assembly, and shared script-entry contracts.
+Updated reviewed research metadata to the actual shared native source.
+Verified formatting, shared runtime/rejections, all18 strict fighter audits,
+native gates and existing helper/port navigation. Reused existing runtime
+and callback fixtures; no new per-reaction tests.

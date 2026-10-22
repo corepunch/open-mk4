@@ -134,7 +134,6 @@ void goro_fireball(Fighter *fighter);
 void goro_fireball_spawn(Fighter *fighter, int task_type);
 void goro_kick_victim(Fighter *victim);
 void goro_leap_stomp(Fighter *fighter);
-void goro_punch_victim(Fighter *victim);
 void goro_quake_stomp(Fighter *fighter);
 void goro_quake_victim(Fighter *victim);
 void goro_script_kick_tail(Fighter *fighter);

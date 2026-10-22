@@ -297,10 +297,10 @@
       "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
     },
     "189": {
-      "source": "game/native/contexts.c",
-      "symbol": "goro_punch_victim",
-      "adaptation": "Registered directly in shared reactions[189]; the Goro-owned victim program runs on any non-Goro victim.",
-      "evidence": "4ea4e8[189] -> 482420: wall recoil 488ea0, disarm 494520, generated 4e8dd0 clip 319 flight and 482790 getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery.",
+      "evidence": "Loaded4ea4e8[189] -> 482420; bounded local native hands playback to original4e8dd0; mk4decomp script entry/controller contracts."
     },
     "190": {
       "source": "game/native/contexts.c",

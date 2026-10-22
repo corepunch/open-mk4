@@ -182,8 +182,53 @@ void retail_stagger_tail(Fighter *fighter) {
   native_play_rows(fighter, mini(last, sample + 60), 1, stagger_tail_finish);
 }
 
+/* These native entries contain only a prelude and a script handoff. All
+ * clip selection, motion, waits and recovery remain the original words. */
+void retail_script_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  if (entry == 0x482420) {
+    battle_wall_recoil(fighter);
+  }
+  if (entry == 0x482420 || entry == 0x482580 || entry == 0x482770) {
+    mk4_script_disarm_self(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_HIT, &move);
+  uint32_t script;
+  switch (entry) {
+    case 0x482260:
+      script = 0x4e8c78;
+      break;
+    case 0x482410:
+      script = 0x4e8da8;
+      break;
+    case 0x482420:
+      script = 0x4e8dd0;
+      break;
+    case 0x482580: {
+      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e8edc);
+      require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native reaction motion callback");
+      script = 0x4e8ee0;
+      break;
+    }
+    case 0x482770:
+      script = 0x4e90b0;
+      break;
+    default:
+      require(false, "Unexpected script reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, mk4_script_thrown_ready);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x482260:
+    case 0x482410:
+    case 0x482420:
+    case 0x482580:
+    case 0x482770:
+      return retail_script_reaction;
     case 0x483450:
     case 0x483490:
     case 0x482750:

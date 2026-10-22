@@ -396,9 +396,10 @@
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
     },
     "51": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Weapon record W26 (4ec9d8 back HP) selects shared reaction51 through retail dispatcher 0x482420."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "evidence": "Loaded4ea4e8[51] -> 482420; bounded local native hands playback to original4e8dd0; mk4decomp script entry/controller contracts.",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "52": {
       "source": "game/reactions.c",

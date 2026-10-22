@@ -62,14 +62,6 @@ static void n4824f0_begin_victim(Fighter *victim) {
   victim->flags |= FF_REACTING;
 }
 
-/* 189 (482420): wall recoil 488ea0, disarm 494520, then 4e8dd0. */
-void goro_punch_victim(Fighter *victim) {
-  n4824f0_begin_victim(victim);
-  battle_wall_recoil(victim);
-  mk4_script_disarm_self(victim);
-  retail_vm_enter_owned(victim, 0x4e8dd0, fighter_ready, 15);
-}
-
 /* 190 (483570): disarm 494520, then 4ea3e0 -> shared 4e9670 flight. */
 void goro_kick_victim(Fighter *victim) {
   n4824f0_begin_victim(victim);
