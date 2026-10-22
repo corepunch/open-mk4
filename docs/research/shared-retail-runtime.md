@@ -1630,3 +1630,12 @@ Verified formatting, shared runtime, all strict fighter audits, native gates
 and existing helper/port navigation. No new tests for identical native bodies.
 This removes another owner specialization; remaining copied reaction playback
 and other owner branches still require migration.
+
+### Share recoil landing continuation
+
+Removed Cage, Jarek and Tanya copies of47dae0 and its three owner gates.
+The bounded local entry and mk4decomp MoveSelectorCluster agree: it runs
+46fd90 landing, then46f650 controller return. Existing mk4_land owns the
+portable landing/cancel controller. Direct native callers use the same service.
+Verified formatting, runtime, all strict audits, native gates and existing
+helper/port navigation. No additional tests for identical adapter bodies.

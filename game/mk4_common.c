@@ -180,6 +180,12 @@ void mk4_land(Fighter *fighter) {
   fighter_enter_stance(fighter, STANCE_STANDING);
 }
 
+/*47dae0 runs46fd90, then returns through46f650. The shared landing
+ * controller owns that continuation for every originating attack. */
+void retail_recoil_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
 static void flip_retract(Fighter *fighter);
 static void flip_wait(Fighter *fighter);
 

@@ -287,10 +287,6 @@ static void n479f00_power_cycle(Fighter *fighter) {
   native_hold(fighter, 4, n479f00_power_restore);
 }
 
-void cage_power_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
 static void n479f00_power_rewind(Fighter *fighter) {
   if (fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000) {
     fighter->mmove_hold = true;
@@ -1987,10 +1983,6 @@ static void n47dae0_2_spin_blocked(Fighter *fighter) {
   native_begin(fighter, 0, 0, NULL);
   native_frame(fighter, 0, 8, n47dae0_2_recoil_wait);
   native_play(fighter, false);
-}
-
-void tanya_blocked_recoil_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
 }
 
 static void n47dae0_2_spin_query(Fighter *fighter) {

@@ -104,10 +104,6 @@ static void n47dae0_ball_startup(Fighter *fighter, const MoveDef *move, FighterF
   native_play(fighter, true);
 }
 
-void jarek_ball_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
 static void n47dae0_recoil_wait(Fighter *fighter) {
   /* 48f490 holds while rising; 47da70 then holds above absolute Y -2.5. */
   if (fighter->body.vel[AXIS_Y] < 0 || fighter->body.pos[AXIS_Y] < -0x28000) {
@@ -216,7 +212,7 @@ static void n47dae0_rise_land(Fighter *fighter) {
   fighter->mmove_hold = false;
   fighter_upright(fighter);
   fighter_neutral(fighter);
-  jarek_ball_land(fighter);
+  retail_recoil_land(fighter);
 }
 
 static void n47dae0_rise_query(Fighter *fighter) {

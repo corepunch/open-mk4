@@ -894,19 +894,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           raiden_script_torpedo_contact(fighter);
           return true;
         case 0x47dae0:
-          if (owner & 0x4000u) {
-            cage_power_land(fighter);
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_ball_land(fighter);
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_blocked_recoil_land(fighter);
-            return true;
-          }
-          return false;
+          retail_recoil_land(fighter);
+          return true;
         case 0x47dc40:
           sub_zero_slide_script(fighter);
           return true;

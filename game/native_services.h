@@ -81,7 +81,6 @@ void cage_groin_punch(Fighter *fighter);
 void cage_high_orb(Fighter *fighter);
 void cage_low_orb(Fighter *fighter);
 void cage_orb_spawn(Fighter *fighter, int task_type);
-void cage_power_land(Fighter *fighter);
 void cage_power_victim(Fighter *fighter);
 void cage_powered_punch(Fighter *fighter);
 void cage_script_cpu_kick_tail(Fighter *fighter);
@@ -153,7 +152,6 @@ void goro_stomp_hold_separation(Fighter *fighter);
 void goro_stomp_victim(Fighter *victim);
 void goro_uppercut_victim(Fighter *victim);
 void goro_victim_getup(Fighter *victim);
-void jarek_ball_land(Fighter *fighter);
 void jarek_ball_victim(Fighter *fighter);
 void jarek_blade(Fighter *fighter);
 void jarek_blade_spawn(Fighter *fighter, int task_type);
@@ -553,7 +551,6 @@ void sub_zero_second_fatality_script(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
 void sub_zero_start_fatality(Fighter *fighter, int id);
-void tanya_blocked_recoil_land(Fighter *fighter);
 void tanya_boomerang_release(Fighter *fighter);
 bool tanya_can_first_fatality(const Fighter *fighter);
 bool tanya_can_spin_kick(const Fighter *fighter);
@@ -585,3 +582,5 @@ void kai_handstand_rear_contact(Fighter *fighter);
 void kai_handstand_victim_tail(Fighter *fighter);
 
 #endif
+
+void retail_recoil_land(Fighter *fighter);

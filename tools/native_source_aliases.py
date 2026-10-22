@@ -1,6 +1,10 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'cage_power_land': 'retail_recoil_land',
+    'jarek_ball_land': 'retail_recoil_land',
+    'tanya_blocked_recoil_land': 'retail_recoil_land',
+
     'fujin_second_finish': 'retail_scene_body_finish',
     'reptile_second_finish': 'retail_scene_body_finish',
     'fujin_second_event': 'mk4_script_context',
