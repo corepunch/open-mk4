@@ -11,6 +11,41 @@ or request, what changed, why the approach was chosen, and how it was verified.
 Record relevant test results and any remaining limitations. Stage only the
 files belonging to that step, preserving unrelated work.
 
+## Scope and execution efficiency
+
+Implement the requested end state through the existing shared runtime first.
+For replacement/removal work, switch the shared entry or dispatch boundary,
+then delete obsolete callers, configuration and generators as they become
+unused. Do not turn a mechanical migration into routine-by-routine rewrites
+or a broader fidelity project.
+
+Separate actual blockers from optional improvements. Extend runtime/native
+support only when required by the requested behavior or a concrete integration
+failure. Reuse existing implementations and research; do not re-derive retail
+script logic. Keep unrelated native accuracy, naming and presentation work out
+of the migration unless needed to complete it. Report remaining limitations
+without silently expanding scope.
+
+Batch changes that share one implementation and validation boundary into a
+coherent step. Commit each verified step, but do not create a separate research,
+audit and commit cycle for every move, address or wrapper. Avoid temporary
+fighter-specific adapters, origin contexts and parallel APIs; when a bridge is
+necessary, identify and complete its removal within the same migration.
+
+Choose validation from the changed contract. Run focused checks while working;
+run all-roster audits and the full suite at meaningful shared boundaries and
+completion. Repeat broad checks only after changes that could invalidate their
+results, a relevant failure or an explicit repository requirement. Retire tests
+of intentionally removed architecture in the step that removes it, preserving
+checks for engine/runtime behavior we still own. Do not rewrite production code
+to satisfy obsolete authored-script timing or damage expectations.
+
+Keep documentation proportional: update the current architecture/workflow and
+record evidence, validation and limitations in commit descriptions. Do not append
+a chronological migration essay for every small change. If research, scaffolding
+or verification starts dominating implementation, reassess the approach before
+continuing; give the user a concise explanation of any unavoidable scope growth.
+
 ## Implementation language
 
 Game, engine, viewer and native regression tests use C11. Follow the procedural
