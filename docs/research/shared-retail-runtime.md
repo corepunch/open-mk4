@@ -1918,3 +1918,17 @@ Checked local entries/dependencies, original script graphs and mk4decomp native
 clusters. Verified formatting, runtime/rejections, strict audits, native gates
 and helper/port navigation. Extended the existing native cleanup fixture with
 interrupted shake-offset retirement. No authored reaction matrices.
+
+### Additional native table branches and scene joins
+
+Connected485ea0's alternate stagger script,4861d0's armed/unarmed guard and
+original ground/air scripts,488810's effect/prelude,488d10's scene park and
+481420's shared explosion continuation.488830 also now uses the same actual
+native/script prelude as its other callers; removed the redundant fallback
+registration and branch. The finisher projectile dispatches loaded177; shared
+fragment pools and a victim-owned160-visit native join replace a separate
+owner timer. Renderer-tree attachment and effect artwork use engine services.
+Verified local native/dependency listings and mk4decomp shared contracts,
+formatting, runtime/rejections, strict audits, native gates and helper/port
+navigation. No new authored reaction tests. Four full-table native addresses
+remain unregistered and are the next work.

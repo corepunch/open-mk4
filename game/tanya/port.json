@@ -381,10 +381,10 @@
       "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
     },
     "95": {
-      "source": "game/native/attacks.c",
-      "symbol": "fujin_triple_victim",
-      "evidence": "Drill kick 47ba90 installs shared reaction 95 through 480f80 on a grounded victim.",
-      "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_record_reaction",
+      "evidence": "Bounded488810/488830/488850 native entries; original4ea0b8 owns victim playback.",
+      "adaptation": "Loaded488830 shares native wall/disarm prelude and original4ea0b8 with other callers."
     },
     "122": {
       "source": "game/retail_reaction.c",

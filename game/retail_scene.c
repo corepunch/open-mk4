@@ -306,3 +306,17 @@ void retail_scene_victim_hold(Fighter *fighter) {
   retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cfa8) * 4, 0);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
+
+/*4891c0/489110 uses the shared bounded fragment pools and160-visit join. */
+void retail_scene_explode(Fighter *fighter) {
+  fighter->script_phase = 2;
+  battle_shatter(fighter);
+  battle_particles(fighter, 3, 20, false);
+  native_hold(fighter, 160, stage_complete);
+}
+
+/*488d10's renderer-tree attachment is implicit in the engine actor registry. */
+void retail_scene_park(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  retail_task_pause(fighter);
+}

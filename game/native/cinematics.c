@@ -814,8 +814,6 @@ static void n43c500_dragon_bite_sound(Fighter *fighter);
 static void n43c500_dragon_delayed_sound(Fighter *fighter);
 static void n43c500_dragon_detach(Fighter *fighter);
 static void n43c500_dragon_fatality_script(Fighter *fighter);
-static void n43c500_liu_script_fatal_watch(Fighter *fighter);
-static void n43c500_liu_script_fatal_hit(Fighter *owner);
 static void n43c500_fatal_fireball_object(Projectile *p);
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n43c500_dragon_actor[] = {
@@ -920,22 +918,6 @@ static void n43c500_dragon_fatality_script(Fighter *fighter) {
   native_motion_play(fighter);
 }
 
-static void n43c500_liu_script_fatal_watch(Fighter *fighter) {
-  (void)fighter;
-  fighter_cancel_all_mmoves();
-  battle_end_finisher();
-}
-
-static void n43c500_liu_script_fatal_hit(Fighter *owner) {
-  Fighter *victim = fighter_peer(owner);
-  victim->script_phase = 2;
-  victim->reaction = 177;
-  battle_shatter(victim);
-  battle_particles(victim, 3, 20, false);
-  native_motion_begin(owner, 160, n43c500_liu_script_fatal_watch);
-  native_motion_play(owner);
-}
-
 static void n43c500_fatal_fireball_object(Projectile *p) {
   if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != FINISH_LIU_KANG_2) {
     p->kind = 0;
@@ -949,7 +931,7 @@ static void n43c500_fatal_fireball_object(Projectile *p) {
   q16 dz = victim->body.pos[AXIS_Z] - p->pos[AXIS_Z];
   if ((int64_t)dx * dx + (int64_t)dz * dz <= (int64_t)0x28000 * 0x28000 || p->ticks >= 47) {
     p->kind = 0;
-    n43c500_liu_script_fatal_hit(&g_battle.fighters[p->owner]);
+    battle_react(victim, 177);
   }
 }
 
@@ -973,7 +955,7 @@ void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type) {
       p->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
     }
   } else {
-    n43c500_liu_script_fatal_hit(fighter);
+    battle_react(fighter_peer(fighter), 177);
   }
 }
 

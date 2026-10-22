@@ -239,4 +239,8 @@ FighterFn retail_engine_reaction(uint32_t entry);
 void retail_aux_reaction(Fighter *fighter);
 void retail_shake_stun(Fighter *fighter);
 
+void retail_guard_fall(Fighter *fighter);
+void retail_scene_explode(Fighter *fighter);
+void retail_scene_park(Fighter *fighter);
+
 #endif

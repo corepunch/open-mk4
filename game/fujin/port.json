@@ -445,10 +445,10 @@
       "adaptation": "Global reactions.c registers the same move-owned dispatcher; shared first/final axe victim adapters use these exact native entries, not different weapon attacks."
     },
     "95": {
-      "source": "game/native/attacks.c",
-      "symbol": "fujin_triple_victim",
-      "evidence": "D9 and47f140 select native488420,488450 and488830:127,311 and131 independent victim phases.",
-      "adaptation": "Global reactions.c registers the same move-owned dispatcher; shared first/final axe victim adapters use these exact native entries, not different weapon attacks."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_record_reaction",
+      "evidence": "Bounded488810/488830/488850 native entries; original4ea0b8 owns victim playback.",
+      "adaptation": "Loaded488830 shares native wall/disarm prelude and original4ea0b8 with other callers."
     },
     "98": {
       "source": "game/native/attacks.c",

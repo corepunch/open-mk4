@@ -504,12 +504,10 @@ void fujin_triple_victim(Fighter *fighter) {
     fighter->flags |= FF_REACTING;
     retail_vm_enter_owned(fighter, 0x4ea050, mk4_mmove_thrown_finish, 5);
   } else {
-    require(retail_reaction_native(fighter) == 0x488420 || retail_reaction_native(fighter) == 0x488830, "Invalid Fujin triple-kick victim stage");
+    require(retail_reaction_native(fighter) == 0x488420, "Invalid Fujin triple-kick victim stage");
     /* Native488420/488440 and488830/488850 are also the exact
      * first/second axe victim entries; reuse their shared adaptations. */
-    weapon_axe_reaction(fighter, retail_reaction_native(fighter) == 0x488830,
-        retail_reaction_native(fighter) == 0x488830 ? (RetailScriptContinuation){0x4ea0b8, fighter_ready, 5}
-                                                    : (RetailScriptContinuation){0x4ea040, mk4_mmove_thrown_finish, 5});
+    weapon_axe_reaction(fighter, false, (RetailScriptContinuation){0x4ea040, mk4_mmove_thrown_finish, 5});
   }
 }
 

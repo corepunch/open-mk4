@@ -559,8 +559,6 @@ FighterFn retail_engine_reaction(uint32_t entry) {
       return fujin_triple_victim;
     case 0x488450:
       return fujin_triple_victim;
-    case 0x488830:
-      return fujin_triple_victim;
     case 0x488a50:
       return kai_handstand_reaction;
     case 0x488a80:
