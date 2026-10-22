@@ -3,6 +3,12 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Named byte addresses of native attack records, checked against the local EXE.
+ * Decode the original data through the VM; do not keep copied balance tables. */
+enum {
+  TORPEDO_ATTACK_RECORD = 0x4ec1a0
+};
+
 /* Native service cluster: 45b1f0, 45b230. */
 
 /* Native service cluster: 45b1f0, 45b230. */
@@ -167,7 +173,6 @@ static void n45b1f0_5_torpedo_pair(Fighter *fighter);
 
 static const MoveDef n45b1f0_5_s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
 static const MoveDef n45b1f0_5_s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const AttackRecord n45b1f0_5_torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
 
 void raiden_special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);
@@ -209,6 +214,8 @@ void raiden_script_torpedo_motion(Fighter *fighter) {
 }
 
 unsigned raiden_script_torpedo_query(Fighter *fighter) {
+  AttackRecord n45b1f0_5_torpedo_record = retail_vm_attack_record(retail_vm_image(), TORPEDO_ATTACK_RECORD);
+
   return battle_contact(fighter, &n45b1f0_5_torpedo_record) == CONTACT_MISS ? 0u : 1u;
 }
 

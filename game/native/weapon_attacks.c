@@ -3,6 +3,15 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Named byte addresses of native attack records, checked against the local EXE.
+ * Decode the original data through the VM; do not keep copied balance tables. */
+enum {
+  BOLT_ATTACK_RECORD = 0x4ebea0,
+  FLURRY_ATTACK_RECORD = 0x4eb7e0,
+  SWEEP_ATTACK_RECORD = 0x4eb7f8,
+  BOOMERANG_ATTACK_RECORD = 0x4ebde0
+};
+
 /* Native service cluster: 482790. */
 static const MoveDef n482790_upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0113};
 
@@ -27,7 +36,7 @@ void retail_weapon_native_495cf0(Fighter *fighter);
 
 static const MoveDef n49a480_bow_move = {.clip = 211, .last = 28, .flags = SF_LOCK | SF_RECORD, .action = 0x303};
 static const MoveDef n49a480_bolt_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
-static const AttackRecord n49a480_bolt_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 101, 10, 2, ATTACK_MARK, 0xccc};
+
 /* Native4ed438 selects506dc8, whose sole mesh is shared106. */
 static const MeshAnimation n49a480_bolt_mesh = {.first = 106, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED};
 
@@ -37,6 +46,8 @@ static void n49a480_bow_cleanup(Fighter *fighter) {
 }
 
 static void n49a480_bolt_step(Projectile *bolt) {
+  AttackRecord n49a480_bolt_record = retail_vm_attack_record(retail_vm_image(), BOLT_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     bolt->kind = 0;
     return;
@@ -459,9 +470,9 @@ static void native_weapon_3_weapon_second_victim(Fighter *fighter) {
  * 4ecd68 = HP 495d40, LP 496100 and the shared stance handlers. */
 void retail_weapon_native_495d70(Fighter *fighter);
 void retail_weapon_native_496140(Fighter *fighter);
+
 /* 495db0 queries WEAPON[20]; 496140 queries WEAPON[19]. */
-static const AttackRecord n482280_flurry_record = {0x16666, -0x12e14, 0x1147a, 0xe624, 137, 10, 112, 0, 0xccc};
-static const AttackRecord n482280_sweep_record = {0x1cccc, -0xe666, 0x1451e, 0xb0a3, 96, 10, 119, 0, 0x2147};
+
 static const MoveDef n482280_flurry_start = {.clip = 248, .last = 12, .flags = SF_LOCK | SF_RECORD, .action = 0x404};
 static const MoveDef n482280_flurry_cycle = {.clip = 249, .last = 11, .flags = SF_LOCK | SF_RECORD, .action = 0x404};
 static const MoveDef n482280_back_low = {.clip = 233, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
@@ -531,6 +542,8 @@ static void n482280_flurry_continue(Fighter *fighter) {
 }
 
 static void n482280_flurry_query(Fighter *fighter) {
+  AttackRecord n482280_flurry_record = retail_vm_attack_record(retail_vm_image(), FLURRY_ATTACK_RECORD);
+
   /* Every 495de8 query is a fresh WEAPON[20] contact for its cycle. */
   ContactResult result = battle_contact(fighter, &n482280_flurry_record);
   fighter->connected = false;
@@ -558,6 +571,8 @@ static void n482280_flurry_cycle_start(Fighter *fighter) {
 /* 495db0 state 0 at 248/8: a blocked query recoils; anything else plays
  * out 248 into the first 249 cycle. */
 void reptile_weapon_flurry(Fighter *fighter) {
+  AttackRecord n482280_flurry_record = retail_vm_attack_record(retail_vm_image(), FLURRY_ATTACK_RECORD);
+
   require(fighter_move(fighter)->clip == 248 && fighter_sample(fighter) == 8, "Reptile weapon flurry needs its generated 248 startup");
   ContactResult result = battle_contact(fighter, &n482280_flurry_record);
   fighter->connected = false;
@@ -588,6 +603,8 @@ static void n482280_back_low_recover(Fighter *fighter) {
 }
 
 static void n482280_back_low_query(Fighter *fighter) {
+  AttackRecord n482280_sweep_record = retail_vm_attack_record(retail_vm_image(), SWEEP_ATTACK_RECORD);
+
   if (!fighter->connected && battle_contact(fighter, &n482280_sweep_record) != CONTACT_MISS) {
     n482280_back_low_recover(fighter);
   }
@@ -755,8 +772,9 @@ void retail_weapon_native_495610(Fighter *fighter);
  * WEAPON selector 42/43 and sound 0x20. */
 /* T2[0x16]/[0x17] 497ae0/497ad0 -> 497af0: action 316 and VM 4ed190. */
 static const MoveDef n497b60_boomerang_throw = {.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x316};
+
 /* 497c50 waiter descriptor 4ed1a8 selects C[20] 4ebde0. */
-static const AttackRecord n497b60_boomerang_record = {0xc76c, -0x424d, 0x9be7, 0x8c8b, 169, 154, 0, ATTACK_MARK, 0x3333};
+
 static const MoveDef n497b60_victim_hit = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
 static const MoveDef n497b60_victim_fall = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
 
@@ -833,6 +851,8 @@ static void n497b60_boomerang_home(Projectile *projectile) {
  * skips a victim in action 2001, and turns back on contact or outside
  * the arena radius squared plus twelve. */
 static void n497b60_boomerang_step(Projectile *projectile) {
+  AttackRecord n497b60_boomerang_record = retail_vm_attack_record(retail_vm_image(), BOOMERANG_ATTACK_RECORD);
+
   if (projectile->phase == n497b60_BOOMERANG_HOME) {
     n497b60_boomerang_home(projectile);
     if (projectile->step == n497b60_boomerang_step && projectile->kind != 0) {

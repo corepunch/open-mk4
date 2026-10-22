@@ -2,9 +2,29 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Named byte addresses of native attack records, checked against the local EXE.
+ * Decode the original data through the VM; do not keep copied balance tables. */
+enum {
+  FIRE_ATTACK_RECORD = 0x4ebf90,
+  ORB_ATTACK_RECORD = 0x4ebed0,
+  FIREBALL_ATTACK_RECORD = 0x4ec290,
+  BLADE_ATTACK_RECORD = 0x4ebf60,
+  MISSILE_ATTACK_RECORD = 0x4ebf60,
+  DROP_ATTACK_RECORD = 0x4ebe70,
+  RISE_ATTACK_RECORD = 0x4ebe58,
+  FIREBALL_HIGH_ATTACK_RECORD = 0x4ebed0,
+  FIREBALL_LOW_ATTACK_RECORD = 0x4ebee8,
+  SKULL_ATTACK_RECORD = 0x4ebe88,
+  GENERIC_PROJECTILE_ATTACK_RECORD = 0x4ebf00,
+  STAR_ATTACK_RECORD = 0x4ebe40,
+  ACID_ATTACK_RECORD = 0x4ebe28,
+  RING_ATTACK_RECORD = 0x4ebf60,
+  ICE_PROJECTILE_ATTACK_RECORD = 0x4ebf18
+};
+
 /* Native service cluster: 4970d0. */
 static const MoveDef n4970d0_cast = {.clip = 28, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x311};
-static const AttackRecord n4970d0_orb_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 64, 10, 2, ATTACK_MARK, 0x1999};
+
 /* 4d1788 -> ten roots50e4dc..50e5d8, all share2_g.geo with the same
  * authored root translation.49726d sets the root's .75 scale. */
 static const MeshAnimation n4970d0_orb_mesh = {
@@ -13,6 +33,8 @@ static const MeshAnimation n4970d0_orb_mesh = {
 /* 4ed108 is a native callback descriptor (selector0,497340,4973a0,
  * 4973f0), not a VM program. The independent object owns motion and contact. */
 static void n4970d0_orb_step(Projectile *projectile) {
+  AttackRecord n4970d0_orb_record = retail_vm_attack_record(retail_vm_image(), ORB_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     projectile->kind = 0;
     return;
@@ -276,12 +298,15 @@ void fujin_wind_slam(Fighter *fighter) {
 /* Native service cluster: 49ca90. */
 static void n49ca90_fireball_step(Projectile *projectile);
 static const MoveDef n49ca90_s_fireball = {.clip = 592, .last = 24, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+
 /* 4ed7e0 selects C[22]; 49c670 queries it every visit without the
  * selector-zero projectile's crouching (2001) exemption. */
-static const AttackRecord n49ca90_fireball_record = {0x3d70, -0x51eb, 0x7d70, 0x7333, 64, 10, 7, ATTACK_MARK, 0x23d7};
+
 static const MeshAnimation n49ca90_fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
 
 static void n49ca90_fireball_step(Projectile *projectile) {
+  AttackRecord n49ca90_fireball_record = retail_vm_attack_record(retail_vm_image(), FIREBALL_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     projectile->kind = 0;
     return;
@@ -385,8 +410,9 @@ void goro_script_quake_land(Fighter *fighter) {
 /* D,B+LP and the CPU projectile row -> 497540: 49c610 snapshots the pair
  * heading, action 0x310, then generated 4ed118 spawns task 78 (497580). */
 static const MoveDef n497580_cast_move = {.clip = 27, .last = 21, .flags = SF_LOCK | SF_RECORD, .action = 0x310};
+
 /* Descriptor 4ed180 selects C[4] (0x4ebf60): 12%, reactions 68/10/2. */
-static const AttackRecord n497580_blade_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 68, 10, 2, 2, 0x1eb8};
+
 /* 4ed170 rig 0x50c770: share2 geometry, mesh 34, no authored offset. */
 static const MeshAnimation n497580_blade_mesh = {.first = 34, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2};
 
@@ -426,6 +452,8 @@ static void n497580_blade_hit(Projectile *projectile, ContactResult result) {
 }
 
 static void n497580_blade_step(Projectile *projectile) {
+  AttackRecord n497580_blade_record = retail_vm_attack_record(retail_vm_image(), BLADE_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     projectile->kind = 0;
     return;
@@ -576,8 +604,9 @@ void jax_ground_pound(Fighter *fighter) {
  * +68/+6c, action 0x314 is stored and 4ed090 plays clip 29, queues C[93] at
  * pose 10 and spawns independent task 80 (496fc0) before finishing. */
 static const MoveDef n496fc0_s_missile = {.clip = 29, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x314};
+
 /* C[4] record 4ebf60: 12%, reactions 68/10/2. */
-static const AttackRecord n496fc0_missile_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 68, 10, 2, 2, 0x1eb8};
+
 /* 4ed0b8 -> rig 5066ac (mesh 42); track 5047ac loops meshes 43..48 (504790),
  * three ticks each, in shared_g.geo. */
 static const MeshAnimation n496fc0_missile_mesh = {.first = 43, .count = 6, .period = 3, .scale = Q16_ONE};
@@ -594,6 +623,8 @@ bool jax_can_missile(const Fighter *fighter) {
  * calls 49bb00 on any contact (C[0x5e], explosion, removal). Otherwise
  * 49bbd0 removes the object outside the squared arena radius plus 12. */
 static void n496fc0_missile_step(Projectile *object) {
+  AttackRecord n496fc0_missile_record = retail_vm_attack_record(retail_vm_image(), MISSILE_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     object->kind = 0;
     return;
@@ -645,10 +676,10 @@ void jax_missile(Fighter *fighter) {
  * 49c610 snapshots the owner heading; 49c540 selects the peer group. */
 static const MoveDef n499000_rising_cast = {.clip = 21, .last = 6, .flags = SF_LOCK | SF_RECORD, .action = 0x307};
 static const MoveDef n499000_ground_cast = {.clip = 22, .last = 4, .flags = SF_LOCK | SF_RECORD, .action = 0x308};
+
 /* C[8] 0x4ebe70 and C[9] 0x4ebe58: 13% damage, reactions 129/130, no block
  * reaction, flags 2 (mark). */
-static const AttackRecord n499000_drop_record = {0x4000, 0x1958, 0x7d70, 0x96c8, 129, 129, 0, ATTACK_MARK, 0x2147};
-static const AttackRecord n499000_rise_record = {0x3d70, -0xb851, 0x7d70, 0x96c8, 130, 130, 0, ATTACK_MARK, 0x2147};
+
 /* Spawn rigs 4ed390/4ed320 both select rig 50c8f8: share2 mesh 48 with no
  * root translation. */
 static const MeshAnimation n499000_skull_mesh = {.first = 48, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2};
@@ -726,6 +757,8 @@ static void n499000_skull_spawn_from(Fighter *fighter, ProjectileFn step, q16 fo
 }
 
 static void n499000_rising_step(Projectile *object) {
+  AttackRecord n499000_drop_record = retail_vm_attack_record(retail_vm_image(), DROP_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     object->kind = 0;
     return;
@@ -746,6 +779,8 @@ static void n499000_rising_step(Projectile *object) {
 }
 
 static void n499000_ground_step(Projectile *object) {
+  AttackRecord n499000_rise_record = retail_vm_attack_record(retail_vm_image(), RISE_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     object->kind = 0;
     return;
@@ -865,10 +900,11 @@ static void n47ed40_fireball(Fighter *fighter, bool low);
 static const MoveDef n47ed40_s_fireball_high = {.clip = 18, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030C};
 static const MoveDef n47ed40_s_fireball_low = {.clip = 19, .last = 46, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030D};
 static const MoveDef n47ed40_s_fireball_air = {.clip = 20, .last = 5, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030E};
-static const AttackRecord n47ed40_fireball_high_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 64, 10, 2, ATTACK_MARK, 0x1999};
-static const AttackRecord n47ed40_fireball_low_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 65, 10, 2, ATTACK_MARK, 0x1999};
 
 static void n47ed40_fireball_projectile(Projectile *p) {
+  AttackRecord n47ed40_fireball_high_record = retail_vm_attack_record(retail_vm_image(), FIREBALL_HIGH_ATTACK_RECORD);
+  AttackRecord n47ed40_fireball_low_record = retail_vm_attack_record(retail_vm_image(), FIREBALL_LOW_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     p->kind = 0;
     return;
@@ -950,8 +986,9 @@ void liu_kang_liu_script_air_return(Fighter *fighter) {
 /* LP [F,F] record 4e4818 and the CPU projectile row select native 499740:
  * 49c610 snapshots the pair heading, action 306 enters 4ed3a0 (clip 23). */
 static const MoveDef n499780_s_skull = {.clip = 23, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = 0x306};
+
 /* 4998d0 copies C[7]/4ebe88 through contact descriptor 4ed3f8. */
-static const AttackRecord n499780_skull_record = {0x824d, -0x6978, 0xc000, 0x947a, 128, 10, 6, ATTACK_MARK, 0x1999};
+
 /* 53d6b8 spawns rig 50c364 from share2_g.geo at the owner origin: cranium
  * mesh 4 and jaw mesh 5 at its authored (0, 0x1020, -0x324d) offset. */
 static const MeshAnimation n499780_skull_mesh = {
@@ -989,6 +1026,8 @@ static void n499780_skull_bite(Projectile *skull) {
 /* 49c690(4ed3f8) waits for contact each tick; 499ae0 tests the arena bound
  * from 49bc00 and emits smoke on its first visit and then every third visit. */
 static void n499780_skull_step(Projectile *skull) {
+  AttackRecord n499780_skull_record = retail_vm_attack_record(retail_vm_image(), SKULL_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     skull->kind = 0;
     return;
@@ -1056,10 +1095,12 @@ void quan_chi_skull_reaction(Fighter *victim) {
 /* Native service cluster: 49be10. */
 static void n49be10_projectile_step(Projectile *object);
 static const MoveDef n49be10_s_projectile = {.clip = 17, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x305};
-static const AttackRecord n49be10_projectile_record = {22282, -7864, 41287, 15073, 66, 10, 2, 2, 9175};
+
 static const MeshAnimation n49be10_projectile_mesh = {.first = 41, .count = 1, .period = 1, .scale = Q16_ONE};
 
 static void n49be10_projectile_step(Projectile *object) {
+  AttackRecord n49be10_projectile_record = retail_vm_attack_record(retail_vm_image(), GENERIC_PROJECTILE_ATTACK_RECORD);
+
   mk4_script_projectile_step(object, &n49be10_projectile_record, false);
 }
 
@@ -1081,8 +1122,9 @@ void raiden_lightning(Fighter *fighter) {
  * pair axis (49c610), action 0x315, then 4ed038 throws on clip 437 and
  * spawns task 82 (496e00) at pose 13. */
 static const MoveDef n483df0_s_star_throw = {.clip = 437, .last = 23, .flags = SF_LOCK | SF_RECORD, .action = 0x315};
+
 /* 4ed080: C[21] contact, bounds 496f10, contact 496f40, expiry 496f60. */
-static const AttackRecord n483df0_star_record = {0x1072b, -0x82d0, 0xcf1a, 0x6147, 45, 45, 2, ATTACK_MARK, 0x2147};
+
 /* 4deae0 is an invisible carrier node. The thrown star drawn by 415620 uses
  * rig 50cf34: share2 mesh 73 translated (0x2000, 0x2000, 0), spun 0xb333. */
 static const MeshAnimation n483df0_star_mesh = {.first = 73, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2, .offset = {0x2000, 0x2000, 0}};
@@ -1096,6 +1138,8 @@ bool reiko_can_star(const Fighter *fighter) {
  * contact plays C[0x65] and retires the object; otherwise 49bc00 retires it
  * beyond the arena radius squared plus 12. The object list then moves it. */
 static void n483df0_star_step(Projectile *star) {
+  AttackRecord n483df0_star_record = retail_vm_attack_record(retail_vm_image(), STAR_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     star->kind = 0;
     return;
@@ -1148,8 +1192,9 @@ void reiko_star(Fighter *fighter) {
  * 4988d0. It stamps action family 7 (48e3a0), snapshots the pair heading
  * (49c610), sets action 30b and runs generated 4ed1e8 on clip 25. */
 static const MoveDef n40eb80_spit = {.clip = 25, .last = 41, .flags = SF_LOCK | SF_RECORD, .action = 0x30b};
+
 /* 4ed258 selector 0x11: C[17], 10% damage, reactions 41/41/2. */
-static const AttackRecord n40eb80_acid_record = {0x1072b, -0x82d0, 0xcf1a, 0x6147, 41, 41, 2, ATTACK_MARK, 0x1999};
+
 /* 40ee30 droplets: 4d16d0 lists shared rigs 509e74..509ee4, meshes 340..344
  * for two ticks each, with the 509e90 authored origin. */
 static const ParticleVisual n40eb80_drool_visual = {
@@ -1236,6 +1281,8 @@ void reptile_script_acid_drool(Fighter *fighter) {
 }
 
 static void n40eb80_acid_step(Projectile *acid) {
+  AttackRecord n40eb80_acid_record = retail_vm_attack_record(retail_vm_image(), ACID_ATTACK_RECORD);
+
   if (acid->phase > 0) {
     /* 498ac0: the contact visit retires the object and plays C[48]; ten
      * ticks later C[49] and the task finishes. */
@@ -1302,11 +1349,14 @@ enum {
 };
 
 static void n416ae0_fire_contact(Fighter *fighter);
-static const AttackRecord n416ae0_fire_record = {0x24e56, -0xc978, 0x23cac, 0xb7ce, 173, 173, 0, ATTACK_UNBLOCKABLE, 0x1eb8};
 static const MoveDef n416ae0_s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0115};
 
 static void n416ae0_fire_contact(Fighter *fighter) {
-  battle_contact(fighter, &n416ae0_fire_record);
+  AttackRecord record = retail_vm_attack_record(retail_vm_image(), FIRE_ATTACK_RECORD);
+  /* Native fire bypasses guarding; this explicit flag belongs to our contact
+   * boundary, while the box, reactions and damage come from retail data. */
+  record.flags |= ATTACK_UNBLOCKABLE;
+  battle_contact(fighter, &record);
 }
 
 /*468640 finishes its native contact phase at sample28, then enters words. */
@@ -1349,10 +1399,12 @@ void scorpion_script_fire_flame(Fighter *fighter) {
 /* Native service cluster: 49b9e0, 49ba50. */
 static void n49b9e0_projectile_step(Projectile *object);
 static const MoveDef n49b9e0_s_projectile = {.clip = 15, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x313};
-static const AttackRecord n49b9e0_projectile_record = {22282, -7864, 41287, 15073, 68, 10, 2, 2, 7864};
+
 static const MeshAnimation n49b9e0_projectile_mesh = {.first = 42, .count = 2, .period = 1, .scale = Q16_ONE};
 
 static void n49b9e0_projectile_step(Projectile *object) {
+  AttackRecord n49b9e0_projectile_record = retail_vm_attack_record(retail_vm_image(), RING_ATTACK_RECORD);
+
   mk4_script_projectile_step(object, &n49b9e0_projectile_record, false);
 }
 
@@ -1375,7 +1427,7 @@ void sonya_script_ring_flash(Fighter *fighter, int task_type) {
 }
 
 /* Native service cluster: native_projectile. */
-static const AttackRecord native_projectile_ice_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 67, 67, 0, ATTACK_MARK, 0};
+
 static const ParticleVisual native_projectile_ice_trail_visual = {
     .animation = {.first = 339, .count = 1, .period = 1, .scale = 0x4000}, .billboard = true, .additive = true, .shrink = 0x51e};
 static const ParticleSpray native_projectile_ice_trail = {.visual = &native_projectile_ice_trail_visual,
@@ -1387,6 +1439,8 @@ static const ParticleSpray native_projectile_ice_trail = {.visual = &native_proj
     .position_spread = {0x6666, 0x6666, 0x6666}};
 
 void sub_zero_ice_projectile(Projectile *p) {
+  AttackRecord native_projectile_ice_record = retail_vm_attack_record(retail_vm_image(), ICE_PROJECTILE_ATTACK_RECORD);
+
   if (g_battle.contacts_off) {
     p->kind = 0;
     return;

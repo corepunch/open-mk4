@@ -2,6 +2,27 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Named byte addresses of native attack records, checked against the local EXE.
+ * Decode the original data through the VM; do not keep copied balance tables. */
+enum {
+  GROIN_PUNCH_ATTACK_RECORD = 0x4ec008,
+  SHADOW_ATTACK_RECORD = 0x4ebfd8,
+  POWER_ATTACK_RECORD = 0x4ebff0,
+  TRIPLE_ATTACK_RECORD = 0x4ec170,
+  PUNCH_ATTACK_RECORD = 0x4ec230,
+  KICK_ATTACK_RECORD = 0x4ec248,
+  UPPERCUT_ATTACK_RECORD = 0x4ec278,
+  STOMP_ATTACK_RECORD = 0x4ec260,
+  DASH_ATTACK_RECORD = 0x4ec050,
+  AERIAL_ATTACK_RECORD = 0x4ec0e0,
+  BICYCLE_ATTACK_RECORD = 0x4ebc60,
+  WEAPON_STEAL_ATTACK_RECORD = 0x4ec140,
+  AERIAL_BICYCLE_ATTACK_RECORD = 0x4ec1d0,
+  CARTWHEEL_ATTACK_RECORD = 0x4ec0b0,
+  LEG_ATTACK_RECORD = 0x4ebf78,
+  SPIN_ATTACK_RECORD = 0x4ebfc0
+};
+
 /* Native service cluster: native_groin_punch. */
 static void native_groin_punch_groin_choose(Fighter *fighter);
 static void native_groin_punch_groin_query(Fighter *fighter);
@@ -9,7 +30,6 @@ static void native_groin_punch_groin_recover(Fighter *fighter);
 static void native_groin_punch_groin_victim(Fighter *victim);
 static const MoveDef native_groin_punch_groin_move = {.clip = 438, .last = 14, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x110};
 static const MoveDef native_groin_punch_groin_stun = {.clip = 126, .last = 14, .flags = SF_LOCK | SF_REACTION, .action = 0x1014};
-static const AttackRecord native_groin_punch_groin_record = {0xd6c8, 0x28f5, 0xba5e, 0xd3f7, 164, 164, 165, 0, 0x28f5};
 
 bool cage_can_groin_punch(const Fighter *fighter) {
   unsigned chord = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_BLOCK);
@@ -46,6 +66,8 @@ static void native_groin_punch_groin_victim(Fighter *victim) {
 }
 
 static void native_groin_punch_groin_contact(Fighter *fighter) {
+  AttackRecord native_groin_punch_groin_record = retail_vm_attack_record(retail_vm_image(), GROIN_PUNCH_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &native_groin_punch_groin_record);
   if (result == CONTACT_MISS) {
     return;
@@ -120,7 +142,6 @@ void cage_cpu_kick(Fighter *fighter);
 /* Native479b70 queries D[25] at poses22/23, then holds24 for twelve
  * contact visits while descriptor4e80c8 installs47bf50 velocity decay.
  * The descriptor is data, never the adjacent powered-punch script. */
-static const AttackRecord n479b70_shadow_record = {0x17fbe, -0x51a9, 0x13020, 0x2b43, 162, 162, 165, 0, 0x23d7};
 
 static void n479b70_shadow_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -133,6 +154,8 @@ static void n479b70_shadow_recover(Fighter *fighter) {
 }
 
 static void n479b70_shadow_contact(Fighter *fighter) {
+  AttackRecord n479b70_shadow_record = retail_vm_attack_record(retail_vm_image(), SHADOW_ATTACK_RECORD);
+
   if (fighter_sample(fighter) == 24) {
     fighter->body.vel[AXIS_X] = q16_mul(fighter->body.vel[AXIS_X], 0xe666);
     fighter->body.vel[AXIS_Z] = q16_mul(fighter->body.vel[AXIS_Z], 0xe666);
@@ -167,7 +190,7 @@ static const MoveDef n479f00_cage_s_powered_punch_script = {.clip = 85, .last = 
 
 /* Native479f00 D[26], followed by two native47a280 paired cycles.
  * 4e80f4 is a physics callback descriptor, not the adjacent105 kick. */
-static const AttackRecord n479f00_power_record = {0xc7ae, -0x16624, 0xe872, 0x13020, 163, 163, 3, 0, 0x1eb8};
+
 static void n479f00_power_cycle(Fighter *fighter);
 static void n479f00_power_recover(Fighter *fighter);
 static void n479f00_power_victim_fall(Fighter *fighter);
@@ -318,6 +341,8 @@ static void n479f00_power_blocked(Fighter *fighter) {
 }
 
 static void n479f00_power_query(Fighter *fighter) {
+  AttackRecord n479f00_power_record = retail_vm_attack_record(retail_vm_image(), POWER_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &n479f00_power_record);
   if (result == CONTACT_MISS) {
     return;
@@ -373,7 +398,7 @@ void cage_powered_punch(Fighter *fighter);
 /* Native service cluster: 47f060, 47f070. */
 static const MoveDef n47f060_triple = {.clip = 100, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x208};
 static const MoveDef n47f060_middle_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
-static const AttackRecord n47f060_triple_record = {0x970a, -0x1170a, 0xb851, 0xffbe, 93, 93, 8, 0, 0x30a3};
+
 static void n47f060_triple_recover(Fighter *fighter);
 static void n47f060_triple_cycle(Fighter *fighter);
 
@@ -470,6 +495,8 @@ static void n47f060_triple_blocked(Fighter *fighter) {
 }
 
 static void n47f060_triple_query(Fighter *fighter) {
+  AttackRecord n47f060_triple_record = retail_vm_attack_record(retail_vm_image(), TRIPLE_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &n47f060_triple_record);
   if (result == CONTACT_MISS) {
     return;
@@ -731,9 +758,6 @@ static void n43afc0_special_tail(Fighter *fighter, const AttackRecord *record, i
 static const MoveDef n43afc0_s_special_punch = {.clip = 599, .last = 56, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
 static const MoveDef n43afc0_s_special_kick = {.clip = 598, .last = 30, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
 static const MoveDef n43afc0_s_special_uppercut = {.clip = 600, .last = 36, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
-static const AttackRecord n43afc0_punch_record = {0x13810, -0xe106, 0xfd2f, 0x11be7, 189, 189, 7, 0, 0x2666};
-static const AttackRecord n43afc0_kick_record = {0x1b2b0, -0x6b43, 0x16872, 0xa624, 190, 190, 7, 0, 0x2666};
-static const AttackRecord n43afc0_uppercut_record = {0x16b43, -0xcf5c, 0x109fb, 0x1424d, 192, 192, 6, 0, 0x23d7};
 
 /* Goro's command handlers open with 489ef0's sampled voice token and
  * 45f870, which stops the grounded body and refaces the pair before the
@@ -758,7 +782,8 @@ static void n43afc0_special_query(Fighter *fighter) {
 static void n43afc0_special_tail(Fighter *fighter, const AttackRecord *record, int first, int queries) {
   int last = fighter_move(fighter)->last;
   require(last != MOVE_END && first + queries - 1 <= last, "Goro special contact rows exceed the bound clip");
-  fighter->native_record = record;
+  fighter->native_record_value = *record;
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, last - first + 2, fighter_ready);
   for (int frame = 1; frame <= last - first + 2; ++frame) {
     native_frame(fighter, frame, mini(last, first + frame - 1), frame <= queries ? n43afc0_special_query : NULL);
@@ -773,6 +798,8 @@ void goro_special_punch(Fighter *fighter) {
 }
 
 void goro_script_punch_tail(Fighter *fighter) {
+  AttackRecord n43afc0_punch_record = retail_vm_attack_record(retail_vm_image(), PUNCH_ATTACK_RECORD);
+
   n43afc0_special_tail(fighter, &n43afc0_punch_record, fighter_sample(fighter) + 1, 3);
 }
 
@@ -783,6 +810,8 @@ void goro_special_kick(Fighter *fighter) {
 }
 
 void goro_script_kick_tail(Fighter *fighter) {
+  AttackRecord n43afc0_kick_record = retail_vm_attack_record(retail_vm_image(), KICK_ATTACK_RECORD);
+
   n43afc0_special_tail(fighter, &n43afc0_kick_record, fighter_sample(fighter) + 1, 8);
 }
 
@@ -790,9 +819,12 @@ void goro_script_kick_tail(Fighter *fighter) {
  * pose 0 through 428750, advances nine poses with 429490, then queries
  * D[35] for five rows through 43b940 before finishing the clip. */
 void goro_special_uppercut(Fighter *fighter) {
+  AttackRecord n43afc0_uppercut_record = retail_vm_attack_record(retail_vm_image(), UPPERCUT_ATTACK_RECORD);
+
   goro_begin_special(fighter, S_UPPERCUT, &n43afc0_s_special_uppercut, 0x5fa);
   mk4_mmove_bind(fighter, 600, 37, 0);
-  fighter->native_record = &n43afc0_uppercut_record;
+  fighter->native_record_value = n43afc0_uppercut_record;
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 0, 37, fighter_ready);
   for (int frame = 0; frame <= 37; ++frame) {
     native_frame(fighter, frame, mini(36, frame), frame >= 9 && frame < 14 ? n43afc0_special_query : NULL);
@@ -805,9 +837,9 @@ static void n43b370_leap_rise(Fighter *fighter);
 static void n43b370_leap_fall(Fighter *fighter);
 static void n43b370_leap_cleanup(Fighter *fighter);
 static const MoveDef n43b370_s_leap = {.clip = 601, .last = 51, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x409};
+
 /* D[34]: the zero-damage stomp box under the falling body; every
  * outcome selects reaction 191. 43b370 applies 30% separately. */
-static const AttackRecord n43b370_stomp_record = {0x68f5, 0x44dd, 0xe666, 0xc76c, 191, 191, 191, 0, 0};
 
 enum {
   n43b370_LEAP_APEX_SAMPLE = 41, /* 23 + ceil(0x3cccc / 0x3851) one-pose rising visits */
@@ -861,6 +893,8 @@ static void n43b370_leap_rise(Fighter *fighter) {
  * A contact disturbs resting Goro objects, deals 30% and enters 4dfbd0;
  * landing first enters the miss recovery 43b620 -> 4dfc38. */
 static void n43b370_leap_fall(Fighter *fighter) {
+  AttackRecord n43b370_stomp_record = retail_vm_attack_record(retail_vm_image(), STOMP_ATTACK_RECORD);
+
   fighter->mmove_hold = true;
   if (!fighter_airborne(fighter)) {
     fighter->mmove_hold = false;
@@ -910,8 +944,9 @@ void goro_script_stomp_return(Fighter *fighter) {
  * select 47ab10: stamp 0xc, action 0x215 and script 4e8150 (indexed 37,
  * C[78], speed 0x2666, clip 299 two poses per visit to 18, tail 47ab50). */
 static const MoveDef n47ab50_s_dash = {.clip = 299, .last = 34, .flags = SF_LOCK | SF_RECORD, .action = 0x215};
+
 /* D[22] record 4ec050: 16%, reactions 157/10/165. */
-static const AttackRecord n47ab50_dash_record = {0x16b43, -0x4c8b, 0xcf1a, 0x2b85, 157, 10, 165, 0, 0x28f5};
+
 static const MoveDef n47ab50_s_dash_stagger = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef n47ab50_s_dash_fall = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef n47ab50_s_dash_air_fall = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
@@ -1032,6 +1067,8 @@ static void n47ab50_dash_contact(Fighter *fighter, ContactResult result) {
 }
 
 static void n47ab50_dash_query(Fighter *fighter) {
+  AttackRecord n47ab50_dash_record = retail_vm_attack_record(retail_vm_image(), DASH_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &n47ab50_dash_record);
   if (result != CONTACT_MISS) {
     n47ab50_dash_contact(fighter, result);
@@ -1101,8 +1138,8 @@ void jax_dash_victim_throw(Fighter *victim) {
 /* 47bd10 sets action 210 and enters 4e8210: sound C60, forward .18, Y -.1,
  * gravity 41, then clip 298 advances to sample 9 before native 47bd40. */
 static const MoveDef n47bd40_aerial_punch = {.clip = 298, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = 0x210};
+
 /* D[16] 0x4ec0e0: 13% damage, reaction 123 on the ground or in the air, no block reaction. */
-static const AttackRecord n47bd40_aerial_contact = {0x107ae, -0x8f1a, 0x107ae, 0xb851, 123, 123, 0, 0, 0x2147};
 
 enum {
   n47bd40_AERIAL_QUERIES = 15,
@@ -1197,6 +1234,8 @@ static void n47bd40_aerial_timeout(Fighter *fighter) {
 }
 
 static void n47bd40_aerial_first_query(Fighter *fighter) {
+  AttackRecord n47bd40_aerial_contact = retail_vm_attack_record(retail_vm_image(), AERIAL_ATTACK_RECORD);
+
   if (battle_contact(fighter, &n47bd40_aerial_contact) != CONTACT_MISS) {
     n47bd40_aerial_hit(fighter);
   }
@@ -1248,7 +1287,6 @@ static void n47eb30_bicycle_carry_end(Fighter *fighter);
 static void n47eb30_bicycle_contact_end(Fighter *fighter);
 static void n47eb30_bicycle_motion_pose(Fighter *fighter, float pose);
 static const MoveDef n47eb30_s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .action = ACTION_RETAIL_0206};
-static const AttackRecord n47eb30_bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
 
 static void n47eb30_bicycle_cleanup(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
@@ -1259,6 +1297,8 @@ static void n47eb30_bicycle_cleanup(Fighter *fighter) {
 }
 
 static void n47eb30_bicycle_query(Fighter *fighter) {
+  AttackRecord n47eb30_bicycle_record = retail_vm_attack_record(retail_vm_image(), BICYCLE_ATTACK_RECORD);
+
   if (!fighter_airborne(fighter) || battle_contact(fighter, &n47eb30_bicycle_record) != CONTACT_MISS) {
     n47eb30_bicycle_contact_end(fighter);
   }
@@ -1377,8 +1417,9 @@ void liu_kang_liu_script_bicycle_motion(Fighter *fighter) {
 /* HP [F,B] record 4e47f8 selects native 469c80: action 401, sound C[37],
  * clip 7 (53ce1c) played to sample 10 by 428d30. */
 static const MoveDef native_steal_s_steal = {.clip = 7, .last = 21, .flags = SF_LOCK | SF_RECORD, .action = 0x401};
+
 /* 469cea queries D[11]/4ec140 once, only against an armed victim. */
-static const AttackRecord native_steal_steal_record = {0x4a3d7, -0x17851, 0x4a3d7, 0x1e147, 108, 108, 0, 0, 0x7ae};
+
 static const MoveDef native_steal_s_stolen_ground = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef native_steal_s_stolen_air = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION};
 
@@ -1473,6 +1514,8 @@ static void native_steal_steal_take(Fighter *fighter) {
 
 /* 469caf: an armed victim and an unarmed thief allow the D[11] query. */
 static void native_steal_steal_query(Fighter *fighter) {
+  AttackRecord native_steal_steal_record = retail_vm_attack_record(retail_vm_image(), WEAPON_STEAL_ATTACK_RECORD);
+
   const Fighter *victim = fighter_opponent(fighter);
   ContactResult result = victim->armed && !fighter->armed ? battle_contact(fighter, &native_steal_steal_record) : CONTACT_MISS;
   if (result == CONTACT_MISS || result == CONTACT_BLOCK) {
@@ -1687,13 +1730,14 @@ static void native_bicycle_bicycle_fall(Fighter *fighter);
 static void native_bicycle_bicycle_spin(Fighter *fighter);
 static void native_bicycle_bicycle_script(Fighter *fighter);
 static const MoveDef native_bicycle_s_bicycle = {.clip = 310, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x205};
-static const AttackRecord native_bicycle_bicycle_record = {80609, -1310, 62259, 20971, 86, 86, 0, 0, 9830};
 
 static bool native_bicycle_bicycle_height(const Fighter *fighter) {
   return fighter_height(fighter) >= 2.5f;
 }
 
 static void native_bicycle_bicycle_contact(Fighter *fighter) {
+  AttackRecord native_bicycle_bicycle_record = retail_vm_attack_record(retail_vm_image(), AERIAL_BICYCLE_ATTACK_RECORD);
+
   if (battle_contact(fighter, &native_bicycle_bicycle_record) != CONTACT_MISS) {
     native_bicycle_bicycle_fall(fighter);
   }
@@ -1742,7 +1786,6 @@ static void n47b6c0_cartwheel_done(Fighter *fighter);
 static void n47b6c0_cartwheel_stop(Fighter *fighter);
 static void n47b6c0_cartwheel_recover(Fighter *fighter);
 static const MoveDef n47b6c0_s_cartwheel = {.clip = 104, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x213};
-static const AttackRecord n47b6c0_cartwheel_record = {75300, -45088, 72083, 89063, 121, 121, 9, 0, 4587};
 
 static void n47b6c0_cartwheel_done(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
@@ -1763,6 +1806,8 @@ static void n47b6c0_cartwheel_recover(Fighter *fighter) {
 }
 
 void sonya_script_cartwheel_tail(Fighter *fighter) {
+  AttackRecord n47b6c0_cartwheel_record = retail_vm_attack_record(retail_vm_image(), CARTWHEEL_ATTACK_RECORD);
+
   fighter->cartwheel_ready = g_battle.ticks + 48;
   native_query_rows(fighter, &n47b6c0_cartwheel_record, 9, 1, n47b6c0_cartwheel_recover);
 }
@@ -1787,7 +1832,6 @@ static void n47e0a0_leg_grab_contact(Fighter *fighter);
 static void n47e0a0_leg_grab_script(Fighter *fighter);
 static const MoveDef n47e0a0_s_leg_grab = {.clip = 102, .last = 64, .flags = SF_LOCK | SF_RECORD, .action = 0x203};
 static const MoveDef n47e0a0_s_leg_victim = {.clip = 201, .last = 34, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const AttackRecord n47e0a0_leg_record = {92405, -29491, 85852, 76677, 88, 88, 8, 1, 11796};
 
 void sonya_script_leg_victim_end(Fighter *victim) {
   mk4_mmove_bind(victim, 185, 16, 0);
@@ -1808,6 +1852,8 @@ static void n47e0a0_leg_stop(Fighter *fighter) {
 }
 
 static void n47e0a0_leg_grab_contact(Fighter *fighter) {
+  AttackRecord n47e0a0_leg_record = retail_vm_attack_record(retail_vm_image(), LEG_ATTACK_RECORD);
+
   if (battle_contact(fighter, &n47e0a0_leg_record) == CONTACT_MISS || fighter->contact == CONTACT_BLOCK) {
     fighter->action = 0x1012;
     retail_vm_enter(fighter, 0x4e85a8, fighter_ready);
@@ -1850,8 +1896,8 @@ bool sonya_can_leg_grab(const Fighter *fighter) {
  * 428750/53cf40, speed .15 and the 4797c0 cursor callback, which loops
  * samples 14..28 after the first pass. */
 static const MoveDef n47dae0_2_spin = {.clip = 109, .last = 28, .flags = SF_LOCK | SF_RECORD, .action = 0x21b};
+
 /* D[28] 4ebfc0: 12%, hit/air 158, block 3. */
-static const AttackRecord n47dae0_2_spin_record = {0x12dd2, 0xf5c, 0x16872, 0x6dd2, 158, 158, 3, 0, 0x1eb8};
 
 /* 45e8d0: at least 60 ticks since stamp 0xd and an opponent combo count
  * of at most four (45ebb0/45f5b0). */
@@ -1928,6 +1974,8 @@ static void n47dae0_2_spin_blocked(Fighter *fighter) {
 }
 
 static void n47dae0_2_spin_query(Fighter *fighter) {
+  AttackRecord n47dae0_2_spin_record = retail_vm_attack_record(retail_vm_image(), SPIN_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &n47dae0_2_spin_record);
   if (result == CONTACT_MISS) {
     return;

@@ -2,9 +2,27 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Named byte addresses of native attack records, checked against the local EXE.
+ * Decode the original data through the VM; do not keep copied balance tables. */
+enum {
+  DIVE_ATTACK_RECORD = 0x4ec0f8,
+  BALL_ATTACK_RECORD = 0x4ec098,
+  LUNGE_ATTACK_RECORD = 0x4eba20,
+  FLYING_ATTACK_RECORD = 0x4ebbd0,
+  FLIP_ATTACK_RECORD = 0x4ec020,
+  STOMP_ATTACK_RECORD = 0x4ec158,
+  FLIP_KICK_ATTACK_RECORD = 0x4ebfa8,
+  DASH_ATTACK_RECORD = 0x4ec038,
+  ROLL_ATTACK_RECORD = 0x4ec080,
+  TELEPORT_ATTACK_RECORD = 0x4ebf48,
+  SQUARE_ATTACK_RECORD = 0x4ec1e8,
+  ICE_CLONE_ATTACK_RECORD = 0x4ebf30,
+  SLIDE_ATTACK_RECORD = 0x4ec1b8,
+  DRILL_ATTACK_RECORD = 0x4ec0c8
+};
+
 /* Native service cluster: 47bf90, 47bfd0. */
 static const MoveDef n47bf90_dive = {.clip = 58, .last = 9, .flags = SF_LOCK | SF_RECORD, .action = 0x20f};
-static const AttackRecord n47bf90_dive_contact = {0x12666, -0xa3d, 0x107ae, 0x851e, 10, 10, 0, 0, 0x147a};
 
 static void n47bf90_dive_cleanup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -27,6 +45,8 @@ static void n47bf90_dive_recoil(Fighter *fighter) {
 }
 
 static void n47bf90_dive_query(Fighter *fighter) {
+  AttackRecord n47bf90_dive_contact = retail_vm_attack_record(retail_vm_image(), DIVE_ATTACK_RECORD);
+
   /* 4704d0 checks the floor before each subsequent D[15] query. */
   if (!fighter_airborne(fighter)) {
     fujin_dive_land(fighter);
@@ -58,7 +78,7 @@ void fujin_dive(Fighter *fighter) {
 /* Jarek's cannonball 47b310 (B,F+LK and every CPU range row) and upward
  * ball 4797f0 (F,D,F+HP). Both bind tuck clip 301 through 53cf4c/53cf44,
  * play it two poses per visit (429220), then query D[19] every visit. */
-static const AttackRecord n47dae0_ball_record = {0x5958, -0x49ba, 0xccc6, 0xadd2, 42, 42, 0, 0, 0x23d7};
+
 static const MoveDef n47dae0_roll_move = {.clip = 301, .last = 8, .flags = SF_LOCK | SF_RECORD, .action = 0x214};
 static const MoveDef n47dae0_rise_move = {.clip = 301, .last = 8, .flags = SF_LOCK | SF_RECORD, .action = 0x21a};
 static const MoveDef n47dae0_victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
@@ -147,6 +167,8 @@ static void n47dae0_ball_recoil(Fighter *fighter) {
 }
 
 static bool n47dae0_ball_contact(Fighter *fighter) {
+  AttackRecord n47dae0_ball_record = retail_vm_attack_record(retail_vm_image(), BALL_ATTACK_RECORD);
+
   if (battle_contact(fighter, &n47dae0_ball_record) == CONTACT_MISS) {
     return false;
   }
@@ -261,10 +283,12 @@ void jarek_ball_victim(Fighter *fighter) {
 /* 478df0 sets action 20b and enters 4e8870: indexed cue 59, clip 551 with
  * its fast-start branch, sound C31 and forward .15 at sample 26. */
 static const MoveDef n478e20_lunge_kick = {.clip = 551, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x20b};
+
 /* B[9] 0x4eba20: 14% damage, reactions 127 hit/air and 5 block. */
-static const AttackRecord n478e20_lunge_contact = {0x18000, -0xa8b4, 0xe147, 0x13ced, 127, 127, 5, 0, 0x23d7};
 
 static void n478e20_lunge_query(Fighter *fighter) {
+  AttackRecord n478e20_lunge_contact = retail_vm_attack_record(retail_vm_image(), LUNGE_ATTACK_RECORD);
+
   /* 470b30 skips 470dc0 after the first contact in this list. */
   if (!fighter->connected) {
     battle_contact(fighter, &n478e20_lunge_contact);
@@ -305,9 +329,10 @@ static void n47ee00_flying_query(Fighter *fighter);
 static void n47ee00_flying_branch(Fighter *fighter);
 static void n47ee00_flying_hold(Fighter *fighter);
 static const MoveDef n47ee00_s_flying_kick = {.clip = 92, .last = 5, .flags = RETAIL, .action = ACTION_RETAIL_0207};
-static const AttackRecord n47ee00_flying_record = {0x14f5c, -0xf5c, 0xf5c2, 0x51eb, 31, 31, 0, 0, 0x23d7};
 
 static void n47ee00_flying_query(Fighter *fighter) {
+  AttackRecord n47ee00_flying_record = retail_vm_attack_record(retail_vm_image(), FLYING_ATTACK_RECORD);
+
   fighter->mmove_hold = fighter_airborne(fighter) && battle_contact(fighter, &n47ee00_flying_record) == CONTACT_MISS;
 }
 
@@ -322,6 +347,8 @@ static void n47ee00_flying_branch(Fighter *fighter) {
 }
 
 static void n47ee00_flying_hold(Fighter *fighter) {
+  AttackRecord n47ee00_flying_record = retail_vm_attack_record(retail_vm_image(), FLYING_ATTACK_RECORD);
+
   if (fighter_airborne(fighter) && battle_contact(fighter, &n47ee00_flying_record) == CONTACT_MISS) {
     native_begin(fighter, 0, 0, n47ee00_flying_branch);
     fighter->native.frames[0].thinkfunc = n47ee00_flying_query;
@@ -356,8 +383,9 @@ void liu_kang_flying_kick(Fighter *fighter) {
  * 217, 490ae0(4e80f8) installs group callback 47bf50, then VM 4e8100 plays
  * clip 105 to sample 10, sets speed 0x547a and reaches sample 15. */
 static const MoveDef n47a3b0_s_flip_kick = {.clip = 105, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x217};
+
 /* 47a500 queries D[24]/4ec020. */
-static const AttackRecord n47a3b0_flip_record = {0xd1eb, 0x570a, 0x16872, 0xbfbe, 160, 160, 8, 0, 0x2666};
+
 static const MoveDef n47a3b0_s_flip_victim = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION};
 
 /* 47bf50 -> 490650: scale horizontal velocity by 0xe666 every world pump. */
@@ -395,6 +423,8 @@ static void n47a3b0_flip_finish(Fighter *fighter) {
 /* 47a500: contact submits pose 19 (429970), stops motion (4906e0) and sets
  * no-guard (490140). A block waits five extra ticks before 47a5c0's ten. */
 static void n47a3b0_flip_contact(Fighter *fighter) {
+  AttackRecord n47a3b0_flip_record = retail_vm_attack_record(retail_vm_image(), FLIP_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &n47a3b0_flip_record);
   if (result == CONTACT_MISS) {
     return;
@@ -443,8 +473,9 @@ void quan_chi_flip_reaction(Fighter *victim) {
  * (53cf58), 90 release (4e8420), 91 missed landing (4e8438), 301 exit.
  * Later clips are bound within the same action, like 428750/4287a0. */
 static const MoveDef n484420_s_sink = {.clip = 87, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = 0x400};
+
 /* 47cf89 queries D[10]/4ec158 every falling visit. */
-static const AttackRecord n484420_stomp_record = {0x68f5, 0x6e14, 0xf0a3, 0xa3d7, 106, 106, 0, 0, 0x3851};
+
 static const MoveDef n484420_s_stomped = {.clip = 178, .last = 27, .flags = SF_LOCK | SF_REACTION};
 
 enum {
@@ -619,6 +650,8 @@ static void n484420_teleport_blocked(Fighter *fighter) {
 
 /* 47cf6b: gravity zero means the owner landed without contact (47d500). */
 static void n484420_teleport_query(Fighter *fighter) {
+  AttackRecord n484420_stomp_record = retail_vm_attack_record(retail_vm_image(), STOMP_ATTACK_RECORD);
+
   if (fighter->body.gravity == 0) {
     n484420_teleport_missed(fighter);
     return;
@@ -787,7 +820,6 @@ bool raiden_can_teleport(const Fighter *fighter) {
  * pump. Clip 110 (53cf3c) advances to pose 7, holds it one visit, then
  * shows 8, 9 and 10 while querying D[29]. */
 static const MoveDef native_flip_kick_s_flip_kick = {.clip = 110, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = 0x21e};
-static const AttackRecord native_flip_kick_flip_record = {0x1353f, -0xab02, 0x12395, 0x1b2b0, 171, 171, 9, 0, 0x1eb8};
 
 /* 45e7a0: slot 16 at least 90 ticks old and a peer combo of at most four. */
 bool reiko_can_flip_kick(const Fighter *fighter) {
@@ -819,6 +851,8 @@ static void native_flip_kick_flip_finish(Fighter *fighter, bool blocked) {
 }
 
 static void native_flip_kick_flip_query(Fighter *fighter) {
+  AttackRecord native_flip_kick_flip_record = retail_vm_attack_record(retail_vm_image(), FLIP_KICK_ATTACK_RECORD);
+
   ContactResult result = battle_contact(fighter, &native_flip_kick_flip_record);
   if (result != CONTACT_MISS) {
     native_flip_kick_flip_finish(fighter, result == CONTACT_BLOCK);
@@ -914,12 +948,13 @@ void reiko_orbit(Fighter *fighter) {
  * 47a690: family-11 stamp, action 216, VM 4e8128 plays clip 302, binds
  * 303/0 with speed 0x2e14 and tails into 47a6d0. */
 static const MoveDef n47a6d0_dash = {.clip = 302, .last = 7, .flags = SF_LOCK | SF_RECORD, .action = 0x216};
+
 /* 47a6d0 queries D[23] (12%, reactions 158/158/165). */
-static const AttackRecord n47a6d0_dash_record = {0xd1eb, 0x570a, 0x16872, 0xbfbe, 158, 158, 165, 0, 0x1eb8};
+
 /* B,F+LP record 4e4590 and the far CPU row enter 47afe0: action 20d,
  * VM 4e8178 on clip 106, D[21] probes and tail 47b010. */
 static const MoveDef n47a6d0_roll = {.clip = 106, .last = 21, .flags = SF_LOCK | SF_RECORD, .action = 0x20d};
-static const AttackRecord n47a6d0_roll_record = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 40, 10, 9, 0, 0x170a};
+
 static const MoveDef n47a6d0_roll_victim = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 
 bool reptile_can_dash(const Fighter *fighter) {
@@ -951,6 +986,8 @@ static void n47a6d0_dash_shake_back(Fighter *fighter) {
 }
 
 static void n47a6d0_dash_contact(Fighter *fighter) {
+  AttackRecord n47a6d0_dash_record = retail_vm_attack_record(retail_vm_image(), DASH_ATTACK_RECORD);
+
   if (fighter->connected) {
     return;
   }
@@ -998,6 +1035,8 @@ void reptile_input_47a690(Fighter *fighter) {
 }
 
 static void n47a6d0_roll_probe(Fighter *fighter) {
+  AttackRecord n47a6d0_roll_record = retail_vm_attack_record(retail_vm_image(), ROLL_ATTACK_RECORD);
+
   /* 47b260 queries D[21] until its local latch is set. */
   if (!fighter->connected) {
     battle_contact(fighter, &n47a6d0_roll_record);
@@ -1100,7 +1139,7 @@ static void n47fcf0_teleport_block_return(Fighter *fighter);
 static void n47fcf0_teleport_query(Fighter *fighter);
 static void n47fcf0_teleport_vanish(Fighter *fighter);
 static void n47fcf0_teleport_range(Fighter *fighter);
-static const AttackRecord n47fcf0_teleport_record = {0x128f5, -0x3ae1, 0xab85, 0x91eb, 90, 90, 0, ATTACK_MARK, 0x170a};
+
 static const MoveDef n47fcf0_s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0209};
 static const MoveDef n47fcf0_s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1011};
 
@@ -1131,6 +1170,8 @@ static void n47fcf0_teleport_block_return(Fighter *fighter) {
 }
 
 static void n47fcf0_teleport_query(Fighter *fighter) {
+  AttackRecord n47fcf0_teleport_record = retail_vm_attack_record(retail_vm_image(), TELEPORT_ATTACK_RECORD);
+
   if (!fighter_airborne(fighter)) {
     fighter_finish_mmove(fighter, scorpion_special_ready);
     return;
@@ -1316,9 +1357,10 @@ static void n47e1d0_square_fall(Fighter *fighter);
 static void n47e1d0_square_victim_drop(Fighter *victim);
 static void n47e1d0_square_victim_guard(Fighter *victim);
 static const MoveDef n47e1d0_s_square_wave = {.clip = 72, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x201};
-static const AttackRecord n47e1d0_square_record = {19005, -9830, 39321, 57671, 87, 87, 0, 0, 13107};
 
 static void n47e1d0_square_query(Fighter *fighter) {
+  AttackRecord n47e1d0_square_record = retail_vm_attack_record(retail_vm_image(), SQUARE_ATTACK_RECORD);
+
   battle_contact(fighter, &n47e1d0_square_record);
   fighter->mmove_hold = fighter_height(fighter) < 2.4f && !fighter->connected;
 }
@@ -1402,7 +1444,7 @@ static bool native_clone_clone_falling(const Fighter *fighter);
 static void native_clone_clone_apex_frames_frame_0(Fighter *fighter);
 static void native_clone_clone_apex_wait(Fighter *fighter);
 static void native_clone_clone_spin(Fighter *fighter);
-static const AttackRecord native_clone_clone_record = {0x4ccc, -0xa3d, 0xbae1, 0x9e76, 67, 67, 0, ATTACK_MARK, 0};
+
 static const MoveDef native_clone_s_clone = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0405};
 static const MoveDef native_clone_s_clone_near = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0406};
 static const OrbitLightDef native_clone_clone_light = {25 * Q16_ONE, -25 * Q16_ONE, 0x18000, 0xccc};
@@ -1440,6 +1482,8 @@ static const mframe_t native_clone_clone_start_frames[3] = {{0}};
 static const mmove_t native_clone_clone_start = {.firstframe = 0, .lastframe = 2, .frame = native_clone_clone_start_frames, .endfunc = native_clone_clone_spin};
 
 static void native_clone_clone_object(Projectile *p) {
+  AttackRecord native_clone_clone_record = retail_vm_attack_record(retail_vm_image(), ICE_CLONE_ATTACK_RECORD);
+
   Fighter *owner = &g_battle.fighters[p->owner];
   if (g_battle.contacts_off || battle_contact_from(owner, &native_clone_clone_record, p->pos, p->facing) != CONTACT_MISS) {
     p->kind = 0;
@@ -1523,7 +1567,7 @@ void sub_zero_clone(Fighter *fighter) {
 /* Native service cluster: 41b450, 47dc40, 47de00. */
 static void n41b450_slide_cleanup(Fighter *fighter);
 static void n41b450_slide_contact(Fighter *fighter);
-static const AttackRecord n41b450_slide_record = {0xf0a3, 0x947a, 0x111eb, 0x8f5c, 122, 122, 165, 0, 0x147a};
+
 static const MoveDef n41b450_s_slide = {.clip = 95, .last = 10, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0204};
 // clang-format off: Keep table entries on one row, including long rows.
 static const int n41b450_slide_contact_frames_samples[] = {
@@ -1608,6 +1652,8 @@ static void n41b450_slide_cleanup(Fighter *fighter) {
 }
 
 static void n41b450_slide_contact(Fighter *fighter) {
+  AttackRecord n41b450_slide_record = retail_vm_attack_record(retail_vm_image(), SLIDE_ATTACK_RECORD);
+
   fighter->sample_override = 9;
   ContactResult contact = battle_contact(fighter, &n41b450_slide_record);
   if (contact == CONTACT_MISS) {
@@ -1656,8 +1702,8 @@ void sub_zero_script_slide_return(Fighter *fighter) {
  * action 211 and VM 4e81f0 (indexed sound 31, speed 0x23d7, clip 103 to
  * sample 12, tail 47ba20). */
 static const MoveDef n47ba20_drill = {.clip = 103, .last = 49, .flags = SF_LOCK | SF_RECORD, .action = 0x211};
+
 /* D[17] 4ec0c8: 15%, hit/air/block 94/122/9. */
-static const AttackRecord n47ba20_drill_record = {0x12624, -0x68b4, 0x11993, 0x15be7, 94, 122, 9, 0, 0x2666};
 
 static void n47ba20_drill_cleanup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -1722,6 +1768,8 @@ static void n47ba20_drill_contact(Fighter *fighter, ContactResult result) {
 
 /* 47ba20 submits samples 13 and 14 with a D[17] query after each. */
 void tanya_drill_kick_contact(Fighter *fighter) {
+  AttackRecord n47ba20_drill_record = retail_vm_attack_record(retail_vm_image(), DRILL_ATTACK_RECORD);
+
   require(fighter_move(fighter)->clip == 103 && fighter_sample(fighter) == 12, "Tanya drill kick contact needs its generated startup");
   for (int pose = 13; pose <= 14; ++pose) {
     fighter->sample_override = pose;
