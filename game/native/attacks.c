@@ -372,7 +372,7 @@ void cage_powered_punch(Fighter *fighter);
 
 /* Native service cluster: 47f060, 47f070. */
 static const MoveDef n47f060_triple = {.clip = 100, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x208};
-static const MoveDef n47f060_middle_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
+static const MoveDef n47f060_middle_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
 static const AttackRecord n47f060_triple_record = {0x970a, -0x1170a, 0xb851, 0xffbe, 93, 93, 8, 0, 0x30a3};
 static void n47f060_triple_recover(Fighter *fighter);
 static void n47f060_triple_cycle(Fighter *fighter);
@@ -1620,7 +1620,7 @@ static void n486000_spear_projectile(Projectile *p) {
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
     retail_vm_enter(victim, 0x4e9d00, fighter_ready);
-    victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
+    victim->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT; /* 0x485fb0: subsequent combo damage scales to 60%. */
     p->phase = 1;
     p->lifetime = 100;
   } else if (result == CONTACT_BLOCK || p->ticks >= 30 || hypot(p->pos[AXIS_X], p->pos[AXIS_Z]) > g_battle.arena_radius) {

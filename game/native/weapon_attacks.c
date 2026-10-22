@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 /* Native service cluster: 482790. */
-static const MoveDef n482790_upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x113};
+static const MoveDef n482790_upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0113};
 
 static void n482790_weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
@@ -26,7 +26,7 @@ static void n49a480_bow_fire(Fighter *fighter);
 void retail_weapon_native_495cf0(Fighter *fighter);
 
 static const MoveDef n49a480_bow_move = {.clip = 211, .last = 28, .flags = SF_LOCK | SF_RECORD, .action = 0x303};
-static const MoveDef n49a480_bolt_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
+static const MoveDef n49a480_bolt_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
 static const AttackRecord n49a480_bolt_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 101, 10, 2, ATTACK_MARK, 0xccc};
 /* Native4ed438 selects506dc8, whose sole mesh is shared106. */
 static const MeshAnimation n49a480_bolt_mesh = {.first = 106, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED};
@@ -736,7 +736,7 @@ void shinnok_weapon_sweep_finish(Fighter *fighter) {
 /* Native service cluster: 482790, 488c10. */
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 void retail_weapon_native_496720(Fighter *fighter);
-static const MoveDef n482790_4_s_weapon_back_hp = {.clip = 228, .last = 39, .flags = RETAIL, .action = 0x112};
+static const MoveDef n482790_4_s_weapon_back_hp = {.clip = 228, .last = 39, .flags = RETAIL, .action = ACTION_RETAIL_0112};
 
 void retail_weapon_native_496720(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n482790_4_s_weapon_back_hp);

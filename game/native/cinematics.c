@@ -224,7 +224,7 @@ void cage_fatality_1(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->native_variant = 0;
   fighter->state = S_PUNCH;
-  fighter->action = 0x700;
+  fighter->action = ACTION_RETAIL_0700;
   mk4_script_scene_pose(victim, 13, 0);
   native_hold(victim, 1, NULL);
   battle_sound(SOUND_B, 0x30);

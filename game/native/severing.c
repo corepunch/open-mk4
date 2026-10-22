@@ -3,6 +3,11 @@
 #include <stdlib.h>
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
+enum {
+  WIND_FINISH_CYCLE_SCRIPT = 0x4e1f68,
+  WIND_FINISH_EXIT_SCRIPT = 0x4e1f80
+};
+
 static const MoveDef n44f5e0_first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 static const MoveDef n44f5e0_first_victim = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
@@ -99,17 +104,17 @@ void fujin_first_loop_start(Fighter *fighter) {
   if (sound != NULL) {
     battle_event_delay(sound, 25);
   }
-  retail_vm_enter(fighter, 0x4e1f68, fighter_ready);
+  retail_vm_enter(fighter, WIND_FINISH_CYCLE_SCRIPT, fighter_ready);
 }
 
 void fujin_first_cycle(Fighter *fighter) {
   if (fighter->native_variant-- > 0) {
-    retail_vm_enter(fighter, 0x4e1f68, fighter_ready);
+    retail_vm_enter(fighter, WIND_FINISH_CYCLE_SCRIPT, fighter_ready);
     return;
   }
   retail_weapon_equip(fighter);
   native_scene_blends(fighter, n44f5e0_first_bow, 1, NULL);
-  native_script_end(fighter, 0x4e1f80, fighter_ready);
+  native_script_end(fighter, WIND_FINISH_EXIT_SCRIPT, fighter_ready);
 }
 
 static void n44f5e0_first_explode(Fighter *victim, Fighter *owner) {

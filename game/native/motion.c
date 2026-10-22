@@ -603,7 +603,7 @@ static void n484420_teleport_blocked(Fighter *fighter) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x8000);
   }
   victim->body.physics = fighter_friction;
-  fighter->action = 0x1011;
+  fighter->action = ACTION_RETAIL_1011;
   mk4_mmove_bind(fighter, 301, n484420_FLIP_COUNT, n484420_FLIP_COUNT - 1);
   fighter_set_speed(fighter, -0x28f);
   fighter->body.vel[AXIS_Y] = -0x1999;
@@ -1073,7 +1073,7 @@ static void n4698b0_toggle(Fighter *fighter) {
  * 470420 returns to the controller. The 404cc0/404df0 green light pulse
  * and its 40fa20 effect task are presentation without an engine light. */
 void reptile_script_invisibility(Fighter *fighter) {
-  require(fighter_move(fighter)->clip == 12 && fighter_sample(fighter) == 24, "Invisibility needs its generated clip-12 startup");
+  require(fighter_move(fighter)->clip == 12 && fighter_sample(fighter) == 24, "Invisibility needs its retail clip-12 startup");
   native_begin(fighter, 1, 35, mk4_mmove_thrown_finish);
   for (int frame = 1; frame <= 16; ++frame) {
     native_frame(fighter, frame, 24 + frame, NULL);
