@@ -29,7 +29,6 @@ void kai_second_victim(Fighter *fighter);
 enum {
   FRICTION = 0xe666,    /* 0x4913a0: velocity *= 0.9 per world pump */
   FRICTION_STOP = 0x41, /* stop once vx*vx + vz*vz <= this */
-  ACTION_GETUP = 0x200e,
   ACTION_BLOCK = 0x2005
 };
 
@@ -39,10 +38,6 @@ static void neutral(Fighter *fighter) {
   } else {
     fighter_stop_mmove(fighter);
   }
-}
-
-static bool landed(const Fighter *fighter) {
-  return !fighter_airborne(fighter) && fighter->body.gravity == 0;
 }
 
 /* 0x4913a0 group callback. */
@@ -55,11 +50,6 @@ void fighter_friction(Fighter *fighter) {
     v[AXIS_Z] = 0;
     fighter->body.physics = NULL;
   }
-}
-
-static void stop_sliding(Fighter *fighter) {
-  fighter->body.vel[AXIS_X] = 0;
-  fighter->body.vel[AXIS_Z] = 0;
 }
 
 static void slide(Fighter *fighter, q16 speed) {
@@ -115,12 +105,6 @@ void battle_wall_recoil(Fighter *victim) {
   }
 }
 
-static void launch(Fighter *fighter, q16 speed, q16 vy, q16 gravity) {
-  fighter_set_speed(fighter, -speed);
-  fighter->body.vel[AXIS_Y] = vy;
-  fighter->body.gravity = gravity;
-}
-
 /* These maps include the entry pose. Later poses and actions are installed
  * once in a fixed-frame program; callbacks never read an age clock. */
 typedef struct ReactionPhase {
@@ -131,38 +115,21 @@ typedef struct ReactionPhase {
   FighterTest until;
 } ReactionPhase;
 
-static void kick_air_rise(Fighter *fighter);
-static void jab_air_land(Fighter *fighter);
-static void jab_air_rise(Fighter *fighter);
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const int forward_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
-static const int jab_hit_samples[] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18};
-static const int stagger_samples[] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 38, 38, 40, 42, 44, 46, 50};
-static const int kick_hit_samples[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 static const int block_samples[] = {3, 5, 7, 9, 7, 5, 3, 3, 5, 7, 9, 7, 5, 3};
 static const int crouch_block_samples[] = {0, 1, 2, 3, 4, 4, 3, 2, 1, 0};
-static const int jab_air_land_samples[] = {31, 32, 33};
 // clang-format on
 
 #define REACTION(name, clip_id, move_flags, poses, frames, finish, gate, action_id)                                                                            \
   static const ReactionPhase name = {                                                                                                                          \
       .move = {.clip = clip_id, .last = MOVE_END, .flags = move_flags, .action = action_id}, .samples = poses, .count = frames, .end = finish, .until = gate}
 
-REACTION(jab_hit, 311, SF_LOCK, jab_hit_samples, COUNT(jab_hit_samples), neutral, NULL, 0);
-REACTION(stagger, 182, SF_LOCK, stagger_samples, COUNT(stagger_samples), neutral, NULL, 0);
-REACTION(kick_hit, 311, SF_LOCK, kick_hit_samples, COUNT(kick_hit_samples), neutral, NULL, 0);
 REACTION(block_short, 321, SF_LOCK, block_samples, 7, neutral, NULL, ACTION_BLOCK);
 REACTION(block_long, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(slide_block, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(slide_crouch_block, 255, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_block, 247, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_crouch_block, 222, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(kick_air, 189, SF_LOCK, forward_samples, 30, kick_air_rise, landed, 0);
-REACTION(kick_air_rise_move, 191, SF_LOCK, forward_samples, 16, neutral, NULL, ACTION_GETUP);
-REACTION(jab_air, 183, SF_LOCK, forward_samples, 30, jab_air_land, landed, 0);
-REACTION(jab_air_land_move, 183, SF_LOCK, jab_air_land_samples, COUNT(jab_air_land_samples), jab_air_rise, NULL, ACTION_GETUP);
-REACTION(jab_air_rise_move, 185, SF_LOCK, forward_samples, 16, neutral, NULL, ACTION_GETUP);
 #undef REACTION
 
 static void shared_reaction_finish(Fighter *fighter) {
@@ -183,25 +150,10 @@ static void start_reaction(Fighter *fighter, int state, const ReactionPhase *pha
   for (int frame = 1; frame <= phase->count; ++frame) {
     native_frame(fighter, frame, phase->samples[mini(frame, phase->count - 1)], NULL);
   }
-  if (phase == &stagger) {
-    fighter->native.frames[18].thinkfunc = stop_sliding;
-  }
   if (phase->until != NULL) {
     fighter->native.frames[phase->count - 1].thinkfunc = shared_reaction_gate;
   }
   native_play(fighter, false);
-}
-
-static void kick_air_rise(Fighter *fighter) {
-  start_reaction(fighter, S_KNOCKDOWN, &kick_air_rise_move);
-}
-
-static void jab_air_land(Fighter *fighter) {
-  start_reaction(fighter, S_KNOCKDOWN, &jab_air_land_move);
-}
-
-static void jab_air_rise(Fighter *fighter) {
-  start_reaction(fighter, S_KNOCKDOWN, &jab_air_rise_move);
 }
 
 /* 1: jab blocked. */
@@ -222,56 +174,65 @@ static void react_block(Fighter *fighter) {
   slide(fighter, 0x3333); /* 0.20 */
 }
 
-/* 11 (0x482070): jab air hit; air reactions scale later damage by 0.6. */
+/* Native preludes select original streams; script words own all playback. */
+static void hit_script(Fighter *fighter, uint32_t script, FighterFn finish) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
+  fighter_start_move(fighter, S_HIT, &move);
+  retail_vm_enter(fighter, script, finish);
+}
+
 static void react_jab_air(Fighter *fighter) {
-  mk4_script_disarm_self(fighter);
-  start_reaction(fighter, S_KNOCKDOWN, &jab_air);
   fighter->damage_scale = 0x9999;
-  launch(fighter, 0xccc, -0x23d7, 0x28f); /* 0.05, -0.14, 0.01 */
+  if (fighter->hits >= 2) {
+    battle_wall_recoil(fighter);
+  }
+  mk4_script_disarm_self(fighter);
+  hit_script(fighter, 0x4e8b00, retail_controller_return);
 }
 
-/* 13 (0x481d30): kick air hit. */
 static void react_kick_air(Fighter *fighter) {
-  mk4_script_disarm_self(fighter);
-  battle_wall_recoil(fighter);
-  start_reaction(fighter, S_KNOCKDOWN, &kick_air);
   fighter->damage_scale = 0x9999;
-  launch(fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
-}
-
-/* 123 (0x481ce0 -> 4e89d8): reaction 13's clip-189 launch, landing and
- * 488c00 getup without its 0x9999 damage scale or 488ea0 wall recoil. The
- * native and its script both restart camera shake row 0 {3, 4, .15}; the
- * script adds sound B[1] and context sound 0. Its decorative 40a470
- * selectors 9/4 remain omitted, as for reaction 13's selector 4. */
-static void react_kick_air_impact(Fighter *fighter) {
-  mk4_script_disarm_self(fighter);
-  battle_camera_shake(3, 4, 0x2666);
-  battle_sound(SOUND_B, 1);
-  mk4_script_context_sound(fighter, 0);
-  start_reaction(fighter, S_KNOCKDOWN, &kick_air);
-  launch(fighter, 0x11eb, -0x23d7, 0x28f);
-}
-
-/* 16 (0x482a10): kick hit, including the wall recoil check. */
-static void react_kick_hit(Fighter *fighter) {
-  mk4_script_disarm_self(fighter);
   battle_wall_recoil(fighter);
-  start_reaction(fighter, S_HIT, &kick_hit);
-  slide(fighter, 0x2666); /* 0.15 */
+  mk4_script_disarm_self(fighter);
+  retail_native_sound_list(0x4ea870);
+  hit_script(fighter, 0x4e8a18, retail_getup_roll);
 }
 
-/* 37 (0x483b40): jab hit, or a stagger once 0.2 damage (0.15 for a CPU)
- * has accumulated, or always against Goro. */
+static void react_kick_air_impact(Fighter *fighter) {
+  mk4_script_shake(fighter, 0);
+  mk4_script_disarm_self(fighter);
+  hit_script(fighter, 0x4e89d8, retail_getup_roll);
+}
+
+static void react_kick_hit(Fighter *fighter) {
+  battle_wall_recoil(fighter);
+  mk4_script_disarm_self(fighter);
+  if (fighter->crouching) {
+    mk4_script_indexed_sound(fighter, 1);
+    fighter->damage_scale = 0x9999;
+    hit_script(fighter, 0x4e9238, retail_controller_return);
+    fighter->action = 0x4005;
+  } else {
+    hit_script(fighter, 0x4e9208, retail_controller_return);
+  }
+}
+
 static void react_jab_hit(Fighter *fighter) {
-  bool staggers = fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666) || fighter->roster == 15;
+  retail_native_sound_list(0x4ea8f8);
+  bool crouch = fighter->action == 0x2001 || fighter->action == 0x2002;
+  if (crouch) {
+    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9358);
+    require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction callback");
+    hit_script(fighter, 0x4e9360, retail_controller_return);
+    return;
+  }
+  fighter->hits = maxi(0, fighter->hits - 1);
+  fighter->flags &= ~(unsigned)FF_NO_GUARD;
+  bool staggers = fighter->damage_total >= (fighter->human ? 0x3333 : 0x2666) || fighter->roster == 15;
   if (staggers) {
     battle_wall_recoil(fighter);
-    start_reaction(fighter, S_HIT, &stagger);
-    fighter_set_speed(fighter, -0x1999); /* 0.1 */
-  } else {
-    start_reaction(fighter, S_HIT, &jab_hit);
   }
+  hit_script(fighter, staggers ? 0x4e97d0 : 0x4e9798, retail_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {

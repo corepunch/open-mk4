@@ -1954,3 +1954,16 @@ The existing runtime fixture checks complete loaded-table resolution and one
 script-to-native capture/release lifetime. No fighter timing/damage matrix was
 added. Runtime rejection checks, strict all-roster script audits and native
 source gates pass.
+
+## Common hit playback
+
+Native482070,481d30,481ce0,482a10 and483b40 now execute their original
+4e8b00/4e8a18/4e89d8/4e9208/4e9238/4e9360/4e9798/4e97d0 streams.
+Remove copied hit, stagger, air-launch and getup sample arrays and their phase
+continuations. Native damage scaling, crouch selection, recoil, disarm, sound
+and hit-count handling remain at the shared native entry. This preserves the
+engine input/state boundaries rather than reproducing the original scheduler.
+Evidence: bounded local native and script listings, mk4decomp
+GameModeAdvanceCluster, Alarm4EntryInstallChain and CrouchFsmCluster matching
+assembly. Existing shared runtime, strict scripts and source gates pass; no
+per-fighter tests were added.
