@@ -102,6 +102,12 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
+void draw_arena_preview(Canvas *canvas, const Arena *arena) {
+  canvas_clear(canvas);
+  Camera camera = {.focal = (float)canvas->w * .75f, .w = canvas->w, .h = canvas->h, .eye = {0, -2.8f, 9}, .heading = {0, 0, -1}, .right = {1, 0, 0}};
+  draw_arena(canvas, camera, arena, above_camera_light(camera.eye));
+}
+
 /* 407330 detaches a joint's rig subtree into its own object. Its clips carry
  * only that subtree's channels in rig order, with the root translation
  * applied to the detached joint's own bind offset. */

@@ -1,13 +1,12 @@
 #include "menu.h"
 #include "game.h"
+#include "draw.h"
 #include "sprite_font.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-static const uint32_t panel = 0xff1a2430;
 
 static const int retail_roster[15] = {3, 7, 5, 12, 10, 0, 13, 8, 14, 11, 9, 1, 4, 6, 2};
 
@@ -565,15 +564,14 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
   canvas_rect(canvas, (Rect){0, 0, canvas->w, canvas->h}, 0xff10151d);
   centered(&assets->hud.font, canvas, 90, "CHOOSE THE ARENA", 1.4f);
   Rect stage = {272, 220, 736, 316};
-  canvas_rect(canvas, stage, panel);
-  canvas_outline(canvas, stage, 0xffffd56b);
-  canvas_rect(canvas, (Rect){stage.x + 20, stage.y + 20, stage.w - 40, stage.h - 40}, 0xff202d38);
-  for (int i = 0; i < 8; ++i) {
-    int x = stage.x + 54 + i * 91;
-    canvas_rect(canvas, (Rect){x, stage.y + 105 + (i % 3) * 18, 31, 110 - (i % 3) * 8}, 0xff293b49);
-    canvas_rect(canvas, (Rect){x - 7, stage.y + 213, 45, 3}, 0xff55626a);
-  }
   const Arena *arena = &assets->arenas.data[menu->arena];
+  Canvas preview;
+  canvas_init(&preview, stage.w, stage.h);
+  draw_arena_preview(&preview, arena);
+  Texture image = {.width = preview.w, .height = preview.h, .pixels = {preview.pixels, (size_t)preview.w * preview.h, (size_t)preview.w * preview.h}};
+  canvas_blit(canvas, &image, (Rect){0, 0, preview.w, preview.h}, stage, false);
+  canvas_free(&preview);
+  canvas_outline(canvas, stage, 0xffffd56b);
   centered(&assets->hud.font, canvas, 562, arena->name, 1.25f);
   char choice[48];
   snprintf(choice, sizeof choice, "ARENA %02d / %02d", menu->arena + 1, MK4_ARENA_COUNT);

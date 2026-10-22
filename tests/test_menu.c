@@ -1,5 +1,8 @@
 #include "menu.h"
 #include "game.h"
+#include "draw.h"
+#include <math.h>
+#include <string.h>
 #include <stdio.h>
 
 int main(void) {
@@ -59,6 +62,26 @@ int main(void) {
   require(menu.screen == MENU_SELECT && menu.selecting_player == 1, "Local play must select both fighters");
   menu_command(&menu, MENU_CONFIRM, &quit);
   require(menu.screen == MENU_ARENA && menu_command(&menu, MENU_CONFIRM, &quit), "Local play must retain arena selection");
+  battle_init(0, 4);
+  static Battle before;
+  memcpy(&before, &g_battle, sizeof before);
+  Canvas preview;
+  canvas_init(&preview, 736, 316);
+  for (int arena = 0; arena < MK4_ARENA_COUNT; ++arena) {
+    draw_arena_preview(&preview, &assets.arenas.data[arena]);
+    size_t visible = 0;
+    for (int pixel = 0; pixel < preview.w * preview.h; ++pixel) {
+      visible += isfinite(preview.depth[pixel]);
+    }
+    require(visible > (size_t)preview.w * preview.h / 8, "Each arena preview must contain visible loaded geometry");
+    menu.arena = arena;
+    menu_draw(&canvas, &assets, &menu, 0);
+    char path[64];
+    snprintf(path, sizeof path, "build/arena-menu-%02d.bmp", arena);
+    save_bmp(&canvas, path);
+  }
+  require(memcmp(&before, &g_battle, sizeof before) == 0, "Arena previews must not reset or mutate the battle");
+  canvas_free(&preview);
   canvas_free(&canvas);
   assets_free(&assets);
   puts("PASS: retail tower loading, all column/face progressions, retry, completion, and local-play routing");
