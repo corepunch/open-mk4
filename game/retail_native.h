@@ -9,6 +9,14 @@ enum {
   RETAIL_NATIVE_THAW_LANDING = 0x486530
 };
 
+/* Retail Q16 damage multipliers, retaining the original truncated values. */
+enum {
+  RETAIL_DAMAGE_SCALE_30_PERCENT = 0x4ccc,
+  RETAIL_DAMAGE_SCALE_40_PERCENT = 0x6666,
+  RETAIL_DAMAGE_SCALE_50_PERCENT = 0x8000,
+  RETAIL_DAMAGE_SCALE_60_PERCENT = 0x9999
+};
+
 void retail_fireball(Fighter *fighter);
 void retail_air_fireball(Fighter *fighter);
 void retail_fireball_spawn(Fighter *fighter, int task_type);

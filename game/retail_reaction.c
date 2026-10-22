@@ -20,9 +20,9 @@ static void stagger_voice(Fighter *fighter) {
 void retail_stagger_reaction(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
   int previous_action = fighter->action;
-  bool crouch = previous_action == 0x2001 || previous_action == 0x2002;
+  bool crouch = previous_action == ACTION_RETAIL_2001 || previous_action == ACTION_RETAIL_2002;
   if (entry == 0x482e00) {
-    crouch |= previous_action == 0x2010 || previous_action == 0x106 || previous_action == 0x107;
+    crouch |= previous_action == 0x2010 || previous_action == ACTION_RETAIL_0106 || previous_action == ACTION_RETAIL_0107;
   }
   if (entry == 0x482e00 || entry == 0x482830 || entry == 0x482870 || entry == 0x4828d0) {
     battle_wall_recoil(fighter);
@@ -34,10 +34,10 @@ void retail_stagger_reaction(Fighter *fighter) {
     case 0x482e00:
       mk4_script_disarm_self(fighter);
       if (crouch) {
-        uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9358);
+        uint32_t physics = mk4_image_u32(retail_vm_image(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
         require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction motion callback");
       }
-      script = crouch ? 0x4e9360 : 0x4e9308;
+      script = crouch ? RETAIL_CROUCH_REACTION_SCRIPT : 0x4e9308;
       break;
     case 0x482830:
       script = 0x4e90e0;
@@ -49,12 +49,12 @@ void retail_stagger_reaction(Fighter *fighter) {
       script = crouch ? 0x4e9170 : entry == 0x482870 ? 0x4e9130 : 0x4e9150;
       break;
     case 0x482be0:
-      fighter->damage_scale = 0x9999;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       script = 0x4e9260;
       break;
     case 0x482e80:
     case 0x482e90:
-      fighter->damage_scale = 0x8000;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_50_PERCENT;
       mk4_script_disarm_self(fighter);
       stagger_voice(fighter);
       fighter->action = ACTION_RETAIL_4003;
@@ -63,7 +63,7 @@ void retail_stagger_reaction(Fighter *fighter) {
     case 0x482b10:
       fighter->action = 0x4002;
       stagger_voice(fighter);
-      fighter->damage_scale = 0x9999;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       script = 0x4e9238;
       break;
     default:
@@ -267,7 +267,7 @@ void retail_scaled_reaction(Fighter *fighter) {
   switch (entry) {
     case 0x482480:
     case 0x4824a0: {
-      fighter->damage_scale = 0x6666;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_40_PERCENT;
       Fighter *attacker = fighter_peer(fighter);
       attacker->run_energy = 0;
       attacker->run_delay = 60;
@@ -275,12 +275,12 @@ void retail_scaled_reaction(Fighter *fighter) {
       break;
     }
     case 0x4823c0:
-      fighter->damage_scale = 0x8000;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_50_PERCENT;
       script = 0x4e8d70;
       finish = retail_getup_roll;
       break;
     case 0x483500:
-      fighter->damage_scale = 0x9999;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
       script = 0x4e95f0;
       break;
@@ -378,7 +378,7 @@ void retail_weapon_reaction(Fighter *fighter) {
       script = 0x4e8c98;
       break;
     case 0x482300:
-      fighter->damage_scale = 0x8000;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_50_PERCENT;
       script = 0x4e8cc0;
       break;
     case 0x482350:
@@ -424,11 +424,11 @@ void retail_impact_reaction(Fighter *fighter) {
     BattleEvent *voice = battle_event_start(fighter, uppercut_voice, false, false);
     require(voice != NULL, "Uppercut needs its native audio task");
     battle_event_delay(voice, 30);
-    fighter->damage_scale = 0x6666;
+    fighter->damage_scale = RETAIL_DAMAGE_SCALE_40_PERCENT;
     battle_wall_recoil(fighter);
     mk4_script_disarm_self(fighter);
   } else if (entry == 0x481fc0) {
-    fighter->damage_scale = 0x9999;
+    fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
     int64_t x = fighter->body.pos[AXIS_X], z = fighter->body.pos[AXIS_Z], radius = g_battle.arena_radius;
     if (fighter->hits > 2 && x * x + z * z >= radius * radius - 10LL * Q16_ONE * Q16_ONE) {
       battle_react(fighter_peer(fighter), 14);
@@ -690,7 +690,7 @@ void retail_record_reaction(Fighter *fighter) {
       return;
     case 0x4887c0:
       mk4_script_effect(fighter, 9);
-      fighter->damage_scale = 0x6666;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_40_PERCENT;
       script = 0x4ea0b8;
       break;
     case 0x488810:
@@ -742,7 +742,7 @@ void retail_aux_reaction(Fighter *fighter) {
       script = 0x4e9c58;
       break;
     case 0x485fb0:
-      fighter->damage_scale = 0x9999;
+      fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
       script = 0x4e9d00;

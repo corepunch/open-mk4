@@ -6,6 +6,8 @@
  * Sources: mk4decomp FSYS/animation, input dispatch and native table readers,
  * with addresses checked against the supplied EXE revision. */
 enum {
+  RETAIL_CROUCH_REACTION_PHYSICS_WORD = 0x4e9358,
+  RETAIL_CROUCH_REACTION_SCRIPT = 0x4e9360,
   RETAIL_ANIMATION_TABLE = 0x4fad7c,
   RETAIL_REACTION_TABLE = 0x4ea4e8,
   RETAIL_REACTION_TABLE_END = 0x4ea7f0,

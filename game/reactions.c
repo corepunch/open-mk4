@@ -26,9 +26,8 @@ void kai_second_victim(Fighter *fighter);
  * an emulation of the retail task scheduler. Native entry selection is loaded. */
 
 enum {
-  FRICTION = 0xe666,    /* 0x4913a0: velocity *= 0.9 per world pump */
-  FRICTION_STOP = 0x41, /* stop once vx*vx + vz*vz <= this */
-  ACTION_BLOCK = 0x2005
+  FRICTION = 0xe666,   /* 0x4913a0: velocity *= 0.9 per world pump */
+  FRICTION_STOP = 0x41 /* stop once vx*vx + vz*vz <= this */
 };
 
 static void neutral(Fighter *fighter) {
@@ -112,7 +111,7 @@ static void hit_script(Fighter *fighter, uint32_t script, FighterFn finish) {
 }
 
 static void react_jab_air(Fighter *fighter) {
-  fighter->damage_scale = 0x9999;
+  fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
   if (fighter->hits >= 2) {
     battle_wall_recoil(fighter);
   }
@@ -121,7 +120,7 @@ static void react_jab_air(Fighter *fighter) {
 }
 
 static void react_kick_air(Fighter *fighter) {
-  fighter->damage_scale = 0x9999;
+  fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
@@ -139,9 +138,9 @@ static void react_kick_hit(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
-    fighter->damage_scale = 0x9999;
+    fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
     hit_script(fighter, 0x4e9238, retail_controller_return);
-    fighter->action = 0x4005;
+    fighter->action = ACTION_RETAIL_4005;
   } else {
     hit_script(fighter, 0x4e9208, retail_controller_return);
   }
@@ -149,11 +148,11 @@ static void react_kick_hit(Fighter *fighter) {
 
 static void react_jab_hit(Fighter *fighter) {
   retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-  bool crouch = fighter->action == 0x2001 || fighter->action == 0x2002;
+  bool crouch = fighter->action == ACTION_RETAIL_2001 || fighter->action == ACTION_RETAIL_2002;
   if (crouch) {
-    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9358);
+    uint32_t physics = mk4_image_u32(retail_vm_image(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction callback");
-    hit_script(fighter, 0x4e9360, retail_controller_return);
+    hit_script(fighter, RETAIL_CROUCH_REACTION_SCRIPT, retail_controller_return);
     return;
   }
   fighter->hits = maxi(0, fighter->hits - 1);
@@ -292,10 +291,10 @@ static void react_block(Fighter *fighter) {
   if (recoil) {
     battle_wall_recoil(fighter);
   }
-  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_BLOCK};
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_2005};
   fighter_start_move(fighter, S_BLOCK, &move);
   if (entry == 0x486970 || entry == 0x486bf0) {
-    fighter->action = 0x4004;
+    fighter->action = ACTION_RETAIL_4004;
   }
   if (entry != 0x486d00) {
     fighter_set_speed(fighter, -speed);
@@ -327,8 +326,8 @@ enum {
   AIRBORNE_THAW_SCRIPT = 0x4e9d38
 };
 
-static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = 0x1003};
-static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = 0x1005};
+static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = ACTION_RETAIL_1003};
+static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = ACTION_RETAIL_1005};
 
 /*486530 runs the shared46fd90 landing native after4e9d38. */
 void retail_thaw_land(Fighter *fighter) {
@@ -381,7 +380,7 @@ static void thaw_hop_play(Fighter *fighter) {
 }
 
 static void react_freeze(Fighter *fighter) {
-  if (fighter->action == 0x1003) {
+  if (fighter->action == ACTION_RETAIL_1003) {
     /* 486430 calls 480f80, which switches to the opponent: double freeze
      * backfires. It does not recursively refresh this victim's timer. */
     Fighter *attacker = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
@@ -404,7 +403,7 @@ static void react_freeze(Fighter *fighter) {
   frozen_play(fighter, sample);
   fighter->frozen_clip = clip;
   fighter->appearance = APPEARANCE_FROZEN;
-  fighter->damage_scale = fighter->hits > 0 ? 0x4ccc : 0x8000;
+  fighter->damage_scale = fighter->hits > 0 ? RETAIL_DAMAGE_SCALE_30_PERCENT : RETAIL_DAMAGE_SCALE_50_PERCENT;
   fighter->flags |= FF_REACTING | FF_NO_GUARD;
   fighter_visual_offset(fighter, 0xccc, 0xccc);
 }
