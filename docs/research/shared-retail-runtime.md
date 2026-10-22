@@ -1763,3 +1763,15 @@ existing script/controller contracts. Updated research metadata and historical
 source aliases. Verified formatting, shared runtime/rejections, all strict
 fighter audits, native gates and existing helper/port navigation. No new tests
 for authored weapon reactions.
+
+### Original uppercut and impact scripts
+
+Removed ReactionSpec23/26/32 and copied uppercut phase tables. Shared native
+481fc0 preserves scaling and its outer-edge peer reaction14,4838e0 starts
+original4e9758 with native scaling/recoil/disarm and independent30-visit audio
+426ad0/426af0 (loaded list4ea960), and485e30 preserves hit decrement and the
+retail damage/Goro stagger gate before4e97d0 or4e9c28. Added pure481350 to
+the shared launch registry so native peer reaction14 enters4e89a0 directly.
+Checked local native/dependency listings and mk4decomp OutroEventForwarderCluster
+matching assembly. Verified formatting, runtime/rejections, all strict audits,
+native gates and helper/port navigation. No authored reaction timing tests.

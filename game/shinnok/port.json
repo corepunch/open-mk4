@@ -378,9 +378,10 @@
       "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "34": {
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut",
-      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "source": "game/reactions.c",
@@ -411,9 +412,10 @@
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
     },
     "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "139": {
       "source": "game/retail_reaction.c",
@@ -495,9 +497,10 @@
       "symbol": "react_extra_block"
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",

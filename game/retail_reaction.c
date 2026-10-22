@@ -70,7 +70,7 @@ void retail_stagger_reaction(Fighter *fighter) {
 
 void retail_launch_reaction(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
-  if (entry != 0x4835e0) {
+  if (entry != 0x4835e0 && entry != 0x481350) {
     mk4_script_disarm_self(fighter);
   }
   if (entry == 0x481320) {
@@ -81,6 +81,7 @@ void retail_launch_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case 0x481320:
+    case 0x481350:
       script = 0x4e89a0;
       break;
     case 0x482560:
@@ -383,8 +384,52 @@ void retail_weapon_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, finish);
 }
 
+static bool uppercut_voice(BattleEvent *event, Fighter *owner, Fighter *peer) {
+  (void)event;
+  (void)owner;
+  (void)peer;
+  retail_native_sound_list(0x4ea960);
+  return false;
+}
+
+void retail_impact_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  bool stagger = false;
+  if (entry == 0x4838e0) {
+    /*426ad0/426af0 is an independent30-visit delayed audio task. */
+    BattleEvent *voice = battle_event_start(fighter, uppercut_voice, false, false);
+    require(voice != NULL, "Uppercut needs its native audio task");
+    battle_event_delay(voice, 30);
+    fighter->damage_scale = 0x6666;
+    battle_wall_recoil(fighter);
+    mk4_script_disarm_self(fighter);
+  } else if (entry == 0x481fc0) {
+    fighter->damage_scale = 0x9999;
+    int64_t x = fighter->body.pos[AXIS_X], z = fighter->body.pos[AXIS_Z], radius = g_battle.arena_radius;
+    if (fighter->hits > 2 && x * x + z * z >= radius * radius - 10LL * Q16_ONE * Q16_ONE) {
+      battle_react(fighter_peer(fighter), 14);
+    }
+    mk4_script_disarm_self(fighter);
+  } else {
+    require(entry == 0x485e30, "Unexpected impact reaction native");
+    fighter->hits = maxi(0, fighter->hits - 1);
+    stagger = fighter->damage_total >= 0x3333 || fighter->roster == 15;
+    if (stagger || fighter->hits >= 3) {
+      battle_wall_recoil(fighter);
+    }
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script = entry == 0x481fc0 ? 0x4e8ab8 : entry == 0x4838e0 ? 0x4e9758 : stagger ? 0x4e97d0 : 0x4e9c28;
+  retail_vm_enter(fighter, script, mk4_script_thrown_ready);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x481fc0:
+    case 0x4838e0:
+    case 0x485e30:
+      return retail_impact_reaction;
     case 0x482110:
     case 0x482130:
     case 0x4821c0:
@@ -421,6 +466,7 @@ FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
     case 0x4826a0:
       return retail_tumble_reaction;
     case 0x481320:
+    case 0x481350:
     case 0x482560:
     case 0x4825c0:
     case 0x4835e0:

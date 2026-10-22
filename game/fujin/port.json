@@ -302,14 +302,16 @@
       "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Fujin uses global reaction selector 23 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[23] -> 481fc0; bounded native/dependency listings and original4e8ab8; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "34": {
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut",
-      "evidence": "Fujin uses global reaction selector 34 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "source": "game/reactions.c",
@@ -367,9 +369,10 @@
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 109 on task peer +38/+3c, not on the executing owner."
     },
     "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "0": {
       "source": "game/reactions.c",
@@ -479,9 +482,10 @@
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",

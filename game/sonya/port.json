@@ -305,9 +305,10 @@
       "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[23] -> 481fc0; bounded native/dependency listings and original4e8ab8; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "24": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
@@ -322,14 +323,16 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "32": {
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "34": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut"
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -444,9 +447,10 @@
       "symbol": "react_extra_block"
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",

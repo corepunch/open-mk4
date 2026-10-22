@@ -301,14 +301,16 @@
       "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 23 at 0x481fc0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[23] -> 481fc0; bounded native/dependency listings and original4e8ab8; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "34": {
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 34 at 0x4838e0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "source": "game/reactions.c",
@@ -412,9 +414,10 @@
       "evidence": "Type63 weapon chip selects119/486a70 through existing shared block recovery."
     },
     "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "123": {
       "source": "game/reactions.c",
@@ -450,9 +453,10 @@
       "symbol": "react_extra_block"
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",

@@ -131,8 +131,6 @@ typedef struct ReactionPhase {
   FighterTest until;
 } ReactionPhase;
 
-static void uppercut_land(Fighter *fighter);
-static void uppercut_rise(Fighter *fighter);
 static void kick_air_rise(Fighter *fighter);
 static void jab_air_land(Fighter *fighter);
 static void jab_air_rise(Fighter *fighter);
@@ -144,7 +142,6 @@ static const int stagger_samples[] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22,
 static const int kick_hit_samples[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 static const int block_samples[] = {3, 5, 7, 9, 7, 5, 3, 3, 5, 7, 9, 7, 5, 3};
 static const int crouch_block_samples[] = {0, 1, 2, 3, 4, 4, 3, 2, 1, 0};
-static const int uppercut_land_samples[] = {53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109};
 static const int jab_air_land_samples[] = {31, 32, 33};
 // clang-format on
 
@@ -161,10 +158,6 @@ REACTION(slide_block, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral
 REACTION(slide_crouch_block, 255, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_block, 247, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_crouch_block, 222, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(uppercut_fall, 128, SF_LOCK, forward_samples, 53, uppercut_land, landed, 0);
-REACTION(uppercut_land_move, 128, SF_LOCK, uppercut_land_samples, 28, uppercut_rise, NULL, 0);
-REACTION(uppercut_ko, 128, SF_LOCK, uppercut_land_samples, COUNT(uppercut_land_samples), neutral, NULL, 0);
-REACTION(uppercut_rise_move, 328, SF_LOCK, forward_samples, 15, neutral, NULL, ACTION_GETUP);
 REACTION(kick_air, 189, SF_LOCK, forward_samples, 30, kick_air_rise, landed, 0);
 REACTION(kick_air_rise_move, 191, SF_LOCK, forward_samples, 16, neutral, NULL, ACTION_GETUP);
 REACTION(jab_air, 183, SF_LOCK, forward_samples, 30, jab_air_land, landed, 0);
@@ -197,15 +190,6 @@ static void start_reaction(Fighter *fighter, int state, const ReactionPhase *pha
     fighter->native.frames[phase->count - 1].thinkfunc = shared_reaction_gate;
   }
   native_play(fighter, false);
-}
-
-static void uppercut_land(Fighter *fighter) {
-  /* A KO victim stays down; 0x48fc20 ends the round instead of a getup. */
-  start_reaction(fighter, S_KNOCKDOWN, fighter->health == 0 ? &uppercut_ko : &uppercut_land_move);
-}
-
-static void uppercut_rise(Fighter *fighter) {
-  start_reaction(fighter, S_KNOCKDOWN, &uppercut_rise_move);
 }
 
 static void kick_air_rise(Fighter *fighter) {
@@ -273,13 +257,6 @@ static void react_kick_hit(Fighter *fighter) {
   slide(fighter, 0x2666); /* 0.15 */
 }
 
-/* 34 (0x4838e0): uppercut launch from the current height. */
-static void react_uppercut(Fighter *fighter) {
-  battle_wall_recoil(fighter);
-  start_reaction(fighter, S_KNOCKDOWN, &uppercut_fall);
-  launch(fighter, 0x7ae, -0x3333, 0x20c); /* 0.03, -0.20, 0.008 */
-}
-
 /* 37 (0x483b40): jab hit, or a stagger once 0.2 damage (0.15 for a CPU)
  * has accumulated, or always against Goro. */
 static void react_jab_hit(Fighter *fighter) {
@@ -306,12 +283,9 @@ typedef struct ReactionSpec {
 #define R(c, n, a) {.clip = c, .last = n, .flags = SF_LOCK, .action = a}
 // clang-format off: Keep table entries on one row, including long rows.
 static const ReactionSpec extra_reactions[256] = {
-  /* Legacy airborne90/173 adapters still borrow this row; native481320 itself
+  /* Legacy airborne173 adapter still borrows this row; native481320 itself
    * now enters original4e89a0 and does not use it. */
   [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
-  [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
-  [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
@@ -353,11 +327,8 @@ static void extra_reaction_end(Fighter *fighter) {
   begin_getup(fighter, extra_reactions[fighter->reaction].getup);
 }
 
-static int reaction_pose(const Fighter *fighter, const ReactionSpec *spec, int elapsed) {
+static int reaction_pose(const ReactionSpec *spec, int elapsed) {
   int sample = elapsed;
-  if (fighter->reaction == 23) {
-    sample = elapsed < 7 ? elapsed * 2 : elapsed + 7;
-  }
   if (spec->hold_ticks) {
     sample = elapsed < spec->hold_at ? elapsed : elapsed < spec->hold_at + spec->hold_ticks ? spec->hold_at : elapsed - spec->hold_ticks;
   }
@@ -368,13 +339,13 @@ static void extra_reaction_play(Fighter *fighter) {
   const ReactionSpec *spec = &extra_reactions[fighter->reaction];
   int first = spec->hold_at == 4 ? 4 : 0;
   int last = first;
-  while (reaction_pose(fighter, spec, last) <= spec->move.last) {
+  while (reaction_pose(spec, last) <= spec->move.last) {
     ++last;
   }
   native_begin(fighter, first, last, extra_reaction_end);
   bool landing = false;
   for (int frame = first; frame <= last; ++frame) {
-    int pose = reaction_pose(fighter, spec, frame);
+    int pose = reaction_pose(spec, frame);
     bool gate = !landing && spec->land_at >= 0 && pose >= spec->land_at;
     native_frame(fighter, frame, mini(spec->move.last, pose), gate ? reaction_land_gate : NULL);
     landing |= gate;
@@ -398,10 +369,6 @@ static void react_extra(Fighter *fighter) {
   int id = fighter->reaction;
   if (id == 173 && fighter_airborne(fighter)) {
     fighter->reaction = id = 10;
-  }
-  if (id == 32 && (fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666))) {
-    react_jab_hit(fighter);
-    return;
   }
   const ReactionSpec *spec = &extra_reactions[id];
   fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, &spec->move);
@@ -767,9 +734,6 @@ static const FighterFn reactions[256] = {
   [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
-  [23] = react_extra,
-  [26] = react_extra,
-  [32] = react_extra,
   [150] = react_scepter_low,
   [151] = react_scepter_freeze,
   [120] = react_weapon_followup,
@@ -795,8 +759,6 @@ static const FighterFn reactions[256] = {
   [13] = react_kick_air,
   [123] = react_kick_air_impact,
   [16] = react_kick_hit,
-  [34] = react_uppercut,
-  [171] = react_uppercut,
   [45] = reiko_star_reaction,
   [37] = react_jab_hit,
   [165] = react_slide_block,

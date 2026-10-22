@@ -305,14 +305,16 @@
       "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
-      "evidence": "Retail reaction selector 23 (0x481fc0) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[23] -> 481fc0; bounded native/dependency listings and original4e8ab8; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "34": {
-      "evidence": "Retail reaction selector 34 (0x4838e0) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut"
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "evidence": "Retail reaction selector 37 (0x483b40) routes to the shared MK4 reaction table.",
@@ -404,9 +406,10 @@
       "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
     },
     "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "105": {
       "source": "game/retail_air_throw.c",
@@ -427,9 +430,10 @@
       "evidence": "47c2d5 D[14] hit/air reaction 24, superseded by 47c33e capture before the victim runs it."
     },
     "171": {
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut",
-      "evidence": "D[29] hit/air reaction 171: 4ea4e8[171] = 0x4838e0, the same routine as uppercut reaction 34."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[171] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "9": {
       "source": "game/reactions.c",
@@ -458,9 +462,10 @@
       "symbol": "react_extra_block"
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",

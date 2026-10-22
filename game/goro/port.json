@@ -240,19 +240,22 @@
       "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Goro contact reaches shared reaction 23 through retail dispatcher 0x481fc0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[23] -> 481fc0; bounded native/dependency listings and original4e8ab8; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Goro contact reaches shared reaction 32 through retail dispatcher 0x485e30."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "34": {
-      "source": "game/reactions.c",
-      "symbol": "react_uppercut",
-      "evidence": "Goro contact reaches shared reaction 34 through retail dispatcher 0x4838e0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "evidence": "Loaded4ea4e8[34] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "37": {
       "source": "game/reactions.c",
@@ -329,9 +332,10 @@
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "26": {
-      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_impact_reaction",
+      "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "27": {
       "source": "game/retail_reaction.c",
