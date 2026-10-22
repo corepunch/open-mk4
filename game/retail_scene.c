@@ -3,6 +3,8 @@
 #include "native_services.h"
 #include "script.h"
 #include "native.h"
+#include "retail_data.h"
+#include <string.h>
 
 /* 43d4b0 selects the cycle from the captured peer, not the active fighter.
  * The native routines own the counter and scene; retail words own playback. */
@@ -200,4 +202,35 @@ static bool scene_victory_join(BattleEvent *event, Fighter *owner, Fighter *peer
 
 void retail_scene_join_victory(Fighter *fighter) {
   require(battle_event_start(fighter, scene_victory_join, false, false) != NULL, "Scene needs a victory completion task");
+}
+
+/*475690/4756f0 share facing, orientation and horizontal origin with the
+ * captured peer. Retail words bind the scene's victim animations. */
+void retail_scene_reaction(Fighter *fighter) {
+  Fighter *owner = fighter_peer(fighter);
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  fighter->facing = owner->facing;
+  memcpy(fighter->body.angle, owner->body.angle, sizeof fighter->body.angle);
+  fighter->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
+  fighter->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
+  owner->flags |= FF_PAIRED;
+  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
+  uint32_t script;
+  switch (entry) {
+    case 0x464e30:
+      script = 0x4e5770;
+      break;
+    case 0x465200:
+      script = 0x4e5820;
+      break;
+    case 0x466110:
+      script = 0x4e59c8;
+      break;
+    default:
+      require(false, "Unexpected native scene reaction");
+      return;
+  }
+  retail_vm_enter(fighter, script, fighter_ready);
 }

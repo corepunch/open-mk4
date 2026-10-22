@@ -1358,10 +1358,6 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             sonya_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
-          if (owner & 0x200u) {
-            tanya_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
           return false;
         case 0x45b230:
           if ((argument & 255u) == 175) {

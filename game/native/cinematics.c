@@ -2277,25 +2277,6 @@ void tanya_second_height(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e57c0, fighter_ready, 9);
 }
 
-/* 465200 (reaction 186): 475690/4756f0 copy the owner's facing, angles
- * and X/Z onto the victim, whose 567/568 clips share that origin. */
-static void n45ac30_second_victim_scene(Fighter *owner) {
-  Fighter *victim = (Fighter *)fighter_opponent(owner);
-  victim->facing = owner->facing;
-  memcpy(victim->body.angle, owner->body.angle, sizeof victim->body.angle);
-  victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
-  victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  fighter_cancel_mmove(victim);
-  /* The shared origin must not be separated by ordinary body collision. */
-  owner->flags |= FF_PAIRED;
-  victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
-  retail_vm_enter_owned(victim, 0x4e5820, fighter_ready, 9);
-}
-
-void tanya_second_reaction(Fighter *fighter) {
-  n45ac30_second_victim_scene(fighter);
-}
-
 static void n45ac30_victory_finish(Fighter *fighter) {
   (void)fighter;
   fighter_cancel_all_mmoves();

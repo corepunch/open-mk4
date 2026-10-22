@@ -1823,3 +1823,14 @@ PendingMatch native/script contracts. Verified formatting, runtime/rejections,
 strict audits, native gates and helper/port navigation. Extended the existing
 inherited-descriptor fixture to catch fixed fighter starting poses. Camera/
 render-space cleanup remains the engine's shared controller adaptation.
+
+### Share captured-peer scene reaction setup
+
+Loaded464e30/465200/466110 now share475690/4756f0 facing, orientation and
+horizontal-origin setup, then original4e5770/4e5820/4e59c8 binds the victim
+animation. Removed fixed561/574 bindings and Tanya's duplicate alignment
+implementation/handler. The engine scene owns collision pairing and generic
+presentation; raw retail decorative task rendering remains adapted.
+Verified bounded native and script entries, formatting, runtime/rejections,
+all strict audits, native gates and existing helper/port navigation. No new
+authored scene tests.

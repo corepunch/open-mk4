@@ -427,10 +427,10 @@
       "adaptation": "The shared reaction dispatcher runs this character-owned generated victim frame stream for every humanoid roster."
     },
     "186": {
-      "source": "game/native/cinematics.c",
-      "symbol": "tanya_second_reaction",
-      "evidence": "4e5798 opcode 41 installs reaction 186 (465200): copy facing/angles/X-Z from the owner and enter 4e5820.",
-      "adaptation": "The second-fatality scene owns this victim continuation through the current-reaction handler, not the shared table."
+      "source": "game/retail_scene.c",
+      "symbol": "retail_scene_reaction",
+      "evidence": "Loaded4ea4e8[186] -> 465200; local475690/4756f0 and original4e5770/4e5820/4e59c8; mk4decomp native/script contracts.",
+      "adaptation": "Loaded native target shares the captured-peer scene alignment; original words bind and play victim clips."
     },
     "135": {
       "source": "game/retail_throw.c",

@@ -306,10 +306,10 @@
       "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "184": {
-      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/native/contexts.c",
-      "symbol": "sonya_script_reaction"
+      "adaptation": "Loaded native target shares the captured-peer scene alignment; original words bind and play victim clips.",
+      "evidence": "Loaded4ea4e8[184] -> 466110; local475690/4756f0 and original4e5770/4e5820/4e59c8; mk4decomp native/script contracts.",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_scene_reaction"
     },
     "2": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

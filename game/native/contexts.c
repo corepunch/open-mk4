@@ -220,13 +220,7 @@ static const MoveDef n45b1f0_5_s_torpedo_victim = {.clip = 135, .last = MOVE_END
 static const AttackRecord n45b1f0_5_torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
 
 void raiden_script_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 187) {
-    Fighter *victim = fighter_peer(fighter);
-    mk4_script_scene_pose(victim, 574, 0);
-    fighter_cancel_mmove(victim);
-    retail_vm_enter_owned(victim, 0x4e5770, fighter_ready, 1);
-    return;
-  }
+
   if (reaction == 175) {
     return; /* Arena spike coordinator owns the victim. */
   }
@@ -501,13 +495,7 @@ void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
 
 /* Native service cluster: 45b1f0, 45b230. */
 void sonya_script_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 184) {
-    Fighter *victim = fighter_peer(fighter);
-    mk4_script_scene_pose(victim, 561, 0);
-    fighter_cancel_mmove(victim);
-    retail_vm_enter_owned(victim, 0x4e59c8, fighter_ready, 2);
-    return;
-  }
+
   if (reaction == 175) {
     return;
   }
@@ -723,13 +711,3 @@ void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count,
 }
 
 /* Native service cluster: 45b1f0, 45b230, 470420. */
-void tanya_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 186) {
-    /* 4e5798's opcode 41 installs reaction 186 (465200) on the victim. */
-    tanya_second_reaction(fighter);
-    return;
-  }
-  require(reaction == 104, "Unexpected tanya LP release reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
