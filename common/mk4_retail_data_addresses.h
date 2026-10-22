@@ -7,6 +7,7 @@
  * Values are image indices, never host pointers or executable function pointers.
  * Established local constant definitions remain valid aliases of these values. */
 enum {
+  MK4_RETAIL_DATA_SLAM_CONTINUE_CHORDS = 0x4de588,
   MK4_RETAIL_DATA_IMAGE_BASE_400000 = 0x400000,
   MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000 = 0x4d0000,
   MK4_RETAIL_SCRIPT_SUB_ZERO_SECOND_FATALITY_SCRIPT_4D2BF0 = 0x4d2bf0,

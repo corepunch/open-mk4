@@ -78,6 +78,31 @@ static void put_word(uint32_t address, uint32_t word) {
   }
 }
 
+static void native_chord_rows(void) {
+  uint32_t row = MK4_RETAIL_DATA_SLAM_CONTINUE_CHORDS;
+  uint32_t saved[8];
+  for (unsigned i = 0; i < 8; ++i) {
+    saved[i] = mk4_image_u32(&image, row + i * 4);
+  }
+  const uint32_t words[] = {0x10, 4, 0x10, 4, 0x2000, 0x10, 0x2000, 0x10};
+  for (unsigned i = 0; i < 8; ++i) {
+    put_word(row + i * 4, words[i]);
+  }
+  Fighter *actor = setup(0, 0);
+  actor->held = BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_RUN) | BUTTON_BIT(BUTTON_UP);
+  check(retail_native_button_chord(actor, row), "native chord must read P1 requirements and ignore switches outside the loaded mask");
+  put_word(row + 8, 0x11);
+  check(!retail_native_button_chord(actor, row), "native chord must observe a changed retail mask");
+  actor = setup(1, 0);
+  actor->held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_PUNCH);
+  check(retail_native_button_chord(actor, row), "native chord must select and decode its independent P2 row");
+  actor->held = BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_RUN);
+  check(!retail_native_button_chord(actor, row), "P2 chord must not reuse P1 requirements");
+  for (unsigned i = 0; i < 8; ++i) {
+    put_word(row + i * 4, saved[i]);
+  }
+}
+
 static void behavior(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int crouch = 0; crouch < 2; ++crouch) {
@@ -1336,6 +1361,7 @@ int main(int argc, char **argv) {
   native_weapon_parameters();
   native_weapon_inventory();
   native_contact_record_lifetime();
+  native_chord_rows();
   native_projectile_context();
   native_return_ownership();
   native_sound_data();

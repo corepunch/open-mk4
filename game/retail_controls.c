@@ -408,3 +408,28 @@ void retail_press_table(Fighter *fighter, Button button) {
   uint32_t target = retail_button_target(retail_vm_image(), fighter->buttons->retail_address, button);
   retail_press_native_button(fighter, target);
 }
+
+/* Local45f2b0 consumes two four-word player records: required switch words,
+ * then their masks. P2 uses the same switches shifted8 and4 bits. The engine
+ * Button order preserves the two retail words (see input.h). */
+bool retail_native_button_chord(const Fighter *fighter, uint32_t address) {
+  enum {
+    PLAYER_RECORD_BYTES = 16,
+    ROW_BYTES = 32,
+    P2_PRIMARY_SHIFT = 8,
+    P2_SECONDARY_SHIFT = 4
+  };
+
+  require(address >= RETAIL_SCRIPT_BEGIN && address <= RETAIL_SCRIPT_END - ROW_BYTES && address % 4 == 0, "Invalid native button-chord row");
+  bool second_player = fighter == &g_battle.fighters[1];
+  uint32_t row = address + (second_player ? PLAYER_RECORD_BYTES : 0);
+  uint32_t primary = fighter->held & (BUTTON_BIT(BUTTON_LOW_PUNCH) - 1);
+  uint32_t secondary = fighter->held >> BUTTON_LOW_PUNCH;
+  if (second_player) {
+    primary <<= P2_PRIMARY_SHIFT;
+    secondary <<= P2_SECONDARY_SHIFT;
+  }
+  const Mk4Image *image = retail_vm_image();
+  return (primary & mk4_image_u32(image, row + 8)) == mk4_image_u32(image, row) &&
+         (secondary & mk4_image_u32(image, row + 12)) == mk4_image_u32(image, row + 4);
+}

@@ -13,6 +13,7 @@ enum {
   SLAM_SECOND_SCRIPT = 0x4de538,
   SLAM_SECOND_RELEASE_SCRIPT = 0x4de558,
   SLAM_FIRST_RELEASE_SCRIPT = 0x4de568,
+  SLAM_CHORD_ROW_BYTES = 32,
   n42c820_SLAM_LIMIT = 4,
   n42c820_SLAM_START = 55
 };
@@ -26,27 +27,14 @@ enum {
 
 /* 48a220 -> 489e80(4ea828): one of tokens 760, 765, 770, 775, 780. */
 
-/* 45f2b0 rows: switches 4d00a4 (HP 0x10, BLK 0x20, HK 0x40, Up 0x01) and
- * 4d00a8 (LP 1, LK 2, RUN 4) under masks 0x71/7 must equal the chord. */
-static bool n42c820_slam_chord(const Fighter *fighter, int count) {
-  static const unsigned chords[n42c820_SLAM_LIMIT] = {
-      BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_RUN),
-      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK),
-      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK),
-      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK),
-  };
-  unsigned mask = BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK) |
-                  BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(BUTTON_RUN);
-  return (fighter->held & mask) == chords[count];
-}
-
 /* 42cab0. The simulation has no CPU-ownership flag (48f2f0); a CPU player
  * continues only when its input frame supplies the chord. */
 static bool n42c820_slam_continue(Fighter *fighter) {
   if (fighter->native_variant >= n42c820_SLAM_LIMIT) {
     return false;
   }
-  return n42c820_slam_chord(fighter, fighter->native_variant++);
+  uint32_t row = MK4_RETAIL_DATA_SLAM_CONTINUE_CHORDS + (uint32_t)fighter->native_variant++ * SLAM_CHORD_ROW_BYTES;
+  return retail_native_button_chord(fighter, row);
 }
 
 void jax_lp_slam_first(Fighter *fighter) {
