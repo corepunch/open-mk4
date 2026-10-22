@@ -101,23 +101,22 @@ post-processing.
 ## Character script ports
 
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
-end-to-end research, frame-program implementation, validation and commit procedure.
+end-to-end research, shared-runtime implementation, validation and commit procedure.
 
 The target is one shared retail runtime for every fighter, with retail-loaded
 roster, input, action, stance and CPU tables. Do not add per-character C
 architecture or hand-authored fighter configuration. Retail native routines
 must have one shared implementation rather than copied fighter variants.
-The remaining character modules and compiler outputs are migration inputs,
-not the target design. See `docs/research/shared-retail-runtime.md`.
+Fighter directories contain research metadata only; native services live in
+shared capability modules. See `docs/research/shared-retail-runtime.md`.
 
-Scorpion runs all 70 reviewed roots through direct retail script execution. Run original words
-through the shared C11 interpreter; do not translate branches, waits, loops or
-animation commands into generated C, frame rows or handwritten move logic.
+All 18 fighters run original retail words through the shared C11 interpreter.
+Do not translate branches, waits, loops or animation commands into generated C,
+frame rows or handwritten move logic.
 Extend a missing opcode once and reuse the existing native engine helpers for
 retail native calls. Script data must remain the source of script behavior.
-Remove generated roots, tables and adapters as their last callers migrate.
-Per-fighter/per-move C folders are transitional organization for remaining
-native implementations, not a required end-state architecture.
+Generated script/frame C and per-fighter C/header/include modules are forbidden.
+Native services live once in shared capability modules under game/native/.
 
 Start research with `tools/compile_retail.py --character NAME --inventory` and
 `--audit --summary`. Use bounded `tools/disassemble_retail.py --character NAME
@@ -128,15 +127,14 @@ dumps for routine move research. Consult native listings and reference source
 for unresolved helpers. See `docs/research/retail-vm.md` and
 `docs/script-decoder.md`.
 
-Other fighters retain their generated implementations until migrated. Keep
-reviewed `port.json` coverage current, distinguishing interpreted roots from
-generated and legacy bodies. Run `make scripts-check` and the strict
-`--require-implemented` audit. Neither runtime registration nor generated
-coverage alone proves native gameplay parity. Trust retail script control flow
-and data. Heavily rely on mk4decomp interpreter/handler sources and matching assembly,
+Keep reviewed `port.json` coverage current as research metadata, never as
+runtime fighter configuration. All catalogued roots must remain interpreted.
+Run `make scripts-check` and the strict `--require-implemented` audit. Neither
+runtime registration nor reviewed-root coverage alone proves native gameplay
+parity. Trust retail script control flow and data. Heavily rely on mk4decomp interpreter/handler sources and matching assembly,
 checking local EXE addresses rather than copying upstream VAs. Test only the
 shared runtime we implement, including opcode and native/lifetime contracts;
-reuse existing move regressions instead of adding per-move timing/damage matrices.
+reuse existing integration coverage instead of adding per-move timing/damage matrices.
 Run focused checks during migration and the full suite at meaningful shared
 runtime boundaries, not repeatedly for each move.
 

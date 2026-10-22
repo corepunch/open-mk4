@@ -43,10 +43,13 @@ def main():
     paths += [ROOT / 'game' / name for name in NATIVE]
     paths = sorted(set(paths))
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
+    fighter_dirs = sorted(path.parent for path in (ROOT / 'game').glob('*/port.json'))
     errors += ['Generated fighter runtime output is forbidden: ' + str(path.relative_to(ROOT))
-               for path in (ROOT / 'game').glob('*/generated/*.inc')]
+               for directory in fighter_dirs for path in directory.rglob('*')
+               if path.is_file() and 'generated' in path.parts]
     errors += ['Per-character C architecture is forbidden: ' + str(path.relative_to(ROOT))
-               for pattern in ('*/character.[ch]', '*/moves/*.[ch]') for path in (ROOT / 'game').glob(pattern)]
+               for directory in fighter_dirs for path in directory.rglob('*')
+               if path.suffix in ('.c', '.h', '.inc')]
     if errors:
         print('\n'.join(errors))
         return 1

@@ -1,9 +1,16 @@
 # Shared retail runtime migration
 
-Target: all fighters use one interpreter, retail-loaded roster/command/action/
-stance/CPU tables, and shared native implementations. No fighter C definitions
-or per-fighter script registrations remain in the target architecture. The
-existing fighter modules are migration inputs, not the desired organization.
+The architecture migration is complete: all 18 fighters execute original
+retail words through one C11 interpreter, with retail-loaded roster, input,
+action, stance, CPU and inventory tables. All 1,133 catalogued roots are
+interpreted. No generated script/frame C, fighter C/header modules or
+fighter-origin native dispatch context remains. Native implementations live
+once in shared capability modules. The unused frame generator is retired.
+
+The sections below are the chronological implementation/evidence ledger;
+earlier transitional descriptions are superseded by later entries and the
+current [architecture](../../ARCHITECTURE.md). Reviewed-root/opcode/native
+registration coverage is not a claim of exact retail native gameplay parity.
 
 ## Retail table reader
 
@@ -2022,3 +2029,21 @@ interruption and source-mutation fixtures remain; remove obsolete context-value
 assertions. Runtime/rejection tests, strict all-roster audits and native source
 gates pass. The full suite also passed at the continuation-API boundary before
 removing the redundant input masks.
+
+## Final architecture verification
+
+Remove the unused generate_mmove_frames.py emitter and its formatting helper
+and Make targets. Native source gates now reject any C/header/include file in
+a fighter research directory, as well as any generated fighter output. Replace
+superseded frame-port descriptions in ARCHITECTURE.md and AGENTS.md with the
+current shared VM/native boundaries.
+
+Final validation: make format and the complete make check pass, including
+strict audits for all18 slots/1133 catalogued roots, malformed VM/native
+contracts, engine ownership/lifecycle, archive rejection, original matrix and
+asset decoding, audio/pose/render integration, shadows, native frame cleanup,
+the game self-test (18 rigs/11 arenas),360-tick headless demo and research tools.
+The existing SDL SDK-version linker warning remains. The original revision is
+preserved at archive/pre-retail-vm-d7b69ba; all verified steps are committed on
+main. This completes the architecture migration, without claiming exact retail
+scheduler, native presentation or per-tick gameplay parity.
