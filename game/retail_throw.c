@@ -140,9 +140,14 @@ static void victim_slide_to_stance(Fighter *fighter) {
 
 /* 485c60 is shared by the LP victim entries. Pair/world coordinates are
  * owned by the engine; 485d00's render-coordinate rebasing is unnecessary. */
+/* The three table releases currently share descriptor173 and callback485c40.
+ * Their native entries remain distinct: the rebased variant runs485d00;
+ * the scatter variant runs43a5c0 for a Goro thrower. Our world coordinates
+ * already supply the rebased position. The other four releases are scripts
+ * with distinct slide/impact paths; none of that playback is authored here. */
 void retail_lp_victim(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
-  if (entry == RETAIL_NATIVE_LP_VICTIM_485BF0 && fighter_peer(fighter)->roster == 15) {
+  if (entry == RETAIL_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE && fighter_peer(fighter)->roster == 15) {
     retail_disturb_resting_weapons();
   }
   mk4_script_disarm_self(fighter);
@@ -153,26 +158,26 @@ void retail_lp_victim(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   switch (entry) {
-    case RETAIL_NATIVE_LP_VICTIM_485B70:
-      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_4E9BB8);
+    case RETAIL_NATIVE_LP_VICTIM_TABLE_RELEASE:
+      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_TABLE_RELEASE);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485BA0:
-      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_4E9BC0);
+    case RETAIL_NATIVE_LP_VICTIM_REBASED_TABLE_RELEASE:
+      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_REBASED_RELEASE);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485BF0:
-      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_4E9BC8);
+    case RETAIL_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE:
+      native_animation_table(fighter, MK4_RETAIL_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485B30:
-      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_4E9B88, mk4_mmove_thrown_finish);
+    case RETAIL_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE, mk4_mmove_thrown_finish);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485AF0:
-      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_4E9B68, mk4_mmove_thrown_finish);
+    case RETAIL_NATIVE_LP_VICTIM_IMPACT_RELEASE:
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_IMPACT_RELEASE, mk4_mmove_thrown_finish);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485A90:
-      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_4E9B40, mk4_mmove_thrown_finish);
+    case RETAIL_NATIVE_LP_VICTIM_SLIDING_IMPACT_RELEASE:
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_SLIDING_IMPACT_RELEASE, mk4_mmove_thrown_finish);
       break;
-    case RETAIL_NATIVE_LP_VICTIM_485A30:
-      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_4E9B18, mk4_mmove_thrown_finish);
+    case RETAIL_NATIVE_LP_VICTIM_SLIDE_RELEASE:
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_VICTIM_SLIDE_RELEASE, mk4_mmove_thrown_finish);
       break;
     default:
       require(false, "Unexpected native LP victim entry");
@@ -234,13 +239,13 @@ FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
     case RETAIL_NATIVE_LK_VICTIM_4858A0:
     case RETAIL_NATIVE_LK_VICTIM_485040:
       return retail_lk_victim;
-    case RETAIL_NATIVE_LP_VICTIM_485B70:
-    case RETAIL_NATIVE_LP_VICTIM_485BA0:
-    case RETAIL_NATIVE_LP_VICTIM_485BF0:
-    case RETAIL_NATIVE_LP_VICTIM_485B30:
-    case RETAIL_NATIVE_LP_VICTIM_485AF0:
-    case RETAIL_NATIVE_LP_VICTIM_485A90:
-    case RETAIL_NATIVE_LP_VICTIM_485A30:
+    case RETAIL_NATIVE_LP_VICTIM_TABLE_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_REBASED_TABLE_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_IMPACT_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_SLIDING_IMPACT_RELEASE:
+    case RETAIL_NATIVE_LP_VICTIM_SLIDE_RELEASE:
       return retail_lp_victim;
     case RETAIL_NATIVE_VICTIM_FINISH_CAPTURED_CLIP_484F10:
       return victim_finish_captured_clip;
