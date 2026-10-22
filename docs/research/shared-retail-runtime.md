@@ -1654,3 +1654,18 @@ Verified formatting, shared runtime, strict audits, native gates and helper/
 port navigation. One compact native/lifetime fixture checks typed task rejection,
 context-independent dispatch, interruption and scene/reset retirement; no
 fighter timing or balance assertions were added.
+
+### Shared inherited stagger completion
+
+Removed three different483df0 adapters (star, acid and burn) and their owner
+switch. Local483df0/483ed0/483fa0 runs20 then ten4-sample native blocks,
+resets neutral context and completes the inherited descriptor. Checked429490
+and4297a0: playback saturates at the loaded descriptor end. The common routine
+uses those bounds rather than copied clip182/count65 or a fighter-specific
+friction write. Existing CPU policy owns input/action response between native
+blocks; exact tagged scheduler interleaving remains outside the engine contract.
+
+Verified formatting, runtime/rejections, all strict audits, native gates and
+helper/port navigation. Extended the existing inherited-descriptor fixture with
+a shortened loaded descriptor and an unrelated actor context to catch fixed
+fighter clip bounds and completion errors, without authored timing assertions.

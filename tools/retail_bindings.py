@@ -1540,6 +1540,8 @@ def bindings_for(character):
     result[0x46e240] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46dff0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46c8f0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x483df0] = Binding('retail_stagger_tail', 'game/retail_reaction.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Local483df0/483ed0/483fa0 advances inherited descriptor through429490 then neutral/reset/completion; no roster variant')
     result[0x46a280] = Binding('retail_scene_hover', 'game/retail_scene.c', ('spawn',), ('fighter', 'task_type'),
                                flow='independent', task_types=(38,), mmove=True,
                                evidence='Local46a280/46a340/46a380 and mk4decomp TripleEntryCountdownInstall: independent gravity task with velocity waits and ten-visit holds')

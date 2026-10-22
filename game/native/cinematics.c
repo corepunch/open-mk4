@@ -1593,7 +1593,6 @@ void reptile_fatality_2(Fighter *fighter) {
   {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
 static void n41ea50_finish_scene(Fighter *fighter);
 static void n41ea50_burn_start(Fighter *fighter);
-static void n41ea50_burn_tail_done(Fighter *victim);
 static void n41ea50_beast_start(Fighter *fighter);
 static void n41ea50_beast_watch(Fighter *fighter);
 static void n41ea50_beast_gore_object(Projectile *object);
@@ -1639,15 +1638,6 @@ void scorpion_burn_fatality(Fighter *fighter) {
 
 void scorpion_beast_fatality(Fighter *fighter) {
   scorpion_start_fatality(fighter, FINISH_BEAST);
-}
-
-static void n41ea50_burn_tail_done(Fighter *victim) {
-  fighter_finish_mmove(victim, mk4_script_thrown_ready);
-}
-
-void scorpion_script_burn_tail(Fighter *victim) {
-  victim->body.physics = fighter_friction;
-  native_finish_clip(victim, n41ea50_burn_tail_done);
 }
 
 void scorpion_script_burn_begin(Fighter *fighter) {

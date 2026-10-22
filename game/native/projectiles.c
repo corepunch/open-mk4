@@ -1145,31 +1145,6 @@ void reiko_star(Fighter *fighter) {
 
 static const MoveDef n483df0_s_star_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x2013};
 
-static void n483df0_star_victim_neutral(Fighter *fighter) {
-  /* 483fa0 -> 48e080: the stagger returns to neutral before its last poses. */
-  fighter_neutral(fighter);
-}
-
-static void n483df0_star_victim_end(Fighter *fighter) {
-  if (fighter->health > 0) {
-    mk4_return_to_stance(fighter);
-  } else {
-    fighter_stop_mmove(fighter);
-  }
-}
-
-/* 483df0: play twenty visits, then 483ec0 ten blocks of four (429490), each
- * advancing one pose per visit. 48e080 returns to neutral, 428810 finishes
- * clip 182 and 483fa0 enters the controller. */
-void reiko_script_star_victim_tail(Fighter *fighter) {
-  int pose = fighter_sample(fighter), last = n483df0_s_star_victim.last;
-  native_begin(fighter, 1, last - pose, n483df0_star_victim_end);
-  for (int frame = 1; frame <= last - pose; ++frame) {
-    native_frame(fighter, frame, pose + frame, frame == 60 ? n483df0_star_victim_neutral : NULL);
-  }
-  native_play(fighter, false);
-}
-
 /* Reaction 45 (483d40): 481010 resets the peer and stores action 0x2013.
  * Airborne victims continue as reaction 10 (481320 -> 4e89a0). Otherwise
  * 494520 disarms, 4906c0 snaps to the floor and stops, 4e97f0 installs
@@ -1336,18 +1311,6 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->mmove_cleanup = n40eb80_spit_cleanup;
   retail_vm_enter_owned(fighter, 0x4ed1e8, fighter_ready, 10);
-}
-
-/* 483df0/483ed0/483fa0: twenty samples, ten four-sample chunks, 48e080
- * neutral reset, then 428810 plays the rest and 46f650 returns. The CPU
- * state hook 4339b0 between chunks belongs to the CPU controller. */
-void reptile_acid_victim_tail(Fighter *victim) {
-  native_begin(victim, 1, 65, mk4_mmove_thrown_finish);
-  for (int frame = 1; frame <= 64; ++frame) {
-    native_frame(victim, frame, frame, frame == 61 ? fighter_neutral : NULL);
-  }
-  native_frame(victim, 65, 64, NULL);
-  native_play(victim, false);
 }
 
 /* Reaction 41. battle_react sends airborne victims to reaction 10, as

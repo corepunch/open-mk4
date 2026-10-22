@@ -166,6 +166,22 @@ void retail_tumble_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, finish);
 }
 
+static void stagger_tail_finish(Fighter *fighter) {
+  /*483fa0 resets the controller context without rebinding its descriptor. */
+  fighter_neutral(fighter);
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
+/*483df0/483ed0 run20 then ten4-sample blocks through429490. Its
+ * 4297a0 cursor saturates at the inherited descriptor end, never a fixed
+ * fighter clip/count. The CPU controller owns the intervening input hook. */
+void retail_stagger_tail(Fighter *fighter) {
+  int sample = fighter_sample(fighter);
+  int last = fighter_move(fighter)->last;
+  require(last != MOVE_END && sample >= 0 && sample <= last, "Stagger tail needs a bounded inherited descriptor");
+  native_play_rows(fighter, mini(last, sample + 60), 1, stagger_tail_finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
     case 0x483450:

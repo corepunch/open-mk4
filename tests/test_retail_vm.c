@@ -997,6 +997,19 @@ static void native_inherited_descriptor(void) {
       retail_native_character_slot(16) == 2 && retail_native_character_slot(17) == 4, "native hidden-roster aliases must remain distinct from script aliases");
   fighter_cancel_mmove(owner);
   put_word(0x4e6c10, original);
+
+  owner = setup(0, 2);
+  uint32_t descriptor = 0x4fad7c;
+  uint32_t count = mk4_image_u32(&image, descriptor + 4);
+  put_word(descriptor + 4, 7);
+  retail_vm_bind_animation(owner, descriptor, 0);
+  check(retail_native_vm(owner, 0x483df0, RETAIL_TAIL, 0) && fighter_move(owner)->clip == 0,
+      "shared stagger tail must retain a caller-supplied descriptor outside the historical fighter variants");
+  for (int visit = 0; visit < 32 && owner->current_mmove != NULL; ++visit) {
+    tick();
+  }
+  check(owner->current_mmove == NULL && owner->state == S_IDLE, "short inherited descriptor must complete without hard-coded clip bounds");
+  put_word(descriptor + 4, count);
 }
 
 static void native_button_table(void) {

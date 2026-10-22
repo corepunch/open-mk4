@@ -972,19 +972,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           shinnok_weapon_sweep_finish(fighter);
           return true;
         case 0x483df0:
-          if (owner & 0x80u) {
-            reiko_script_star_victim_tail(fighter);
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_acid_victim_tail(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_burn_tail(fighter);
-            return true;
-          }
-          return false;
+          retail_stagger_tail(fighter);
+          return true;
         case 0x484330:
           goro_script_stomp_victim_hold(fighter);
           return true;
