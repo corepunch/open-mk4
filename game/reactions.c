@@ -323,36 +323,18 @@ static void react_block(Fighter *fighter) {
  * three 6-tick shakes. Pose and body stay fixed; cosmetic shake is omitted.
  * Air thaw: 4e9d38 sets gravity 0x147 and waits for landing, then 486530. */
 static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = 0x1003};
-static const MoveDef thaw_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
 static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = 0x1005};
 
-static void thaw_landing_start(Fighter *fighter) {
-  fighter_start_move(fighter, S_JUMP, &thaw_landing);
-  fighter->sample_override = 18;
-  native_begin(fighter, 1, 10, neutral);
-  for (int frame = 1; frame <= 10; ++frame) {
-    native_frame(fighter, frame, mini(27, 18 + frame), NULL);
-  }
-  native_play(fighter, false);
-}
-
-static void frozen_ground(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
-}
-
-static void frozen_land(Fighter *fighter) {
+/*486530 runs the shared46fd90 landing native after4e9d38. */
+void retail_thaw_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_NO_GUARD;
-  thaw_landing_start(fighter);
+  retail_recoil_land(fighter);
 }
 
 static void frozen_thaw(Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   if (fighter_airborne(fighter)) {
-    fighter->body.gravity = 0x147;
-    fighter->script_phase = 1;
-    native_begin(fighter, 0, 0, frozen_land);
-    native_frame(fighter, 0, fighter_sample(fighter), frozen_ground);
-    native_play(fighter, false);
+    retail_vm_enter(fighter, 0x4e9d38, retail_controller_return);
   } else {
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
     neutral(fighter);
@@ -375,7 +357,7 @@ static void frozen_play(Fighter *fighter, int sample) {
 
 static void thaw_hop_land(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
-    thaw_landing_start(fighter);
+    retail_thaw_land(fighter);
   }
 }
 

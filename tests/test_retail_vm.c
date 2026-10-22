@@ -788,6 +788,33 @@ static void native_stagger_boundary(void) {
   fighter_interrupt(actor, fighter_ready);
 }
 
+/* A script-owned landing wait hands off to the shared native controller. */
+static void script_landing_handoff(void) {
+  uint32_t gravity = mk4_image_u32(&image, 0x4e9d3c);
+  put_word(0x4e9d3c, 0x200);
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef locked = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+    fighter_start_move(actor, S_HIT, &locked);
+    actor->body.pos[AXIS_Y] = actor->body.ground - Q16_ONE;
+    actor->flags |= FF_NO_GUARD;
+    actor->action = 0x1003;
+    retail_vm_enter(actor, 0x4e9d38, retail_controller_return);
+    check(
+        actor->retail_vm.active && actor->current_mmove == NULL && actor->body.gravity == 0x200, "landing motion and wait must come from loaded script words");
+    if (interrupted) {
+      fighter_interrupt(actor, fighter_ready);
+      check(!actor->retail_vm.active, "interruption must cancel the script-owned landing wait");
+    }
+    for (int visit = 0; visit < 128 && (actor->retail_vm.active || actor->current_mmove != NULL || actor->pending != NULL); ++visit) {
+      tick();
+    }
+    check(!actor->retail_vm.active && actor->current_mmove == NULL && !(actor->flags & FF_NO_GUARD),
+        "landing completion or interruption must retire script/native playback and guard ownership");
+  }
+  put_word(0x4e9d3c, gravity);
+}
+
 static uint32_t returned_word;
 static unsigned returned_limit;
 
@@ -1281,6 +1308,7 @@ int main(int argc, char **argv) {
   native_callback_table();
   native_reaction_table();
   native_stagger_boundary();
+  script_landing_handoff();
   native_task_completion();
   cursor_alias_opcodes();
   conditional_primitive_opcodes();

@@ -1554,6 +1554,8 @@ def bindings_for(character):
                                evidence='Local486f30 repeats original4e9e68 through a shared native counter; mk4decomp matching assembly')
     result[0x460250] = Binding('retail_controller_return', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Shared engine controller join after original armed block stream')
+    result[0x486530] = Binding('retail_thaw_land', 'game/reactions.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Local486530 calls46fd90 then46f650 after original4e9d38; mk4decomp SlotEvent3EntryChain matching assembly')
     result[0x486000] = Binding('retail_shake_stun', 'game/retail_reaction.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Local486000/4860d0 bounded shake and settle; one native implementation replaces an indefinite fighter-specific waiter')
     for address, target in ((0x4829e0, 0x4e91c0), (0x4829f0, 0x4e91d0), (0x482a00, 0x4e91e0)):
