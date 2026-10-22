@@ -5,7 +5,6 @@ function references are expanded. Native literals retain instruction provenance;
 no operand is called Q16, damage, action or a host pointer just from its number.
 """
 from collections import deque
-import json
 from c_source import read_source, source_files, function_source
 import re
 
@@ -15,72 +14,6 @@ from retail_helper_view import ROOT, helper_rows, port_source
 from retail_helpers import HELPERS
 from retail_symbols import native_name, reference_rows
 from scorpion_moves import script_program
-
-# This is a portable implementation index, separate from the retail root map.
-COMMON = {'air_throw': ('game/mk4_common.c', 'mk4_air_throw_frames')}
-ENTRIES = {
-    'high_punch': '{c}_hp', 'lp_throw': 'enter_throw', 'lk_throw': 'enter_lk_throw',
-    'jab': '{c}_jab', 'high_kick': '{c}_kick', 'low_kick': '{c}_lk',
-    'sweep': '{c}_sweep', 'uppercut': '{c}_uppercut', 'roundhouse': '{c}_roundhouse',
-    'close_hp': '{c}_hp', 'combo_hp': '{c}_combo_hp', 'close_hk': '{c}_hk',
-    'crouch_lp': '{c}_crouch_lp', 'crouch_lk': '{c}_crouch_lk', 'crouch_hk': '{c}_crouch_hk',
-    'air_hp': 'air_hp', 'air_lp': 'air_lp', 'air_kick': 'air_kick',
-    'air_diagonal_hk': 'air_hk_diagonal', 'air_diagonal_lk': 'air_lk_diagonal',
-    'draw_weapon': '{c}_weapon', 'fan_fatality': '{c}_fan_fatality', 'spike_fatality': '{c}_spike_fatality',
-}
-SPECIFIC = {
-    0: {'spear': 'scorpion_spear', 'breathe_fire': 'scorpion_fire', 'teleport_punch': 'scorpion_teleport',
-        'sword_back_lp': 'sword_back_lp', 'sword_back_hp': 'sword_back_hp', 'sword_spin': 'sword_spin',
-        'fatality_1': 'scorpion_burn_fatality', 'fatality_2': 'scorpion_beast_fatality',
-        'sword_throw': ('game/weapons.c', 'weapon_throw')},
-    1: {'lightning': 'raiden_lightning', 'torpedo': 'raiden_torpedo', 'teleport': 'raiden_teleport',
-        'staff_hp': 'weapon_hp', 'staff_lp': 'weapon_lp', 'staff_back_hp': 'weapon_back_hp', 'staff_back_lp': 'weapon_back_lp',
-        'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'victory': ('game/roster.c', 'retail_victory'), 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
-    2: {'ring': 'sonya_ring', 'leg_grab': 'sonya_leg_grab', 'bicycle': 'sonya_bicycle', 'square_wave': 'sonya_square_wave', 'cartwheel': 'sonya_cartwheel',
-        'weapon_hp': 'weapon_hp', 'weapon_lp': 'weapon_lp', 'weapon_back_hp': 'weapon_back_hp', 'weapon_back_lp': 'weapon_back_lp',
-        'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'air_throw': 'sonya_air_throw', 'victory': ('game/roster.c', 'retail_victory'), 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
-    3: {
-        'fatality_1': 'liu_kang_first_fatality',
-        'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'sword_lp': 'sword_lp',
-        'sword_back_hp': 'sword_back_hp',
-        'weapon_throw': ('game/weapons.c', 'weapon_throw'),
-        'fireball_reaction': ('game/retail_reaction.c', 'retail_script_reaction'),
-    },
-    4: {'ice': 'sub_zero_ice', 'clone': 'sub_zero_clone', 'slide': 'sub_zero_slide', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'scepter_hp': 'scepter_hp', 'scepter_lp': 'scepter_lp', 'scepter_back_hp': 'scepter_back_hp', 'scepter_back_lp': 'scepter_back_lp',
-        'fatality_1': 'sub_zero_first_fatality', 'fatality_2': 'sub_zero_second_fatality',
-        'weapon_throw': ('game/weapons.c', 'weapon_throw')},
-}
-
-# This scene has one native coordinator for all fighters, with direct retail words.
-for _character in SPECIFIC:
-    SPECIFIC[_character]['spike_fatality'] = ('game/retail_scene.c', 'retail_spike_finish')
-    SPECIFIC[_character]['fan_fatality'] = ('game/retail_scene.c', 'retail_fan_finish')
-    SPECIFIC[_character]['high_punch'] = ('game/native_combat.c', 'retail_high_punch')
-    SPECIFIC[_character]['jab'] = ('game/retail_controls.c', 'retail_normal_low_punch')
-    SPECIFIC[_character]['roundhouse'] = ('game/retail_combat.c', 'retail_roundhouse')
-    SPECIFIC[_character]['uppercut'] = ('game/retail_combat.c', 'retail_uppercut')
-    SPECIFIC[_character]['sweep'] = ('game/retail_combat.c', 'retail_sweep')
-    SPECIFIC[_character]['high_kick'] = ('game/retail_combat.c', 'retail_high_kick')
-    SPECIFIC[_character]['crouch_hk'] = ('game/retail_combat.c', 'retail_crouch_high_kick')
-    SPECIFIC[_character]['lk_throw'] = ('game/retail_throw.c', 'retail_lk_throw')
-    SPECIFIC[_character]['lp_throw'] = ('game/script.c', 'retail_lp_throw')
-    SPECIFIC[_character]['crouch_lp'] = ('game/retail_combat.c', 'retail_crouch_low_punch')
-    SPECIFIC[_character]['crouch_lk'] = ('game/retail_combat.c', 'retail_crouch_low_kick')
-    SPECIFIC[_character]['low_kick'] = ('game/retail_controls.c', 'retail_normal_low_kick')
-    SPECIFIC[_character]['air_hp'] = ('game/retail_air.c', 'retail_air_high_punch')
-    SPECIFIC[_character]['air_lp'] = ('game/retail_air.c', 'retail_air_low_punch')
-    SPECIFIC[_character]['air_kick'] = ('game/retail_air.c', 'retail_air_kick')
-    SPECIFIC[_character]['air_diagonal_hk'] = ('game/retail_air.c', 'retail_air_diagonal_high_kick')
-    SPECIFIC[_character]['air_diagonal_lk'] = ('game/retail_air.c', 'retail_air_diagonal_low_kick')
-    SPECIFIC[_character]['air_throw'] = ('game/retail_air_throw.c', 'retail_air_throw_flip' if _character == 2 else 'retail_air_throw')
-    SPECIFIC[_character]['close_hp'] = ('game/retail_combat.c', 'retail_close_high_punch')
-    SPECIFIC[_character]['combo_hp'] = ('game/retail_controls.c', 'retail_combo_high_punch')
-    SPECIFIC[_character]['close_hk'] = ('game/retail_controls.c', 'retail_close_high_kick')
-
 
 PORT_NOTES = {
     (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
@@ -99,28 +32,29 @@ def masked_c(text):
 
 
 def port_entry(character, name):
-    if character not in SPECIFIC:
-        return None
-    if name == 'draw_weapon':
+    move = moves_for(character).get(name, {})
+    if name in ('draw_weapon', 'weapon_followup'):
         return ('game/retail_weapon.c', 'retail_weapon_draw')
-    if name.startswith(('weapon_', 'sword_', 'staff_', 'scepter_')):
-        helper = HELPERS.get(moves_for(character).get(name, {}).get('entry'))
-        if helper is not None and helper.port:
-            return helper.port
-    profile_path = ROOT / 'game' / CHARACTERS[character] / 'port.json'
-    profile = json.loads(profile_path.read_text())
-    reviewed = profile.get('moves', {}).get(name, {})
-    if reviewed.get('source', '').endswith('/moves/weapon.c') or reviewed.get('source') == 'game/retail_weapon.c':
-        return (reviewed['source'], reviewed['symbol'])
-    if name in COMMON and character != 2:
-        return COMMON[name]
-    c = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[character]
-    entry = SPECIFIC[character].get(name, ENTRIES.get(name))
-    if entry is None and moves_for(character).get(name, {}).get('scripts'):
+    # Armed button names navigate to shared selectors; retail data chooses
+    # the actual weapon routine and inventory at runtime.
+    if name.startswith(('weapon_', 'sword_', 'staff_', 'scepter_', 'axe_')):
+        for suffix, symbol in (('back_hp', 'back_high_punch'), ('back_lp', 'back_low_punch'),
+                               ('hp', 'high_punch'), ('lp', 'low_punch')):
+            if name.endswith('_' + suffix):
+                return ('game/retail_weapon.c', 'retail_weapon_' + symbol)
+    from retail_coverage import native_entries
+    symbol = native_entries().get(move.get('entry'))
+    if symbol:
+        from c_source import public_definitions
+        paths = public_definitions().get(symbol, set())
+        if len(paths) == 1:
+            return (next(iter(paths)), symbol)
+    helper = HELPERS.get(move.get('entry'))
+    if helper and helper.port:
+        return helper.port
+    if move.get('scripts'):
         return ('game/retail_vm.c', 'retail_vm_enter')
-    if isinstance(entry, tuple):
-        return entry
-    return ('game/%s/character.c' % c, entry.format(c=c)) if entry else None
+    return None
 
 
 def source_closure(port):

@@ -1,12 +1,15 @@
 # Raiden and Sonya script port ledger
 
+Historical migration notes: generated programs and fighter manifests described
+below have been retired. See [the current workflow](character-script-port.md).
+
 The supplied `MK4/MK-4.EXE` is the specification: roster slots 1 and 2.
 The compiler generates **64/64 Raiden** and **63/63 Sonya** reviewed VM roots,
 with **zero legacy roots and zero coverage errors**. Each audit covers eight
 input event tables, four CPU rows and nine stance tables, plus the default
 weapon and reached contacts/reactions (36 Raiden, 40 Sonya).
 
-`game/raiden/port.json` and `sonya.json` contain the reviewed inventory
+The former fighter manifests contained the reviewed inventory
 fingerprints, native entry clip/cursor contracts, engine continuations and C
 integration references. `make scripts` regenerates the two includes in
 each character’s `generated/` folder; `make scripts-check` requires canonical generation and

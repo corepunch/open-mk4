@@ -3,7 +3,8 @@
 All catalogued fighter programs execute original retail words through one
 C11 interpreter. Script-to-C/frame translation is retired. The remaining
 native services and controllers live in shared capability modules under
-`game/native/`; fighter folders contain research profiles only.
+`game/native/`. Evidence belongs beside shared implementations or in typed
+research bindings; there are no per-fighter coverage manifests.
 
 ## Workflow
 
@@ -35,8 +36,8 @@ native services and controllers live in shared capability modules under
    Do not add per-fighter C folders, configuration or copied native variants.
 
 5. Remove obsolete C adapters, copied data and private modules when their last
-   callers migrate. Keep `port.json` as a research/coverage index, not a runtime
-   fighter definition. Generated fighter C/include outputs are forbidden.
+   callers migrate. Do not add per-fighter coverage declarations or fighter
+   definitions. Generated fighter C/include outputs are forbidden.
 
 6. Run `make format`, focused shared-runtime checks and `make scripts-check`.
    Test only runtime/native features we implement: opcode/control flow, typed

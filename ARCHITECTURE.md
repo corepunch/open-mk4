@@ -133,8 +133,8 @@ no invented animation or balance values.
 
 Original words own script branches, waits, loops and animation commands.
 There is no script-to-C compiler, generated script/frame output, per-fighter C
-folder or per-fighter script registration. Fighter directories contain only
-`port.json` research inventories. Script entries are checked image addresses,
+folder or per-fighter script registration or coverage manifest. Research evidence
+lives in shared source comments and typed tooling bindings. Script entries are checked image addresses,
 not host function pointers. The VM implements all 118 non-null opcode slots
 in the supplied handler table; the null slot remains invalid.
 

@@ -156,10 +156,8 @@ def unreachable_references(profile):
         if candidates and not any(key in reached for key in candidates):
             errors.append('%s: unreachable implementation %s (not connected to gameplay)' % (label, name))
             reported.update(candidates)
-    # A manifest is a review index, not the universe of possible omissions.
-    # Inspect authored callbacks and control tables even if nobody listed them
-    # in port.json. Mechanical interpreter integration thunks
-    # are checked through the catalog roots above, not as independent moves.
+    # Inspect callbacks and control tables independently of source navigation.
+    # Script roots are checked by the shared interpreter audit.
     directory = 'game/' + profile['character'] + '/'
     errors.extend(weapon_dispatch_cycles(graph, reached, directory))
     for key, body in graph.nodes.items():

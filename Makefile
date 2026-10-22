@@ -14,7 +14,7 @@ RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
-SCRIPT_CHARACTERS = $(patsubst game/%/port.json,%,$(wildcard game/*/port.json))
+SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools"); from character_catalog import CHARACTERS; print(" ".join(CHARACTERS))')
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 

@@ -18,10 +18,10 @@ folders. Some native services retain historical names and engine adaptations;
 source registration alone does not establish their native parity. Do not add
 fighter configuration, generated frame paths or copied native variants.
 
-Per-fighter `port.json` files are research inventories and source navigation,
-not runtime configuration or evidence of complete native parity. Historical
-source names are resolved by Python research tools only. Use bounded queries
-and the [runtime migration workflow](../docs/character-script-port.md).
+Research evidence lives in shared native source comments and typed Python
+bindings. Audits inspect decoded EXE roots and shared runtime registrations
+directly; no per-fighter manifest is needed. Use bounded queries and the
+[runtime workflow](../docs/character-script-port.md).
 
 Arcade goes from fighter selection to the five retail destiny towers. The
 frontend loads column names and packed opponent lists from the selected EXE

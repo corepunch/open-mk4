@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reject native actor action clocks outside the fixed-frame runners."""
+from character_catalog import CHARACTERS
 from pathlib import Path
 import re
 
@@ -43,7 +44,7 @@ def main():
     paths += [ROOT / 'game' / name for name in NATIVE]
     paths = sorted(set(paths))
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
-    fighter_dirs = sorted(path.parent for path in (ROOT / 'game').glob('*/port.json'))
+    fighter_dirs = [ROOT / 'game' / name for name in CHARACTERS]
     errors += ['Generated fighter runtime output is forbidden: ' + str(path.relative_to(ROOT))
                for directory in fighter_dirs for path in directory.rglob('*')
                if path.is_file() and 'generated' in path.parts]

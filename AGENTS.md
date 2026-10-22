@@ -142,7 +142,7 @@ The target is one shared retail runtime for every fighter, with retail-loaded
 roster, input, action, stance and CPU tables. Do not add per-character C
 architecture or hand-authored fighter configuration. Retail native routines
 must have one shared implementation rather than copied fighter variants.
-Fighter directories contain research metadata only; native services live in
+Do not add fighter directories or coverage manifests; native services live in
 shared capability modules. See `docs/research/shared-retail-runtime.md`.
 
 All 18 fighters run original retail words through the shared C11 interpreter.
@@ -162,8 +162,8 @@ dumps for routine move research. Consult native listings and reference source
 for unresolved helpers. See `docs/research/retail-vm.md` and
 `docs/script-decoder.md`.
 
-Keep reviewed `port.json` coverage current as research metadata, never as
-runtime fighter configuration. All catalogued roots must remain interpreted.
+Keep native evidence beside shared implementations and in typed research bindings,
+not per-fighter coverage manifests. All catalogued roots must remain interpreted.
 Run `make scripts-check` and the strict `--require-implemented` audit. Neither
 runtime registration nor reviewed-root coverage alone proves native gameplay
 parity. Trust retail script control flow and data. Heavily rely on mk4decomp interpreter/handler sources and matching assembly,

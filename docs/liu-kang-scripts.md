@@ -1,5 +1,8 @@
 # Liu Kang script port ledger
 
+Historical migration notes: generated programs and fighter manifests described
+below have been retired. See [the current workflow](character-script-port.md).
+
 The supplied MK-4.EXE is the specification. Selector slot 3 is Liu Kang.
 This ledger distinguishes implemented control flow from outstanding work.
 Shared locomotion, contact scaling, reactions, landing and scene pools use the
@@ -9,7 +12,7 @@ All 45 remaining VM roots have been migrated to generated C. Together with the
 previous five and five newly catalogued throw/fan continuations (`4de468`,
 `4e0138/148/158/1a0`), the audit passes **57/57 generated, zero legacy**, including the two shared air-weapon selector programs.
 `make scripts` regenerates `game/liu_kang/generated/scripts.inc` from the pinned EXE;
-`game/liu_kang/port.json` supplies reviewed native entry contexts and returns.
+The former fighter manifest supplied reviewed native entry contexts and returns.
 Normal command/CPU entries call these generated frame programs, and script-only
 native thunks become static phase links. Shared frame rows, contacts, clip binding, pair
 playback, landing, weapon motion, audio and scene pools supply the engine work.

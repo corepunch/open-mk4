@@ -121,10 +121,10 @@ Bounded local queries inspected 0x49a680, 0x486000, 0x487420 and 0x45b1f0.
 The native stun owns its 0x40 countdown; the script owns clip 13 and the tail
 call. No synthetic VM body or retail-execution harness was introduced.
 
-`port.json.runtime_scripts` and `--require-implemented` distinguish interpreted
-roots from generated roots, reject duplicates and verify decoded bounds/opcodes.
-The remaining compiler bindings and generated paths stay for unmigrated moves.
-The old per-fighter folders are not the intended final script representation.
+`--require-implemented` checks every catalogued root against the shared
+interpreter's decoded bounds, opcodes and typed native bindings. Input and CPU
+targets are checked against shared native registrations. Coverage is derived
+from the EXE and implementation without per-fighter review manifests.
 
 Validation policy: trust the retail scripts rather than re-test their authored
 balance and frame timing. Verify shared interpreter semantics and our native /
