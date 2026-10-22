@@ -1435,6 +1435,11 @@ def bindings_for(character):
     for address, function in ((0x41f1b0, 'retail_task_pause'), (0x466df0, 'retail_task_pause'), (0x49cb60, 'retail_task_retire')):
         result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='One native pause/retirement boundary; scene completion belongs to the script caller, not roster dispatch')
+    result[0x45ac30] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'),
+                               evidence='45ac30 masks the scene selector and calls4315b0; one engine camera boundary independent of roster')
+    for address, function in ((0x46a950, 'mk4_script_avoid_clear'), (0x46a970, 'mk4_script_avoid_set')):
+        result[address] = Binding(function, 'game/script.c', ('call',), ('fighter',),
+                                  evidence='Checked native task5c clear/set and matching mk4decomp entries; one shared avoidance lifetime')
     # Native script links always enter original words in the shared VM.
     result = {address: replace(binding, symbol='retail_vm_enter', source='game/retail_vm.c')
               if binding.script_target else binding for address, binding in result.items()}

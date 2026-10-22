@@ -11,6 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from retail_moves import RetailImage
+from c_source import canonical_name
 from retail_helpers import HELPERS
 from retail_helper_view import native_c_text, port_source, table_values
 from retail_script_c import instruction_c, move_c_text, script_c_text
@@ -96,7 +97,7 @@ class HelperTests(unittest.TestCase):
             if helper.port:
                 line, code = port_source(helper.port)
                 self.assertGreater(line, 0)
-                self.assertIn(helper.port[1] + '(', code)
+                self.assertIn(canonical_name(*helper.port) + '(', code)
                 self.assertTrue(code.rstrip().endswith('}'))
         native = native_c_text(self.image, 0x457b50)
         self.assertIn('two pulses, three ticks', native)

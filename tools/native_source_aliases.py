@@ -1,6 +1,15 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'fujin_second_event': 'mk4_script_context',
+    'kai_second_event': 'mk4_script_context',
+    'liu_kang_liu_script_scene_event': 'mk4_script_context',
+    'reptile_second_event': 'mk4_script_context',
+    'shinnok_second_event': 'mk4_script_context',
+    'tanya_second_event': 'mk4_script_context',
+    'jarek_script_low_kick_clear': 'mk4_script_avoid_clear',
+    'jarek_script_low_kick_avoid': 'mk4_script_avoid_set',
+
     'cage_first_task_end': 'retail_scene_448480_complete',
     'fujin_first_fire_end': 'retail_scene_44f5e0_complete',
     'jarek_first_victim_done': 'retail_scene_446f80_complete',

@@ -373,12 +373,6 @@ void fujin_second_finish(Fighter *victim) {
   native_hold(victim, 60, n41ef20_second_complete);
 }
 
-void fujin_second_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && selector == 63, "Unexpected Fujin second scene event");
-  /*4315b0 queues scene orchestration; our finisher owns its input lock. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
-
 void fujin_second_blood(Fighter *fighter, int task_type) {
   require(task_type == 38, "Unexpected wind fatality decoration task");
   const Fighter *victim = fighter_opponent(fighter);
@@ -724,12 +718,6 @@ enum {
    * 60-visit park interval before the result. */
   n406ba0_SECOND_SETTLE = 160
 };
-
-void kai_second_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && selector == 45, "Unexpected Kai second scene event");
-  /* 4315b0 queues the scene camera event; the finisher owns its input lock. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
 
 void kai_second_child_walk(Fighter *fighter) {
   /* 406ba0 walks the node's +10 child list with selector 3. The finisher
@@ -1109,12 +1097,6 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
 
 /* Typed native boundaries used by generated VM code. These contain native
  * contact/controller work; all VM playback and branching lives in the include. */
-
-void liu_kang_liu_script_scene_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && selector >= 42 && selector <= 44, "Invalid fatality orchestration event");
-  /* battle_begin_finisher owns input lock, camera and scene activation. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
 
 #undef SCENE
 
@@ -1734,12 +1716,6 @@ void reptile_second_melt(Fighter *victim) {
   native_play(victim, false);
 }
 
-void reptile_second_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && selector == 63, "Unexpected Reptile second scene event");
-  /* 4315b0 queues scene orchestration; the finisher owns its input lock. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
-
 static void n41e490_second_complete(Fighter *victim) {
   mk4_script_stop_body(victim);
   battle_end_finisher();
@@ -2052,12 +2028,6 @@ static const MoveDef n41db70_victim_pose = {.clip = 542, .last = 11, .flags = SF
 
 /* Rows of the independent 46a280/46a380 lift task. */
 #define LIFT_ROWS 400
-
-void shinnok_second_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && selector >= 48 && selector <= 50, "Unexpected Shinnok clap camera shot");
-  /* 4315b0 queues camera director 4dea40; the finisher keeps the lock. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
 
 static void n41db70_lift_gravity(Fighter *victim, float gravity) {
   victim->body.gravity = (q16)gravity;
@@ -2480,13 +2450,6 @@ void tanya_second_owner_cue(Fighter *fighter, int task_type) {
 void tanya_second_victim_cue(Fighter *fighter, int task_type) {
   require(task_type == 619, "Unexpected Tanya fatality victim cue task");
   n45ac30_start_cue(fighter, true);
-}
-
-void tanya_second_event(Fighter *fighter, int selector) {
-  require(g_battle.phase == PHASE_FATALITY && (selector == 69 || selector == 70), "Unexpected Tanya second scene event");
-  /* 4315b0 queues camera shots on scene task 4dea40; the portable camera
-   * follows both live actors, and the finisher owns the input lock. */
-  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
 
 /* 4650b0: list 4e33e8 (Sonya, Tanya, Kitana) lowers the owner 0x147a. */

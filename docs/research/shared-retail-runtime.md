@@ -1597,3 +1597,23 @@ A direct comparison with the supplied dispatch table now finds runtime and
 decoder cases for all118 non-null slots; null31 remains invalid. Slot coverage
 does not establish native gameplay parity. Legacy reaction copies and native
 owner specializations remain the next migration work, not completed parity.
+
+### Share camera selector and avoidance native boundaries
+
+Removed six camera-event adapters and their owner masks at45ac30. Local
+45ac30 only masks the selector and calls4315b0, which queues camera director
+4dea40 with the actor context. The existing engine camera service handles all
+selectors; battle_begin_finisher already owns both actors' input and
+invulnerability flags. Camera requests no longer duplicate those combat writes
+or enforce invented per-fighter selector ranges. The portable follow-camera
+policy remains; retail camera-shot reproduction is not added by this cleanup.
+
+Native46a950/46a970 are plain task5c clear/set operations. Removed two identical
+Jarek wrappers and owner gates, using the existing shared avoidance/lifetime
+helpers. Checked bounded local entries and mk4decomp matching clear/set
+assembly. Historical names remain research aliases only.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). Updated the existing navigation check
+to assert canonical alias names instead of requiring removed legacy spellings
+inside current C bodies. No new tests for identical helper bodies.

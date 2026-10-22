@@ -144,8 +144,9 @@ void mk4_script_pair_adjust(Fighter *fighter, int amount) {
 }
 
 void mk4_script_context(Fighter *fighter, int selector) {
-  /* 431520/431700 create a camera task. Our camera already follows both
-   * live actors; paired positions remain the source of its framing. */
+  /* 431520/4315b0/431700 select or queue camera tasks. The engine camera
+   * follows the live actors. Finisher input/invulnerability ownership belongs
+   * to battle_begin_finisher, not to a roster-specific camera adapter. */
   (void)fighter;
   require(selector >= 0 && selector <= 255, "Unexpected paired camera context");
 }

@@ -74,25 +74,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_disturb_resting_weapons();
           return true;
         case 0x46a950:
-          if (owner & 0x1000u) {
-            jarek_script_low_kick_clear(fighter);
-            return true;
-          }
-          if (owner & 0x3efffu) {
-            mk4_script_avoid_clear(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_avoid_clear(fighter);
+          return true;
         case 0x46a970:
-          if (owner & 0x1000u) {
-            jarek_script_low_kick_avoid(fighter);
-            return true;
-          }
-          if (owner & 0x3efffu) {
-            mk4_script_avoid_set(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_avoid_set(fighter);
+          return true;
         case 0x46ddd0:
           mk4_script_jab_contact(fighter);
           return true;
@@ -1364,31 +1350,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
     case RETAIL_HANDLER:
       switch (address) {
         case 0x45ac30:
-          if (owner & 0x20u) {
-            fujin_second_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x800u) {
-            kai_second_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x8u) {
-            liu_kang_liu_script_scene_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_second_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_second_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_second_event(fighter, (int)(argument & 255u));
-            return true;
-          }
-          return false;
+          mk4_script_context(fighter, (int)(argument & 255u));
+          return true;
         case 0x45b1f0:
           if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) != NULL) {
             retail_script_release_reaction(fighter, (int)(argument & 255u));

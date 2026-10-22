@@ -909,14 +909,6 @@ void goro_script_stomp_return(Fighter *fighter) {
 }
 
 /* Native service cluster: 46a950, 46a970. */
-void jarek_script_low_kick_avoid(Fighter *fighter) {
-  fighter->avoids_high = true;
-}
-
-void jarek_script_low_kick_clear(Fighter *fighter) {
-  fighter->avoids_high = false;
-}
-
 /* Native service cluster: 47ab50. */
 /* LP D,B record 4e4394 (flags 0x4, gate 45e910) and the near/far CPU rows
  * select 47ab10: stamp 0xc, action 0x215 and script 4e8150 (indexed 37,
