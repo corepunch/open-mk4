@@ -7,7 +7,6 @@
 void reptile_reaction_40(Fighter *fighter);
 void reptile_acid_victim(Fighter *fighter);
 void reptile_second_victim(Fighter *fighter);
-void reptile_weapon_reaction(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
@@ -132,7 +131,6 @@ typedef struct ReactionPhase {
   FighterTest until;
 } ReactionPhase;
 
-static void sweep_rise(Fighter *fighter);
 static void uppercut_land(Fighter *fighter);
 static void uppercut_rise(Fighter *fighter);
 static void kick_air_rise(Fighter *fighter);
@@ -163,8 +161,6 @@ REACTION(slide_block, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral
 REACTION(slide_crouch_block, 255, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_block, 247, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
 REACTION(fireball_armed_crouch_block, 222, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(sweep_fall, 195, SF_LOCK, forward_samples, 29, sweep_rise, NULL, 0);
-REACTION(sweep_rise_move, 197, SF_LOCK, forward_samples, 29, neutral, NULL, 0);
 REACTION(uppercut_fall, 128, SF_LOCK, forward_samples, 53, uppercut_land, landed, 0);
 REACTION(uppercut_land_move, 128, SF_LOCK, uppercut_land_samples, 28, uppercut_rise, NULL, 0);
 REACTION(uppercut_ko, 128, SF_LOCK, uppercut_land_samples, COUNT(uppercut_land_samples), neutral, NULL, 0);
@@ -201,11 +197,6 @@ static void start_reaction(Fighter *fighter, int state, const ReactionPhase *pha
     fighter->native.frames[phase->count - 1].thinkfunc = shared_reaction_gate;
   }
   native_play(fighter, false);
-}
-
-static void sweep_rise(Fighter *fighter) {
-  stop_sliding(fighter);
-  start_reaction(fighter, S_KNOCKDOWN, &sweep_rise_move);
 }
 
 static void uppercut_land(Fighter *fighter) {
@@ -282,15 +273,6 @@ static void react_kick_hit(Fighter *fighter) {
   slide(fighter, 0x2666); /* 0.15 */
 }
 
-/* 18 (0x483050): sweep trip, also when airborne; Y is forced to the floor. */
-static void react_sweep(Fighter *fighter) {
-  fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter->body.vel[AXIS_Y] = 0;
-  fighter->body.gravity = 0;
-  start_reaction(fighter, S_KNOCKDOWN, &sweep_fall);
-  fighter_set_speed(fighter, -0xf5c); /* 0.06 */
-}
-
 /* 34 (0x4838e0): uppercut launch from the current height. */
 static void react_uppercut(Fighter *fighter) {
   battle_wall_recoil(fighter);
@@ -330,8 +312,6 @@ static const ReactionSpec extra_reactions[256] = {
   [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
-  [54] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
@@ -774,8 +754,6 @@ static const FighterFn reactions[256] = {
   [86] = sonya_generated_reaction,
   [87] = sonya_generated_reaction,
   [121] = sonya_generated_reaction,
-  [54] = react_extra,
-  [62] = jarek_weapon_reaction,
   [117] = react_block,
   [19] = react_liu_record,
   [31] = react_liu_record,
@@ -817,7 +795,6 @@ static const FighterFn reactions[256] = {
   [13] = react_kick_air,
   [123] = react_kick_air_impact,
   [16] = react_kick_hit,
-  [18] = react_sweep,
   [34] = react_uppercut,
   [171] = react_uppercut,
   [45] = reiko_star_reaction,
@@ -832,19 +809,9 @@ static const FighterFn reactions[256] = {
   [126] = kai_handstand_reaction,
   [127] = kai_handstand_reaction,
   [167] = kai_handstand_reaction,
-  [142] = kai_weapon_reaction,
-  [145] = kai_weapon_reaction,
-  [146] = kai_weapon_reaction,
-  [63] = cage_weapon_reaction,
   [169] = tanya_weapon_reaction,
   [170] = tanya_weapon_reaction,
-  [149] = cage_weapon_reaction,
-  [44] = kai_weapon_reaction,
-  [148] = jarek_weapon_reaction,
   [42] = jarek_ball_victim,
-  [139] = cage_weapon_reaction,
-  [140] = shinnok_weapon_reaction,
-  [141] = shinnok_weapon_reaction,
   [185] = cage_second_victim_hit,
   [136] = goro_quake_victim,
   [190] = goro_kick_victim,
@@ -853,9 +820,6 @@ static const FighterFn reactions[256] = {
   [41] = reptile_acid_victim,
   [40] = reptile_reaction_40,
   [180] = reptile_second_victim,
-  [96] = reptile_weapon_reaction,
-  [137] = reptile_weapon_reaction,
-  [144] = reptile_weapon_reaction,
   [128] = quan_chi_skull_reaction,
   [160] = quan_chi_flip_reaction,
   [106] = quan_chi_stomp_reaction,

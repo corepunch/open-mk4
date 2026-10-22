@@ -282,9 +282,10 @@
       "evidence": "Quan Chi LP throw emits reaction 175 through VM handler 45b1f0 (0x4836e0)"
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Quan Chi slot 8 dispatches reaction 18 through the shared C reaction table (0x483050)"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "21": {
       "source": "game/retail_reaction.c",

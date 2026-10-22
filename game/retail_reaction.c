@@ -307,8 +307,95 @@ void retail_branch_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, finish);
 }
 
+/* Native48fed0 places the victim relative to its attacking peer. */
+static void reaction_position(Fighter *fighter, q16 forward, q16 y) {
+  Fighter *peer = fighter_peer(fighter);
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    fighter->body.pos[axis] = peer->body.pos[axis] + q16_mul(fighter_axis(peer, axis), forward);
+  }
+  fighter->body.pos[AXIS_Y] = peer->body.pos[AXIS_Y] + y;
+}
+
+void retail_weapon_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  bool airborne = fighter_airborne(fighter);
+  if (entry == 0x482110 || entry == 0x4825e0) {
+    mk4_script_context_sound(fighter, 6);
+  } else if (entry == 0x482130) {
+    battle_sound(SOUND_C, 8);
+  }
+  if (entry != 0x482270) {
+    mk4_script_disarm_self(fighter);
+  }
+  if (entry == 0x482110 || entry == 0x482130 || entry == 0x482300 || entry == 0x482350 || entry == 0x482380 || entry == 0x4825e0) {
+    battle_wall_recoil(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  FighterFn finish = mk4_script_thrown_ready;
+  switch (entry) {
+    case 0x482110:
+    case 0x482130:
+      reaction_position(fighter, 0x1cccc, -0x8000);
+      script = 0x4e8b78;
+      break;
+    case 0x4821c0:
+      script = 0x4e8bc0;
+      break;
+    case 0x4821e0:
+      reaction_position(fighter, 0x1b333, 0);
+      mk4_script_stop_body(fighter);
+      fighter->body.pos[AXIS_Y] = fighter->body.ground;
+      script = 0x4e8c08;
+      break;
+    case 0x482270:
+      script = 0x4e8c98;
+      break;
+    case 0x482300:
+      fighter->damage_scale = 0x8000;
+      script = 0x4e8cc0;
+      break;
+    case 0x482350:
+      script = 0x4e8d08;
+      break;
+    case 0x482380:
+      script = 0x4e8d38;
+      finish = retail_getup_roll;
+      break;
+    case 0x4825e0:
+      if (airborne) {
+        fighter->body.gravity = 0x28f;
+        fighter->body.vel[AXIS_Y] = 0x1999;
+      }
+      script = 0x4e8f50;
+      break;
+    case 0x483050:
+      retail_native_sound_list(0x4ea8f8);
+      mk4_script_stop_body(fighter);
+      fighter->body.pos[AXIS_Y] = fighter->body.ground;
+      script = 0x4e9460;
+      break;
+    default:
+      require(false, "Unexpected weapon reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x482110:
+    case 0x482130:
+    case 0x4821c0:
+    case 0x4821e0:
+    case 0x482270:
+    case 0x482300:
+    case 0x482350:
+    case 0x482380:
+    case 0x4825e0:
+    case 0x483050:
+      return retail_weapon_reaction;
     case 0x482ef0:
     case 0x482f00:
     case 0x485f10:

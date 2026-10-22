@@ -272,9 +272,10 @@
       "symbol": "mk4_script_spike_tail"
     },
     "18": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_sweep"
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "20": {
       "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",

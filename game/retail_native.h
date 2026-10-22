@@ -209,3 +209,5 @@ void retail_scaled_reaction(Fighter *fighter);
 
 void retail_branch_reaction(Fighter *fighter);
 void retail_getup_front(Fighter *fighter);
+
+void retail_weapon_reaction(Fighter *fighter);

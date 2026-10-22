@@ -229,9 +229,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Jax script reaction selector 18 follows the shared reaction table entry."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "21": {
       "source": "game/retail_reaction.c",

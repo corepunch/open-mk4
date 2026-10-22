@@ -269,9 +269,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Reptile reaction selector 18 at 0x483050 routes through the shared MK4 sweep reaction handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "21": {
       "source": "game/retail_reaction.c",
@@ -375,22 +376,22 @@
       "evidence": "4dff08 dispatches 180 through 45b1f0 (480f80/48f880, peer task): 481530 holds 28, 481670 turns, VM 4ea290 and native 481590 tear/flesh/4ea2a8 fall."
     },
     "96": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "reptile_weapon_reaction",
-      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
-      "evidence": "4821c0 disarms and enters 4e8bc0 (clip 182 knockback, 490bd0 facing callback)."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch.",
+      "evidence": "Loaded4ea4e8[96] -> 4821c0; bounded local native prelude and original4e8bc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts."
     },
     "137": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "reptile_weapon_reaction",
-      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
-      "evidence": "482270 enters 4e8c98 (clip 311 stagger) and 482280 replays it before the controller return."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch.",
+      "evidence": "Loaded4ea4e8[137] -> 482270; bounded local native prelude and original4e8c98; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts."
     },
     "144": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "reptile_weapon_reaction",
-      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
-      "evidence": "482300: damage scale 0x8000, wall recoil, disarm, 4e8cc0 clip 189 launch and 482790 getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch.",
+      "evidence": "Loaded4ea4e8[144] -> 482300; bounded local native prelude and original4e8cc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts."
     },
     "112": {
       "source": "game/reactions.c",
@@ -403,10 +404,10 @@
       "evidence": "Reptile weapon records WEAPON[18/19/21] block with shared reaction 119 (486a70)."
     },
     "63": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "cage_weapon_reaction",
-      "adaptation": "The shared reactions.c entry 63 already dispatches native 482380 (4e8d38 flight and 488c00 getup) for any struck victim; Reptile HP WEAPON[18] reuses it.",
-      "evidence": "WEAPON[18] selects reaction 63 (482380), the same native shared with Cage mace LP."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch.",
+      "evidence": "Loaded4ea4e8[63] -> 482380; bounded local native prelude and original4e8d38; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts."
     },
     "133": {
       "source": "game/retail_throw.c",

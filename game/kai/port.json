@@ -283,9 +283,10 @@
       "evidence": "Kai script handler 0x45b230 dispatches selected reaction 175 at address 0x4836e0."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 18 at 0x483050."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "21": {
       "source": "game/retail_reaction.c",
@@ -388,22 +389,22 @@
       "evidence": "Handstand D13 blocked reaction0 dispatches486cd0; existing shared block frame recovery."
     },
     "142": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
-      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[142] -> 482110; bounded local native prelude and original4e8b78; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "145": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
-      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[145] -> 4825e0; bounded local native prelude and original4e8f50; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "146": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
-      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[146] -> 4821c0; bounded local native prelude and original4e8bc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "119": {
       "source": "game/reactions.c",

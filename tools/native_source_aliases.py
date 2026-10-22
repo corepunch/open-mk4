@@ -1,6 +1,12 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'cage_weapon_reaction': 'retail_weapon_reaction',
+    'jarek_weapon_reaction': 'retail_weapon_reaction',
+    'kai_weapon_reaction': 'retail_weapon_reaction',
+    'reptile_weapon_reaction': 'retail_weapon_reaction',
+    'shinnok_weapon_reaction': 'retail_weapon_reaction',
+
     'sonya_script_weapon_victim_getup': 'retail_getup_front',
     'reptile_dash_victim': 'retail_scaled_reaction',
     'goro_uppercut_victim': 'retail_scaled_reaction',

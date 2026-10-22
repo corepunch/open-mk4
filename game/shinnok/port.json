@@ -366,9 +366,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "20": {
       "source": "game/retail_reaction.c",
@@ -415,28 +416,28 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "139": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "cage_weapon_reaction",
-      "evidence": "Native weapon table selects reaction139 and its actual generated victim stream.",
-      "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[139] -> 482380; bounded local native prelude and original4e8d38; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "140": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "shinnok_weapon_reaction",
-      "evidence": "Native weapon table selects reaction140 and its actual generated victim stream.",
-      "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[140] -> 482350; bounded local native prelude and original4e8d08; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "141": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "shinnok_weapon_reaction",
-      "evidence": "Native weapon table selects reaction141 and its actual generated victim stream.",
-      "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[141] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "62": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "jarek_weapon_reaction",
-      "evidence": "Native weapon table selects reaction62 and its actual generated victim stream.",
-      "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[62] -> 4821e0; bounded local native prelude and original4e8c08; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "118": {
       "source": "game/reactions.c",

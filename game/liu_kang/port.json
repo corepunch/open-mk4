@@ -399,10 +399,10 @@
       "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "62": {
-      "adaptation": "Use the existing generated native victim stream in the shared dispatcher.",
-      "evidence": "Reaction62 and148 share native4821e0 and generated4e8c08.",
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "jarek_weapon_reaction"
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch.",
+      "evidence": "Loaded4ea4e8[62] -> 4821e0; bounded local native prelude and original4e8c08; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction"
     },
     "64": {
       "evidence": "4ea4e8[64] -> 0x486730; shared reaction adapter and behavioral regressions",

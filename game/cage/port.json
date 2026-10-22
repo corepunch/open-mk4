@@ -307,9 +307,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Cage contact reaches shared reaction 18 through retail dispatcher 0x483050."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "21": {
       "source": "game/retail_reaction.c",
@@ -410,22 +411,22 @@
       "evidence": "Cage orb C0 selects shared reaction2; generated64 body4e9de8 and existing block frame recovery."
     },
     "63": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "cage_weapon_reaction",
-      "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
-      "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[63] -> 482380; bounded local native prelude and original4e8d38; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "149": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "cage_weapon_reaction",
-      "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
-      "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[149] -> 482300; bounded local native prelude and original4e8cc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "146": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native4821c0 shared weapon33 victim stream4e8bc0 is already generated and frame-driven.",
-      "adaptation": "Reuse the shared native146 dispatcher across weapon owners."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[146] -> 4821c0; bounded local native prelude and original4e8bc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "57": {
       "source": "game/retail_reaction.c",

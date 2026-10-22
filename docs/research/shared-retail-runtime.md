@@ -1745,3 +1745,21 @@ original4e96e0 without rewriting the reaction ID to select deleted C data.
 Verified formatting, runtime/rejections, strict audits and native gates. Added
 one transfer assertion to the existing shared native-boundary fixture to catch
 retired-row calls; no authored timing/damage matrix.
+
+### Load weapon victim scripts by native identity
+
+Removed Cage/Jarek/Kai/Reptile/Shinnok weapon-reaction dispatchers, seven
+copied victim MoveDefs, two ReactionSpec rows and the copied sweep program.
+Sixteen reviewed reaction IDs now resolve ten actual native entries once.
+This corrects conflicting per-fighter variants of4821c0 and482300 and lets
+54/62 use their original482130/4821e0 script and placement rather than copied
+fallback rows. Native preludes preserve sound bank distinctions, captured-peer
+position, airborne motion, damage scaling and roll-getup continuation. Scripts
+own animation, waits, branches, motion operands and recovery selection.
+
+Checked bounded local entries482110/130/1c0/1e0/270/300/350/380/5e0 and
+483050, mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and the
+existing script/controller contracts. Updated research metadata and historical
+source aliases. Verified formatting, shared runtime/rejections, all strict
+fighter audits, native gates and existing helper/port navigation. No new tests
+for authored weapon reactions.

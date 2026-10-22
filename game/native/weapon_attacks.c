@@ -4,7 +4,6 @@
 
 /* Native service cluster: 482790. */
 static const MoveDef n482790_upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x113};
-static const MoveDef n482790_victim = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 
 static void n482790_weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
@@ -16,22 +15,6 @@ void retail_weapon_native_495860(Fighter *fighter) {
   fighter->mmove_cleanup = n482790_weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
   retail_vm_enter_owned(fighter, 0x4ec4f0, fighter_ready, 14);
-}
-
-void cage_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 63 || fighter->reaction == 139 || fighter->reaction == 149, "Invalid Cage weapon victim reaction");
-  if (fighter->reaction == 149) {
-    fighter->damage_scale = 0x8000;
-  }
-  battle_wall_recoil(fighter);
-  mk4_script_disarm_self(fighter);
-  fighter_start_move(fighter, S_KNOCKDOWN, &n482790_victim);
-  fighter->flags |= FF_REACTING;
-  if (fighter->reaction == 149) {
-    retail_vm_enter_owned(fighter, 0x4e8cc0, mk4_mmove_thrown_finish, 14);
-  } else {
-    retail_vm_enter_owned(fighter, 0x4e8d38, mk4_mmove_thrown_finish, 14);
-  }
 }
 
 /* Native service cluster: 49a480. */
@@ -210,29 +193,14 @@ void fujin_bolt_victim(Fighter *fighter) {
 }
 
 /* Native service cluster: native_weapon. */
-static const MoveDef native_weapon_victim = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4001};
 
 /* 495980 has the throw/back gates but no air selector. The ordinary LP
  * callback handles air first; follow-up table4ecb40 enters this ground body. */
-
-void jarek_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 148 || fighter->reaction == 62, "Invalid knife victim entry");
-  mk4_script_disarm_self(fighter);
-  const Fighter *peer = fighter_opponent(fighter);
-  fighter->body.pos[AXIS_X] = peer->body.pos[AXIS_X] + q16_mul(fighter_axis(peer, AXIS_X), 0x1b333);
-  fighter->body.pos[AXIS_Z] = peer->body.pos[AXIS_Z] + q16_mul(fighter_axis(peer, AXIS_Z), 0x1b333);
-  mk4_script_stop_body(fighter);
-  fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter_start_move(fighter, S_HIT, &native_weapon_victim);
-  fighter->flags |= FF_REACTING;
-  retail_vm_enter_owned(fighter, 0x4e8c08, mk4_mmove_thrown_finish, 12);
-}
 
 /* Native service cluster: 482790. */
 void retail_weapon_native_495a90(Fighter *fighter);
 static void n482790_2_weapon_cleanup(Fighter *fighter);
 static const MoveDef n482790_2_back_move = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
-static const MoveDef n482790_2_victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 
 static void n482790_2_weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
@@ -249,36 +217,6 @@ void retail_weapon_native_495a90(Fighter *fighter) {
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
  * the HP strike data directly, bypassing ordinary air/back input selection. */
-
-void kai_weapon_reaction(Fighter *fighter) {
-  int reaction = fighter->reaction;
-  bool airborne = fighter_airborne(fighter);
-  require(reaction == 142 || reaction == 145 || reaction == 146 || reaction == 44, "Invalid Kai weapon reaction");
-  mk4_script_disarm_self(fighter);
-  if (reaction != 146) {
-    mk4_script_indexed_sound(fighter, 6);
-    battle_wall_recoil(fighter);
-  }
-  fighter_start_move(fighter, S_KNOCKDOWN, &n482790_2_victim_move);
-  fighter->flags |= FF_REACTING;
-  if (reaction == 142) {
-    /* 48fed0 swaps to the attacking peer, then48fee0 positions its
-     * opponent (this victim) 1.8 units away and half a unit above the peer. */
-    const Fighter *peer = fighter_opponent(fighter);
-    fighter->body.pos[AXIS_X] = peer->body.pos[AXIS_X] + q16_mul(fighter_axis(peer, AXIS_X), 0x1cccc);
-    fighter->body.pos[AXIS_Z] = peer->body.pos[AXIS_Z] + q16_mul(fighter_axis(peer, AXIS_Z), 0x1cccc);
-    fighter->body.pos[AXIS_Y] = peer->body.pos[AXIS_Y] - 0x8000;
-    retail_vm_enter_owned(fighter, 0x4e8b78, mk4_mmove_thrown_finish, 11);
-  } else if (reaction == 145 || reaction == 44) {
-    if (airborne) {
-      fighter->body.gravity = 0x28f;
-      fighter->body.vel[AXIS_Y] = 0x1999;
-    }
-    retail_vm_enter_owned(fighter, 0x4e8f50, mk4_mmove_thrown_finish, 11);
-  } else {
-    retail_vm_enter_owned(fighter, 0x4e8bc0, mk4_mmove_thrown_finish, 11);
-  }
-}
 
 /* Native service cluster: 46db00, 496430. */
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
@@ -681,35 +619,9 @@ void retail_weapon_native_496140(Fighter *fighter) {
  * the peer and runs 4ecb40[7] = 495d20, the 4eca28 HP strike; otherwise
  * action 1004 and VM 4e62c0. */
 
-static const MoveDef n482280_weapon_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
-static const MoveDef n482280_weapon_stagger = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
-static const MoveDef n482280_weapon_launch = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
-
 /* Weapon victims: 96 (4821c0: disarm, VM 4e8bc0), 137 (482270: VM 4e8c98
  * and 482280) and 144 (482300: damage scale 0x8000, wall recoil, disarm,
  * VM 4e8cc0 and 482790). */
-void reptile_weapon_reaction(Fighter *fighter) {
-  int reaction = fighter->reaction;
-  require(reaction == 96 || reaction == 137 || reaction == 144, "Invalid Reptile weapon victim reaction");
-  if (reaction == 144) {
-    fighter->damage_scale = 0x8000;
-    battle_wall_recoil(fighter);
-  }
-  if (reaction != 137) {
-    mk4_script_disarm_self(fighter);
-  }
-  fighter->flags |= FF_REACTING;
-  if (reaction == 96) {
-    fighter_start_move(fighter, S_HIT, &n482280_weapon_victim);
-    retail_vm_enter_owned(fighter, 0x4e8bc0, mk4_mmove_thrown_finish, 10);
-  } else if (reaction == 137) {
-    fighter_start_move(fighter, S_HIT, &n482280_weapon_stagger);
-    retail_vm_enter_owned(fighter, 0x4e8c98, mk4_mmove_thrown_finish, 10);
-  } else {
-    fighter_start_move(fighter, S_KNOCKDOWN, &n482280_weapon_launch);
-    retail_vm_enter_owned(fighter, 0x4e8cc0, mk4_mmove_thrown_finish, 10);
-  }
-}
 
 /* 482280 -> 489020: replay 311 from 0 to its end, then 46f650. */
 void reptile_weapon_stagger_tail(Fighter *fighter) {
@@ -834,7 +746,6 @@ void retail_weapon_native_480770(Fighter *fighter) {
 #undef SWORD_MOVE
 
 /* Native service cluster: 483090, 4830a0. */
-static const MoveDef n483090_victim = {.clip = 132, .last = 59, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4003};
 
 void shinnok_weapon_sweep_getup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -854,25 +765,6 @@ void shinnok_weapon_sweep_finish(Fighter *fighter) {
     native_frame(fighter, frame, frame, NULL);
   }
   native_play(fighter, false);
-}
-
-void shinnok_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 140 || fighter->reaction == 141, "Invalid Shinnok weapon victim entry");
-  mk4_script_disarm_self(fighter);
-  if (fighter->reaction == 140) {
-    battle_wall_recoil(fighter);
-  } else {
-    mk4_script_indexed_sound(fighter, 3);
-    mk4_script_stop_body(fighter);
-    fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  }
-  fighter_start_move(fighter, S_KNOCKDOWN, &n483090_victim);
-  fighter->flags |= FF_REACTING;
-  if (fighter->reaction == 140) {
-    retail_vm_enter_owned(fighter, 0x4e8d08, mk4_mmove_thrown_finish, 6);
-  } else {
-    retail_vm_enter_owned(fighter, 0x4e9460, mk4_mmove_thrown_finish, 6);
-  }
 }
 
 /* Native service cluster: 482790, 488c10. */

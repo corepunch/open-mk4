@@ -331,9 +331,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
-      "source": "game/reactions.c",
-      "symbol": "react_sweep",
-      "evidence": "Pinned EXE Jarek contact record and reaction table"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "20": {
       "source": "game/retail_reaction.c",
@@ -421,28 +422,28 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "149": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "cage_weapon_reaction",
-      "evidence": "Native knife weapon records select reaction149; use its actual shared generated victim path.",
-      "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[149] -> 482300; bounded local native prelude and original4e8cc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "146": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native knife weapon records select reaction146; use its actual shared generated victim path.",
-      "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[146] -> 4821c0; bounded local native prelude and original4e8bc0; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "44": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "kai_weapon_reaction",
-      "evidence": "Native knife weapon records select reaction44; use its actual shared generated victim path.",
-      "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[44] -> 4825e0; bounded local native prelude and original4e8f50; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "148": {
-      "source": "game/native/weapon_attacks.c",
-      "symbol": "jarek_weapon_reaction",
-      "evidence": "Native knife weapon records select reaction148; use its actual shared generated victim path.",
-      "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_weapon_reaction",
+      "evidence": "Loaded4ea4e8[148] -> 4821e0; bounded local native prelude and original4e8c08; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
+      "adaptation": "The loaded native address selects one shared prelude and original script for every victim; no fighter-specific reaction dispatch."
     },
     "118": {
       "source": "game/reactions.c",
