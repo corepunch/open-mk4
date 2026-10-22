@@ -242,17 +242,19 @@ void kai_handstand_reaction(Fighter *fighter) {
   static const MoveDef stagger = {.clip = 134, .last = 17, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
   static const MoveDef knockdown = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
   bool crouch = fighter->action == 0x2001 || fighter->action == 0x2010 || fighter->action == 0x2002 || fighter->action == 0x106 || fighter->action == 0x107;
-  require(fighter->reaction == 126 || fighter->reaction == 127 || fighter->reaction == 167, "Unexpected handstand victim reaction");
+  require(retail_reaction_native(fighter) == 0x482de0 || retail_reaction_native(fighter) == 0x488a50 || retail_reaction_native(fighter) == 0x488a80,
+      "Unexpected handstand victim reaction");
   mk4_script_stop_body(fighter);
-  if (fighter->reaction != 167) {
+  if (retail_reaction_native(fighter) != 0x488a80) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  fighter_start_move(fighter, fighter->reaction == 127 ? S_KNOCKDOWN : S_HIT, fighter->reaction == 127 ? &knockdown : &stagger);
+  fighter_start_move(
+      fighter, retail_reaction_native(fighter) == 0x488a50 ? S_KNOCKDOWN : S_HIT, retail_reaction_native(fighter) == 0x488a50 ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
-  if (fighter->reaction == 127) {
+  if (retail_reaction_native(fighter) == 0x488a50) {
     retail_vm_enter_owned(fighter, 0x4ea170, mk4_mmove_thrown_finish, 11);
-  } else if (fighter->reaction == 167) {
+  } else if (retail_reaction_native(fighter) == 0x488a80) {
     fighter->body.physics = fighter_friction;
     retail_vm_enter_owned(fighter, 0x4ea1c0, mk4_mmove_thrown_finish, 11);
   } else {

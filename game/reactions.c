@@ -1,6 +1,7 @@
 #include "game.h"
 #include "native.h"
 #include "retail_native.h"
+#include "retail_data.h"
 #include "retail_vm.h"
 #include "native_services.h"
 
@@ -21,7 +22,7 @@ void kai_second_victim(Fighter *fighter);
 
 /* Shared reaction phases used by script attack records. Source addresses
  * are in docs/scorpion/combat-core.md. These are our C continuations, not
- * an emulation of the retail task scheduler. Goro retains his own clips. */
+ * an emulation of the retail task scheduler. Native entry selection is loaded. */
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 
@@ -223,6 +224,7 @@ static void react_block(Fighter *fighter) {
 
 /* 11 (0x482070): jab air hit; air reactions scale later damage by 0.6. */
 static void react_jab_air(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
   start_reaction(fighter, S_KNOCKDOWN, &jab_air);
   fighter->damage_scale = 0x9999;
   launch(fighter, 0xccc, -0x23d7, 0x28f); /* 0.05, -0.14, 0.01 */
@@ -230,6 +232,7 @@ static void react_jab_air(Fighter *fighter) {
 
 /* 13 (0x481d30): kick air hit. */
 static void react_kick_air(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
   battle_wall_recoil(fighter);
   start_reaction(fighter, S_KNOCKDOWN, &kick_air);
   fighter->damage_scale = 0x9999;
@@ -242,6 +245,7 @@ static void react_kick_air(Fighter *fighter) {
  * script adds sound B[1] and context sound 0. Its decorative 40a470
  * selectors 9/4 remain omitted, as for reaction 13's selector 4. */
 static void react_kick_air_impact(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
   battle_camera_shake(3, 4, 0x2666);
   battle_sound(SOUND_B, 1);
   mk4_script_context_sound(fighter, 0);
@@ -251,6 +255,7 @@ static void react_kick_air_impact(Fighter *fighter) {
 
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
   battle_wall_recoil(fighter);
   start_reaction(fighter, S_HIT, &kick_hit);
   slide(fighter, 0x2666); /* 0.15 */
@@ -278,12 +283,12 @@ static void reaction_play(Fighter *fighter, int first, int last, int final, Figh
 }
 
 static void react_extra_block(Fighter *fighter) {
-  int id = fighter->reaction;
-  start_reaction(fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
-  if (id == 3 || id == 143) {
+  uint32_t id = retail_reaction_native(fighter);
+  start_reaction(fighter, S_BLOCK, id == 0x486c70 ? &block_short : &block_long);
+  if (id == 0x486bf0 || id == 0x486970) {
     fighter->action = 0x4004;
   }
-  slide(fighter, id == 8 ? 0 : id == 7 ? 0x4000 : id == 5 ? 0x2e14 : 0xf5c);
+  slide(fighter, id == 0x486c70 ? 0 : id == 0x486ab0 ? 0x4000 : id == 0x486b70 ? 0x2e14 : 0xf5c);
 }
 
 /* 486d00 -> 4e9e68: two repetitions of seven standing poses, no push.
@@ -301,16 +306,7 @@ static void react_fireball_block(Fighter *fighter) {
     phase = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
   }
   start_reaction(fighter, S_BLOCK, phase);
-  slide(fighter, fighter->reaction == 9 ? 0x3333 : 0x2147);
-}
-
-static void react_approximate(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter->body.gravity = 0x28f;
-    fighter_enter_state(fighter, S_KNOCKDOWN);
-  } else {
-    fighter_enter_state(fighter, S_HIT);
-  }
+  slide(fighter, retail_reaction_native(fighter) == 0x486b30 ? 0x3333 : 0x2147);
 }
 
 /* 486230/486310/486340/4863b0: six 6-tick shakes, 88-tick hold,
@@ -456,100 +452,145 @@ static void react_weapon_followup(Fighter *fighter) {
   fighter->action = action;
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn reactions[256] = {
-  [117] = react_block,
-  [2] = react_fireball_block,
-  [9] = react_fireball_block,
-  [0] = react_block,
-  [3] = react_extra_block,
-  [5] = react_extra_block,
-  [7] = react_extra_block,
-  [8] = react_extra_block,
-  [143] = react_extra_block,
-  [151] = react_scepter_freeze,
-  [120] = react_weapon_followup,
-  [67] = react_freeze,
-  [92] = fujin_wind_victim,
-  [93] = fujin_triple_victim,
-  [94] = fujin_triple_victim,
-  [95] = fujin_triple_victim,
-  [97] = fujin_wind_slam_victim,
-  [98] = fujin_grab_victim,
-  [181] = fujin_second_victim,
-  [179] = shinnok_second_victim,
-  [101] = fujin_bolt_victim,
-
-  [112] = react_block,
-  [118] = react_block,
-  [119] = react_block,
-  [1] = react_jab_block,
-  [4] = react_low_block,
-  [6] = react_block,
-  [11] = react_jab_air,
-  [13] = react_kick_air,
-  [123] = react_kick_air_impact,
-  [16] = react_kick_hit,
-  [37] = react_jab_hit,
-  [165] = react_slide_block,
-  [157] = jax_dash_victim_hit,
-  [168] = jax_dash_victim_throw,
-  [183] = jax_fatality_2_head,
-  [125] = react_approximate,
-  [162] = cage_shadow_victim,
-  [163] = cage_power_victim,
-  [126] = kai_handstand_reaction,
-  [127] = kai_handstand_reaction,
-  [167] = kai_handstand_reaction,
-  [169] = tanya_weapon_reaction,
-  [170] = tanya_weapon_reaction,
-  [42] = jarek_ball_victim,
-  [185] = cage_second_victim_hit,
-  [136] = goro_quake_victim,
-  [190] = goro_kick_victim,
-  [191] = goro_stomp_victim,
-  [178] = kai_second_victim,
-  [40] = reptile_reaction_40,
-  [180] = reptile_second_victim,
-  [128] = quan_chi_skull_reaction,
-  [160] = quan_chi_flip_reaction,
-  [106] = quan_chi_stomp_reaction,
-  [108] = quan_chi_steal_reaction,
-};
-// clang-format on
+/* Native entry registry. Reaction IDs and roster dispatch stay in retail data. */
+FighterFn retail_engine_reaction(uint32_t entry) {
+  switch (entry) {
+    case 0x465a80:
+      return cage_second_victim_hit;
+    case 0x466b40:
+      return jax_fatality_2_head;
+    case 0x4814c0:
+      return kai_second_victim;
+    case 0x481510:
+      return shinnok_second_victim;
+    case 0x481530:
+      return reptile_second_victim;
+    case 0x4816b0:
+      return fujin_second_victim;
+    case 0x481ce0:
+      return react_kick_air_impact;
+    case 0x481d30:
+      return react_kick_air;
+    case 0x481d90:
+      return quan_chi_flip_reaction;
+    case 0x482070:
+      return react_jab_air;
+    case 0x4821a0:
+      return tanya_weapon_reaction;
+    case 0x482a10:
+      return react_kick_hit;
+    case 0x482c20:
+      return react_weapon_followup;
+    case 0x482de0:
+      return kai_handstand_reaction;
+    case 0x4834d0:
+      return goro_quake_victim;
+    case 0x483550:
+      return reptile_reaction_40;
+    case 0x483570:
+      return goro_kick_victim;
+    case 0x4835a0:
+      return jarek_ball_victim;
+    case 0x4836b0:
+      return cage_shadow_victim;
+    case 0x483b40:
+      return react_jab_hit;
+    case 0x484060:
+      return quan_chi_steal_reaction;
+    case 0x4842d0:
+      return goro_stomp_victim;
+    case 0x4843b0:
+      return quan_chi_stomp_reaction;
+    case 0x485f90:
+      return quan_chi_skull_reaction;
+    case 0x486210:
+      return react_scepter_freeze;
+    case 0x486230:
+      return react_freeze;
+    case 0x486710:
+      return tanya_weapon_reaction;
+    case 0x486770:
+      return fujin_bolt_victim;
+    case 0x4867b0:
+      return jax_dash_victim_throw;
+    case 0x486970:
+      return react_extra_block;
+    case 0x4869c0:
+      return react_block;
+    case 0x4869f0:
+      return react_block;
+    case 0x486a30:
+      return react_block;
+    case 0x486a70:
+      return react_block;
+    case 0x486ab0:
+      return react_extra_block;
+    case 0x486af0:
+      return react_block;
+    case 0x486b30:
+      return react_fireball_block;
+    case 0x486b70:
+      return react_extra_block;
+    case 0x486bb0:
+      return react_low_block;
+    case 0x486bf0:
+      return react_extra_block;
+    case 0x486c40:
+      return react_jab_block;
+    case 0x486c70:
+      return react_extra_block;
+    case 0x486ca0:
+      return react_fireball_block;
+    case 0x486cd0:
+      return react_block;
+    case 0x486d00:
+      return react_slide_block;
+    case 0x487a10:
+      return fujin_grab_victim;
+    case 0x487ed0:
+      return fujin_wind_victim;
+    case 0x488310:
+      return fujin_wind_slam_victim;
+    case 0x4883f0:
+      return jax_dash_victim_hit;
+    case 0x488400:
+      return cage_power_victim;
+    case 0x488420:
+      return fujin_triple_victim;
+    case 0x488450:
+      return fujin_triple_victim;
+    case 0x488830:
+      return fujin_triple_victim;
+    case 0x488a50:
+      return kai_handstand_reaction;
+    case 0x488a80:
+      return kai_handstand_reaction;
+    default:
+      return NULL;
+  }
+}
 
 /* 0x48f880: the victim's move is replaced at once; velocities, gravity and
  * its physics callback are cleared and it is marked as reacting. The
  * reaction starts on the victim's next update. */
 void battle_react(Fighter *victim, int reaction) {
-  require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
+  require(reaction >= 0, "Invalid reaction id");
+  uint32_t target = retail_reaction_target(retail_vm_image(), (unsigned)reaction);
   FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   q16 retained_velocity[3];
-  if (reaction == 97) {
+  if (target == 0x488310) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
   }
   victim->body_contact = false;
-  /* Drop rules for the reaction ids currently used by our script records.
-   * Native 0x494520 is called by these reaction paths, not by ordinary block. */
-  if (native == NULL && victim->armed && victim->disarm != NULL &&
-      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
-          (reaction >= 48 && reaction <= 62) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
-          reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
-          reaction == 156 || reaction == 162 || reaction == 173 || reaction == 123 || reaction == 129 || reaction == 130 || reaction == 41 || reaction == 40 ||
-          reaction == 158)) {
-    victim->disarm(victim);
-  }
   victim->reaction = reaction;
-  if (reaction != 67 && reaction != 151) {
+  if (target != 0x486230 && target != 0x486210) {
     for (int i = 0; i < 3; ++i) {
       victim->body.angle[i] = 0;
     }
     victim->body.pos[AXIS_Y] += victim->body.root_y;
     victim->body.root_y = 0;
   }
-  FighterFn selected = native != NULL ? native : reactions[reaction];
-  FighterFn entry =
-      selected != NULL && (native != NULL || victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
+  require(native != NULL, "Unimplemented loaded reaction native");
 
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;
@@ -558,10 +599,10 @@ void battle_react(Fighter *victim, int reaction) {
   victim->body.gravity = 0;
   victim->body.physics = NULL;
   victim->body.on_land = NULL;
-  fighter_interrupt(victim, entry);
+  fighter_interrupt(victim, native);
   /* Native488310 changes gravity on the existing vortex motion. Preserve
    * that motion across cancellation of the previous portable frame action. */
-  if (reaction == 97) {
+  if (target == 0x488310) {
     memcpy(victim->body.vel, retained_velocity, sizeof retained_velocity);
   }
   victim->flags |= FF_REACTING;

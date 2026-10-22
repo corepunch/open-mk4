@@ -1886,3 +1886,20 @@ original scripts own their authored playback. Verified formatting, runtime/
 rejections, strict audits, native gates and existing helper/port navigation.
 No new per-character tests. SDL build/resource self-test also passed at the
 preceding owner-dispatch boundary (18 rigs,11 arenas).
+
+### Load every reaction selection from retail data
+
+Removed the copied reaction-ID dispatch table and generic-hit fallback. The
+shared registry now resolves modern and remaining engine-native implementations
+by loaded native address. Removed the Goro approximation bypass. Multi-entry
+native helpers now select by loaded native identity; freeze/vortex setup also
+uses native identity, and required disarm preludes live in their native bodies.
+No reaction-ID drop/configuration list remains. Missing targets reject explicitly.
+
+The audit checks reviewed engine-native bindings against address dispatch.
+Repaired the shared API include-guard boundary while adding the registry API.
+Verified formatting, runtime/rejections, strict audits, native gates and helper/
+port navigation. Extended the existing table-mutation fixture to cover an
+engine-native selection, catching fallback to a copied ID table. Full retail
+table inspection exposes18 additional native addresses outside prior reviewed
+move coverage; implementing those remains required, not inferred complete.

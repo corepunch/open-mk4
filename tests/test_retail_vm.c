@@ -492,6 +492,13 @@ static void reaction_native_table(void) {
     tick();
   }
   check(actor->state == S_IDLE && actor->current_mmove == NULL, "native clip/hold/getup chain must release its playback ownership");
+  actor = setup(0, 2);
+  put_word(0x4ea4e8, 0x486230);
+  battle_react(actor, 0);
+  tick();
+  check(actor->appearance == APPEARANCE_FROZEN && actor->action == 0x1003,
+      "engine-native reactions must also follow the loaded address rather than a copied reaction-ID table");
+  fighter_interrupt(actor, fighter_ready);
   put_word(0x4ea4e8, original);
 }
 

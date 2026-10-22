@@ -1,6 +1,10 @@
 #include "native_services.h"
 #include "retail_data.h"
 
+uint32_t retail_reaction_native(const Fighter *fighter) {
+  return retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+}
+
 /* Native482aa0: the impact voice depends on the captured peer, independently
  * of the selected script/model aliases. Script words supply subsequent sound. */
 static void stagger_voice(Fighter *fighter) {
@@ -696,7 +700,9 @@ FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
     case 0x482e90:
     case 0x482b10:
       return retail_stagger_reaction;
-    default:
-      return retail_throw_reaction(image, reaction);
+    default: {
+      FighterFn entry = retail_throw_reaction(image, reaction);
+      return entry != NULL ? entry : retail_engine_reaction(retail_reaction_target(image, reaction));
+    }
   }
 }

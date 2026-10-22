@@ -169,7 +169,6 @@ void retail_spike_finish(Fighter *fighter);
 void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner);
 void retail_lp_select_short(Fighter *fighter);
 void retail_lp_select_long(Fighter *fighter);
-#endif
 
 void retail_lp_victim(Fighter *fighter);
 
@@ -233,3 +232,8 @@ void retail_bicycle_release(Fighter *fighter);
 void retail_torpedo_return(Fighter *fighter);
 void retail_record_reaction(Fighter *fighter);
 void retail_square_victim(Fighter *fighter);
+
+uint32_t retail_reaction_native(const Fighter *fighter);
+FighterFn retail_engine_reaction(uint32_t entry);
+
+#endif

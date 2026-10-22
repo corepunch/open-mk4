@@ -535,6 +535,6 @@ void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_handstand_rear_contact(Fighter *fighter);
 void kai_handstand_victim_tail(Fighter *fighter);
 
-#endif
-
 void retail_recoil_land(Fighter *fighter);
+
+#endif

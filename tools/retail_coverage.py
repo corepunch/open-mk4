@@ -215,17 +215,16 @@ def audit(image, character, profile=None):
             check_reference(profile.get('stances', {}).get(name), errors, 'stance ' + name, table=True)
         if observed['weapon']:
             check_reference(profile.get('weapon'), errors, 'weapon')
-        # A registered reaction must match the actual C dispatch, rather than
-        # just naming an arbitrary existing function. Paired/cinematic native
-        # adapters explicitly declare their different dispatch ownership.
+        # Reviewed engine-native entries must match the loaded address registry.
+        # The retail table owns reaction IDs; no copied ID dispatch is accepted.
         reaction_source = (ROOT / 'game/reactions.c').read_text()
-        table = re.search(r'static const FighterFn reactions\[\d+\]\s*=\s*\{(.*?)\};', masked_c(reaction_source), re.S)
-        actual = dict(re.findall(r'\[(\d+)\]\s*=\s*(\w+)', table[1])) if table else {}
+        registry = re.search(r'FighterFn retail_engine_reaction\(uint32_t entry\)\s*\{(.*?)\n\}', masked_c(reaction_source), re.S)
+        actual = {int(address, 16): name for address, name in re.findall(r'case (0x[0-9a-f]+):\s*return (\w+);', registry[1])} if registry else {}
         for value, native in observed['reactions'].items():
             reference = profile.get('reactions', {}).get(value)
             check_reference(reference, errors, 'reaction ' + value + '/' + native)
-            if reference and reference.get('source') == 'game/reactions.c' and actual.get(value) != reference.get('symbol'):
-                errors.append('reaction %s: C dispatch %s differs from reviewed %s' % (value, actual.get(value), reference.get('symbol')))
+            if reference and reference.get('source') == 'game/reactions.c' and actual.get(int(native, 16)) != reference.get('symbol'):
+                errors.append('reaction %s: native dispatch %s differs from reviewed %s' % (value, actual.get(int(native, 16)), reference.get('symbol')))
             elif reference and reference.get('source') != 'game/reactions.c' and not reference.get('adaptation'):
                 errors.append('reaction %s: non-table dispatch needs an explicit adaptation' % value)
     # Every typed boundary is navigable to a real definition. Prose helper

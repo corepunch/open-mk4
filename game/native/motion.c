@@ -1037,6 +1037,7 @@ void reptile_input_47afe0(Fighter *fighter) {
 /* Reaction 40 (483550): disarm and VM 4e9620, clip 183 launch, landing
  * wait and the shared 488b40 side getup. */
 void reptile_reaction_40(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &n47a6d0_roll_victim);
   fighter->sample_override = 0;
   retail_vm_enter_owned(fighter, 0x4e9620, fighter_ready, 10);

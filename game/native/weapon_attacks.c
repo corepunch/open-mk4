@@ -943,9 +943,9 @@ void retail_weapon_native_495610(Fighter *fighter) {
 /* Reactions 169 (486710 -> 4e9db8) and 170 (4821a0 -> 4e8bb0) both disarm
  * through 494520 before their generated victim streams. */
 void tanya_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 169 || fighter->reaction == 170, "Invalid Tanya weapon victim reaction");
+  require(retail_reaction_native(fighter) == 0x486710 || retail_reaction_native(fighter) == 0x4821a0, "Invalid Tanya weapon victim reaction");
   mk4_script_disarm_self(fighter);
-  if (fighter->reaction == 169) {
+  if (retail_reaction_native(fighter) == 0x486710) {
     fighter_start_move(fighter, S_HIT, &n497b60_victim_hit);
     fighter->flags |= FF_REACTING;
     retail_vm_enter_owned(fighter, 0x4e9db8, mk4_mmove_thrown_finish, 9);
