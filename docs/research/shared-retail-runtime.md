@@ -2006,3 +2006,19 @@ shape. Implement that native routine once; keep controller input/KO ownership
 in the existing engine boundary. This is native recovery, not translated
 script logic. The existing headless demo validates the actual script/native
 join without adding a character timing matrix.
+
+## Address-only native dispatch
+
+Remove the obsolete native_owner/native_owner_set fields and fighter-origin
+arguments from VM, native and scene continuations. A continuation owns a script
+entry plus typed finish, or a distinct native address; actor/model identity
+belongs to the Fighter alone. All script entry sites use the same VM API.
+Remove roster masks and the character argument from native input dispatch too:
+139 unique native entry addresses each select one implementation, with command
+availability supplied only by the loaded retail tables. Predicate selection is
+already address-only. Historical function names are source navigation labels,
+not fighter registrations. Existing actor/model, callback-table, script-return,
+interruption and source-mutation fixtures remain; remove obsolete context-value
+assertions. Runtime/rejection tests, strict all-roster audits and native source
+gates pass. The full suite also passed at the continuation-API boundary before
+removing the redundant input masks.

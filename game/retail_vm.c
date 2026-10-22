@@ -215,9 +215,7 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
       .selector = previous.selector,
       .repeat_count = previous.repeat_count,
       .repeat_entry = previous.repeat_entry,
-      .repeat_after = previous.repeat_after,
-      .native_owner = previous.native_owner_set ? previous.native_owner : (unsigned)fighter->roster,
-      .native_owner_set = true};
+      .repeat_after = previous.repeat_after};
   fighter->continuation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
@@ -230,29 +228,21 @@ void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
   retail_vm_start_at(fighter, retail_vm_image(), entry, RETAIL_SCRIPT_BEGIN, RETAIL_SCRIPT_END, next, retail_native_vm);
 }
 
-/* Legacy native services are still selected by the originating integration
- * context. A victim/scene actor keeps its own model roster independently. */
+/* Script returns keep their own typed continuation; native addresses select
+ * one implementation independently of actor/model identity. */
 static void resume_script_return(Fighter *fighter) {
   RetailScriptContinuation next = fighter->retail_vm.then;
   require(next.entry != 0, "Missing retail script return continuation");
   fighter->retail_vm.then = (RetailScriptContinuation){0};
-  retail_vm_enter_owned(fighter, next.entry, next.finish, next.native_owner);
+  retail_vm_enter(fighter, next.entry, next.finish);
 }
 
 /* Native callers that enter a second script after an original return keep
  * that continuation in VM ownership, independent of native frame completion. */
-void retail_vm_enter_then_owned(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish, unsigned native_owner) {
-  require(after >= RETAIL_SCRIPT_BEGIN && after < RETAIL_SCRIPT_END && after % 4 == 0 && finish != NULL && native_owner < MK4_ROSTER_COUNT,
-      "Invalid retail script return continuation");
-  fighter->retail_vm.then = (RetailScriptContinuation){after, finish, native_owner};
-  retail_vm_enter_owned(fighter, entry, resume_script_return, native_owner);
-}
-
-void retail_vm_enter_owned(Fighter *fighter, uint32_t entry, FighterFn next, unsigned native_owner) {
-  require(native_owner < MK4_ROSTER_COUNT, "Invalid native integration context");
-  fighter->retail_vm.native_owner = native_owner;
-  fighter->retail_vm.native_owner_set = true;
-  retail_vm_enter(fighter, entry, next);
+void retail_vm_enter_then(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish) {
+  require(after >= RETAIL_SCRIPT_BEGIN && after < RETAIL_SCRIPT_END && after % 4 == 0 && finish != NULL, "Invalid retail script return continuation");
+  fighter->retail_vm.then = (RetailScriptContinuation){after, finish};
+  retail_vm_enter(fighter, entry, resume_script_return);
 }
 
 static void repeat_enter(Fighter *fighter, uint32_t entry) {

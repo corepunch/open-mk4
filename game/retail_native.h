@@ -146,7 +146,7 @@ void retail_fan_cycle(Fighter *fighter);
 void retail_fan_victory(Fighter *fighter);
 void retail_fan_victim_end(Fighter *fighter);
 bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument);
-FighterFn retail_native_entry(unsigned character, uint32_t address);
+FighterFn retail_native_entry(uint32_t address);
 bool retail_can_finish_close(const Fighter *fighter);
 bool retail_can_finish_range(const Fighter *fighter);
 bool retail_has_gravity(const Fighter *fighter);

@@ -25,7 +25,7 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   unsigned selection = action == CPU_SPECIAL_NEAR ? 0u : action == CPU_SPECIAL_1 ? 1u : action == CPU_SPECIAL_2 ? 2u : 3u;
   if (action == CPU_SPECIAL_NEAR || action == CPU_SPECIAL_1 || action == CPU_SPECIAL_2 || action == CPU_PROJECTILE) {
     uint32_t target = retail_cpu_target(retail_vm_image(), (unsigned)fighter->roster, selection);
-    entry = target ? retail_native_entry((unsigned)fighter->roster, target) : NULL;
+    entry = target ? retail_native_entry(target) : NULL;
   }
   if (fighter->armed && fighter->weapon != NULL) {
     if (action == CPU_JAB || action == CPU_CLOSE_HP) {

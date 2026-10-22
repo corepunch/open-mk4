@@ -298,7 +298,7 @@ static void native_shared_record(void) {
   uint32_t record = mk4_image_u32(&image, 0x53d268) * 4;
   uint32_t saved = mk4_image_u32(&image, record + 20);
   put_word(record + 20, 0);
-  FighterFn entry = retail_native_entry((unsigned)owner->roster, 0x46d290);
+  FighterFn entry = retail_native_entry(0x46d290);
   entry(owner);
   check(fighter_move(owner)->last == (int)mk4_image_u32(&image, 0x4fbb60) - 1, "shared native must bind the loaded descriptor length");
   bool contacted = false;
@@ -320,12 +320,10 @@ static void native_contracts(void) {
   check(!retail_native_vm(owner, 0x49a6a0, RETAIL_SPAWN, 0), "spawn ABI must reject an unreviewed task type before calling native code");
   check(!retail_native_vm(owner, 0x12345678, RETAIL_TAIL, 0), "native lookup must reject unknown retail addresses");
   owner->roster = 4;
-  owner->retail_vm.native_owner = 0;
-  owner->retail_vm.native_owner_set = true;
   check(retail_native_vm(owner, 0x480040, RETAIL_PHYSICS, 0) && owner->body.physics != NULL,
-      "native binding context must remain independent of a victim or scene actor's model roster");
+      "native address selection must remain independent of a victim or scene actor's model roster");
   owner->roster = MK4_ROSTER_COUNT;
-  check(!retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0), "native lookup must reject an invalid owner before shifting its mask");
+  check(!retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0), "native lookup must reject an invalid actor model");
 }
 
 static void data_tables(void) {
@@ -336,9 +334,9 @@ static void data_tables(void) {
   uint32_t scene_slot = 0x4e0498;
   uint32_t scene_saved = mk4_image_u32(&image, scene_slot);
   uint32_t alternate = mk4_image_u32(&image, scene_slot + 4);
-  FighterFn original_scene = retail_native_entry(0, scene_saved);
+  FighterFn original_scene = retail_native_entry(scene_saved);
   put_word(scene_slot, alternate);
-  check(retail_finish_target(&image, 0, false) == alternate && retail_native_entry(0, alternate) != original_scene,
+  check(retail_finish_target(&image, 0, false) == alternate && retail_native_entry(alternate) != original_scene,
       "scene dispatch must resolve the live retail target rather than a fighter callback table");
   put_word(scene_slot, scene_saved);
   /* Mutate shared source records: no compiled command or roster definition
@@ -371,13 +369,13 @@ static void data_tables(void) {
   put_word(base + 8, 0x00010001);
   put_word(action_slot, 0x469250);
   fighter_press(owner, BUTTON_HIGH_PUNCH);
-  check(owner->pending == retail_native_entry(17, 0x469250), "live input must use the selected retail action rather than a compiled command table");
+  check(owner->pending == retail_native_entry(0x469250), "live input must use the selected retail action rather than a compiled command table");
 
   roster_def(17);
   uint32_t cpu_slot = 0x4df8e8 + 7 * 4;
   uint32_t cpu_saved = mk4_image_u32(&image, cpu_slot);
   put_word(cpu_slot, 0x0001000f);
-  check(battle_cpu_action(owner, CPU_SPECIAL_NEAR) && owner->pending == retail_native_entry(17, 0x469250),
+  check(battle_cpu_action(owner, CPU_SPECIAL_NEAR) && owner->pending == retail_native_entry(0x469250),
       "CPU dispatch must read the live remapped retail action row");
   put_word(cpu_slot, 0);
   owner->pending = NULL;
@@ -530,8 +528,6 @@ static void native_getup_entries(void) {
   const uint32_t entries[] = {0x485ad0, 0x485b10, 0x485b50, 0x488c10};
   for (unsigned i = 0; i < sizeof entries / sizeof *entries; ++i) {
     Fighter *actor = setup(0, 2);
-    actor->retail_vm.native_owner_set = true;
-    actor->retail_vm.native_owner = 15;
     actor->held = BUTTON_BIT(BUTTON_DOWN);
     int facing = actor->facing;
     uint32_t row = i == 0 ? 0x4ea210 : i == 3 ? 0x4ea230 : 0x4ea220;
@@ -610,8 +606,6 @@ static void native_contact_record_lifetime(void) {
   uint32_t original = mk4_image_u32(&image, 0x53d0c0 + 11 * 4);
   uint32_t selected = mk4_image_u32(&image, 0x53d0c0);
   put_word(0x53d0c0 + 11 * 4, selected);
-  actor->retail_vm.native_owner_set = true;
-  actor->retail_vm.native_owner = 15;
   check(retail_native_vm(actor, 0x496970, RETAIL_TAIL, 0), "weapon contact native must not depend on fighter registration masks");
   AttackRecord expected = retail_vm_attack_record(&image, selected * 4);
   check(actor->native_record == &actor->native_record_value && actor->native_record->damage == expected.damage,
@@ -622,8 +616,6 @@ static void native_contact_record_lifetime(void) {
 
 static void native_projectile_context(void) {
   Fighter *actor = setup(0, 2);
-  actor->retail_vm.native_owner_set = true;
-  actor->retail_vm.native_owner = 15;
   check(!retail_native_vm(actor, 0x498bb0, RETAIL_SPAWN, 74), "shared projectile native must reject the wrong typed task argument");
   check(retail_native_vm(actor, 0x498bb0, RETAIL_SPAWN, 75), "shared projectile spawn must be independent of fighter owner masks");
   Projectile *projectile = NULL;
@@ -647,8 +639,6 @@ static void native_return_ownership(void) {
   actor->flags |= FF_PAIRED;
   peer->flags |= FF_PAIRED;
   actor->body.vel[AXIS_X] = 0x1234;
-  actor->retail_vm.native_owner_set = true;
-  actor->retail_vm.native_owner = 15;
   check(retail_native_vm(actor, 0x42ce80, RETAIL_TAIL, 0), "native throw return must not depend on a fighter context mask");
   check(!(actor->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED) && actor->body.vel[AXIS_X] == 0 && actor->state == S_IDLE,
       "controller return must retire pair and motion ownership together");
@@ -706,10 +696,10 @@ static void native_callback_table(void) {
     put_word(descriptor + 4, 2);
     put_word(table, descriptor / 4);
     put_word(table + 4, 0x42ce80);
-    native_animation_table(actor, table, 4);
+    native_animation_table(actor, table);
     put_word(descriptor + 4, count);
-    check(actor->native.native_end.address == 0x42ce80 && actor->native.native_end.native_owner == 4 && actor->native.script_end.entry == 0,
-        "native animation table must own its callback and context separately from VM script completion");
+    check(actor->native.native_end.address == 0x42ce80 && actor->native.script_end.entry == 0,
+        "native animation table must own its callback separately from VM script completion");
     put_word(table + 4, 0x4e6d08);
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
@@ -722,10 +712,10 @@ static void native_callback_table(void) {
   }
   Fighter *actor = setup(0, 2);
   native_hold(actor, 2, NULL);
-  native_address_end(actor, 0x42ce80, 4);
-  native_script_end(actor, 0x4e6d08, fighter_ready, 1);
+  native_address_end(actor, 0x42ce80);
+  native_script_end(actor, 0x4e6d08, fighter_ready);
   check(actor->native.native_end.address == 0, "script completion must replace an earlier native callback");
-  native_address_end(actor, 0x42ce80, 4);
+  native_address_end(actor, 0x42ce80);
   check(actor->native.script_end.entry == 0, "native callback must replace an earlier script completion");
   fighter_cancel_mmove(actor);
   check(actor->native.script_end.entry == 0 && actor->native.native_end.address == 0, "cancellation must clear both typed completion records");
@@ -742,7 +732,6 @@ static void native_reaction_table(void) {
   put_word(0x4e9bbc, 0x42ce80);
   Fighter *owner = fighter_peer(actor);
   owner->retail_vm.image = &image;
-  owner->retail_vm.native_owner = 9;
   owner->flags |= FF_PAIRED;
   actor->flags |= FF_PAIRED;
   check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100), "shared reaction handler must accept loaded native targets in any script context");
@@ -773,8 +762,6 @@ static void native_stagger_boundary(void) {
     Fighter *actor = setup(0, 0);
     actor->action = crouch ? 0x2001 : 0x2000;
     Fighter *owner = fighter_peer(actor);
-    owner->retail_vm.native_owner_set = true;
-    owner->retail_vm.native_owner = 15;
     uint64_t generation = owner->continuation;
     check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100) && owner->continuation == generation && actor->pending != NULL,
         "script reaction dispatch must use the loaded peer native independently of owner context without interrupting the caller");
@@ -993,8 +980,6 @@ static void native_task_completion(void) {
   put_word(base + 8, 0x49cb60);
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     Fighter *actor = setup(0, 2);
-    actor->retail_vm.native_owner_set = true;
-    actor->retail_vm.native_owner = 15;
     control_finished = cleanup_calls = 0;
     retail_vm_start(actor, &image, base, base + 12, control_end, retail_native_vm);
     actor->retail_vm.cleanup = cleanup_once;
@@ -1049,7 +1034,7 @@ static void native_inherited_descriptor(void) {
   uint32_t original = mk4_image_u32(&image, 0x4e6c10);
   uint32_t replacement = mk4_image_u32(&image, 0x4e6c14);
   put_word(0x4e6c10, replacement);
-  retail_native_entry(0, 0x46be40)(owner);
+  retail_native_entry(0x46be40)(owner);
   int clip = (int)((replacement * 4 - 0x4fad7c) / 12);
   check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e61e0 && fighter_move(owner)->clip == clip,
       "native inherited animation must come from the loaded descriptor table");
@@ -1111,7 +1096,7 @@ static void native_script_continuation(void) {
   for (unsigned interrupted = 0; interrupted < 2; ++interrupted) {
     Fighter *owner = setup(0, 2);
     native_hold(owner, 2, NULL);
-    native_script_end(owner, 0x4e6d08, fighter_ready, 4);
+    native_script_end(owner, 0x4e6d08, fighter_ready);
     if (interrupted) {
       fighter_interrupt(owner, fighter_ready);
     }
@@ -1122,7 +1107,7 @@ static void native_script_continuation(void) {
     if (interrupted) {
       check(!owner->retail_vm.active && owner->current_mmove == NULL, "canceled native completion must not resume a retail script");
     } else {
-      check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e6d08 && owner->retail_vm.native_owner == 4,
+      check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e6d08,
           "native completion must enter its stored original script with the typed integration context");
     }
   }
@@ -1132,18 +1117,18 @@ static void native_script_continuation(void) {
   put_word(0x4e6d08, 0x34000002);
   put_word(0x4e6d0c, 0x30000000);
   retail_native_begin(owner, S_KICK, 0x101, false);
-  retail_vm_enter_then_owned(owner, 0x4e6d08, 0x4e5d90, fighter_ready, 4);
+  retail_vm_enter_then(owner, 0x4e6d08, 0x4e5d90, fighter_ready);
   native_begin(owner, 0, 0, NULL);
-  native_script_end(owner, 0x4e62f0, fighter_ready, 1);
+  native_script_end(owner, 0x4e62f0, fighter_ready);
   for (int visit = 0; visit < 5 && owner->retail_vm.entry != 0x4e5d90; ++visit) {
     tick();
   }
-  check(owner->retail_vm.entry == 0x4e5d90 && owner->retail_vm.native_owner == 4 && owner->retail_vm.then.entry == 0 && owner->native.script_end.entry == 0,
+  check(owner->retail_vm.entry == 0x4e5d90 && owner->retail_vm.then.entry == 0 && owner->native.script_end.entry == 0,
       "VM return continuation must stay independent of native completion data and consume once");
 
   static const MoveDef actor_view = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK};
-  Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, 0x4e6d08, fighter_ready, 1);
-  check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->retail_vm.active && actor->retail_vm.native_owner == 1,
+  Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, 0x4e6d08, fighter_ready);
+  check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->retail_vm.active,
       "raw scene script entry must preserve model identity independently of native integration context");
   battle_reset_match();
   check(!owner->retail_vm.active && owner->retail_vm.then.entry == 0 && !actor->retail_vm.active,
@@ -1261,7 +1246,7 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "callback") == 0) {
       Fighter *actor = setup(0, 2);
       native_hold(actor, 1, NULL);
-      native_address_end(actor, 0x4e6d08, 0);
+      native_address_end(actor, 0x4e6d08);
     } else if (strcmp(argv[1], "range") == 0) {
       Fighter *owner = setup(0, 2);
       put_word(0x570000, 0x1f000000);

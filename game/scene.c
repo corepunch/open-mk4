@@ -153,10 +153,10 @@ Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const M
   return actor;
 }
 
-Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, const MoveDef *move, uint32_t entry, FighterFn finish, unsigned native_owner) {
+Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, const MoveDef *move, uint32_t entry, FighterFn finish) {
   Fighter *actor = scene_actor_allocate(owner, source, move);
   if (actor != NULL) {
-    retail_vm_enter_owned(actor, entry, finish, native_owner);
+    retail_vm_enter(actor, entry, finish);
   }
   return actor;
 }

@@ -566,7 +566,7 @@ void weapon_axe_reaction(Fighter *victim, bool followup, RetailScriptContinuatio
   fighter_start_move(victim, followup ? S_KNOCKDOWN : S_HIT, followup ? &second : &first);
   victim->flags |= FF_REACTING;
   mk4_script_effect(victim, followup ? 0 : 9);
-  retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+  retail_vm_enter(victim, script.entry, script.finish);
 }
 
 static void script_strike_recover(Fighter *fighter) {

@@ -104,7 +104,7 @@ void kai_script_stage_event(Fighter *fighter) {
 
 static void kai_input_47cbf0(Fighter *fighter) {
   weapon_followup_victim(fighter);
-  retail_vm_enter_owned(fighter, 0x4e88c8, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e88c8, fighter_ready);
 }
 
 void kai_input_47c520(Fighter *fighter) {
@@ -115,26 +115,26 @@ void kai_input_47c520(Fighter *fighter) {
   if (fighter->armed) {
     kai_input_47cbf0(fighter);
   } else {
-    retail_vm_enter_owned(fighter, 0x4e8320, fighter_ready, 11);
+    retail_vm_enter(fighter, 0x4e8320, fighter_ready);
   }
 }
 
 void retail_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e83e8, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e83e8, fighter_ready);
 }
 
 void retail_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e8358, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e8358, fighter_ready);
 }
 
 void retail_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e83a0, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e83a0, fighter_ready);
 }
 
 static void handstand_contact(Fighter *fighter) {
@@ -147,7 +147,7 @@ void kai_script_contact_b10_continuation(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 0 && fighter_sample(fighter) == 9, "Handstand HK needs its selected startup");
   fighter->native_record = &front_record;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, 0x4e8390, fighter_ready, 11);
+  native_script_end(fighter, 0x4e8390, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, frame == 1 ? 10 : 11, handstand_contact);
   }
@@ -158,7 +158,7 @@ void kai_handstand_rear_contact(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 6 && fighter_sample(fighter) == 9, "Handstand LK needs its selected startup");
   fighter->native_record = &rear_record;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, 0x4e83d8, fighter_ready, 11);
+  native_script_end(fighter, 0x4e83d8, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, 9 + frame, handstand_contact);
   }
@@ -226,7 +226,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
 void retail_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e8338, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e8338, fighter_ready);
 }
 
 void kai_handstand_victim_tail(Fighter *fighter) {
@@ -253,17 +253,17 @@ void kai_handstand_reaction(Fighter *fighter) {
       fighter, retail_reaction_native(fighter) == 0x488a50 ? S_KNOCKDOWN : S_HIT, retail_reaction_native(fighter) == 0x488a50 ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
   if (retail_reaction_native(fighter) == 0x488a50) {
-    retail_vm_enter_owned(fighter, 0x4ea170, mk4_mmove_thrown_finish, 11);
+    retail_vm_enter(fighter, 0x4ea170, mk4_mmove_thrown_finish);
   } else if (retail_reaction_native(fighter) == 0x488a80) {
     fighter->body.physics = fighter_friction;
-    retail_vm_enter_owned(fighter, 0x4ea1c0, mk4_mmove_thrown_finish, 11);
+    retail_vm_enter(fighter, 0x4ea1c0, mk4_mmove_thrown_finish);
   } else {
     mk4_script_shake(fighter, 0);
     if (crouch) {
       fighter->body.physics = fighter_friction;
-      retail_vm_enter_owned(fighter, 0x4e9360, mk4_mmove_thrown_finish, 11);
+      retail_vm_enter(fighter, 0x4e9360, mk4_mmove_thrown_finish);
     } else {
-      retail_vm_enter_owned(fighter, 0x4e9308, mk4_mmove_thrown_finish, 11);
+      retail_vm_enter(fighter, 0x4e9308, mk4_mmove_thrown_finish);
     }
   }
 }

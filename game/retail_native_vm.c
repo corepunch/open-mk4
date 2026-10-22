@@ -1,5 +1,5 @@
 /* Typed native ABI registrations, derived from the reviewed local-EXE
- * contracts. This is a transitional bridge to existing native services;
+ * contracts. Each native address selects one shared engine service;
  * no retail script instructions or animation frame rows are emitted. */
 #include "retail_native.h"
 #include "retail_vm.h"
@@ -12,10 +12,6 @@ unsigned raiden_script_torpedo_query(Fighter *fighter);
 
 bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
   if (fighter->roster < 0 || fighter->roster >= MK4_ROSTER_COUNT) {
-    return false;
-  }
-  unsigned context = fighter->retail_vm.native_owner_set ? fighter->retail_vm.native_owner : (unsigned)fighter->roster;
-  if (context >= MK4_ROSTER_COUNT) {
     return false;
   }
   switch (kind) {

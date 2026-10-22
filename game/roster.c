@@ -95,8 +95,8 @@ const CharacterDef *roster_def(int index) {
     cpu[index].enter[CPU_JAB] = retail_jab;
     cpu[index].enter[CPU_LOW_KICK] = retail_low_kick;
     cpu[index].enter[CPU_THROW] = retail_lp_throw;
-    cpu[index].enter[CPU_CLOSE_HP] = retail_native_entry((unsigned)index, retail_action_target(image, 1, 9));
-    cpu[index].enter[CPU_CLOSE_HK] = retail_native_entry((unsigned)index, retail_action_target(image, 1, 12));
+    cpu[index].enter[CPU_CLOSE_HP] = retail_native_entry(retail_action_target(image, 1, 9));
+    cpu[index].enter[CPU_CLOSE_HK] = retail_native_entry(retail_action_target(image, 1, 12));
     /* Native weapon draw is available only when present in the loaded input
      * lists. This also respects boss slots without a draw action. */
     uint32_t draw = retail_action_target(image, 1, 41);
@@ -105,14 +105,14 @@ const CharacterDef *roster_def(int index) {
       RetailCommand command;
       while (retail_command_next(image, &cursor, &command)) {
         if (draw != 0 && command.target == draw) {
-          cpu[index].enter[CPU_DRAW] = retail_native_entry((unsigned)index, draw);
+          cpu[index].enter[CPU_DRAW] = retail_native_entry(draw);
         }
       }
     }
     const CpuAction slots[4] = {CPU_SPECIAL_NEAR, CPU_SPECIAL_1, CPU_SPECIAL_2, CPU_PROJECTILE};
     for (unsigned table = 0; table < 4; ++table) {
       uint32_t target = retail_cpu_target(image, (unsigned)index, table);
-      cpu[index].enter[slots[table]] = target ? retail_native_entry((unsigned)index, target) : NULL;
+      cpu[index].enter[slots[table]] = target ? retail_native_entry(target) : NULL;
     }
     cpu[index].enter[CPU_FINISH_1] = retail_finish_target(image, (unsigned)index, false) ? retail_finish_first : NULL;
     cpu[index].enter[CPU_FINISH_2] = retail_finish_target(image, (unsigned)index, true) ? retail_finish_second : NULL;

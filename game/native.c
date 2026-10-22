@@ -27,16 +27,15 @@ static void native_script_resume(Fighter *fighter) {
   RetailScriptContinuation next = fighter->native.script_end;
   fighter->native.script_end = (RetailScriptContinuation){0};
   require(next.entry != 0, "Missing native script continuation");
-  retail_vm_enter_owned(fighter, next.entry, next.finish, next.native_owner);
+  retail_vm_enter(fighter, next.entry, next.finish);
 }
 
 /* Install after native_begin (or a non-immediate native helper). The phase
  * owns the original address as data; no fighter-specific C thunk is needed. */
-void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish, unsigned native_owner) {
-  require(entry >= RETAIL_SCRIPT_BEGIN && entry < RETAIL_SCRIPT_END && entry % 4 == 0 && finish != NULL && native_owner < MK4_ROSTER_COUNT,
-      "Invalid native script continuation");
+void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish) {
+  require(entry >= RETAIL_SCRIPT_BEGIN && entry < RETAIL_SCRIPT_END && entry % 4 == 0 && finish != NULL, "Invalid native script continuation");
   fighter->native.native_end = (RetailNativeContinuation){0};
-  fighter->native.script_end = (RetailScriptContinuation){entry, finish, native_owner};
+  fighter->native.script_end = (RetailScriptContinuation){entry, finish};
   fighter->native.move.endfunc = native_script_resume;
 }
 
@@ -44,8 +43,6 @@ static void native_address_resume(Fighter *fighter) {
   RetailNativeContinuation next = fighter->native.native_end;
   fighter->native.native_end = (RetailNativeContinuation){0};
   require(next.address != 0, "Missing native address continuation");
-  fighter->retail_vm.native_owner = next.native_owner;
-  fighter->retail_vm.native_owner_set = true;
   uint64_t continuation = fighter->continuation;
   require(retail_native_vm(fighter, next.address, RETAIL_TAIL, 0), "Unsupported native address continuation");
   require(fighter->continuation != continuation || fighter->current_mmove != &fighter->native.move, "Native continuation did not transfer ownership");
@@ -53,22 +50,22 @@ static void native_address_resume(Fighter *fighter) {
 
 /* Install after native_begin or a non-immediate native helper. Native callback
  * addresses remain distinct from script entries and are never host pointers. */
-void native_address_end(Fighter *fighter, uint32_t address, unsigned native_owner) {
-  require(address >= 0x400000 && address < RETAIL_SCRIPT_BEGIN && native_owner < MK4_ROSTER_COUNT, "Invalid native address continuation");
+void native_address_end(Fighter *fighter, uint32_t address) {
+  require(address >= 0x400000 && address < RETAIL_SCRIPT_BEGIN, "Invalid native address continuation");
   fighter->native.script_end = (RetailScriptContinuation){0};
-  fighter->native.native_end = (RetailNativeContinuation){address, native_owner};
+  fighter->native.native_end = (RetailNativeContinuation){address};
   fighter->native.move.endfunc = native_address_resume;
 }
 
 /* Native4287a0 reads a packed descriptor and a byte-address callback cell,
  * then starts ordinary forward native playback at pose zero. */
-void native_animation_table(Fighter *fighter, uint32_t table, unsigned native_owner) {
+void native_animation_table(Fighter *fighter, uint32_t table) {
   const Mk4Image *image = retail_vm_image();
   uint32_t descriptor = mk4_image_u32(image, table) * 4;
   uint32_t callback = mk4_image_u32(image, table + 4);
   retail_vm_bind_animation(fighter, descriptor, 0);
   native_finish_clip(fighter, NULL);
-  native_address_end(fighter, callback, native_owner);
+  native_address_end(fighter, callback);
 }
 
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action) {

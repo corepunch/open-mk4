@@ -57,22 +57,22 @@ static bool press_air_controller(Fighter *fighter, uint32_t target) {
       return false;
   }
   uint32_t entry = retail_action_target(retail_vm_image(), 8, action);
-  fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, entry));
+  fighter_interrupt(fighter, retail_native_entry(entry));
   return true;
 }
 
-static FighterFn action_entry(Fighter *fighter, unsigned index) {
+static FighterFn action_entry(unsigned index) {
   uint32_t target = retail_action_target(retail_vm_image(), 1, index);
-  return retail_native_entry((unsigned)fighter->roster, target);
+  return retail_native_entry(target);
 }
 
 static void enter_action(Fighter *fighter, unsigned index) {
-  action_entry(fighter, index)(fighter);
+  action_entry(index)(fighter);
 }
 
-static FighterFn crouch_entry(Fighter *fighter, unsigned index) {
+static FighterFn crouch_entry(unsigned index) {
   uint32_t target = mk4_image_u32(retail_vm_image(), 0x4e7020 + index * 4);
-  return retail_native_entry((unsigned)fighter->roster, target);
+  return retail_native_entry(target);
 }
 
 uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button button) {
@@ -148,12 +148,12 @@ static void air_ground_hp(Fighter *fighter) {
 static FighterFn normal_hk_entry(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
-    return action_entry(fighter, 7);
+    return action_entry(7);
   } else if (fighter_distance(fighter) <= q16_float(0xcccc) && !fighter_airborne(peer) && peer->action != ACTION_RETAIL_4005 &&
              peer->action != ACTION_RETAIL_4001) {
-    return action_entry(fighter, 12);
+    return action_entry(12);
   } else {
-    return action_entry(fighter, 5);
+    return action_entry(5);
   }
 }
 
@@ -178,11 +178,11 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
     return;
   }
   if (target == 0x47c2a0) {
-    fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, target));
+    fighter_interrupt(fighter, retail_native_entry(target));
     return;
   }
   if (target == 0x47c850 || target == 0x47ccf0 || target == 0x47cc10 || target == 0x47cc80) {
-    fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, target));
+    fighter_interrupt(fighter, retail_native_entry(target));
     return;
   }
   const Fighter *peer = fighter_opponent(fighter);
@@ -193,11 +193,11 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
       entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_high_punch : retail_weapon_high_punch) : normal_hp;
       break;
     case 0x460fb0:
-      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch)
-                                                        : action_entry(fighter, 8);
+      entry =
+          fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch) : action_entry(8);
       break;
     case 0x460fc0:
-      entry = action_entry(fighter, fighter_holds_back(fighter) ? 6 : 4);
+      entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
     case 0x461030:
       entry = normal_hk_entry(fighter);
@@ -206,21 +206,21 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
       /* The engine command matcher owns finish command gates before fallback. */
       {
         uint32_t target = retail_action_target(retail_vm_image(), 1, 1);
-        entry = target == 0x46ccd0 ? retail_uppercut : retail_native_entry((unsigned)fighter->roster, target);
+        entry = target == 0x46ccd0 ? retail_uppercut : retail_native_entry(target);
       }
       break;
     case 0x4610d0:
       if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
         entry = retail_weapon_native_480770;
       } else {
-        entry = crouch_entry(fighter, 8);
+        entry = crouch_entry(8);
       }
       break;
     case 0x461190:
-      entry = crouch_entry(fighter, 7);
+      entry = crouch_entry(7);
       break;
     case 0x461160:
-      entry = crouch_entry(fighter, 6);
+      entry = crouch_entry(6);
       break;
     case 0x460200:
     case 0x461130:
@@ -259,7 +259,7 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
       }
       break;
     case 0x46c740:
-      entry = action_entry(fighter, fighter_holds_back(fighter) ? 6 : 4);
+      entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
     default:
       fatal("Unimplemented retail button controller %08x", target);

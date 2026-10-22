@@ -153,13 +153,13 @@ void retail_lp_victim(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   switch (entry) {
     case 0x485b70:
-      native_animation_table(fighter, 0x4e9bb8, fighter->retail_vm.native_owner);
+      native_animation_table(fighter, 0x4e9bb8);
       break;
     case 0x485ba0:
-      native_animation_table(fighter, 0x4e9bc0, fighter->retail_vm.native_owner);
+      native_animation_table(fighter, 0x4e9bc0);
       break;
     case 0x485bf0:
-      native_animation_table(fighter, 0x4e9bc8, fighter->retail_vm.native_owner);
+      native_animation_table(fighter, 0x4e9bc8);
       break;
     case 0x485b30:
       retail_vm_enter(fighter, 0x4e9b88, mk4_mmove_thrown_finish);

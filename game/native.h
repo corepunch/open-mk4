@@ -5,9 +5,9 @@
 /* Assemble bounded native playback once on entry. Original script words run
  * in the VM; only native routines build these engine playback rows. */
 void native_begin(Fighter *fighter, int first, int last, FighterFn end);
-void native_address_end(Fighter *fighter, uint32_t address, unsigned native_owner);
-void native_animation_table(Fighter *fighter, uint32_t table, unsigned native_owner);
-void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish, unsigned native_owner);
+void native_address_end(Fighter *fighter, uint32_t address);
+void native_animation_table(Fighter *fighter, uint32_t table);
+void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish);
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action);
 void native_play(Fighter *fighter, bool immediate);
 void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end);

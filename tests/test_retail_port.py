@@ -39,7 +39,7 @@ class PortTests(unittest.TestCase):
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
         self.assertIn('sub_zero_ice', ice)
-        self.assertIn('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)', ice['sub_zero_ice'][1])
+        self.assertIn('retail_vm_enter(fighter, 0x4ed588, fighter_ready)', ice['sub_zero_ice'][1])
         self.assertIn('sub_zero_ice_projectile', source_closure(('game/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/sub_zero/character.c', 'if'))
@@ -48,7 +48,7 @@ class PortTests(unittest.TestCase):
 
     def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
-        for value in ('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)',
+        for value in ('retail_vm_enter(fighter, 0x4ed588, fighter_ready)',
                       'script_spawn_ice', 'raw_fixed=', '0x570a', '0049bc74', 'mk4decomp',
                       'Existing engine C', 'not a standalone translation unit', 'literal', 'control target'):
             self.assertIn(value, ice)
@@ -56,7 +56,7 @@ class PortTests(unittest.TestCase):
         for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
             self.assertIn(value, clone)
         spear = port_text(self.disassembly, 'spear')
-        self.assertIn('retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0)', spear)
+        self.assertIn('retail_vm_enter(fighter, 0x4ed448, scorpion_script_spear_done)', spear)
         self.assertIn('scheduler wait; ticks=45', spear)
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed runtime boundaries', spear)
@@ -151,7 +151,7 @@ class PortTests(unittest.TestCase):
         base = [sys.executable, tool, '--exe', str(ROOT / 'MK4/MK-4.EXE'), '--archive', 'missing']
         with tempfile.TemporaryDirectory() as directory:
             result = subprocess.run([*base, '--character', 'sub_zero', '--move', 'ice', '--port'], cwd=directory, text=True, capture_output=True, check=True)
-            self.assertIn('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)', result.stdout)
+            self.assertIn('retail_vm_enter(fighter, 0x4ed588, fighter_ready)', result.stdout)
             self.assertEqual(list(Path(directory).iterdir()), [])
             for args in (['--port'], ['--port', '--script', '4ed588'], ['--port', '--move', 'ice', '--c'],
                          ['--port', '--move', 'ice', '--raw'], ['--move', 'ice', '--port', '--limit', '0']):

@@ -47,32 +47,32 @@ static bool n42c820_slam_continue(Fighter *fighter) {
 
 void jax_lp_slam_first(Fighter *fighter) {
   if (!n42c820_slam_continue(fighter)) {
-    retail_vm_enter_owned(fighter, 0x4de568, fighter_ready, 13);
+    retail_vm_enter(fighter, 0x4de568, fighter_ready);
     return;
   }
   /* 42c83f saves the victim group position in task +5c..+64. */
   memcpy(fighter->saved_motion, fighter_opponent(fighter)->body.pos, sizeof fighter->saved_motion);
-  retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
+  retail_vm_enter(fighter, 0x4de518, fighter_ready);
 }
 
 void jax_lp_slam_second(Fighter *fighter) {
   if (n42c820_slam_continue(fighter)) {
-    retail_vm_enter_owned(fighter, 0x4de538, fighter_ready, 13);
+    retail_vm_enter(fighter, 0x4de538, fighter_ready);
   } else {
-    retail_vm_enter_owned(fighter, 0x4de558, fighter_ready, 13);
+    retail_vm_enter(fighter, 0x4de558, fighter_ready);
   }
 }
 
 void jax_lp_slam_third(Fighter *fighter) {
   if (!n42c820_slam_continue(fighter)) {
-    retail_vm_enter_owned(fighter, 0x4de568, fighter_ready, 13);
+    retail_vm_enter(fighter, 0x4de568, fighter_ready);
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   memcpy(victim->body.pos, fighter->saved_motion, sizeof victim->body.pos);
   fighter->sample_override = n42c820_SLAM_START;
   victim->sample_override = n42c820_SLAM_START;
-  retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
+  retail_vm_enter(fighter, 0x4de518, fighter_ready);
 }
 
 /* 42c9f0 blends into the stance (48fde0, 0xccc) and returns via 470420. */
@@ -130,7 +130,7 @@ static void n487220_thrown_finish(Fighter *victim) {
 static void n487220_lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
-  retail_vm_enter_owned(victim, 0x4e9ee0, fighter_ready, 4);
+  retail_vm_enter(victim, 0x4e9ee0, fighter_ready);
 }
 
 void sub_zero_lk_thrown_script(Fighter *victim) {

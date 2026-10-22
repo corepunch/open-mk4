@@ -42,7 +42,7 @@ static void native_groin_punch_groin_victim(Fighter *victim) {
   fighter_start_move(victim, S_HIT, &native_groin_punch_groin_stun);
   victim->flags |= FF_REACTING;
   victim->body.physics = fighter_friction;
-  retail_vm_enter_owned(victim, 0x4e9f78, mk4_script_thrown_ready, 14);
+  retail_vm_enter(victim, 0x4e9f78, mk4_script_thrown_ready);
 }
 
 static void native_groin_punch_groin_contact(Fighter *fighter) {
@@ -77,7 +77,7 @@ static void native_groin_punch_groin_recover(Fighter *fighter) {
   int first_low = pose - first_rewind;
   int frames = first_rewind + 14 - first_low + (repetitions - 1) * 4;
   native_begin(fighter, 1, frames, NULL);
-  native_script_end(fighter, 0x4e5ba8, fighter_ready, 14);
+  native_script_end(fighter, 0x4e5ba8, fighter_ready);
   for (int repeat = 0; repeat < repetitions; ++repeat) {
     do {
       native_frame(fighter, ++frame, --pose, NULL);
@@ -154,12 +154,12 @@ void cage_script_cpu_kick_tail(Fighter *fighter) {
 
 void cage_shadow_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
-  retail_vm_enter_owned(fighter, 0x4e9718, fighter_ready, 14);
+  retail_vm_enter(fighter, 0x4e9718, fighter_ready);
 }
 
 void cage_cpu_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &n479b70_cage_s_cpu_kick_script);
-  retail_vm_enter_owned(fighter, 0x4e80a8, fighter_ready, 14);
+  retail_vm_enter(fighter, 0x4e80a8, fighter_ready);
 }
 
 /* Native service cluster: 479f00, 47dae0. */
@@ -297,7 +297,7 @@ static void n479f00_power_rewind(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 14);
+  retail_vm_enter(fighter, 0x4e84b8, fighter_ready);
 }
 
 static void n479f00_power_blocked(Fighter *fighter) {
@@ -355,14 +355,14 @@ void cage_power_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_HIT, &victim);
   fighter->flags |= FF_REACTING;
   mk4_script_effect(fighter, 15);
-  retail_vm_enter_owned(fighter, 0x4ea040, fighter_ready, 14);
+  retail_vm_enter(fighter, 0x4ea040, fighter_ready);
 }
 
 void cage_powered_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n479f00_cage_s_powered_punch_script);
   fighter->native_followup = false;
   fighter->mmove_cleanup = n479f00_power_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e80d0, fighter_ready, 14);
+  retail_vm_enter(fighter, 0x4e80d0, fighter_ready);
 }
 
 /* Native service cluster: native_punches. */
@@ -495,19 +495,19 @@ void fujin_triple_contact(Fighter *fighter) {
 }
 
 void fujin_triple_fast(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8770, fighter_ready, 5);
+  retail_vm_enter(fighter, 0x4e8770, fighter_ready);
 }
 
 void fujin_triple_victim(Fighter *fighter) {
   if (retail_reaction_native(fighter) == 0x488450) {
     fighter_start_move(fighter, S_HIT, &n47f060_middle_victim);
     fighter->flags |= FF_REACTING;
-    retail_vm_enter_owned(fighter, 0x4ea050, mk4_mmove_thrown_finish, 5);
+    retail_vm_enter(fighter, 0x4ea050, mk4_mmove_thrown_finish);
   } else {
     require(retail_reaction_native(fighter) == 0x488420, "Invalid Fujin triple-kick victim stage");
     /* Native488420/488440 and488830/488850 are also the exact
      * first/second axe victim entries; reuse their shared adaptations. */
-    weapon_axe_reaction(fighter, false, (RetailScriptContinuation){0x4ea040, mk4_mmove_thrown_finish, 5});
+    weapon_axe_reaction(fighter, false, (RetailScriptContinuation){0x4ea040, mk4_mmove_thrown_finish});
   }
 }
 
@@ -517,7 +517,7 @@ void fujin_triple_kick(Fighter *fighter) {
   fighter->native_followup = false;
   fighter->mmove_cleanup = n47f060_triple_cleanup;
   battle_sound(SOUND_C, 0x42);
-  retail_vm_enter_owned(fighter, 0x4e8740, fighter_ready, 5);
+  retail_vm_enter(fighter, 0x4e8740, fighter_ready);
 }
 
 /* Native service cluster: 4803a0. */
@@ -671,7 +671,7 @@ static void n4803a0_orbit_release(Fighter *victim, const Fighter *owner, q16 ang
     victim->heading[0] = (q16)llround(x * Q16_ONE / length);
     victim->heading[1] = (q16)llround(z * Q16_ONE / length);
   }
-  retail_vm_enter_owned(victim, 0x4e9fb0, fighter_ready, 5);
+  retail_vm_enter(victim, 0x4e9fb0, fighter_ready);
 }
 
 static void n4803a0_orbit_step(Fighter *victim) {
@@ -722,7 +722,7 @@ void fujin_wind_grab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n4803a0_wind_grab);
   fighter->mmove_cleanup = n4803a0_grab_cleanup;
   n4803a0_grab_effect_start(fighter);
-  retail_vm_enter_owned(fighter, 0x4e8830, fighter_ready, 5);
+  retail_vm_enter(fighter, 0x4e8830, fighter_ready);
 }
 
 /* Native service cluster: 43afc0, 43b1a0. */
@@ -769,7 +769,7 @@ static void n43afc0_special_tail(Fighter *fighter, const AttackRecord *record, i
 /* 43af90 -> 4dfb60 clip 599 to 14, then 43afc0: three D[32] rows. */
 void goro_special_punch(Fighter *fighter) {
   goro_begin_special(fighter, S_PUNCH, &n43afc0_s_special_punch, 0x5fa);
-  retail_vm_enter_owned(fighter, 0x4dfb60, fighter_ready, 15);
+  retail_vm_enter(fighter, 0x4dfb60, fighter_ready);
 }
 
 void goro_script_punch_tail(Fighter *fighter) {
@@ -779,7 +779,7 @@ void goro_script_punch_tail(Fighter *fighter) {
 /* 43b170 -> 4dfb70 clip 598 to 8, then 43b1a0: eight D[33] rows. */
 void goro_special_kick(Fighter *fighter) {
   goro_begin_special(fighter, S_KICK, &n43afc0_s_special_kick, 0x5fa);
-  retail_vm_enter_owned(fighter, 0x4dfb70, fighter_ready, 15);
+  retail_vm_enter(fighter, 0x4dfb70, fighter_ready);
 }
 
 void goro_script_kick_tail(Fighter *fighter) {
@@ -836,7 +836,7 @@ static void n43b370_leap_cleanup(Fighter *fighter) {
 void goro_leap_stomp(Fighter *fighter) {
   goro_begin_special(fighter, S_KICK, &n43b370_s_leap, 0x64f);
   fighter->mmove_cleanup = n43b370_leap_cleanup;
-  retail_vm_enter_owned(fighter, 0x4dfbb8, fighter_ready, 15);
+  retail_vm_enter(fighter, 0x4dfbb8, fighter_ready);
 }
 
 static void n43b370_leap_descend(Fighter *fighter) {
@@ -866,7 +866,7 @@ static void n43b370_leap_fall(Fighter *fighter) {
     fighter->mmove_hold = false;
     fighter->sample_override = n43b370_LEAP_APEX_SAMPLE;
     retail_disturb_resting_weapons();
-    retail_vm_enter_owned(fighter, 0x4dfc38, fighter_ready, 15);
+    retail_vm_enter(fighter, 0x4dfc38, fighter_ready);
     return;
   }
   if (battle_contact(fighter, &n43b370_stomp_record) == CONTACT_MISS) {
@@ -876,7 +876,7 @@ static void n43b370_leap_fall(Fighter *fighter) {
   retail_disturb_resting_weapons();
   battle_damage((Fighter *)fighter_opponent(fighter), n43b370_LEAP_DAMAGE);
   fighter->sample_override = n43b370_LEAP_APEX_SAMPLE;
-  retail_vm_enter_owned(fighter, 0x4dfbd0, fighter_ready, 15);
+  retail_vm_enter(fighter, 0x4dfbd0, fighter_ready);
 }
 
 /* 43b505 records the victim X/Z and rises at -0x3851 per visit; 43b42d
@@ -934,7 +934,7 @@ bool jax_can_dash_punch(const Fighter *fighter) {
 void jax_dash_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n47ab50_s_dash);
   fighter->dash_punch_ready = g_battle.ticks + 60;
-  retail_vm_enter_owned(fighter, 0x4e8150, fighter_ready, 13);
+  retail_vm_enter(fighter, 0x4e8150, fighter_ready);
 }
 
 /* 47af90, installed through descriptor 4e8174 as the group +44 callback:
@@ -1076,7 +1076,7 @@ void jax_dash_punch_contact(Fighter *fighter) {
 void jax_dash_victim_hit(Fighter *victim) {
   mk4_script_stop_body(victim);
   fighter_start_move(victim, S_HIT, &n47ab50_s_dash_stagger);
-  retail_vm_enter_owned(victim, 0x4ea028, fighter_ready, 13);
+  retail_vm_enter(victim, 0x4ea028, fighter_ready);
 }
 
 /* 4ea4e8[168] -> 4867b0: disarm; an airborne victim takes 481ce0 (shake 0,
@@ -1087,12 +1087,12 @@ void jax_dash_victim_throw(Fighter *victim) {
   if (fighter_airborne(victim)) {
     mk4_script_shake(victim, 0);
     fighter_start_move(victim, S_KNOCKDOWN, &n47ab50_s_dash_air_fall);
-    retail_vm_enter_owned(victim, 0x4e89d8, fighter_ready, 13);
+    retail_vm_enter(victim, 0x4e89d8, fighter_ready);
     return;
   }
   fighter_start_move(victim, S_KNOCKDOWN, &n47ab50_s_dash_fall);
   victim->body.physics = fighter_friction;
-  retail_vm_enter_owned(victim, 0x4e9e38, fighter_ready, 13);
+  retail_vm_enter(victim, 0x4e9e38, fighter_ready);
 }
 
 /* 488c00 -> 4914c0(4ea220): roll getup 191/16 at -0x147a, crouch 190/16. */
@@ -1233,7 +1233,7 @@ void kai_aerial_punch_contact(Fighter *fighter) {
 void kai_input_47bd10(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n47bd40_aerial_punch);
   fighter->mmove_cleanup = n47bd40_aerial_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e8210, fighter_ready, 11);
+  retail_vm_enter(fighter, 0x4e8210, fighter_ready);
 }
 
 /* Native service cluster: 47eb30, 480e90. */
@@ -1281,7 +1281,7 @@ static bool n47eb30_bicycle_grounded(const Fighter *fighter) {
 }
 
 static void n47eb30_bicycle_land(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8678, fighter_ready, 3);
+  retail_vm_enter(fighter, 0x4e8678, fighter_ready);
 }
 
 static void n47eb30_bicycle_descend(Fighter *fighter) {
@@ -1308,7 +1308,7 @@ static void n47eb30_bicycle_carry_end(Fighter *fighter) {
 /* The query rows end on landing, contact or their last visit. */
 static void n47eb30_bicycle_contact_end(Fighter *fighter) {
   if (fighter->contact == CONTACT_BLOCK) {
-    retail_vm_enter_owned(fighter, 0x4e8688, fighter_ready, 3);
+    retail_vm_enter(fighter, 0x4e8688, fighter_ready);
     return;
   }
   if (fighter->contact != CONTACT_HIT) {
@@ -1350,7 +1350,7 @@ void liu_kang_bicycle_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &n47eb30_s_bicycle);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = n47eb30_bicycle_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e8610, fighter_ready, 3);
+  retail_vm_enter(fighter, 0x4e8610, fighter_ready);
 }
 
 static void n47eb30_bicycle_motion_pose(Fighter *fighter, float pose) {
@@ -1516,9 +1516,9 @@ void quan_chi_steal_reaction(Fighter *victim) {
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
   if (airborne) {
-    retail_vm_enter_owned(victim, 0x4e9838, fighter_ready, 8);
+    retail_vm_enter(victim, 0x4e9838, fighter_ready);
   } else {
-    retail_vm_enter_owned(victim, 0x4e9818, fighter_ready, 8);
+    retail_vm_enter(victim, 0x4e9818, fighter_ready);
   }
 }
 
@@ -1583,7 +1583,7 @@ static void n486000_spear_projectile(Projectile *p) {
       retail_spear_arrival(victim);
       fighter_start_move(owner, S_PUNCH, &n486000_s_spear);
       owner->sample_override = 31;
-      retail_vm_enter_owned(owner, 0x4ed4a8, fighter_ready, 0);
+      retail_vm_enter(owner, 0x4ed4a8, fighter_ready);
       owner->retail_vm.cleanup = n486000_spear_cleanup;
       p->kind = 0;
     } else {
@@ -1619,7 +1619,7 @@ static void n486000_spear_projectile(Projectile *p) {
     fighter_start_move(victim, S_HIT, &n486000_s_snared);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
-    retail_vm_enter_owned(victim, 0x4e9d00, fighter_ready, 0);
+    retail_vm_enter(victim, 0x4e9d00, fighter_ready);
     victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
     p->phase = 1;
     p->lifetime = 100;
@@ -1657,7 +1657,7 @@ void scorpion_spear(Fighter *fighter) {
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
-  retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0);
+  retail_vm_enter(fighter, 0x4ed448, scorpion_script_spear_done);
   fighter->retail_vm.cleanup = n486000_spear_cleanup;
 }
 
@@ -1773,7 +1773,7 @@ void sonya_cartwheel(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_KICK, &n47b6c0_s_cartwheel);
   fighter->mmove_cleanup = sonya_special_cleanup;
-  retail_vm_enter_owned(fighter, 0x4e81d0, fighter_ready, 2);
+  retail_vm_enter(fighter, 0x4e81d0, fighter_ready);
 }
 
 bool sonya_can_cartwheel(const Fighter *fighter) {
@@ -1810,10 +1810,10 @@ static void n47e0a0_leg_stop(Fighter *fighter) {
 static void n47e0a0_leg_grab_contact(Fighter *fighter) {
   if (battle_contact(fighter, &n47e0a0_leg_record) == CONTACT_MISS || fighter->contact == CONTACT_BLOCK) {
     fighter->action = 0x1012;
-    retail_vm_enter_owned(fighter, 0x4e85a8, fighter_ready, 2);
+    retail_vm_enter(fighter, 0x4e85a8, fighter_ready);
   } else {
     mk4_mmove_pair_victim(fighter, &n47e0a0_s_leg_victim);
-    retail_vm_enter_owned(fighter, 0x4e8578, fighter_ready, 2);
+    retail_vm_enter(fighter, 0x4e8578, fighter_ready);
   }
 }
 
@@ -1901,7 +1901,7 @@ static void n47dae0_2_recoil_wait(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 9);
+  retail_vm_enter(fighter, 0x4e84b8, fighter_ready);
 }
 
 /* Shared blocked recoil 47d940: action 1010, 4e84a8 speed -.05, Y -0x23d7

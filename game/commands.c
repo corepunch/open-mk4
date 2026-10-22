@@ -115,7 +115,7 @@ static FighterFn match_command(const Fighter *fighter, Button button, bool relea
     if (!retail_native_gate(fighter, command.predicate)) {
       continue;
     }
-    return retail_native_entry((unsigned)fighter->roster, command.target);
+    return retail_native_entry(command.target);
   }
   return NULL;
 }

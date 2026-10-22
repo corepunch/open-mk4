@@ -4,7 +4,7 @@
 #include "retail_vm.h"
 
 typedef struct NativeAction {
-  uint32_t address, characters;
+  uint32_t address;
   FighterFn enter;
 } NativeAction;
 
@@ -26,14 +26,13 @@ void retail_native_begin(Fighter *fighter, StateId state, int action, bool comma
   }
 }
 
-FighterFn retail_native_entry(unsigned character, uint32_t address) {
-  require(character < MK4_ROSTER_COUNT, "Invalid retail native owner");
+FighterFn retail_native_entry(uint32_t address) {
   for (size_t i = 0; i < sizeof entries / sizeof *entries; ++i) {
-    if (entries[i].address == address && (entries[i].characters & (1u << character))) {
+    if (entries[i].address == address) {
       return entries[i].enter;
     }
   }
-  fatal("Unimplemented retail native entry %08x for roster %u", address, character);
+  fatal("Unimplemented retail native entry %08x", address);
 }
 
 CommandPredicate retail_native_predicate(uint32_t address) {
@@ -73,7 +72,7 @@ bool retail_has_gravity(const Fighter *fighter) {
 static void finish_enter(Fighter *fighter, bool second) {
   uint32_t target = retail_finish_target(retail_vm_image(), (unsigned)fighter->roster, second);
   if (target != 0) {
-    retail_native_entry((unsigned)fighter->roster, target)(fighter);
+    retail_native_entry(target)(fighter);
   }
 }
 
