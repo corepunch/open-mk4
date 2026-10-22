@@ -289,9 +289,10 @@
       "symbol": "liu_kang_liu_script_fatal_setup"
     },
     "19": {
-      "evidence": "4ea4e8[19] -> 0x4831e0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record"
+      "evidence": "Loaded4ea4e8[19] -> 4831e0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "2": {
       "evidence": "4ea4e8[2] -> 0x486ca0; shared reaction adapter and behavioral regressions",
@@ -329,9 +330,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "31": {
-      "evidence": "4ea4e8[31] -> 0x4835f0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record"
+      "evidence": "Loaded4ea4e8[31] -> 4835f0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_reaction_fall",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "32": {
       "evidence": "Loaded4ea4e8[32] -> 485e30; bounded native/dependency listings and original4e9c28; checked mk4decomp matching native/controller sources.",
@@ -408,14 +410,16 @@
       "symbol": "retail_weapon_reaction"
     },
     "64": {
-      "evidence": "4ea4e8[64] -> 0x486730; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record"
+      "evidence": "Loaded4ea4e8[64] -> 486730; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "65": {
-      "evidence": "4ea4e8[65] -> 0x4866d0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record"
+      "evidence": "Loaded4ea4e8[65] -> 4866d0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "8": {
       "evidence": "4ea4e8[8] -> 0x486c70; shared reaction adapter and behavioral regressions",

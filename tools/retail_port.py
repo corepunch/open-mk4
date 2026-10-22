@@ -47,7 +47,7 @@ SPECIFIC = {
         'sword_lp': 'sword_lp',
         'sword_back_hp': 'sword_back_hp',
         'weapon_throw': ('game/weapons.c', 'weapon_throw'),
-        'fireball_reaction': ('game/reactions.c', 'react_liu_record'),
+        'fireball_reaction': ('game/retail_reaction.c', 'retail_script_reaction'),
     },
     4: {'ice': 'sub_zero_ice', 'clone': 'sub_zero_clone', 'slide': 'sub_zero_slide', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
         'scepter_hp': 'scepter_hp', 'scepter_lp': 'scepter_lp', 'scepter_back_hp': 'scepter_back_hp', 'scepter_back_lp': 'scepter_back_lp',

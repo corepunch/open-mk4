@@ -285,9 +285,10 @@
       "evidence": "Fujin opponent reaction continuation 0x45b230 handles selector 175."
     },
     "19": {
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record",
-      "evidence": "Fujin uses global reaction selector 19 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "evidence": "Loaded4ea4e8[19] -> 4831e0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "21": {
       "source": "game/retail_reaction.c",

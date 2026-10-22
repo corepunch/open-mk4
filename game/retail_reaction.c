@@ -195,8 +195,15 @@ void retail_script_reaction(Fighter *fighter) {
   if (entry == 0x482420) {
     battle_wall_recoil(fighter);
   }
-  if (entry == 0x482420 || entry == 0x482580 || entry == 0x482770) {
+  if (entry == 0x482420 || entry == 0x482580 || entry == 0x482770 || entry == 0x4831e0 || entry == 0x4866d0 || entry == 0x486730) {
     mk4_script_disarm_self(fighter);
+  }
+  if (entry == 0x4831e0) {
+    retail_native_sound_list(0x4ea8f8);
+    mk4_script_stop_body(fighter);
+    fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  } else if (entry == 0x486730) {
+    battle_sound(SOUND_C, 0x5c);
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter_start_move(fighter, S_HIT, &move);
@@ -219,6 +226,18 @@ void retail_script_reaction(Fighter *fighter) {
     }
     case 0x482770:
       script = 0x4e90b0;
+      break;
+    case 0x4831e0:
+      script = 0x4e94b0;
+      break;
+    case 0x4866d0: {
+      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9d80);
+      require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native recoil motion callback");
+      script = 0x4e9d88;
+      break;
+    }
+    case 0x486730:
+      script = 0x4e9de8;
       break;
     default:
       require(false, "Unexpected script reaction native");
@@ -467,6 +486,8 @@ void retail_stagger_entry(Fighter *fighter) {
 
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x4835f0:
+      return retail_reaction_fall;
     case 0x483c50:
     case 0x483d40:
     case 0x483d60:
@@ -498,6 +519,9 @@ FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
     case 0x483500:
     case 0x482f60:
       return retail_scaled_reaction;
+    case 0x4831e0:
+    case 0x4866d0:
+    case 0x486730:
     case 0x482260:
     case 0x482410:
     case 0x482420:

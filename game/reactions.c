@@ -416,42 +416,6 @@ static void react_freeze(Fighter *fighter) {
   fighter_visual_offset(fighter, 0xccc, 0xccc);
 }
 
-/* 4831e0 / 4e94b0: low scepter hit, then the human down-held
- * branch 45b620 chooses crouch clip 193 instead of standing rise 194. */
-static const MoveDef scepter_low_hit = {.clip = 192, .last = 34, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef scepter_low_crouch = {.clip = 193, .last = 15, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef scepter_low_rise = {.clip = 194, .last = 23, .flags = SF_LOCK, .action = 0x4003};
-
-static void scepter_low_play(Fighter *fighter);
-
-static void scepter_low_next(Fighter *fighter) {
-  if (fighter->current_move == &scepter_low_hit) {
-    bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-    fighter_start_move(fighter, S_KNOCKDOWN, down ? &scepter_low_crouch : &scepter_low_rise);
-    fighter->sample_override = 0;
-    scepter_low_play(fighter);
-  } else {
-    neutral(fighter);
-  }
-}
-
-static void scepter_low_play(Fighter *fighter) {
-  int last = fighter_move(fighter)->last;
-  native_begin(fighter, 1, last + 1, scepter_low_next);
-  for (int frame = 1; frame <= last + 1; ++frame) {
-    native_frame(fighter, frame, mini(last, frame), frame == 24 && fighter->current_move == &scepter_low_hit ? stop_sliding : NULL);
-  }
-  native_play(fighter, false);
-}
-
-static void react_scepter_low(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &scepter_low_hit);
-  fighter->sample_override = 0;
-  scepter_low_play(fighter);
-  fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter_set_speed(fighter, -0xf5c);
-}
-
 static void react_scepter_freeze(Fighter *fighter) {
   if (fighter->hits > 3) {
     /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
@@ -492,103 +456,6 @@ static void react_weapon_followup(Fighter *fighter) {
   fighter->action = action;
 }
 
-/* Reached Liu Kang records: 15/19/31/64/65. Scripts 4e9508,
- * 4e94b0, 4e96e0, 4e9de8 and 4e9d88; shared across victim rosters. */
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef liu_reaction_moves[] = {
-  {.clip = 130, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4001},
-  {.clip = 127, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4001},
-  {.clip = 131, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_4003},
-  {.clip = 192, .last = 34, .flags = SF_LOCK, .action = ACTION_RETAIL_4003},
-  {.clip = 193, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E},
-  {.clip = 194, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_200E},
-};
-// clang-format on
-
-static void liu_record_impact(Fighter *fighter) {
-  battle_scene_impact(fighter);
-}
-
-static void liu_record_done(Fighter *fighter) {
-  fighter->body.on_land = NULL;
-  stop_sliding(fighter);
-  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
-}
-
-static void liu_record_end(Fighter *fighter) {
-  native_hold(fighter, 1, liu_record_done);
-}
-
-static void liu_record_slide_stop(Fighter *fighter) {
-  stop_sliding(fighter);
-  native_play_rows(fighter, 39, 1, liu_record_end);
-}
-
-static void liu_record_slide_push(Fighter *fighter) {
-  fighter->body.physics = NULL;
-  fighter_set_speed(fighter, 0x147a);
-  native_play_rows(fighter, 31, 1, liu_record_slide_stop);
-}
-
-static void liu_record_landed(Fighter *fighter) {
-  native_play_rows(fighter, 79, 1, liu_record_end);
-}
-
-static void liu_record_fall(Fighter *fighter) {
-  native_await(fighter, native_grounded, liu_record_landed);
-}
-
-static void liu_record_getup(Fighter *fighter) {
-  if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
-    return;
-  }
-  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-  fighter_start_move(fighter, S_KNOCKDOWN, &liu_reaction_moves[down ? 4 : 5]);
-  fighter->sample_override = 0;
-  native_play_rows(fighter, down ? 15 : 23, 1, liu_record_end);
-}
-
-static void liu_record_settle(Fighter *fighter) {
-  native_hold(fighter, 1, liu_record_getup);
-}
-
-static void liu_record_impact_stop(Fighter *fighter) {
-  battle_scene_impact(fighter);
-  stop_sliding(fighter);
-  native_play_rows(fighter, 34, 1, liu_record_settle);
-}
-
-/* Each record runs as frame rows: 65 slides and pushes back, 31 launches
- * and lands, the others recoil into a crouched or standing getup. */
-static void liu_record_script(Fighter *fighter) {
-  int id = fighter->reaction;
-  if (id == 65) {
-    battle_sound(SOUND_A, 38);
-    slide(fighter, 0x5999);
-    native_play_rows(fighter, 26, 1, liu_record_slide_push);
-  } else if (id == 31) {
-    launch(fighter, 0x1999, -0x23d7, 0x24d);
-    battle_sound(SOUND_B, 3);
-    fighter->body.on_land = liu_record_impact;
-    native_play_rows(fighter, 39, 1, liu_record_fall);
-  } else {
-    fighter_set_speed(fighter, -0xf5c);
-    native_play_rows(fighter, 24, 1, liu_record_impact_stop);
-  }
-}
-
-static void react_liu_record(Fighter *fighter) {
-  int index = fighter->reaction == 64 ? 0 : fighter->reaction == 65 ? 1 : fighter->reaction == 31 ? 2 : 3;
-  fighter_start_move(fighter, index < 2 ? S_HIT : S_KNOCKDOWN, &liu_reaction_moves[index]);
-  fighter->sample_override = 0;
-  if (fighter->reaction == 64) {
-    retail_vm_enter_owned(fighter, 0x4e9de8, mk4_mmove_thrown_finish, 3);
-  } else {
-    liu_record_script(fighter);
-  }
-}
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
   [47] = raiden_generated_reaction,
@@ -604,10 +471,6 @@ static const FighterFn reactions[256] = {
   [87] = sonya_generated_reaction,
   [121] = sonya_generated_reaction,
   [117] = react_block,
-  [19] = react_liu_record,
-  [31] = react_liu_record,
-  [64] = react_liu_record,
-  [65] = react_liu_record,
   [2] = react_fireball_block,
   [9] = react_fireball_block,
   [0] = react_block,
@@ -616,7 +479,6 @@ static const FighterFn reactions[256] = {
   [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
-  [150] = react_scepter_low,
   [151] = react_scepter_freeze,
   [120] = react_weapon_followup,
   [67] = react_freeze,

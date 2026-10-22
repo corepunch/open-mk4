@@ -239,9 +239,10 @@
       "symbol": "react_extra_block"
     },
     "150": {
-      "evidence": "4ea4e8[150] -> 0x4831e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_scepter_low"
+      "evidence": "Loaded4ea4e8[150] -> 4831e0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "151": {
       "evidence": "4ea4e8[151] -> 0x486210; shared C reaction dispatch",

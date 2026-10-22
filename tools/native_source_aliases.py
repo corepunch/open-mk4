@@ -1,6 +1,8 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'react_liu_record': 'retail_script_reaction',
+    'react_scepter_low': 'retail_script_reaction',
     'reiko_star_reaction': 'retail_stagger_entry',
     'reptile_acid_victim': 'retail_stagger_entry',
     'scorpion_generated_reaction': 'retail_stagger_entry',

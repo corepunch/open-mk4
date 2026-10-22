@@ -1794,3 +1794,16 @@ portable generic particle artwork, consistent with existing effect boundaries.
 Verified formatting, runtime/rejections, all strict audits, native gates and
 helper/port navigation. No new authored reaction tests. Other legacy reaction
 phase programs still remain; removing ReactionSpec alone is not completion.
+
+### Original low-hit and recoil programs
+
+Removed conflicting4831e0 low-hit implementations, the Liu-named record
+player and their copied getup/slide/launch tables. Shared native preludes now
+enter original4e94b0,4e9d88 and4e9de8;31 resolves native4835f0 directly.
+4e94b0 owns its human/down branch and tails to existing native recovery;
+its authored clip and getup control are no longer reconstructed in C.
+4866d0 loads its original callback cell4e9d80. Native486730 keeps C-bank5c.
+Verified bounded local native/script entries and mk4decomp shared contracts,
+formatting, runtime/rejections, strict audits, native gates and existing helper/
+port navigation. Updated bounded source navigation after retiring the old
+record player; no new authored reaction tests.

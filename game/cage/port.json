@@ -404,9 +404,10 @@
       "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "64": {
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record",
-      "evidence": "Cage orb C0 selects shared reaction64; generated64 body4e9de8 and existing block frame recovery."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_script_reaction",
+      "evidence": "Loaded4ea4e8[64] -> 486730; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
+      "adaptation": "Loaded native entry performs its shared prelude and starts the original recoil/fall script; original branches select getup."
     },
     "2": {
       "source": "game/reactions.c",
