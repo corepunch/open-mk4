@@ -276,10 +276,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "175": {
-      "source": "game/native/contexts.c",
-      "symbol": "quan_chi_script_current_reaction",
-      "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
-      "evidence": "Quan Chi LP throw emits reaction 175 through VM handler 45b1f0 (0x4836e0)"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim",
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion.",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits."
     },
     "18": {
       "source": "game/retail_reaction.c",

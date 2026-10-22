@@ -275,10 +275,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "175": {
-      "adaptation": "Noob Saibot selector 175 is handled by the character pair/cinematic continuation, outside the shared hit-reaction table.",
-      "evidence": "Contact selector 175 at 0x4836e0; Noob Saibot-native pair coordinator 0x45b230",
-      "source": "game/retail_throw.c",
-      "symbol": "retail_script_release_reaction"
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion.",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits.",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim"
     },
     "18": {
       "evidence": "Loaded4ea4e8[18] -> 483050; bounded local native prelude and original4e9460; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",

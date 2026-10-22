@@ -1,6 +1,8 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'mk4_script_spike_tail': 'retail_stage_owner',
+    'mk4_native_spike_tail': 'retail_stage_owner',
     'tanya_second_reaction': 'retail_scene_reaction',
     'tanya_script_current_reaction': 'retail_script_release_reaction',
     'raiden_lk_victim': 'retail_lk_victim',

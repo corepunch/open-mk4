@@ -219,3 +219,8 @@ void retail_stagger_entry(Fighter *fighter);
 void retail_lk_victim(Fighter *fighter);
 
 void retail_scene_reaction(Fighter *fighter);
+
+void retail_stage_owner(Fighter *fighter);
+void retail_stage_victim(Fighter *fighter);
+void retail_stage_impale(Fighter *fighter);
+void retail_stage_complete(Fighter *fighter);

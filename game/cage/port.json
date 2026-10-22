@@ -371,10 +371,10 @@
       "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/retail_throw.c",
-      "symbol": "retail_script_release_reaction",
-      "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
-      "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim",
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion.",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits."
     },
     "13": {
       "source": "game/reactions.c",

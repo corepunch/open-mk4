@@ -298,10 +298,10 @@
       "evidence": "Goro contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/script.c",
-      "symbol": "mk4_script_spike_tail",
-      "adaptation": "Explicit stage-scene victim continuation, outside the ordinary hit table; the shared spike tail owns the impaled victim.",
-      "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim",
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion.",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits."
     },
     "189": {
       "source": "game/retail_reaction.c",

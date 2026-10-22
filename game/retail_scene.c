@@ -234,3 +234,65 @@ void retail_scene_reaction(Fighter *fighter) {
   }
   retail_vm_enter(fighter, script, fighter_ready);
 }
+
+/* Native467fc0 owns only the attacker's small rewind/advance cycle. */
+static void stage_owner_forward(Fighter *fighter);
+static void stage_owner_cycle(Fighter *fighter);
+
+static void stage_owner_park(Fighter *fighter) {
+  native_hold(fighter, 30, retail_task_pause);
+}
+
+static void stage_owner_reverse(Fighter *fighter) {
+  native_play_rows(fighter, mini(6, fighter_move(fighter)->last), -1, stage_owner_forward);
+}
+
+static void stage_owner_forward(Fighter *fighter) {
+  native_play_rows(fighter, mini(8, fighter_move(fighter)->last), 1, stage_owner_cycle);
+}
+
+static void stage_owner_cycle(Fighter *fighter) {
+  if (--fighter->native_variant > 0) {
+    stage_owner_reverse(fighter);
+  } else {
+    native_finish_clip(fighter, stage_owner_park);
+  }
+}
+
+void retail_stage_owner(Fighter *fighter) {
+  fighter->native_variant = 3;
+  stage_owner_reverse(fighter);
+}
+
+/*4836e0 hands the victim to original4ea300. Actor motion and animation
+ * remain script-owned, independently of the attacker's continuation. */
+void retail_stage_victim(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  retail_vm_enter(fighter, 0x4ea300, retail_task_pause);
+}
+
+static bool stage_ceiling_reached(const Fighter *fighter) {
+  return fighter->body.pos[AXIS_Y] <= -0x59999;
+}
+
+static void stage_impaled(Fighter *fighter) {
+  retail_vm_enter(fighter, 0x4ea330, retail_task_pause);
+}
+
+/*483720/48f5f0 waits for the original absolute ceiling height. */
+void retail_stage_impale(Fighter *fighter) {
+  native_await(fighter, stage_ceiling_reached, stage_impaled);
+}
+
+static void stage_complete(Fighter *fighter) {
+  (void)fighter;
+  fighter_cancel_all_mmoves();
+  battle_end_finisher();
+}
+
+/*4837c0's result/input director is the portable battle coordinator. */
+void retail_stage_complete(Fighter *fighter) {
+  native_hold(fighter, 60, stage_complete);
+}

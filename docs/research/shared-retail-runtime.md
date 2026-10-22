@@ -1834,3 +1834,20 @@ presentation; raw retail decorative task rendering remains adapted.
 Verified bounded native and script entries, formatting, runtime/rejections,
 all strict audits, native gates and existing helper/port navigation. No new
 authored scene tests.
+
+### Run the stage victim scripts directly
+
+Replaced the synthetic324-visit owner/victim clock and forced clip/height
+updates with original4ea300 and4ea330. Loaded native4836e0 starts the victim;
+483720 waits for absoluteY<=-0x59999 before entering the impalement words;
+4837c0 joins the portable battle result after its native60-visit phase.
+The owner's467fc0 now implements only its native three rewind/advance cycles,
+clip completion and30-visit park. Removed the stage175 dispatcher bypass.
+
+Checked bounded native phases (including467fc0's jump table), mk4decomp
+BattleEndCluster and original victim words. Verified formatting, runtime/
+rejections, strict audits, native gates and helper/port navigation. Added one
+shared scene/native completion contract to the existing runtime fixture:
+original script handoff, bounded completion and retirement of actor playback.
+No character timing/damage assertions. Result/input direction and scene rendering
+remain engine coordinator/presentation adaptations.

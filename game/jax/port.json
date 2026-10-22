@@ -302,10 +302,10 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "175": {
-      "source": "game/script.c",
-      "symbol": "mk4_script_spike_tail",
-      "evidence": "4ea4e8[175] -> 0x4836e0; spike stage contact 4ebd80 (175/175/175, no damage) in 4e6950.",
-      "adaptation": "Explicit stage-scene continuation 467fc0 owns the impaled victim outside the ordinary hit table, as for Sub-Zero."
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits.",
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion."
     },
     "183": {
       "source": "game/native/cinematics.c",

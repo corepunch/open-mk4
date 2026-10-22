@@ -47,8 +47,6 @@ void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, i
 void mk4_script_landing_motion(Fighter *fighter);
 void mk4_script_scene_pose(Fighter *fighter, int clip, int sample);
 void mk4_native_fan_rise(Fighter *fighter);
-void mk4_native_spike_tail(Fighter *fighter, FighterFn end);
-void mk4_script_spike_tail(Fighter *fighter);
 void mk4_script_shake(Fighter *fighter, int selector);
 void mk4_script_effect(Fighter *fighter, int selector);
 void mk4_script_projectile_step(Projectile *object, const AttackRecord *record, bool hits_crouching);

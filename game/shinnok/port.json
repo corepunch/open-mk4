@@ -406,10 +406,10 @@
       "evidence": "Pinned EXE Shinnok contact record and reaction table"
     },
     "175": {
-      "source": "game/native/cinematics.c",
-      "symbol": "shinnok_fatality_contact_hold",
-      "evidence": "Shinnok spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
-      "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_stage_victim",
+      "evidence": "Local4836e0/483720/4837c0 and mk4decomp BattleEndCluster; original stage victim words own motion, animation and waits.",
+      "adaptation": "Loaded4836e0 starts original4ea300; shared ceiling native enters4ea330 and battle owns result completion."
     },
     "32": {
       "source": "game/retail_reaction.c",

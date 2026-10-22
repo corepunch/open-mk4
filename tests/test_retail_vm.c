@@ -971,6 +971,18 @@ static void native_task_completion(void) {
     check(control_finished == (interrupted ? 0 : 1) && cleanup_calls == 1 && !actor->retail_vm.active,
         "native task retirement must consume the caller completion and cleanup once, while interruption suppresses completion");
   }
+  Fighter *actor = setup(0, 2);
+  g_battle.phase = PHASE_FATALITY;
+  g_battle.finisher = FINISH_SPIKE;
+  g_battle.winner = 0;
+  battle_react(actor, 175);
+  tick();
+  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4ea300, "loaded stage native must transfer victim motion and playback to original words");
+  for (int visit = 0; visit < 512 && g_battle.phase == PHASE_FATALITY; ++visit) {
+    tick();
+  }
+  check(g_battle.phase == PHASE_MATCH_OVER && !actor->retail_vm.active && actor->current_mmove == NULL,
+      "stage native continuations must join the battle result and retire all actor playback ownership");
 }
 
 static void native_throw_selection(void) {

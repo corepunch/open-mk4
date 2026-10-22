@@ -665,7 +665,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_task_pause(fighter);
           return true;
         case 0x467fc0:
-          mk4_script_spike_tail(fighter);
+          retail_stage_owner(fighter);
           return true;
         case 0x468640:
           scorpion_fire_script(fighter);
@@ -966,6 +966,12 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           return true;
         case 0x4830a0:
           shinnok_weapon_sweep_finish(fighter);
+          return true;
+        case 0x483720:
+          retail_stage_impale(fighter);
+          return true;
+        case 0x4837c0:
+          retail_stage_complete(fighter);
           return true;
         case 0x483df0:
           retail_stagger_tail(fighter);
@@ -1360,9 +1366,6 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b230:
-          if ((argument & 255u) == 175) {
-            return true; /* The stage coordinator owns its victim continuation. */
-          }
           if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) == NULL) {
             return false;
           }

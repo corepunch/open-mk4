@@ -486,6 +486,8 @@ void retail_stagger_entry(Fighter *fighter) {
 
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x4836e0:
+      return retail_stage_victim;
     case 0x464e30:
     case 0x465200:
     case 0x466110:

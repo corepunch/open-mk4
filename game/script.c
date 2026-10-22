@@ -432,45 +432,6 @@ void mk4_native_fan_rise(Fighter *fighter) {
   native_motion_play(fighter);
 }
 
-static void finish_scene(Fighter *fighter) {
-  (void)fighter;
-  battle_end_finisher();
-}
-
-static void spike_rise(Fighter *fighter, float rise) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  int height = (int)rise;
-  mk4_script_scene_pose(victim, 128, mini(31, height * 2));
-  victim->body.pos[AXIS_Y] = height == 22 ? -0x59999 : victim->body.ground - height * 0x3333;
-}
-
-void mk4_native_spike_tail(Fighter *fighter, FighterFn end) {
-  int first = g_battle.phase_ticks + 1;
-  int pose = fighter_sample(fighter);
-  native_begin(fighter, first, maxi(first, 324), end);
-  for (int frame = first; frame <= fighter->native.move.lastframe; ++frame) {
-    native_frame(fighter, frame, mini(19, pose + frame - first + 1), NULL);
-    if (frame >= 64) {
-      /* Pose and victim movement have separate frame tracks so the callback
-       * needs only the authored rise, never the scene clock. */
-      fighter->native.frames[frame - first].aifunc = spike_rise;
-      fighter->native.frames[frame - first].dist = (float)mini(22, frame - 64);
-    }
-  }
-  native_play(fighter, false);
-}
-
-static void spike_finish(Fighter *fighter) {
-  const MoveDef *victory = roster_def(fighter->roster)->moves[S_VICTORY];
-  fighter_start_move(fighter, S_VICTORY, victory);
-  fighter->sample_override = victory->last == MOVE_END ? 0 : victory->last;
-  finish_scene(fighter);
-}
-
-void mk4_script_spike_tail(Fighter *fighter) {
-  mk4_native_spike_tail(fighter, spike_finish);
-}
-
 void mk4_script_shake(Fighter *fighter, int selector) {
   (void)fighter;
   // clang-format off: Keep table entries on one row, including long rows.
