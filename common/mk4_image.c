@@ -52,4 +52,5 @@ Mk4Image mk4_image_load(const char *name) {
 
 void mk4_image_free(Mk4Image *image) {
   FREE_ARRAY(image->bytes);
+  FREE_ARRAY(image->program_words);
 }

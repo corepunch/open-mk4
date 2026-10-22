@@ -122,7 +122,10 @@ are separate features.
 
 ## Shared retail runtime
 
-All 18 fighters run original retail scripts through `game/retail_vm.c`.
+All 18 fighters run MK4 wordcode assembled from `scripts/mk4/program.asm`
+through `game/retail_vm.c`. `make scripts` builds the package without reading
+the EXE. Original data tables still come from the image; script fetches require
+a word supplied by the assembled package. See [script sources](scripts/README.md).
 Roster identity, input records, action dispatch, stances, CPU choices, weapon
 inventories, animation descriptors and reaction targets are loaded from the
 retail image. Selection remaps follow each original table's own native path;

@@ -1,5 +1,6 @@
 #include "retail_layout.h"
 #include "retail_vm.h"
+#include "mk4_program.h"
 #include "script.h"
 #include "retail_native.h"
 
@@ -14,6 +15,7 @@ const Mk4Image *retail_vm_image(void) {
   }
   if (image.bytes.data == NULL) {
     image = mk4_image_load("MK4/MK-4.EXE");
+    mk4_program_load(&image, "build/mk4.scripts");
   }
   return &image;
 }
@@ -34,7 +36,7 @@ static uint32_t fetch(Fighter *fighter) {
   if (vm->pc < vm->begin || vm->pc >= vm->end || vm->pc % 4 != 0) {
     vm_error(fighter, "script cursor outside reviewed range");
   }
-  uint32_t word = mk4_image_u32(vm->image, vm->pc);
+  uint32_t word = mk4_program_word(vm->image, vm->pc);
   vm->pc += 4;
   return word;
 }
@@ -824,7 +826,7 @@ void retail_vm_step(Fighter *fighter) {
               vm_error(fighter, "loop marker outside script");
             }
             marker -= 4;
-          } while (mk4_image_u32(vm->image, marker) >> 24 != 0x3a);
+          } while (mk4_program_word(vm->image, marker) >> 24 != 0x3a);
           vm->pc = marker + 4;
         }
         break;

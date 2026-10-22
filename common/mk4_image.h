@@ -6,6 +6,7 @@
 /* Relocated, non-executable retail data. VAs are checked indices, never pointers. */
 typedef struct Mk4Image {
   Bytes bytes;
+  Bytes program_words; /* bitset of words supplied by the assembled script package */
 } Mk4Image;
 
 Mk4Image mk4_image_load(const char *path);

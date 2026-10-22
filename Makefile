@@ -9,7 +9,7 @@ CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clan
 export CLANG_FORMAT
 FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
-ASSETS = common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
+ASSETS = common/mk4_program.c common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
@@ -21,11 +21,18 @@ SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 .PHONY: input-test retail-vm-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts: scripts-audit
-scripts-check: scripts-audit
+scripts: build/mk4.scripts
+
+build/mk4.scripts: tools/mk4_asm.py $(wildcard scripts/mk4/*)
+	python3 tools/mk4_asm.py scripts/mk4/program.asm $@
+
+mk4-game mk4-viewer build/test-retail-vm build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-menu: | build/mk4.scripts
+
+scripts-check: scripts-audit build/mk4.scripts
+	python3 tests/test_mk4_asm.py
 	python3 tools/check_native_addresses.py
-scripts-audit:
-	python3 tools/compile_retail.py --all --audit --strict --summary --require-implemented
+scripts-audit: build/mk4.scripts
+	python3 tools/compile_retail.py --all --audit --strict --summary --require-implemented --program build/mk4.scripts
 native-frames-check:
 	python3 tests/test_c_reachability.py
 	python3 tools/check_native_frames.py

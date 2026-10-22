@@ -1,4 +1,5 @@
 #include "game.h"
+#include "mk4_program.h"
 #include "retail_vm.h"
 #include "script.h"
 #include "retail_data.h"
@@ -73,6 +74,8 @@ static int recover(Fighter *owner, int slot, bool crouch, int scenario) {
 }
 
 static void put_word(uint32_t address, uint32_t word) {
+  size_t offset = address - 0x400000;
+  image.program_words.data[offset / 32] |= (uint8_t)(1u << (offset / 4 % 8));
   for (int byte = 0; byte < 4; ++byte) {
     image.bytes.data[address - 0x400000 + (unsigned)byte] = (uint8_t)(word >> (byte * 8));
   }
@@ -1342,6 +1345,21 @@ static void native_air_capture_lifetimes(void) {
 
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
+  mk4_program_load(&image, "build/mk4.scripts");
+  if (argc == 3 && strcmp(argv[1], "program") == 0) {
+    Fighter *owner = setup(0, 2);
+    mk4_program_load(&image, argv[2]);
+    control_finished = 0;
+    retail_vm_start(owner, &image, 0x4d0000, 0x4d0008, control_end, reject_native);
+    check(owner->retail_vm.wake == g_battle.ticks + 3, "assembled wait operand must control execution");
+    for (int i = 0; i < 3; ++i) {
+      g_battle.ticks++;
+      retail_vm_step(owner);
+    }
+    check(control_finished == 1, "assembled program must return through the shared VM");
+    mk4_image_free(&image);
+    return 0;
+  }
   if (argc == 2) {
     if (strcmp(argv[1], "opcode") == 0) {
       put_word(0x4e6d08, 0xff000000);

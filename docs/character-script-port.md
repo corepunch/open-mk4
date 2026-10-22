@@ -1,6 +1,7 @@
 # Shared retail runtime workflow
 
-All catalogued fighter programs execute original retail words through one
+All catalogued fighter programs execute MK4 words assembled from the checked-in
+[`scripts/mk4/program.asm`](../scripts/mk4/program.asm) through one
 C11 interpreter. Script-to-C/frame translation is retired. The remaining
 native services and controllers live in shared capability modules under
 `game/native/`. Evidence belongs beside shared implementations or in typed
@@ -8,7 +9,9 @@ research bindings; there are no per-fighter coverage manifests.
 
 ## Workflow
 
-1. Inspect the existing inventory and unresolved boundary:
+1. Build edited script sources with `make scripts`; normal builds do this
+   automatically. See [assembly workflow](../scripts/README.md).
+   Inspect the existing inventory and unresolved boundary:
 
    ```sh
    python3 tools/compile_retail.py --character NAME --inventory
