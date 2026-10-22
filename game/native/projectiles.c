@@ -1292,6 +1292,15 @@ void reptile_acid_spit(Fighter *fighter) {
 }
 
 /* Native service cluster: 416ae0, 416d40, 468640. */
+enum {
+  FIRE_SCRIPT_STARTUP = 0x4e5b58,
+  FIRE_SCRIPT_RECOVERY = 0x4e5b98,
+  FIRE_NATIVE_NORMAL_END = 47,
+  FIRE_NATIVE_FAST_END = 31,
+  FIRE_NATIVE_NORMAL_CONTACT = 27,
+  FIRE_NATIVE_FAST_CONTACT = 19
+};
+
 static void n416ae0_fire_contact(Fighter *fighter);
 static const AttackRecord n416ae0_fire_record = {0x24e56, -0xc978, 0x23cac, 0xb7ce, 173, 173, 0, ATTACK_UNBLOCKABLE, 0x1eb8};
 static const MoveDef n416ae0_s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0115};
@@ -1300,13 +1309,23 @@ static void n416ae0_fire_contact(Fighter *fighter) {
   battle_contact(fighter, &n416ae0_fire_record);
 }
 
+/*468640 finishes its native contact phase at sample28, then enters words. */
+static void fire_recovery_script(Fighter *fighter) {
+  retail_vm_enter(fighter, FIRE_SCRIPT_RECOVERY, fighter_ready);
+}
+
+/*4688e0 uses428cf0 to finish the inherited descriptor, then46f650. */
+void retail_fire_recovery_finish(Fighter *fighter) {
+  native_finish_clip(fighter, scorpion_special_ready);
+}
+
 void scorpion_fire_script(Fighter *fighter) {
   bool fast = fighter->script_phase != 0;
-  int first = fighter->ticks + 1, last = fast ? 39 : 54;
-  native_begin(fighter, first, last, scorpion_special_ready);
+  int first = fighter->ticks + 1, last = fast ? FIRE_NATIVE_FAST_END : FIRE_NATIVE_NORMAL_END;
+  native_begin(fighter, first, last, fire_recovery_script);
   for (int frame = first; frame <= last; ++frame) {
-    int pose = fast ? mini(34, frame < 19 ? frame - 2 : frame < 32 ? frame - 3 : frame - 4) : mini(34, frame < 48 ? 11 + (frame - 13) / 2 : frame - 19);
-    native_frame(fighter, frame, pose, frame == (fast ? 19 : 27) ? n416ae0_fire_contact : NULL);
+    int pose = fast ? frame - (frame < FIRE_NATIVE_FAST_CONTACT ? 2 : 3) : 11 + (frame - 13) / 2;
+    native_frame(fighter, frame, pose, frame == (fast ? FIRE_NATIVE_FAST_CONTACT : FIRE_NATIVE_NORMAL_CONTACT) ? n416ae0_fire_contact : NULL);
   }
   native_play(fighter, false);
 }
@@ -1316,7 +1335,7 @@ void scorpion_fire(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n416ae0_s_fire);
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;
-  retail_vm_enter(fighter, 0x4e5b58, fighter_ready);
+  retail_vm_enter(fighter, FIRE_SCRIPT_STARTUP, fighter_ready);
 }
 
 void scorpion_script_fire_decor(Fighter *fighter) {

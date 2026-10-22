@@ -662,8 +662,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x467fc0:
           retail_stage_owner(fighter);
           return true;
-        case 0x468640:
+        case RETAIL_NATIVE_FIRE_CONTACT:
           scorpion_fire_script(fighter);
+          return true;
+        case RETAIL_NATIVE_FIRE_RECOVERY:
+          retail_fire_recovery_finish(fighter);
           return true;
         case 0x4698b0:
           reptile_script_invisibility(fighter);

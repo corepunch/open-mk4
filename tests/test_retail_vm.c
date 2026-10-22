@@ -1038,6 +1038,24 @@ static void native_task_completion(void) {
       actor->visual_offset[AXIS_Y] == 0 && actor->current_mmove == NULL, "interrupting a native presentation phase must remove its owned offset and playback");
 }
 
+/* A native contact phase must hand recovery back to original words. */
+static void native_script_recovery_handoff(void) {
+  for (int reacting_peer = 0; reacting_peer < 2; ++reacting_peer) {
+    Fighter *actor = setup(0, 2);
+    if (reacting_peer) {
+      fighter_peer(actor)->flags |= FF_REACTING;
+    }
+    retail_native_entry(0x468610)(actor);
+    bool script_seen = false;
+    for (int visit = 0; visit < 128 && actor->state != S_IDLE; ++visit) {
+      tick();
+      script_seen |= actor->retail_vm.active && actor->retail_vm.entry == 0x4e5b98;
+    }
+    check(script_seen && !actor->retail_vm.active && actor->current_mmove == NULL && actor->state == S_IDLE,
+        "native contact recovery must run original words and retire its descriptor continuation");
+  }
+}
+
 /* Native scene blends hand authored playback to the original script task. */
 static void native_scene_script_handoff(void) {
   Fighter *owner = setup(0, 2), *peer = fighter_peer(owner);
@@ -1327,6 +1345,7 @@ int main(int argc, char **argv) {
   script_landing_handoff();
   native_task_completion();
   native_scene_script_handoff();
+  native_script_recovery_handoff();
   cursor_alias_opcodes();
   conditional_primitive_opcodes();
   motion_distance_opcodes();
