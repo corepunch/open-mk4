@@ -1,6 +1,16 @@
 #include "native_services.h"
+#include "retail_data.h"
 #include <math.h>
 #include <stdlib.h>
+
+enum {
+  HEAD_HAND_PART_ROW_BYTES = 8,
+  HEAD_HAND_PART_CAPACITY = 3
+};
+
+static unsigned head_hand_part_count(void) {
+  return retail_terminated_rows(retail_vm_image(), MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS, HEAD_HAND_PART_ROW_BYTES, HEAD_HAND_PART_CAPACITY);
+}
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
 enum {
@@ -126,12 +136,12 @@ static void n44f5e0_first_explode(Fighter *victim, Fighter *owner) {
   if (source.assets != NULL) {
     source.scene_model = &source.assets->cut_characters.data[roster_def(source.roster)->asset];
   }
-  static const int joints[] = {2, 9, 10};
-  static const q16 scales[] = {0x1999, 0x147a, 0x147a};
-  for (int part = 0; part < 3; ++part) {
-    ScenePiece *piece = battle_detach_piece(&source, joints[part], (q16[3]){part == 1 ? -0x2147 : 0x2147, -0x2147, 0}, (q16[3]){0, 0x2147, 0});
+  for (unsigned part = 0; part < head_hand_part_count(); ++part) {
+    uint32_t row = MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS + part * HEAD_HAND_PART_ROW_BYTES;
+    int joint = (int)mk4_image_u32(retail_vm_image(), row);
+    ScenePiece *piece = battle_detach_piece(&source, joint, (q16[3]){part == 1 ? -0x2147 : 0x2147, -0x2147, 0}, (q16[3]){0, 0x2147, 0});
     if (piece != NULL) {
-      piece->scale = scales[part];
+      piece->scale = (q16)mk4_image_u32(retail_vm_image(), row + 4);
       piece->gravity = 0x189;
     }
   }
@@ -1903,15 +1913,16 @@ static bool n44d4a0_burst_step(BattleEvent *event, Fighter *owner, Fighter *oppo
     event->phase = 1;
     mk4_script_shake(owner, 8);
     battle_sound(SOUND_B, 0x15);
-    static const int joints[][2] = {{2, 0x1999}, {9, 0x147a}, {10, 0x147a}};
     const Fighter *peer = fighter_opponent(owner);
     Vec3 neck;
     Mat3 unused;
     fighter_joint_position(owner, 2, &neck, &unused);
-    for (size_t i = 0; i < sizeof joints / sizeof joints[0]; ++i) {
-      q16 speed = joints[i][1];
+    for (unsigned i = 0; i < head_hand_part_count(); ++i) {
+      uint32_t row = MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS + i * HEAD_HAND_PART_ROW_BYTES;
+      int joint = (int)mk4_image_u32(retail_vm_image(), row);
+      q16 speed = (q16)mk4_image_u32(retail_vm_image(), row + 4);
       q16 velocity[3] = {q16_mul(fighter_axis(peer, AXIS_X), speed), -speed, q16_mul(fighter_axis(peer, AXIS_Z), speed)};
-      ScenePiece *piece = battle_detach_piece(owner, joints[i][0], velocity, (q16[3]){0});
+      ScenePiece *piece = battle_detach_piece(owner, joint, velocity, (q16[3]){0});
       if (piece != NULL) {
         piece->gravity = 0x7ae;
       }

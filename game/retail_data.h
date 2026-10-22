@@ -31,6 +31,7 @@ typedef struct RetailCommand {
 } RetailCommand;
 
 /* Addresses refer to the checked local image, never host function pointers. */
+unsigned retail_terminated_rows(const Mk4Image *image, uint32_t table, unsigned stride, unsigned limit);
 void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponInventory *inventory);
 void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster);
 unsigned retail_character_slot(unsigned character);

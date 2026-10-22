@@ -281,3 +281,16 @@ void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponI
       .backward = mk4_image_u32(image, address + 24) * 4,
       .reserved = mk4_image_u32(image, address + 28)};
 }
+
+/* Native lists use a zero first word as their terminator. Keep the caller's
+ * engine capacity as a bound, independent of the authored row count. */
+unsigned retail_terminated_rows(const Mk4Image *image, uint32_t table, unsigned stride, unsigned limit) {
+  require(stride > 0 && stride % 4 == 0, "Invalid retail table row stride");
+  for (unsigned count = 0; count <= limit; ++count) {
+    if (mk4_image_u32(image, table + count * stride) == 0) {
+      return count;
+    }
+  }
+  require(false, "Retail table exceeds its engine capacity or lacks a terminator");
+  return 0;
+}

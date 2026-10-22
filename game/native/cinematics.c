@@ -1,6 +1,7 @@
 #include "retail_layout.h"
 #include "native_services.h"
 #include "retail_data.h"
+#include "retail_data.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -358,8 +359,23 @@ void cage_fatality_2(Fighter *fighter) {
 /* Native service cluster: 41ef20, 45ac30, 4816f0, 4817c0. */
 static const MoveDef n41ef20_owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 static const MoveDef n41ef20_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
-/*4818f0 reads4ea420 in this order, separating one joint every five visits. */
-static const int n41ef20_torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
+
+/*4818f0 walks the zero-terminated retail skin rows; the native effects
+ * differ in drift, spin and gravity, while joint/model order is shared. */
+enum {
+  SKIN_PART_ROW_BYTES = 12,
+  SKIN_PART_CAPACITY = SCENE_MODEL_SEVERED_LEGS - SCENE_MODEL_WIND_PIECES,
+  SKIN_TEAR_VISIT_PERIOD = 5
+};
+
+static unsigned skin_part_count(void) {
+  return retail_terminated_rows(retail_vm_image(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
+}
+
+static int skin_part_joint(int index) {
+  require(index >= 0 && (unsigned)index < skin_part_count(), "Invalid native skin tear phase");
+  return (int)mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
+}
 
 void fujin_second_blood(Fighter *fighter, int task_type) {
   require(task_type == 38, "Unexpected wind fatality decoration task");
@@ -375,9 +391,8 @@ static void n41ef20_second_voice(Fighter *victim) {
 
 static void n41ef20_second_tear_joint(Fighter *victim) {
   int index = victim->native_variant++;
-  require(index >= 0 && (size_t)index < sizeof n41ef20_torn_joints / sizeof n41ef20_torn_joints[0], "Invalid wind tear phase");
   q16 velocity[3] = {victim->saved_motion[AXIS_X] * 10 * victim->facing, 0, victim->saved_motion[AXIS_Z] * 10};
-  ScenePiece *piece = battle_detach_piece(victim, n41ef20_torn_joints[index], velocity, (q16[3]){0});
+  ScenePiece *piece = battle_detach_piece(victim, skin_part_joint(index), velocity, (q16[3]){0});
   if (piece != NULL) {
     /*406ce0 exchanges the detached joint for its closed share2 part
      *from4ea420, retaining the original joint transform. */
@@ -406,10 +421,10 @@ void fujin_second_burst(Fighter *victim) {
   victim->saved_motion[AXIS_X] = victim->body.vel[AXIS_X];
   victim->saved_motion[AXIS_Z] = victim->body.vel[AXIS_Z];
   victim->native_variant = 0;
-  int visits = (int)(sizeof n41ef20_torn_joints / sizeof n41ef20_torn_joints[0]) * 5;
+  int visits = (int)skin_part_count() * SKIN_TEAR_VISIT_PERIOD;
   native_begin(victim, 1, visits, n41ef20_second_flayed);
   for (int visit = 1; visit <= visits; ++visit) {
-    native_frame(victim, visit, 0, (visit - 1) % 5 == 0 ? n41ef20_second_tear_joint : NULL);
+    native_frame(victim, visit, 0, (visit - 1) % SKIN_TEAR_VISIT_PERIOD == 0 ? n41ef20_second_tear_joint : NULL);
   }
   native_play(victim, false);
 }
@@ -1471,8 +1486,6 @@ enum {
  * selects 4dfe90[10] = 43bf40: shared setup 41aaf0, then VM 4dff08. */
 static const MoveDef n41e490_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 static const MoveDef n41e490_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
-/* 4818f0 reads 4ea420 in this order, separating one joint every five visits. */
-static const int n41e490_torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
 /* 41e490 droplets reuse the 4d16d0 shared meshes 340..344; 40f380 adds
  * 0x106 gravity each visit. */
 static const ParticleVisual n41e490_acid_visual = {
@@ -1524,9 +1537,8 @@ static void n41e490_second_tear(Fighter *victim) {
   /* 481b80/481c10: closed share2 part (406ce0), ten times the saved
    * drift without facing, Z spin 0x1999, forty-five visits. */
   int index = victim->native_variant++;
-  require(index >= 0 && (size_t)index < sizeof n41e490_torn_joints / sizeof n41e490_torn_joints[0], "Invalid Reptile tear phase");
   q16 velocity[3] = {victim->saved_motion[AXIS_X] * 10, 0, victim->saved_motion[AXIS_Z] * 10};
-  ScenePiece *piece = battle_detach_piece(victim, n41e490_torn_joints[index], velocity, (q16[3]){0, 0, 0x1999});
+  ScenePiece *piece = battle_detach_piece(victim, skin_part_joint(index), velocity, (q16[3]){0, 0, 0x1999});
   if (piece != NULL && victim->assets != NULL) {
     piece->model = &victim->assets->scene_models.data[SCENE_MODEL_WIND_PIECES + index];
     piece->bone = 0;
@@ -1552,12 +1564,12 @@ void reptile_second_melt(Fighter *victim) {
   victim->saved_motion[AXIS_X] = victim->body.vel[AXIS_X];
   victim->saved_motion[AXIS_Z] = victim->body.vel[AXIS_Z];
   mk4_script_stop_body(victim);
-  int count = (int)(sizeof n41e490_torn_joints / sizeof n41e490_torn_joints[0]);
+  int count = (int)skin_part_count();
   int pose = fighter_sample(victim);
   victim->native_variant = 0;
-  native_begin(victim, 1, count * 5, n41e490_second_flayed);
-  for (int visit = 1; visit <= count * 5; ++visit) {
-    native_frame(victim, visit, pose, (visit - 1) % 5 == 0 ? n41e490_second_tear : NULL);
+  native_begin(victim, 1, count * SKIN_TEAR_VISIT_PERIOD, n41e490_second_flayed);
+  for (int visit = 1; visit <= count * SKIN_TEAR_VISIT_PERIOD; ++visit) {
+    native_frame(victim, visit, pose, (visit - 1) % SKIN_TEAR_VISIT_PERIOD == 0 ? n41e490_second_tear : NULL);
   }
   native_play(victim, false);
 }
