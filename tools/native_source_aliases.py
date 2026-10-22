@@ -1,6 +1,8 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'kai_second_hover': 'retail_scene_hover',
+    'reptile_second_hover': 'retail_scene_hover',
     'cage_power_land': 'retail_recoil_land',
     'jarek_ball_land': 'retail_recoil_land',
     'tanya_blocked_recoil_land': 'retail_recoil_land',

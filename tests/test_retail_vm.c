@@ -874,6 +874,27 @@ static void edge_task_lifetime(void) {
   check(!event->active, "round reset must leave the native event resource retired");
 }
 
+static void scene_task_lifetime(void) {
+  Fighter *actor = setup(0, 2);
+  g_battle.phase = PHASE_FATALITY;
+  check(!retail_native_vm(actor, 0x46a280, RETAIL_SPAWN, 39), "hover native must reject an unrelated task type");
+  check(retail_native_vm(actor, 0x46a280, RETAIL_SPAWN, 38), "shared hover native must accept any valid actor context");
+  BattleEvent *event = NULL;
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    if (g_battle.events[i].active) {
+      event = &g_battle.events[i];
+      break;
+    }
+  }
+  check(event != NULL && !event->cancel_on_owner_change, "native scene task must have independent event ownership");
+  fighter_interrupt(actor, fighter_ready);
+  check(event->active, "actor script interruption must preserve the independent scene task");
+  g_battle.phase = PHASE_MATCH_OVER;
+  check(!event->step(event, actor, fighter_peer(actor)), "scene completion must retire independent hover motion");
+  battle_init(0, 4);
+  check(!event->active, "round reset must release the scene task resource");
+}
+
 static void conditional_primitive_opcodes(void) {
   const uint32_t base = 0x570180;
   const uint32_t words[] = {0x43000000, 0x12345678, (base + 68) / 4, 0x55ffff07, 0x12345678, (base + 68) / 4, 0x3d000000, (base + 40) / 4, 0x12000002,
@@ -1181,6 +1202,7 @@ int main(int argc, char **argv) {
   motion_distance_opcodes();
   animation_controller_opcodes();
   edge_task_lifetime();
+  scene_task_lifetime();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

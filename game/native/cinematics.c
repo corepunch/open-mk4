@@ -692,13 +692,6 @@ static const MoveDef n406ba0_victim_pose = {.clip = 13, .last = 55, .flags = SF_
 static const MeshAnimation n406ba0_skull_mesh = {.first = 48, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2};
 
 enum {
-  n406ba0_HOVER_RISE,
-  n406ba0_HOVER_EASE_START,
-  n406ba0_HOVER_EASE,
-  n406ba0_HOVER_DESCEND,
-  n406ba0_HOVER_APEX_HOLD,
-  n406ba0_HOVER_ASCEND,
-  n406ba0_HOVER_LOW_HOLD,
   n406ba0_SKULL_FLIGHT = 0,
   n406ba0_SKULL_HIT,
   /* 4e5be0 plays clip 206 for 100 visits; then the scene settles for one
@@ -711,72 +704,6 @@ void kai_second_child_walk(Fighter *fighter) {
    * disarmed both fighters and attached no child objects before these
    * calls, so the portable actors have no child nodes to visit. */
   require(!fighter->armed, "Kai second fatality actors must not carry a weapon");
-}
-
-static void n406ba0_hover_step(Projectile *object) {
-  /* 46a280/46a340/46a380 drive the owner's group gravity. Visit counts are
-   * this independent task's own state, not an actor clock. */
-  Fighter *owner = &g_battle.fighters[object->owner];
-  if (g_battle.phase != PHASE_FATALITY) {
-    object->kind = 0;
-    return;
-  }
-  object->lifetime = 2;
-  Body *body = &owner->body;
-  switch (object->phase) {
-    case n406ba0_HOVER_RISE:
-      body->gravity = -0x28f;
-      object->phase = n406ba0_HOVER_EASE_START;
-      break;
-    case n406ba0_HOVER_EASE_START:
-      object->bounce = 10;
-      object->phase = n406ba0_HOVER_EASE;
-      break;
-    case n406ba0_HOVER_EASE:
-      body->gravity += 0x41;
-      if (--object->bounce == 0) {
-        body->gravity = 0x83;
-        object->phase = n406ba0_HOVER_DESCEND;
-      }
-      break;
-    case n406ba0_HOVER_DESCEND:
-      /* 48f490 waits until the rise stops, then 46a380 holds ten visits. */
-      if (body->vel[AXIS_Y] >= 0) {
-        object->bounce = 10;
-        object->phase = n406ba0_HOVER_APEX_HOLD;
-      }
-      break;
-    case n406ba0_HOVER_APEX_HOLD:
-      if (--object->bounce == 0) {
-        body->gravity = -0x83;
-        object->phase = n406ba0_HOVER_ASCEND;
-      }
-      break;
-    case n406ba0_HOVER_ASCEND:
-      /* 48f510 waits until the body rises again, then holds ten visits. */
-      if (body->vel[AXIS_Y] < 0) {
-        object->bounce = 10;
-        object->phase = n406ba0_HOVER_LOW_HOLD;
-      }
-      break;
-    case n406ba0_HOVER_LOW_HOLD:
-      if (--object->bounce == 0) {
-        body->gravity = 0x83;
-        object->phase = n406ba0_HOVER_DESCEND;
-      }
-      break;
-    default:
-      require(false, "Invalid Kai hover phase");
-  }
-}
-
-void kai_second_hover(Fighter *fighter, int task_type) {
-  require(task_type == 38, "Unexpected Kai hover task");
-  Projectile *object = battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, n406ba0_hover_step);
-  if (object != NULL) {
-    object->phase = n406ba0_HOVER_RISE;
-    n406ba0_hover_step(object);
-  }
 }
 
 static void n406ba0_skull_step(Projectile *object) {
@@ -1565,61 +1492,6 @@ static const ParticleVisual n41e490_acid_visual = {
     .animation = {.first = 340, .count = 5, .period = 2, .scale = 0x51eb, .source = MESH_SHARED, .offset = {0x1100, 0xd80, 0}}};
 static const ParticleSpray n41e490_acid_spray = {
     .visual = &n41e490_acid_visual, .count = 2, .lifetime = 30, .gravity = 0x106, .velocity = {0, 0x1708, 0}, .spread = {0x51e, 0x7ae, 0x51e}};
-
-enum {
-  n41e490_HOVER_RISE,
-  n41e490_HOVER_EASE,
-  n41e490_HOVER_FALLING,
-  n41e490_HOVER_RISING
-};
-
-/* Task 38 (46a280) writes the owner's gravity: -0x28f, ten +0x41 steps,
- * then +0x83 until vertical speed is not upward (48f490), ten visits,
- * -0x83 until it rises (48f510), ten visits, and so on. */
-static bool n41e490_hover_step(BattleEvent *event, Fighter *owner, Fighter *victim) {
-  (void)victim;
-  if (g_battle.phase != PHASE_FATALITY && g_battle.phase != PHASE_MATCH_OVER) {
-    return false;
-  }
-  switch (event->phase) {
-    case n41e490_HOVER_RISE:
-      owner->body.gravity = -0x28f;
-      event->phase = n41e490_HOVER_EASE;
-      event->data[0] = 0;
-      return true;
-    case n41e490_HOVER_EASE:
-      if (event->data[0]++ == 0) {
-        return true;
-      }
-      owner->body.gravity += 0x41;
-      if (event->data[0] > 10) {
-        owner->body.gravity = 0x83;
-        event->phase = n41e490_HOVER_FALLING;
-      }
-      return true;
-    case n41e490_HOVER_FALLING:
-      if (owner->body.vel[AXIS_Y] >= 0) {
-        battle_event_delay(event, 10);
-        owner->body.gravity = -0x83;
-        event->phase = n41e490_HOVER_RISING;
-      }
-      return true;
-    default:
-      if (owner->body.vel[AXIS_Y] < 0) {
-        battle_event_delay(event, 10);
-        owner->body.gravity = 0x83;
-        event->phase = n41e490_HOVER_FALLING;
-      }
-      return true;
-  }
-}
-
-void reptile_second_hover(Fighter *fighter, int task_type) {
-  require(task_type == 38, "Unexpected Reptile hover task");
-  BattleEvent *event = battle_event_start(fighter, n41e490_hover_step, false, false);
-  require(event != NULL, "Reptile second fatality needs its bounded hover task");
-  event->phase = n41e490_HOVER_RISE;
-}
 
 static bool n41e490_acid_drops(BattleEvent *event, Fighter *owner, Fighter *victim) {
   (void)victim;

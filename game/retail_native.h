@@ -196,3 +196,5 @@ void retail_scene_body_finish(Fighter *fighter);
 void retail_directional_motion(Fighter *fighter, q16 speed, q16 up, q16 gravity);
 bool retail_outer_edge(const Fighter *fighter);
 void retail_edge_push(Fighter *fighter);
+
+void retail_scene_hover(Fighter *fighter, int task_type);

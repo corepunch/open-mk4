@@ -1215,21 +1215,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           tanya_second_victim_cue(fighter, (int)argument);
           return true;
         case 0x46a280:
-          if (owner & 0x800u) {
-            if (argument != 38u) {
-              return false;
-            }
-            kai_second_hover(fighter, (int)argument);
-            return true;
+          if (argument != 38u) {
+            return false;
           }
-          if (owner & 0x400u) {
-            if (argument != 38u) {
-              return false;
-            }
-            reptile_second_hover(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          retail_scene_hover(fighter, (int)argument);
+          return true;
         case 0x496e00:
           if (argument != 82u) {
             return false;

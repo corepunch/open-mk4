@@ -116,3 +116,65 @@ void retail_scene_body_finish(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] -= 0x147a;
   native_hold(fighter, 60, scene_body_complete);
 }
+
+enum {
+  HOVER_EASE_START,
+  HOVER_EASE,
+  HOVER_WAIT_DOWN,
+  HOVER_REVERSE_UP,
+  HOVER_WAIT_UP,
+  HOVER_REVERSE_DOWN
+};
+
+/*46a280/46a340/46a380: an independent task changes group gravity;
+ * velocity predicates and ten-visit holds belong to this native task. */
+static bool scene_hover_step(BattleEvent *event, Fighter *owner, Fighter *peer) {
+  (void)peer;
+  if (g_battle.phase != PHASE_FATALITY) {
+    return false;
+  }
+  switch (event->phase) {
+    case HOVER_EASE_START:
+      event->data[0] = 10;
+      event->phase = HOVER_EASE;
+      break;
+    case HOVER_EASE:
+      owner->body.gravity += 0x41;
+      if (--event->data[0] == 0) {
+        owner->body.gravity = 0x83;
+        event->phase = HOVER_WAIT_DOWN;
+      }
+      break;
+    case HOVER_WAIT_DOWN:
+      if (owner->body.vel[AXIS_Y] >= 0) {
+        event->phase = HOVER_REVERSE_UP;
+        battle_event_delay(event, 10);
+      }
+      break;
+    case HOVER_REVERSE_UP:
+      owner->body.gravity = -0x83;
+      event->phase = HOVER_WAIT_UP;
+      break;
+    case HOVER_WAIT_UP:
+      if (owner->body.vel[AXIS_Y] < 0) {
+        event->phase = HOVER_REVERSE_DOWN;
+        battle_event_delay(event, 10);
+      }
+      break;
+    case HOVER_REVERSE_DOWN:
+      owner->body.gravity = 0x83;
+      event->phase = HOVER_WAIT_DOWN;
+      break;
+    default:
+      require(false, "Invalid native hover phase");
+  }
+  return true;
+}
+
+void retail_scene_hover(Fighter *fighter, int task_type) {
+  require(task_type == 38, "Unexpected native hover task");
+  BattleEvent *event = battle_event_start(fighter, scene_hover_step, false, false);
+  require(event != NULL, "Scene needs its independent hover task");
+  fighter->body.gravity = -0x28f;
+  event->phase = HOVER_EASE_START;
+}

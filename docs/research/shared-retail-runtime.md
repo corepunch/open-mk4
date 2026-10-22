@@ -1639,3 +1639,18 @@ The bounded local entry and mk4decomp MoveSelectorCluster agree: it runs
 portable landing/cancel controller. Direct native callers use the same service.
 Verified formatting, runtime, all strict audits, native gates and existing
 helper/port navigation. No additional tests for identical adapter bodies.
+
+### One independent hover native
+
+Replaced the Kai projectile-based driver and Reptile event driver with one
+46a280 scene task. Checked local46a280/46a340/46a380 and mk4decomp
+TripleEntryCountdownInstall matching assembly. Gravity starts at-0x28f,
+eases through ten+0x41 updates, then alternates+/-0x83 using native vertical
+velocity predicates. Ten-visit holds now precede reversal; the old Reptile
+copy reversed before its delay. The shared task uses engine event ownership,
+independent of fighter script replacement, and retires with the scene/reset.
+
+Verified formatting, shared runtime, strict audits, native gates and helper/
+port navigation. One compact native/lifetime fixture checks typed task rejection,
+context-independent dispatch, interruption and scene/reset retirement; no
+fighter timing or balance assertions were added.
