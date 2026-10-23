@@ -1,5 +1,5 @@
 #include "game.h"
-#include "mk4_program.h"
+#include "lua/script_lua.h"
 
 static Mk4Image image;
 #include "runtime/playback.h"
@@ -303,6 +303,7 @@ static void advance(int ticks) {
 
 int main(void) {
   image = mk4_image_load("build/mk4.data");
+  script_lua_open("build/mk4_symbols.lua", "scripts/lua/program.lua");
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();

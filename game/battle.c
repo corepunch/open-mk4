@@ -47,7 +47,7 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
 }
 
 void battle_init(const Mk4Image *data, int p1, int p2) {
-  require(data != NULL && data->bytes.count != 0 && data->program_words.count != 0, "Match needs MK4 data and an assembled script program");
+  require(data != NULL && data->bytes.count != 0, "Match needs linked MK4 data");
   fighter_execution_cancel_all();
   memset(&g_battle, 0, sizeof g_battle);
   g_battle.data = data;

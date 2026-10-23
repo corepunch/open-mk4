@@ -410,20 +410,17 @@ typedef enum ScriptNativeKind {
   MK4_PHYSICS
 } ScriptNativeKind;
 
-typedef bool (*ScriptNativeFn)(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument);
-
 typedef struct ScriptVm {
   const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
-  uint32_t pc, begin, end, instruction, entry;
+  uint32_t entry;        /* linked script label; the Lua runtime owns the function */
   uint64_t wake;
-  unsigned result, selector, loop_count, repeat_count, playback_limit;
+  unsigned result, selector, repeat_count, playback_limit;
   uint32_t repeat_entry, repeat_after, native_cursor, native_query, returned_word;
   unsigned native_selector, native_rows;
   int play_ticks, target, direction, stride, period, blend_ticks;
   bool active, return_after_play, parked, paired, wait_ground, native_contact, interpolated_play, interpolated_pair;
   FighterFn finish, native_resume;
   ScriptContinuation then;
-  ScriptNativeFn dispatch;
 } ScriptVm;
 
 /* One action lifetime across script/native phase changes. Cleanup is detached

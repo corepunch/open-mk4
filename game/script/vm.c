@@ -1,39 +1,25 @@
 #include "script/native_ids.h"
 #include "data/layout.h"
 #include "script/vm.h"
-#include "mk4_program.h"
+#include "lua/script_lua.h"
 #include "native/helpers.h"
 #include "native/actions.h"
+
+/* Actor script execution state. The Lua runtime decides which operation runs
+ * next; this module owns playback, waits, contact results, pairing, native
+ * continuations and the per-tick step that advances them. */
 
 static void resume_script_return(Fighter *fighter);
 
 void script_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next) {
-  require(fighter->execution.script.active, "Native wait without a retail task");
+  require(fighter->execution.script.active, "Native wait without a live script");
   fighter->execution.script.parked = true;
   fighter->execution.script.native_resume = next;
   fighter->execution.script.wake = g_battle.ticks + ticks;
 }
 
 static _Noreturn void vm_error(const Fighter *fighter, const char *message) {
-  fatal("Retail VM at %08x (next %08x): %s", fighter->execution.script.instruction, fighter->execution.script.pc, message);
-}
-
-static uint32_t fetch(Fighter *fighter) {
-  ScriptVm *vm = &fighter->execution.script;
-  if (vm->pc < vm->begin || vm->pc >= vm->end || vm->pc % 4 != 0) {
-    vm_error(fighter, "script cursor outside reviewed range");
-  }
-  uint32_t word = mk4_program_word(vm->image, vm->pc);
-  vm->pc += 4;
-  return word;
-}
-
-static void jump(Fighter *fighter, uint32_t packed) {
-  ScriptVm *vm = &fighter->execution.script;
-  if (packed < vm->begin / 4 || packed >= vm->end / 4) {
-    vm_error(fighter, "script branch outside reviewed range");
-  }
-  vm->pc = packed * 4;
+  fatal("Script %s: %s", script_lua_entry_name(fighter->execution.script.entry), message);
 }
 
 static void finish(Fighter *fighter) {
@@ -42,7 +28,7 @@ static void finish(Fighter *fighter) {
 }
 
 void script_vm_return(Fighter *fighter) {
-  require(fighter->execution.script.active, "Native return without a retail task");
+  require(fighter->execution.script.active, "Native return without a live script");
   finish(fighter);
 }
 
@@ -108,16 +94,6 @@ static void play(Fighter *fighter, int target, bool inclusive) {
   vm->wake = g_battle.ticks + (vm->play_ticks > 0 ? 1 : 0);
 }
 
-/* PauseTestCmp2CallStore consumes a descriptor only for prefix byte 2. */
-static void optional_bind(Fighter *fighter, uint32_t word) {
-  unsigned prefix = (word >> 8) & 255u;
-  if (prefix == 2) {
-    bind(fighter, fetch(fighter), 0);
-  } else if (prefix != 0) {
-    vm_error(fighter, "unreviewed playback prefix");
-  }
-}
-
 static void slow_play(Fighter *fighter, int target, bool inclusive) {
   play(fighter, target, inclusive);
   ScriptVm *vm = &fighter->execution.script;
@@ -140,6 +116,23 @@ static void interpolated_play(Fighter *fighter, unsigned limit) {
   vm->play_ticks = 0;
   vm->interpolated_play = true;
   vm->interpolated_pair = false;
+  vm->wake = g_battle.ticks + 1;
+}
+
+/* Quarter-weight blend from the current pose into sample one of a new clip. */
+static void blend_to(Fighter *fighter, uint32_t packed) {
+  ScriptVm *vm = &fighter->execution.script;
+  int source = fighter_move(fighter)->clip;
+  int pose = fighter_sample(fighter);
+  bind(fighter, packed, 0);
+  if (fighter_move(fighter)->last < 1) {
+    vm_error(fighter, "blend needs sample one");
+  }
+  fighter->blend_clip = source;
+  fighter->blend_sample = pose;
+  fighter->blend_duration = 1;
+  fighter->blend_weight = 0x4000;
+  vm->blend_ticks = (Q16_ONE - 0x4000) / 0xa3d + 1;
   vm->wake = g_battle.ticks + 1;
 }
 
@@ -175,22 +168,19 @@ static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
   }
 }
 
-void script_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry, uint32_t begin, uint32_t end, FighterFn next, ScriptNativeFn native) {
-  require(image != NULL && image->bytes.count != 0 && next != NULL && native != NULL, "Retail VM needs owned image and typed continuations");
-  require(begin <= entry && entry < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= SCRIPT_ADDRESS_END - SCRIPT_ADDRESS_BEGIN,
-      "Invalid reviewed retail script range");
+/* Start the script at a linked entry. Contact result, selector, playback
+ * limit and native repetition state carry over from the previous script of
+ * the same actor, as the retail task state did. */
+void script_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry, FighterFn next) {
+  require(image != NULL && image->bytes.count != 0 && next != NULL, "Script start needs owned data and a typed continuation");
+  require(entry >= SCRIPT_ADDRESS_BEGIN && entry < SCRIPT_ADDRESS_END && entry % 4 == 0, "Script entry outside the linked script section");
   ScriptVm previous = fighter->execution.script;
   fighter_execution_reset(fighter);
   fighter->execution.script = (ScriptVm){.image = image,
       .entry = entry,
-      .pc = entry,
-      .begin = begin,
-      .end = end,
       .active = true,
       .finish = next,
       .then = next == resume_script_return ? previous.then : (ScriptContinuation){0},
-      .dispatch = native,
-      .loop_count = previous.loop_count,
       .result = previous.result,
       .selector = previous.selector,
       .repeat_count = previous.repeat_count,
@@ -201,26 +191,27 @@ void script_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
   if (move->clip >= 0 && move->last == MOVE_END) {
     bind(fighter, (MK4_ANIMATION_TABLE + (uint32_t)move->clip * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4, fighter_sample(fighter));
   }
+  script_lua_start(fighter, entry);
   script_vm_step(fighter);
 }
 
 void script_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
-  script_vm_start_at(fighter, battle_data(), entry, SCRIPT_ADDRESS_BEGIN, SCRIPT_ADDRESS_END, next, script_native_dispatch);
+  script_vm_start_at(fighter, battle_data(), entry, next);
 }
 
 /* Script returns keep their own typed continuation; native addresses select
  * one implementation independently of actor/model identity. */
 static void resume_script_return(Fighter *fighter) {
   ScriptContinuation next = fighter->execution.script.then;
-  require(next.entry != 0, "Missing retail script return continuation");
+  require(next.entry != 0, "Missing script return continuation");
   fighter->execution.script.then = (ScriptContinuation){0};
   script_vm_enter(fighter, next.entry, next.finish);
 }
 
 /* Native callers that enter a second script after an original return keep
- * that continuation in VM ownership, independent of native frame completion. */
+ * that continuation in script ownership, independent of native frame completion. */
 void script_vm_enter_then(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish) {
-  require(after >= SCRIPT_ADDRESS_BEGIN && after < SCRIPT_ADDRESS_END && after % 4 == 0 && finish != NULL, "Invalid retail script return continuation");
+  require(after >= SCRIPT_ADDRESS_BEGIN && after < SCRIPT_ADDRESS_END && after % 4 == 0 && finish != NULL, "Invalid script return continuation");
   fighter->execution.script.then = (ScriptContinuation){after, finish};
   script_vm_enter(fighter, entry, resume_script_return);
 }
@@ -228,7 +219,7 @@ void script_vm_enter_then(Fighter *fighter, uint32_t entry, uint32_t after, Figh
 static void repeat_enter(Fighter *fighter, uint32_t entry) {
   ScriptVm *vm = &fighter->execution.script;
   if (vm->active) {
-    script_vm_start_at(fighter, vm->image, entry, vm->begin, vm->end, vm->finish, vm->dispatch);
+    script_vm_start_at(fighter, vm->image, entry, vm->finish);
   } else {
     script_vm_enter(fighter, entry, fighter_ready);
   }
@@ -249,10 +240,8 @@ void script_vm_repeat_next(Fighter *fighter) {
   repeat_enter(fighter, next);
 }
 
-void script_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, ScriptNativeFn native) {
-  script_vm_start_at(fighter, image, begin, begin, end, next, native);
-}
-
+/* One actor tick: advance engine-owned playback, blends and native waits;
+ * when nothing owns the tick, resume the script for its next operations. */
 void script_vm_step(Fighter *fighter) {
   ScriptVm *vm = &fighter->execution.script;
   if (!vm->active || g_battle.ticks < vm->wake) {
@@ -340,492 +329,32 @@ void script_vm_step(Fighter *fighter) {
       return;
     }
   }
-  for (int budget = 0; budget < 128; ++budget) {
-    vm->instruction = vm->pc;
-    uint32_t word = fetch(fighter);
-    unsigned opcode = word >> 24, arg = word & 255u;
-    switch (opcode) {
-      case 0x00:
-      case 0x0b:
-      case 0x15:
-      case 0x18:
-      case 0x21:
-      case 0x23:
-      case 0x57:
-      case 0x66:
-      case 0x67:
-        /* These loaded dispatch slots point directly back to4594b0. */
-        break;
-      case 0x0e:
-        bind_image((Fighter *)fighter_opponent(fighter), vm->image, fetch(fighter), 0);
-        break;
-      case 0x08:
-      case 0x01:
-      case 0x0c:
-      case 0x02:
-      case 0x09:
-      case 0x11:
-      case 0x0f: {
-        bind(fighter, fetch(fighter), opcode == 9 ? -1 : (opcode == 0x08 || opcode == 0x0f || opcode == 0x11 || opcode == 0x0c) ? (int)arg : 0);
-        if (opcode == 0x01 || opcode == 0x08) {
-          play(fighter, fighter_move(fighter)->last, true);
-        } else if (opcode == 0x0c) {
-          int current = fighter_sample(fighter);
-          play(fighter, current < fighter_move(fighter)->last ? current + 1 : current, false);
-        } else if (opcode == 0x02) {
-          play(fighter, (int)arg, false);
-        } else if (opcode == 9) {
-          play(fighter, 0, true);
-        }
-        break;
-      }
-      case 0x17: {
-        bind(fighter, fetch(fighter), 0);
-        int last = fighter_move(fighter)->last;
-        sample(fighter, last > 0 ? 1 : 0);
-        play(fighter, last, true);
-        vm->stride = 2;
-        vm->play_ticks = (last - fighter_sample(fighter) + 1) / 2 + 1;
-        break;
-      }
-      case 0x1a:
-        bind(fighter, fetch(fighter), 0);
-        interpolated_play(fighter, 200);
-        break;
-      case 0x1b:
-        vm->playback_limit = arg;
-        vm->returned_word = fetch(fighter);
-        finish(fighter);
-        return;
-      case 0x1c:
-        interpolated_play(fighter, arg);
-        break;
-      case 0x0a:
-        sample(fighter, fighter_sample(fighter) + (int)arg);
-        break;
-      case 0x13:
-      case 0x14:
-        /* The engine owns the sampled pose directly; native429970's pose
-         * submission does not require a separate retail render command. */
-        sample(fighter, fighter_move(fighter)->last);
-        break;
-      case 0x0d:
-        sample(fighter, fighter_sample(fighter) + 1);
-        break;
-      case 0x46:
-      case 0x68:
-      case 0x69: {
-        if (opcode != 0x69) {
-          optional_bind(fighter, word);
-        }
-        if (opcode == 0x68) {
-          sample(fighter, 0);
-        }
-        int last = fighter_move(fighter)->last;
-        int target = opcode == 0x46 && arg != 0 ? fighter_sample(fighter) + (int)arg : last;
-        slow_play(fighter, target > last ? last : target, opcode != 0x46 || arg == 0 || target > last);
-        break;
-      }
-      case 0x71: {
-        int source = fighter_move(fighter)->clip;
-        int pose = fighter_sample(fighter);
-        bind(fighter, fetch(fighter), 0);
-        if (fighter_move(fighter)->last < 1) {
-          vm_error(fighter, "blend needs sample one");
-        }
-        fighter->blend_clip = source;
-        fighter->blend_sample = pose;
-        fighter->blend_duration = 1;
-        fighter->blend_weight = 0x4000;
-        vm->blend_ticks = (Q16_ONE - 0x4000) / 0xa3d + 1;
-        vm->wake = g_battle.ticks + 1;
-        break;
-      }
-      case 0x06: {
-        int target = fighter_sample(fighter) - (int)(word & 0xffffffu);
-        play(fighter, target < 0 ? 0 : target, false);
-        break;
-      }
-      case 0x07:
-        play(fighter, 0, true);
-        break;
-      case 0x05:
-      case 0x47:
-      case 0x48: {
-        if (opcode == 0x47 || opcode == 0x48) {
-          optional_bind(fighter, word);
-        }
-        int target = opcode == 0x48 ? fighter_move(fighter)->last : opcode == 0x05 ? (int)(word & 0xffffffu) : (int)arg;
-        if (opcode == 0x48 || target > fighter_sample(fighter)) {
-          play(fighter, target, opcode == 0x48);
-        }
-        break;
-      }
-      case 0x4a:
-        if ((int)arg < fighter_sample(fighter)) {
-          play(fighter, (int)arg, false);
-        }
-        break;
-      case 0x4c:
-      case 0x4b:
-        play(fighter, (int)arg, true);
-        vm->paired = true;
-        break;
-      case 0x10:
-      case 0x04:
-      case 0x19:
-      case 0x4d: {
-        int current = fighter_sample(fighter);
-        int target = opcode == 0x4d ? (int)arg : current + (int)arg;
-        int last = fighter_move(fighter)->last;
-        if (opcode != 0x4d && target > last) {
-          target = last;
-        }
-        play(fighter, target, false);
-        vm->paired = opcode == 0x10;
-        if (opcode == 0x19 || opcode == 0x4d) {
-          vm->stride = 2;
-          vm->play_ticks = opcode == 0x19 ? ((int)arg + 1) / 2 : (target - current + 1) / 2;
-        } else {
-          vm->play_ticks = (int)arg;
-        }
-        break;
-      }
-      case 0x6a:
-      case 0x03:
-        play(fighter, fighter_move(fighter)->last, true);
-        break;
-      case 0x12:
-      case 0x1d:
-      case 0x49:
-        if (opcode == 0x49) {
-          optional_bind(fighter, word);
-        } else if ((word & 0xffff00u) != 0) {
-          vm_error(fighter, "unreviewed sample prefix");
-        }
-        sample(fighter, (int)arg);
-        break;
-      case 0x1f:
-        vm->selector = fetch(fighter);
-        break;
-      case 0x20:
-      case 0x27:
-      case 0x2b:
-        battle_sound(opcode == 0x20 ? SOUND_A : opcode == 0x27 ? SOUND_C : SOUND_B, (int)arg);
-        break;
-      case 0x4e:
-        /* Native helpers receive the active fighter explicitly. */
-        break;
-      case 0x22:
-        mk4_script_impact_callback(fighter);
-        break;
-      case 0x2e:
-        fighter->flags |= FF_NO_GUARD;
-        break;
-      case 0x61:
-        fighter->flags &= ~(unsigned)FF_BUSY;
-        break;
-      case 0x75:
-        mk4_script_guard_block_sound_26(fighter);
-        break;
-      case 0x76:
-        mk4_script_guard_block_sound_28(fighter);
-        break;
-      case 0x24:
-        mk4_script_attack_return(fighter);
-        break;
-      case 0x29:
-        fighter->action = ACTION_CODE_1006;
-        break;
-      case 0x2d:
-        fighter->action = ACTION_CODE_1007;
-        break;
-      case 0x3f:
-      case 0x30:
-        /* These roots entered from the controller; this is their explicit
-         * return continuation, not a general retail tagged-stack emulation. */
-        finish(fighter);
-        return;
-      case 0x32:
-      case 0x35: {
-        uint32_t address = fetch(fighter);
-        if (!vm->dispatch(fighter, address, opcode == 0x32 ? MK4_TAIL : MK4_CALL, 0)) {
-          vm_error(fighter, "unreviewed native binding");
-        }
-        break;
-      }
-      case 0x25:
-        mk4_script_indexed_sound(fighter, (int)arg);
-        break;
-      case 0x26:
-        mk4_script_context_sound(fighter, (int)arg);
-        break;
-      case 0x16:
-        mk4_script_scene_active(fighter);
-        break;
-      case 0x28:
-        mk4_script_impact(fighter);
-        break;
-      case 0x2a:
-        mk4_script_shake(fighter, (int)arg);
-        break;
-      case 0x2c:
-        mk4_script_draw_voice(fighter);
-        break;
-      case 0x4f:
-        mk4_script_context(fighter, (int)arg);
-        break;
-      case 0x5f:
-        fighter_set_speed(fighter, (q16)fetch(fighter));
-        break;
-      case 0x63:
-        mk4_script_damage(fighter, (q16)fetch(fighter));
-        break;
-      case 0x6b:
-        mk4_script_roster_sound(fighter, (int)arg);
-        break;
-      case 0x6d:
-        mk4_script_pair_adjust(fighter, (q16)fetch(fighter));
-        break;
-      case 0x6e:
-        mk4_script_disarm(fighter);
-        break;
-      case 0x62:
-        mk4_script_effect(fighter, (int)arg);
-        break;
-      case 0x40: {
-        unsigned type = fetch(fighter);
-        uint32_t address = fetch(fighter);
-        if (!vm->dispatch(fighter, address, MK4_SPAWN, type)) {
-          vm_error(fighter, "unreviewed task binding");
-        }
-        break;
-      }
-      case 0x56:
-      case 0x64:
-        if (!vm->dispatch(fighter, opcode == 0x56 ? MK4_NATIVE_CONTEXT : MK4_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, MK4_HANDLER, arg)) {
-          vm_error(fighter, "unreviewed scene/facing binding");
-        }
-        break;
-      case 0x41:
-      case 0x1e:
-        if (!vm->dispatch(fighter, opcode == 0x41 ? MK4_NATIVE_SCRIPT_REACTION_DISPATCH : MK4_NATIVE_DISPATCH_OPPONENT_REACTION, MK4_HANDLER, arg)) {
-          vm_error(fighter, "unreviewed reaction binding");
-        }
-        break;
-      case 0x43:
-      case 0x55:
-      case 0x36: {
-        uint32_t address = fetch(fighter);
-        uint32_t target = fetch(fighter);
-        uint64_t continuation = fighter->execution.generation;
-        if (!vm->dispatch(fighter, address, MK4_PREDICATE, opcode == 0x55 ? arg : 0)) {
-          vm_error(fighter, "unreviewed predicate binding");
-        }
-        if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
-          return;
-        }
-        if (vm->result & (opcode == 0x36 ? 4u : 1u)) {
-          jump(fighter, target);
-        }
-        break;
-      }
-      case 0x6f: {
-        uint32_t target = fetch(fighter);
-        bool outer = action_outer_edge(fighter);
-        vm->result = (vm->result & ~1u) | (outer ? 1u : 0u);
-        if (outer) {
-          jump(fighter, target);
-        }
-        break;
-      }
-      case 0x70: {
-        q16 limit = (q16)fetch(fighter);
-        if (g_battle.distance <= limit) {
-          uint64_t continuation = fighter->execution.generation;
-          if (!vm->dispatch(fighter, MK4_NATIVE_SCRIPT_REACTION_DISPATCH, MK4_HANDLER, arg)) {
-            vm_error(fighter, "unreviewed distance reaction binding");
-          }
-          if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
-            return;
-          }
-          vm->result |= 1u;
-        } else {
-          vm->result &= ~1u;
-        }
-        break;
-      }
-      case 0x3d: {
-        uint32_t target = fetch(fighter);
-        if (fighter->contact == CONTACT_BLOCK) {
-          jump(fighter, target);
-        }
-        break;
-      }
-      case 0x50: {
-        uint32_t target = fetch(fighter);
-        uint64_t continuation = fighter->execution.generation;
-        contact(fighter, MK4_DATA_CONTACT_QUERY_B_TABLE, arg);
-        if (vm->active && fighter->execution.generation == continuation && (vm->result & 1u)) {
-          jump(fighter, target);
-        }
-        break;
-      }
-      case 0x42: {
-        uint32_t target = fetch(fighter);
-        if (vm->result & 1u) {
-          jump(fighter, target);
-        }
-        break;
-      }
-      case 0x38: {
-        uint32_t address = fetch(fighter);
-        if (!vm->dispatch(fighter, address, MK4_PHYSICS, 0)) {
-          vm_error(fighter, "unreviewed physics binding");
-        }
-        break;
-      }
-      case 0x39:
-        fighter->body.physics = NULL;
-        break;
-      case 0x65: {
-        q16 speed = (q16)fetch(fighter);
-        q16 up = (q16)fetch(fighter);
-        q16 gravity = (q16)fetch(fighter);
-        action_directional_motion(fighter, speed, up, gravity);
-        break;
-      }
-      case 0x72:
-        action_edge_push(fighter);
-        break;
-      case 0x5d: {
-        q16 horizontal = (q16)fetch(fighter);
-        q16 vertical = (q16)fetch(fighter);
-        fighter->body.pos[AXIS_X] += q16_mul(fighter_axis(fighter, AXIS_X), horizontal);
-        fighter->body.pos[AXIS_Z] += q16_mul(fighter_axis(fighter, AXIS_Z), horizontal);
-        fighter->body.pos[AXIS_Y] += vertical;
-        break;
-      }
-      case 0x74:
-        battle_sound(SOUND_TOKEN, 0x627);
-        break;
-      case 0x58:
-        fighter_set_speed(fighter, (q16)fetch(fighter));
-        fighter->body.vel[AXIS_Y] = (q16)fetch(fighter);
-        fighter->body.gravity = (q16)fetch(fighter);
-        break;
-      case 0x59: {
-        int left = (int32_t)fetch(fighter);
-        int right = (int32_t)fetch(fighter);
-        int up = (int32_t)fetch(fighter);
-        int gravity = (int32_t)fetch(fighter);
-        mk4_script_reaction_motion(fighter, left, right, up, gravity);
-        break;
-      }
-      case 0x5c:
-        fighter->body.gravity = (q16)fetch(fighter);
-        break;
-      case 0x6c: {
-        int speed = (int32_t)fetch(fighter);
-        mk4_script_schedule_motion(fighter, speed, (int)(word & 0xfffu), (int)((word >> 12) & 0xfffu));
-        break;
-      }
-      case 0x5a:
-        fighter_set_speed(fighter, (q16)(0u - fetch(fighter)));
-        break;
-      case 0x5b:
-        mk4_script_stop(fighter);
-        break;
-      case 0x60:
-        vm->wait_ground = fighter_airborne(fighter);
-        if (vm->wait_ground) {
-          return;
-        }
-        break;
-      case 0x73:
-        /* Native45c070 preserves VM scratch and selects a sampled token
-         * from the low bit of the shared retail random word. */
-        battle_sound(SOUND_TOKEN, battle_random(0x10000) & 1 ? 0x66d : 0x64a);
-        break;
-      case 0x3e:
-        script_vm_wait_native(fighter, 0, NULL);
-        return;
-      case 0x33:
-        jump(fighter, fetch(fighter));
-        break;
-      case 0x3c: {
-        /* mk4decomp MoveListCursorCluster: task character selects one of
-         * sixteen packed script pointers; Kitana/Noob reuse Sonya/Reiko. */
-        unsigned character = (unsigned)fighter->roster;
-        character = character == 16 ? 2 : character == 17 ? 7 : character;
-        uint32_t packed = 0;
-        for (unsigned index = 0; index < 16; ++index) {
-          uint32_t candidate = fetch(fighter);
-          if (index == character) {
-            packed = candidate;
-          }
-        }
-        jump(fighter, packed);
-        break;
-      }
-      case 0x2f:
-      case 0x44:
-      case 0x45: {
-        uint32_t packed = fetch(fighter);
-        if (opcode == 0x2f ? fighter_airborne(fighter) : opcode == 0x44 ? (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0 : fighter_fast_start(fighter)) {
-          jump(fighter, packed);
-        }
-        break;
-      }
-      case 0x34:
-        vm->wake = g_battle.ticks + (word & 0xffffffu);
-        break;
-      case 0x54:
-      case 0x37:
-        vm->wake = g_battle.ticks + ((vm->result & 1u) ? (word >> 12) & 0xfffu : word & 0xfffu);
-        break;
-      case 0x3a:
-        if (arg == 0) {
-          vm_error(fighter, "zero loop counter");
-        }
-        vm->loop_count = arg;
-        break;
-      case 0x3b: {
-        if (vm->loop_count == 0) {
-          vm_error(fighter, "loop without a live counter");
-        }
-        if (--vm->loop_count != 0) {
-          uint32_t marker = vm->instruction;
-          do {
-            if (marker == vm->begin) {
-              vm_error(fighter, "loop marker outside script");
-            }
-            marker -= 4;
-          } while (mk4_program_word(vm->image, marker) >> 24 != 0x3a);
-          vm->pc = marker + 4;
-        }
-        break;
-      }
-      case 0x51:
-      case 0x52:
-      case 0x53:
-      case 0x5e:
-        contact(fighter,
-            opcode == 0x51   ? MK4_DATA_CONTACT_QUERY_B_TABLE
-            : opcode == 0x52 ? MK4_DATA_CONTACT_QUERY_A_TABLE
-            : opcode == 0x53 ? MK4_DATA_CONTACT_QUERY_D_TABLE
-                             : MK4_WEAPON_ATTACK_TABLE,
-            arg);
-        break;
-      default:
-        vm_error(fighter, "unsupported opcode");
-    }
-    if (!vm->active || vm->parked || fighter->pending != NULL) {
-      return;
-    }
-    if (vm->play_ticks > 0 || vm->blend_ticks > 0 || vm->interpolated_play || g_battle.ticks < vm->wake) {
-      return;
-    }
-  }
-  vm_error(fighter, "instruction budget exhausted without yielding");
+  script_lua_step(fighter);
+}
+
+/* Playback primitives for the Lua operations; they keep the same bounds
+ * checks and actor-owned state as the engine-side playback above. */
+void script_vm_play(Fighter *fighter, int target, bool inclusive) {
+  play(fighter, target, inclusive);
+}
+
+void script_vm_sample(Fighter *fighter, int pose) {
+  sample(fighter, pose);
+}
+
+void script_vm_contact(Fighter *fighter, uint32_t table, unsigned selector) {
+  contact(fighter, table, selector);
+}
+
+void script_vm_slow_play(Fighter *fighter, int target, bool inclusive) {
+  slow_play(fighter, target, inclusive);
+}
+
+void script_vm_interpolated_play(Fighter *fighter, unsigned limit) {
+  interpolated_play(fighter, limit);
+}
+
+void script_vm_blend(Fighter *fighter, uint32_t descriptor) {
+  require(descriptor % 4 == 0, "Unaligned animation descriptor");
+  blend_to(fighter, descriptor / 4);
 }

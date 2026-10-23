@@ -2,30 +2,41 @@ CC = cc
 CFLAGS = -O2 -std=c11 -Wall -Wextra -Wpedantic
 CXX = c++
 CXXFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic
-CPPFLAGS = -Icommon -Ibuild
+LUA_DIR = third_party/lua-5.4.7
+CPPFLAGS = -Icommon -Ibuild -I$(LUA_DIR)
 LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
 export CLANG_FORMAT
 FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
-ASSETS = common/mk4_program.c common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
+ASSETS = common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h) build/mk4_linked.h
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
+# Lua 5.4 runs the actor scripts; every binary that runs a match links it.
+LUA_SOURCES = $(wildcard $(LUA_DIR)/*.c)
+LUA_OBJECTS = $(patsubst $(LUA_DIR)/%.c,build/lua/%.o,$(LUA_SOURCES))
+LUA_LIB = build/liblua.a
 
 SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools"); from character_catalog import CHARACTERS; print(" ".join(CHARACTERS))')
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: input-test retail-vm-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: lua-test input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts: build/mk4.data build/mk4_linked.h
+scripts: build/mk4.data build/mk4_linked.h build/mk4_symbols.lua
 
+# The script section lists one placeholder word per Lua script function.
+LUA_SCRIPTS = $(wildcard scripts/lua/*.lua)
+scripts/mk4/program.asm: tools/mk4_script_labels.py scripts/lua/program.lua $(LUA_SCRIPTS)
+	python3 tools/mk4_script_labels.py scripts/lua/program.lua $@
 SCRIPT_SOURCES = $(shell find scripts/mk4 -type f \( -name '*.asm' -o -name '*.inc' \))
-build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(SCRIPT_SOURCES)
+build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(SCRIPT_SOURCES) scripts/mk4/program.asm
 	python3 tools/mk4_link.py scripts/mk4/project.asm $@ build/mk4_linked.h
+build/mk4_symbols.lua: tools/mk4_lua_symbols.py tools/mk4_link.py tools/mk4_asm.py $(SCRIPT_SOURCES) scripts/mk4/program.asm
+	python3 tools/mk4_lua_symbols.py scripts/mk4/project.asm $@
 build/mk4_linked.h: build/mk4.data
 	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data $@
 
@@ -48,6 +59,11 @@ format:
 format-check:
 	$(CLANG_FORMAT) --style=file --dry-run --Werror $(FORMAT_FILES)
 
+build/lua/%.o: $(LUA_DIR)/%.c $(wildcard $(LUA_DIR)/*.h)
+	mkdir -p build/lua
+	$(CC) -O2 -std=c99 -I$(LUA_DIR) -c $< -o $@
+$(LUA_LIB): $(LUA_OBJECTS)
+	ar rcs $@ $^
 build/%.o: common/%.c $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -69,30 +85,31 @@ test: fsys build/test-package
 	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game build/mk4.data build/mk4_linked.h build/mk4.scripts $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-retail-vm
+	rm -f fsys mk4-viewer mk4-game build/mk4.data build/mk4_linked.h build/mk4.scripts $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-script-runtime build/test-lua-vm build/liblua.a build/mk4_symbols.lua
+	rm -rf build/lua
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
 NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c)
-ROSTER_SOURCES = $(wildcard game/data/*.c game/script/*.c game/runtime/*.c) game/roster.c game/moves.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
+ROSTER_SOURCES = $(wildcard game/data/*.c game/script/*.c game/runtime/*.c game/lua/*.c) game/roster.c game/moves.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
 GAME_HEADERS = $(wildcard game/*.h game/*/*.h game/*/*.inc)
-build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
 viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
 GAME_SOURCES = game/main.c game/menu.c game/input.c game/sdl_input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c
-mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
+mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS) $(LUA_LIB)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) $(LUA_LIB) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(ASSETS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
 build/test-input: tests/test_input.c game/input.c game/sdl_input.c game/input.h game/sdl_input.h game/host_commands.h
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_input.c game/input.c game/sdl_input.c -o $@ $$($(SDL2_CONFIG) --libs)
@@ -101,18 +118,23 @@ input-test: build/test-input
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
-build/test-frames: tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+build/test-frames: tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
-build/test-retail-vm: tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
+build/test-script-runtime: tests/test_script_runtime.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
-retail-vm-test: build/test-retail-vm
-	./build/test-retail-vm
-	python3 tests/test_retail_vm.py
-build/test-menu: tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_script_runtime.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
+script-runtime-test: build/test-script-runtime scripts
+	./build/test-script-runtime
+	python3 tests/test_script_runtime.py
+build/test-lua-vm: tests/test_lua_vm.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_lua_vm.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
+lua-test: build/test-lua-vm scripts
+	./build/test-lua-vm
+build/test-menu: tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS) $(LUA_LIB)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(RENDER) $(LUA_LIB) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 game-test: input-test mk4-game build/test-battle build/test-shadows build/test-frames build/test-menu
 	./build/test-menu
 	./build/test-battle
@@ -120,7 +142,7 @@ game-test: input-test mk4-game build/test-battle build/test-shadows build/test-f
 	./build/test-frames
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
-check: retail-vm-test format-check scripts-check native-frames-check test viewer-test game-test
+check: script-runtime-test format-check scripts-check native-frames-check test viewer-test game-test lua-test
 	python3 tests/test_apps.py
 	python3 tests/test_retail_moves.py
 	python3 tests/test_disassembly.py

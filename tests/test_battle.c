@@ -1,5 +1,5 @@
 #include "game.h"
-#include "mk4_program.h"
+#include "lua/script_lua.h"
 
 static Mk4Image image;
 #include "native/actions.h"
@@ -86,6 +86,7 @@ static void check_independent_scene_actor_lifetime(void) {
  * authored move timing/damage is covered by the source scripts, not matrices. */
 int main(void) {
   image = mk4_image_load("build/mk4.data");
+  script_lua_open("build/mk4_symbols.lua", "scripts/lua/program.lua");
   battle_init(&image, 0, 4);
   check_roster();
   check_independent_scene_actor_lifetime();

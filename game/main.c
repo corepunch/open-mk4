@@ -1,5 +1,5 @@
 #include "game.h"
-#include "mk4_program.h"
+#include "lua/script_lua.h"
 #include "draw.h"
 #include "audio.h"
 #include "sdl_app.h"
@@ -14,7 +14,8 @@
 static void usage(void) {
   puts("MK4 native battle game\n"
        "  --archive PATH     default MK4/FILESYS.DAT\n"
-       "  --data PATH        default build/mk4.data\n"
+       "  --data PATH        default build/mk4.data (mk4_symbols.lua beside it)\n"
+       "  --scripts PATH     Lua script program, default scripts/lua/program.lua\n"
        "  --p1 N --p2 N      roster slots 0..17 (default Scorpion / Sub Zero)\n"
        "  --arena N          arena 0..10 (default 8, The Prison)\n"
        "  --two-player       local controls for player two\n"
@@ -193,6 +194,7 @@ static void start_menu_match(const FrontendMenu *menu, const Assets *assets, int
 int main(int argc, char **argv) {
   const char *archive = "MK4/FILESYS.DAT";
   const char *data = "build/mk4.data";
+  const char *scripts = "scripts/lua/program.lua";
   const char *shot = NULL;
   bool headless = false, demo = false, cpu = true, selftest = false, list = false;
   bool menu_requested = false, select_requested = false, explicit_match = false;
@@ -216,6 +218,8 @@ int main(int argc, char **argv) {
       archive = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--data"))
       data = cli_value(argc, argv, &i);
+    else if (!strcmp(arg, "--scripts"))
+      scripts = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--screenshot"))
       shot = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--p1")) {
@@ -259,6 +263,7 @@ int main(int argc, char **argv) {
 
   assets_load(&assets, archive, data);
   assets_load_battle(&assets, archive);
+  script_lua_open_beside(data, scripts);
   if (list) {
     for (size_t i = 0; i < assets.characters.count; ++i)
       printf("Fighter %2zu: %s\n", i, assets.characters.data[i].name);
@@ -393,6 +398,7 @@ int main(int argc, char **argv) {
   game_audio_free(&audio);
   sdl_app_free(&app);
   canvas_free(&cv);
+  script_lua_close();
   assets_free(&assets);
   return 0;
 }

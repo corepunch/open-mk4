@@ -48,9 +48,10 @@ continuing; give the user a concise explanation of any unavoidable scope growth.
 
 ## Implementation language
 
-Game, engine, viewer and native regression tests use C11. Follow the procedural
-state/context boundaries and evidence rules in `ARCHITECTURE.md`. Keep SDL out
-of combat simulation. The standalone `fsys.cpp` development tool may remain
+Game, engine, viewer and native regression tests use C11. Fighter scripts are
+Lua 5.4 (`scripts/lua/`, vendored interpreter in `third_party/`). Follow the
+procedural state/context boundaries and evidence rules in `ARCHITECTURE.md`.
+Keep SDL out of combat simulation. The standalone `fsys.cpp` development tool may remain
 C++17; it must use the shared C archive validator and filename hash.
 
 ## Code formatting
@@ -138,20 +139,30 @@ post-processing.
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
 end-to-end research, shared-runtime implementation, validation and commit procedure.
 
-The target is one shared retail runtime for every fighter, with retail-loaded
-roster, input, action, stance and CPU tables. Do not add per-character C
-architecture or hand-authored fighter configuration. Retail native routines
-must have one shared implementation rather than copied fighter variants.
-Do not add fighter directories or coverage manifests; native services live in
-shared capability modules. See `docs/research/shared-retail-runtime.md`.
+The target is one shared runtime for every fighter, with retail-loaded roster,
+input, action, stance and CPU tables. Do not add per-character C architecture
+or hand-authored fighter configuration. Retail native routines must have one
+shared implementation rather than copied fighter variants. Do not add fighter
+directories or coverage manifests; native services live in shared capability
+modules. See `docs/research/shared-retail-runtime.md`.
 
-All 18 fighters run original retail words through the shared C11 interpreter.
-Do not translate branches, waits, loops or animation commands into generated C,
-frame rows or handwritten move logic.
-Extend a missing opcode once and reuse the existing native engine helpers for
-retail native calls. Script data must remain the source of script behavior.
-Generated script/frame C and per-fighter C/header/include modules are forbidden.
-Native services live once in shared capability modules under game/native/.
+All 18 fighters run Lua scripts from `scripts/lua/` through the embedded Lua
+5.4 runtime in `game/lua/script_lua.c`; `game/script/vm.c` owns playback,
+waits, contact results, pairing and native continuations. The scripts were
+translated mechanically from the original retail words and proved identical
+to them tick for tick before the wordcode interpreter was removed
+(`docs/research/lua-vm.md`). Keep script behaviour in the Lua scripts: do not
+translate waits, loops, branches or animation commands into C, frame rows or
+handwritten move logic, and do not add per-script C paths. A new engine need
+is a new shared operation in `script_lua.c` (documented in
+`scripts/lua/README.md`), implemented once. Native services live once in
+shared capability modules under `game/native/`. Generated per-fighter C,
+header or include modules are forbidden.
+
+Data tables stay in `scripts/mk4/tables/`. Every Lua script function keeps a
+linked label (`scripts/mk4/program.asm` is generated from the Lua modules), so
+tables, command lists, reaction tables and natives refer to scripts by linked
+address; `build/mk4_symbols.lua` maps those addresses back to the functions.
 
 Start research with `tools/compile_retail.py --character NAME --inventory` and
 `--audit --summary`. Use bounded `tools/disassemble_retail.py --character NAME
@@ -163,19 +174,20 @@ for unresolved helpers. See `docs/research/retail-vm.md` and
 `docs/script-decoder.md`.
 
 Keep native evidence beside shared implementations and in typed research bindings,
-not per-fighter coverage manifests. All catalogued roots must remain interpreted.
-Run `make scripts-check` and the strict `--require-implemented` audit. Neither
-runtime registration nor reviewed-root coverage alone proves native gameplay
-parity. Trust retail script control flow and data. Heavily rely on mk4decomp interpreter/handler sources and matching assembly,
-checking local EXE addresses rather than copying upstream VAs. Test only the
-shared runtime we implement, including opcode and native/lifetime contracts;
-reuse existing integration coverage instead of adding per-move timing/damage matrices.
-Run focused checks during migration and the full suite at meaningful shared
-runtime boundaries, not repeatedly for each move.
+not per-fighter coverage manifests. Run `make scripts-check` and the strict
+`--require-implemented` audit. Neither runtime registration nor reviewed-root
+coverage alone proves native gameplay parity. Trust the retail-derived script
+control flow and data. Heavily rely on mk4decomp interpreter/handler sources and
+matching assembly, checking local EXE addresses rather than copying upstream VAs.
+Test only the shared runtime we implement, including operation and
+native/lifetime contracts; reuse existing integration coverage instead of adding
+per-move timing/damage matrices. `make lua-test` runs every scenario family
+twice and requires identical simulation state each tick; run it at meaningful
+shared runtime boundaries, not repeatedly for each move.
 
 Preserve move timing, command gates, branches, damage and balance intent while
 using our engine's own implementation and state boundaries. Binary identity,
 exact retail scheduler emulation and per-tick trace identity are not goals.
 Do not build new retail-execution harnesses or record large JSON traces for
-character work. Add engine features only when retail execution needs them,
+character work. Add engine features only when script execution needs them,
 and keep new tests focused on our shared runtime and native integration.

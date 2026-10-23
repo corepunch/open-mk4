@@ -2049,3 +2049,14 @@ The existing SDL SDK-version linker warning remains. The original revision is
 preserved at archive/pre-retail-vm-d7b69ba; all verified steps are committed on
 main. This completes the architecture migration, without claiming exact retail
 scheduler, native presentation or per-tick gameplay parity.
+
+## Lua scripts replace the wordcode interpreter
+
+The 11 script modules were translated mechanically into Lua (`scripts/lua/`),
+the runtime in `game/lua/script_lua.c` registers an operation for every
+non-no-op opcode, and a tick-equivalence harness showed wordcode and Lua
+identical over 16,134 scenarios and 2.65 million ticks. The word interpreter,
+the assembly code modules and the package instruction bitmap are removed;
+`scripts/mk4/program.asm` is now generated from the Lua modules and holds
+one label per script. `make lua-test` keeps the harness as a determinism and
+coverage check. Details and remaining gaps: [lua-vm.md](lua-vm.md).

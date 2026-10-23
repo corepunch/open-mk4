@@ -1,6 +1,6 @@
 #include "menu.h"
 #include "game.h"
-#include "mk4_program.h"
+#include "lua/script_lua.h"
 #include "draw.h"
 #include <math.h>
 #include <string.h>
@@ -9,6 +9,7 @@
 int main(void) {
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "build/mk4.data");
+  script_lua_open("build/mk4_symbols.lua", "scripts/lua/program.lua");
   battle_init(&assets.image, 0, 4);
   assets_load_battle(&assets, "MK4/FILESYS.DAT");
   FrontendMenu menu;

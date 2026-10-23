@@ -99,7 +99,7 @@ The package tool keeps its stable-snapshot watcher and extraction code separate.
 | `fsys.cpp` | Package listing, extraction, filename recovery, polling |
 | `game/game.h`, `game/roster.c`, `game/battle.c` | Roster state tables and SDL-independent combat simulation |
 | `game/input.c`, `game/sdl_input.c` | Tick input buffering and host device mapping |
-| `game/data/`, `game/script/`, `game/runtime/`, `game/native/` | MK4 tables, wordcode/native bindings, actor execution and shared gameplay capabilities |
+| `game/data/`, `game/script/`, `game/lua/`, `game/runtime/`, `game/native/` | MK4 tables, script execution state and native bindings, the Lua script runtime, actor execution and shared gameplay capabilities |
 | `game/draw.c`, `game/main.c` | Battle presentation and game loop |
 
 `make` builds all three tools. `make fsys` builds only the dependency-free
@@ -134,13 +134,15 @@ or system font. Goro uses his
 own 21-channel animation bank. Other characters use compatible original action
 clips. Resources load from the read-only archive and the linked project data package.
 
-All 1,133 catalogued fighter script roots across 18 roster slots execute MK4
-wordcode assembled from checked-in [script sources](scripts/README.md).
-Edit `scripts/mk4/program.asm`, run `make scripts` (or `make game`), then launch
-`./mk4-game`. Tables live in `scripts/mk4/tables.asm`; the linker resolves
-labels after edits and rebuilds C callers when offsets change. Neither build nor
-game/viewer startup needs the EXE. Use `--data PATH` to select a compatible
-linked package. The original archive still supplies binary asset payloads.
+All 1,133 catalogued fighter script roots across 18 roster slots run as Lua
+scripts from [`scripts/lua/`](scripts/lua/README.md) on the embedded Lua 5.4
+runtime. Edit a script module, run `make scripts` (or `make game`), then launch
+`./mk4-game`. Tables live in `scripts/mk4/tables.asm` ([source
+workflow](scripts/README.md)); the linker resolves labels after edits and
+rebuilds C callers when offsets change. Neither build nor game/viewer startup
+needs the EXE. Use `--data PATH` to select a compatible linked package (its
+`mk4_symbols.lua` sits beside it) and `--scripts PATH` for another script
+program. The original archive still supplies binary asset payloads.
 
 Roster, command/action, CPU, native throw/combo, stance, reaction and scene
 selection tables load from the linked source package. Shared C capabilities implement native

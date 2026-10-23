@@ -1,16 +1,5 @@
 ; C interface: left-hand export names are stable; right-hand labels are editable source names.
-; Operand aliases preserve embedded entry points; changing those instruction layouts needs care.
-.alias lp_throw_script_select_roster_1_operand_16 lp_throw_script_select_roster_1 + 64
-.alias high_kick_sonya high_kick + 64
-.alias crouch_high_kick_sonya crouch_high_kick + 64
-.alias air_straight_kick_startup_scorpion air_straight_kick_startup + 64
-.alias air_diagonal_low_kick_startup_select_roster_1_operand_16 air_diagonal_low_kick_startup_select_roster_1 + 64
-.alias air_diagonal_high_kick_startup_select_roster_1_operand_16 air_diagonal_high_kick_startup_select_roster_1 + 64
-.alias sweep_raiden sweep + 64
-.alias roundhouse_scorpion roundhouse + 64
-.alias low_kick_clip_67_operand_1 low_kick_clip_67 + 4
-.alias reaction_clip_129_wait_landing_tail_1_operand_1 reaction_clip_129_wait_landing_tail_1 + 4
-.alias airborne_thaw_script_operand_1 airborne_thaw_script + 4
+; Operand aliases are gone with the wordcode; script labels come from scripts/lua through program.asm.
 .export MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SWORD weapon_descriptor_sword
 .export MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SCEPTER weapon_descriptor_scepter
 .export MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_DRAGON_SWORD weapon_descriptor_dragon_sword
@@ -889,7 +878,6 @@
 .export MK4_FIXTURE_REF_190712 animation_clip_586_frame_count
 .export MK4_FIXTURE_REF_190708 animation_clip_586
 .export MK4_FIXTURE_REF_112352 reaction_fall
-.export MK4_FIXTURE_REF_113980 airborne_thaw_script_operand_1
 .export MK4_FIXTURE_REF_113976 airborne_thaw_script
 .export MK4_FIXTURE_REF_115456 stage_victim
 .export MK4_FIXTURE_REF_97176 fire_script_recovery
@@ -904,7 +892,6 @@
 .export MK4_FIXTURE_REF_97680 low_kick
 .export MK4_FIXTURE_REF_102408 action_table_8
 .export MK4_FIXTURE_REF_98808 air_straight_kick_startup
-.export MK4_FIXTURE_REF_101644 low_kick_clip_67_operand_1
 .export MK4_FIXTURE_REF_99056 jab
 .export MK4_FIXTURE_REF_99988 unresolved_dispatch_and_motion_017
 .export MK4_FIXTURE_REF_99552 air_low_kick_contact_hold

@@ -1,3 +1,8 @@
+> Historical: these notes document the wordcode interpreter that ran the
+> original script words. It was replaced by Lua scripts translated from those
+> words; see [lua-vm.md](lua-vm.md). The native evidence and addresses below
+> remain valid for the shared services.
+
 # Direct retail script prototype
 
 Safety checkpoint: `archive/pre-retail-vm-d7b69ba` preserves main before this work.

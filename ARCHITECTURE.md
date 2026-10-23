@@ -9,6 +9,8 @@ C-style engine; it does not prove that every original source file was C, or
 establish the language of the separate arcade release. The reference also uses
 x86 assembly where needed for byte matching. Our portable code does not need
 those compiler-specific matching tricks. Use C11 with a current C compiler.
+Fighter scripts are Lua 5.4 source run by the vendored interpreter; the
+simulation that hosts them stays C.
 
 Evidence in the pinned reference:
 
@@ -69,7 +71,7 @@ all original translation units were C.
 | FSYS filename hash and sorted archive index | Shared package module | Already verified against supplied archive and hash routines. |
 | GEO loading, executable rig records, AP0/AP1 decoding | Shared asset module | Preserve format checks, rig channel lookup, root C/descendant B transform setup and cosine table interpretation. |
 | Pose hierarchy, matrix composition, renderer dispatch | Shared pose math and software renderer | Pose formulas have original x86 fixtures. SDL presentation and modern rendering are portable replacements. |
-| Audio, fighter scripts, weapons, projectiles and arena callbacks | Shared retail VM and native engine services | Original script words and loaded tables select behavior; typed C services implement native boundaries once. Portable presentation and scheduler policies remain engine adaptations. |
+| Audio, fighter scripts, weapons, projectiles and arena callbacks | Lua actor scripts and native engine services | Scripts translated from the original words and loaded tables select behavior; typed C services implement native boundaries once. Portable presentation and scheduler policies remain engine adaptations. |
 
 Source paths for retail flow:
 
@@ -130,7 +132,8 @@ The runtime has four concrete boundaries:
 | Module | Responsibility |
 | --- | --- |
 | `game/data/` | Validate and decode MK4 table formats and expose the bound match data. |
-| `game/script/` | Execute MK4 instructions and resolve typed native IDs to C services. |
+| `game/script/` | Own actor script execution state and resolve typed native IDs to C services. |
+| `game/lua/` | Run the Lua actor scripts and expose the script operations. |
 | `game/runtime/` | Own actor execution lifetime and native frame playback. |
 | `game/native/` | Implement shared gameplay capabilities and native action entries. |
 
@@ -138,45 +141,59 @@ The runtime has four concrete boundaries:
 resolve host callbacks. Native IDs are included only by modules that use them,
 rather than exposed through every simulation structure.
 
-All 18 fighters run MK4 wordcode linked from `scripts/mk4/program.asm`
-through `game/script/vm.c`. `scripts/mk4/tables.asm` supplies the other image
-records, including roster/input/action/CPU/weapon/reaction tables, animation
-metadata, rigs, sound selectors and scene data. `make scripts` links them into
-one `mk4.data` package without reading the EXE. The generated C header resolves
-native callers to the same labels; a layout fingerprint rejects stale packages.
-No script address is pinned to its original location. Stable native IDs select
-C services and remain distinct from linked data offsets.
-The two assembly files are link-order indexes: shared script modules live in
-`scripts/mk4/code/` and record groups in `scripts/mk4/tables/`. Source labels name
-entries, record roles and resource files; unclassified blocks are explicitly
-`unresolved_*`. Native C export names remain a separate stable interface.
+All 18 fighters run Lua 5.4 scripts from `scripts/lua/` (one module per
+retail script group, `program.lua` listing them) through `game/lua/script_lua.c`.
+The host opens one Lua state next to the data package and closes it at exit;
+each actor script is one coroutine. `game/script/vm.c` keeps the engine-owned
+state: playback plan, waits, blends, contact results, pairing, native parking
+and typed continuations. Its per-tick step advances that state and resumes
+the coroutine only when nothing owns the tick, so operations that start
+playback or wait suspend the script exactly where the retail words yielded.
+The scripts were translated mechanically from the retail words and compared
+tick for tick with the wordcode interpreter before it was removed; see
+[docs/research/lua-vm.md](docs/research/lua-vm.md).
+
+`scripts/mk4/tables.asm` supplies the data records: roster/input/action/CPU/
+weapon/reaction tables, animation metadata, rigs, sound selectors and scene
+data. `scripts/mk4/program.asm` is generated from the Lua modules and holds
+one placeholder word per script function, so tables, command lists, reaction
+tables and native services still refer to a script by its linked address.
+`make scripts` links both into one `mk4.data` package and writes
+`build/mk4_symbols.lua`, which the runtime uses to map addresses back to
+functions; the generated C header resolves native callers to the same labels,
+and a layout fingerprint rejects stale packages and symbol maps. Stable native
+IDs select C services and remain distinct from linked data offsets. Source
+labels name entries, record roles and resource files; unclassified blocks are
+explicitly `unresolved_*`. Native C export names remain a separate stable
+interface. See [source workflow](scripts/README.md) and the
+[script reference](scripts/lua/README.md).
 
 Original fixup records identify packed references at import; decoded asset
 structures identify raw pointers. Ordinary numeric fields remain unchanged.
-Instruction membership is explicit and accidental fallthrough between separate
-blocks encounters a non-executable guard. See [source workflow](scripts/README.md).
-Selection remaps follow each original table's own native path;
-model identity is not a substitute for script or table selection.
-`game/roster.c` exposes runtime-derived compatibility views for engine/UI
-callers, not handwritten fighter definitions. Unstarted attack states have
-no invented animation or balance values.
+Selection remaps follow each original table's own native path; model identity
+is not a substitute for script or table selection. `game/roster.c` exposes
+runtime-derived compatibility views for engine/UI callers, not handwritten
+fighter definitions. Unstarted attack states have no invented animation or
+balance values.
 
-Original words own script branches, waits, loops and animation commands.
-There is no script-to-C compiler, generated script/frame output, per-fighter C
-folder or per-fighter script registration or coverage manifest. Research evidence
-lives in shared source comments and typed tooling bindings. Script entries are checked image addresses,
-not host function pointers. The VM implements all 118 non-null opcode slots
-in the supplied handler table; the null slot remains invalid.
+Lua scripts own script branches, waits, loops and animation commands. There is
+no script-to-C compiler, generated script/frame output, per-fighter C folder or
+per-fighter script registration or coverage manifest. Research evidence lives
+in shared source comments and typed tooling bindings. Script entries are
+checked linked addresses, not host function pointers. The runtime registers an
+operation for every non-no-op retail opcode; scripts run in a sandbox without
+host randomness, files or code loading, and a script that fails to yield
+within its operation and instruction budgets is reported.
 
-Each Fighter owns one `ActionExecution`: VM state, native playback, typed
+Each Fighter owns one `ActionExecution`: script state, native playback, typed
 returns, a generation counter and one cleanup callback.
 `game/runtime/execution.c` provides the shared actor step, phase reset and
 action cancellation boundary. Phase changes retain cleanup; cancellation
-detaches and invokes it once. The unused `MoveSequence` path is removed.
-The shared 60 Hz actor pump advances that state on one thread. There are no
-coroutine stacks, worker threads or raw retail task-stack emulation. Typed
-script returns remain distinct from typed native completions. Starting a new
-phase or interrupting one invalidates stale callbacks.
+detaches and invokes it once. The shared 60 Hz actor pump advances that state
+on one thread; coroutines are resumed from it and never from worker threads.
+Typed script returns remain distinct from typed native completions. Starting a
+new phase or interrupting one invalidates stale callbacks and abandons the
+coroutine; one coroutine per actor stays reachable, so the heap stays flat.
 The simulation captures animation history after each tick (at the existing
 30 Hz animation sampling cadence), including early phase exits and resets.
 `game/draw.h` takes an explicit `const Battle *` and borrowed assets. Drawing
@@ -236,12 +253,13 @@ identity are not goals. Camera, particles, rendering and host policy use our
 engine's portable boundaries.
 
 The strict audit covers 1,133 catalogued roots across all 18 roster slots,
-loaded dispatch data, opcode support, typed native roles and source reachability.
+loaded dispatch data, Lua operations for every original opcode, typed native
+roles and source reachability.
 Uncatalogued programs need the same evidence discipline when encountered;
 the audit does not claim exhaustive native semantic verification.
 
-Tests focus on what we implement: interpreter/control flow, malformed data,
-native ABI roles, script/native handoffs, loaded-table mutation, interruption,
+Tests focus on what we implement: script runtime and operations, malformed
+data, native ABI roles, script/native handoffs, loaded-table mutation, interruption,
 cleanup, engine lifecycle/body constraints, asset/pose/audio decoding and
 rendering. Trust authored retail character logic; do not restore per-fighter
 timing, damage or balance matrices. `make check` includes strict audits, shared

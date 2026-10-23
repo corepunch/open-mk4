@@ -20,6 +20,19 @@ from retail_query import CONTACT_TABLES
 from scorpion_moves import commands, script_program, attack_record, attack_record_at, DISPATCH
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _lua_opcodes():
+    """Opcodes with a registered Lua operation, plus the no-op slots."""
+    from mk4_asm_to_lua import SPEC, NOPS
+    registered = set(re.findall(r'\{"(\w+)", op_\w+\}', (ROOT / 'game/lua/script_lua.c').read_text()))
+    missing = sorted(name for op, (name, _, _, form) in SPEC.items() if form not in ('jump', 'loop', 'repeat', 'select') and name not in registered)
+    if missing:
+        raise SystemExit('Lua operations missing from game/lua/script_lua.c: ' + ', '.join(missing))
+    return set(SPEC) | set(NOPS)
+
+
+LUA_OPCODES = _lua_opcodes()
 INPUT_EVENTS = {'up', 'high_punch', 'low_punch', 'block', 'high_kick', 'low_kick', 'low_kick_release', 'run'}
 STANCE_TABLES = {
     'standing': 0x4e5058, 'crouching': 0x4e5070, 'straight_air': 0x4e6ec8,
@@ -140,10 +153,11 @@ def audit(image, character):
     for entry, names in sorted(root_names.items()):
         program = script_program(image, entry, character)
         # This audit checks the original catalog/evidence and native registration.
-        # Linked source layout is independently validated by mk4_link and its tests.
-        supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/script/vm.c').read_text())}
-        if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
-            errors.append('%s: runtime opcode is unsupported' % hex(entry))
+        # Every original opcode must have a Lua operation (or be a no-op slot)
+        # that the runtime registers; the Lua modules themselves are validated by
+        # mk4_script_labels and the determinism harness.
+        if any(int(row['opcode'], 16) not in LUA_OPCODES for row in program['instructions']):
+            errors.append('%s: opcode has no Lua operation' % hex(entry))
         for row in program['instructions']:
             boundary = instruction_binding(row)
             if boundary and boundary[0]:
