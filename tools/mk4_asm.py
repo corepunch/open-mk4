@@ -29,10 +29,31 @@ def lines(path, parents=()):
     path = path.resolve()
     if path in parents:
         raise ValueError('Recursive include: ' + str(path))
+    pending, start = '', 0
     for number, raw in enumerate(path.read_text().splitlines(), 1):
-        line = raw.split(';', 1)[0].strip()
+        # A semicolon inside a quoted string is data, not a comment.
+        quoted, escaped = False, False
+        for index, char in enumerate(raw):
+            if char == ';' and not quoted:
+                raw = raw[:index]
+                break
+            if char == '"' and not escaped:
+                quoted = not quoted
+            escaped = char == '\\' and not escaped
+        line = raw.strip()
+        if not line:
+            continue
+        if not pending:
+            start = number
+        if line.endswith('\\'):
+            pending += line[:-1].rstrip() + ' '
+            continue
+        line = pending + line
+        pending = ''
         if line.startswith('.include '):
             name = line[len('.include '):].strip('"')
             yield from lines(path.parent / name, (*parents, path))
         elif line:
-            yield f'{path}:{number}', line
+            yield f'{path}:{start}', line
+    if pending:
+        raise ValueError(f'{path}:{start}: Unfinished line continuation')

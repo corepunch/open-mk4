@@ -146,6 +146,10 @@ one `mk4.data` package without reading the EXE. The generated C header resolves
 native callers to the same labels; a layout fingerprint rejects stale packages.
 No script address is pinned to its original location. Stable native IDs select
 C services and remain distinct from linked data offsets.
+The two assembly files are link-order indexes: shared script modules live in
+`scripts/mk4/code/` and record groups in `scripts/mk4/tables/`. Source labels name
+entries, record roles and resource files; unclassified blocks are explicitly
+`unresolved_*`. Native C export names remain a separate stable interface.
 
 Original fixup records identify packed references at import; decoded asset
 structures identify raw pointers. Ordinary numeric fields remain unchanged.

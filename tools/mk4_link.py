@@ -78,6 +78,14 @@ def link(path):
                 elif name == '.word':
                     args = [a.strip() for a in arguments.split(',')]
                     size = len(args) * 4
+                elif name == '.string' and section == 'data':
+                    value = json.loads(arguments)
+                    if not isinstance(value, str) or '\0' in value:
+                        raise ValueError('Expected a string without embedded NUL')
+                    encoded = value.encode('ascii') + b'\0'
+                    encoded += b'\0' * (-len(encoded) % 4)
+                    args = [str(word[0]) for word in struct.iter_unpack('<I', encoded)]
+                    size = len(encoded)
                 elif name in OPS and section == 'script':
                     args = [a.strip() for a in arguments.split(',')]
                     op, count = OPS[name]

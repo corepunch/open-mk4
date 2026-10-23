@@ -23,7 +23,8 @@ all: fsys mk4-viewer mk4-game
 
 scripts: build/mk4.data build/mk4_linked.h
 
-build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(wildcard scripts/mk4/*)
+SCRIPT_SOURCES = $(shell find scripts/mk4 -type f \( -name '*.asm' -o -name '*.inc' \))
+build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(SCRIPT_SOURCES)
 	python3 tools/mk4_link.py scripts/mk4/project.asm $@ build/mk4_linked.h
 build/mk4_linked.h: build/mk4.data
 	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data $@

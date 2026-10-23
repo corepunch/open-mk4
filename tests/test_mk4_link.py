@@ -57,6 +57,31 @@ return 0
             with self.subTest(body=body), self.assertRaises((ValueError, KeyError)):
                 link(self.source('.section data\ntable:\n.word 0\n.section script\nentry:\n'+body+'\n'))
 
+    def test_strings_comments_and_continued_operands(self):
+        source = self.source(r'''.section data
+name:
+.string "a;b\"c" ; comment after a quoted semicolon and escaped quote
+table:
+.word name, \
+  word(entry) ; packed reference on the following line
+.section script
+entry:
+jump 0, \
+  word(done)
+done:
+return 0
+''')
+        package, _, labels = link(source)
+        payload = package[HEADER.size:]
+        self.assertEqual(payload[:8], b'a;b"c\0\0\0')
+        self.assertEqual(struct.unpack_from('<II', payload, labels['table'] - BASE),
+                         (labels['name'], labels['entry'] // 4))
+        self.assertEqual(struct.unpack_from('<I', payload, labels['entry'] - BASE + 4)[0],
+                         labels['done'] // 4)
+        for text in ('.string "embedded\\u0000nul"', '.string 42', '.word 0, \\'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                link(self.source('.section data\n' + text + '\n'))
+
     def test_imported_data_and_wordcode_evidence(self):
         self.assertEqual({op:count for op,count in OPS.values()}, {op:row[1] for op,row in SCRIPT_OPS.items()})
         with TemporaryDirectory() as temp:
