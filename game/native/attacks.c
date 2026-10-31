@@ -5,24 +5,6 @@
 
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
-enum {
-  GROIN_PUNCH_ATTACK_RECORD = MK4_LINK_ATTACKS_GROIN_PUNCH_ATTACK_RECORD,
-  SHADOW_ATTACK_RECORD = MK4_LINK_ATTACKS_SHADOW_ATTACK_RECORD,
-  POWER_ATTACK_RECORD = MK4_LINK_ATTACKS_POWER_ATTACK_RECORD,
-  TRIPLE_ATTACK_RECORD = MK4_LINK_ATTACKS_TRIPLE_ATTACK_RECORD,
-  PUNCH_ATTACK_RECORD = MK4_LINK_ATTACKS_PUNCH_ATTACK_RECORD,
-  KICK_ATTACK_RECORD = MK4_LINK_ATTACKS_KICK_ATTACK_RECORD,
-  UPPERCUT_ATTACK_RECORD = MK4_LINK_ATTACKS_UPPERCUT_ATTACK_RECORD,
-  STOMP_ATTACK_RECORD = MK4_LINK_ATTACKS_STOMP_ATTACK_RECORD,
-  DASH_ATTACK_RECORD = MK4_LINK_ATTACKS_DASH_ATTACK_RECORD,
-  AERIAL_ATTACK_RECORD = MK4_LINK_ATTACKS_AERIAL_ATTACK_RECORD,
-  BICYCLE_ATTACK_RECORD = MK4_LINK_ATTACKS_BICYCLE_ATTACK_RECORD,
-  WEAPON_STEAL_ATTACK_RECORD = MK4_LINK_ATTACKS_WEAPON_STEAL_ATTACK_RECORD,
-  AERIAL_BICYCLE_ATTACK_RECORD = MK4_LINK_ATTACKS_AERIAL_BICYCLE_ATTACK_RECORD,
-  CARTWHEEL_ATTACK_RECORD = MK4_LINK_ATTACKS_CARTWHEEL_ATTACK_RECORD,
-  LEG_ATTACK_RECORD = MK4_LINK_ATTACKS_LEG_ATTACK_RECORD,
-  SPIN_ATTACK_RECORD = MK4_LINK_ATTACKS_SPIN_ATTACK_RECORD
-};
 
 /* Native service cluster: native_groin_punch. */
 static void groin_punch_choose(Fighter *fighter);
@@ -67,7 +49,7 @@ static void groin_punch_victim(Fighter *victim) {
 }
 
 static void groin_punch_contact(Fighter *fighter) {
-  AttackRecord groin_punch_record = script_vm_attack_record(battle_data(), GROIN_PUNCH_ATTACK_RECORD);
+  AttackRecord groin_punch_record = script_vm_attack_record(battle_data(), dat_groin_punch_attack_record);
 
   ContactResult result = battle_contact(fighter, &groin_punch_record);
   if (result == CONTACT_MISS) {
@@ -155,7 +137,7 @@ static void cage_kicks_shadow_recover(Fighter *fighter) {
 }
 
 static void cage_kicks_shadow_contact(Fighter *fighter) {
-  AttackRecord cage_kicks_shadow_record = script_vm_attack_record(battle_data(), SHADOW_ATTACK_RECORD);
+  AttackRecord cage_kicks_shadow_record = script_vm_attack_record(battle_data(), dat_shadow_attack_record);
 
   if (fighter_sample(fighter) == 24) {
     fighter->body.vel[AXIS_X] = q16_mul(fighter->body.vel[AXIS_X], 0xe666);
@@ -343,7 +325,7 @@ static void cage_powered_punch_power_blocked(Fighter *fighter) {
 }
 
 static void cage_powered_punch_power_query(Fighter *fighter) {
-  AttackRecord cage_powered_punch_power_record = script_vm_attack_record(battle_data(), POWER_ATTACK_RECORD);
+  AttackRecord cage_powered_punch_power_record = script_vm_attack_record(battle_data(), dat_power_attack_record);
 
   ContactResult result = battle_contact(fighter, &cage_powered_punch_power_record);
   if (result == CONTACT_MISS) {
@@ -498,7 +480,7 @@ static void fujin_triple_kick_triple_blocked(Fighter *fighter) {
 }
 
 static void fujin_triple_kick_triple_query(Fighter *fighter) {
-  AttackRecord fujin_triple_kick_triple_record = script_vm_attack_record(battle_data(), TRIPLE_ATTACK_RECORD);
+  AttackRecord fujin_triple_kick_triple_record = script_vm_attack_record(battle_data(), dat_triple_attack_record);
 
   ContactResult result = battle_contact(fighter, &fujin_triple_kick_triple_record);
   if (result == CONTACT_MISS) {
@@ -802,7 +784,7 @@ void goro_special_punch(Fighter *fighter) {
 }
 
 void goro_script_punch_tail(Fighter *fighter) {
-  AttackRecord goro_specials_punch_record = script_vm_attack_record(battle_data(), PUNCH_ATTACK_RECORD);
+  AttackRecord goro_specials_punch_record = script_vm_attack_record(battle_data(), dat_punch_attack_record);
 
   goro_specials_special_tail(fighter, &goro_specials_punch_record, fighter_sample(fighter) + 1, 3);
 }
@@ -814,7 +796,7 @@ void goro_special_kick(Fighter *fighter) {
 }
 
 void goro_script_kick_tail(Fighter *fighter) {
-  AttackRecord goro_specials_kick_record = script_vm_attack_record(battle_data(), KICK_ATTACK_RECORD);
+  AttackRecord goro_specials_kick_record = script_vm_attack_record(battle_data(), dat_kick_attack_record);
 
   goro_specials_special_tail(fighter, &goro_specials_kick_record, fighter_sample(fighter) + 1, 8);
 }
@@ -823,7 +805,7 @@ void goro_script_kick_tail(Fighter *fighter) {
  * pose 0 through 428750, advances nine poses with 429490, then queries
  * D[35] for five rows through 43b940 before finishing the clip. */
 void goro_special_uppercut(Fighter *fighter) {
-  AttackRecord goro_specials_uppercut_record = script_vm_attack_record(battle_data(), UPPERCUT_ATTACK_RECORD);
+  AttackRecord goro_specials_uppercut_record = script_vm_attack_record(battle_data(), dat_uppercut_attack_record);
 
   goro_begin_special(fighter, S_UPPERCUT, &goro_specials_s_special_uppercut, 0x5fa);
   mk4_mmove_bind(fighter, 600, 37, 0);
@@ -897,7 +879,7 @@ static void goro_stomp_leap_rise(Fighter *fighter) {
  * A contact disturbs resting Goro objects, deals 30% and enters 4dfbd0;
  * landing first enters the miss recovery 43b620 -> 4dfc38. */
 static void goro_stomp_leap_fall(Fighter *fighter) {
-  AttackRecord goro_stomp_stomp_record = script_vm_attack_record(battle_data(), STOMP_ATTACK_RECORD);
+  AttackRecord goro_stomp_stomp_record = script_vm_attack_record(battle_data(), dat_stomp_attack_record_666);
 
   fighter->execution.hold = true;
   if (!fighter_airborne(fighter)) {
@@ -1071,7 +1053,7 @@ static void jax_dash_punch_dash_contact(Fighter *fighter, ContactResult result) 
 }
 
 static void jax_dash_punch_dash_query(Fighter *fighter) {
-  AttackRecord jax_dash_punch_dash_record = script_vm_attack_record(battle_data(), DASH_ATTACK_RECORD);
+  AttackRecord jax_dash_punch_dash_record = script_vm_attack_record(battle_data(), dat_dash_attack_record_648);
 
   ContactResult result = battle_contact(fighter, &jax_dash_punch_dash_record);
   if (result != CONTACT_MISS) {
@@ -1239,7 +1221,7 @@ static void kai_aerial_punch_aerial_timeout(Fighter *fighter) {
 }
 
 static void kai_aerial_punch_aerial_first_query(Fighter *fighter) {
-  AttackRecord kai_aerial_punch_aerial_contact = script_vm_attack_record(battle_data(), AERIAL_ATTACK_RECORD);
+  AttackRecord kai_aerial_punch_aerial_contact = script_vm_attack_record(battle_data(), dat_aerial_attack_record);
 
   if (battle_contact(fighter, &kai_aerial_punch_aerial_contact) != CONTACT_MISS) {
     kai_aerial_punch_aerial_hit(fighter);
@@ -1302,7 +1284,7 @@ static void liu_kang_bicycle_bicycle_cleanup(Fighter *fighter) {
 }
 
 static void liu_kang_bicycle_bicycle_query(Fighter *fighter) {
-  AttackRecord liu_kang_bicycle_bicycle_record = script_vm_attack_record(battle_data(), BICYCLE_ATTACK_RECORD);
+  AttackRecord liu_kang_bicycle_bicycle_record = script_vm_attack_record(battle_data(), dat_bicycle_attack_record);
 
   if (!fighter_airborne(fighter) || battle_contact(fighter, &liu_kang_bicycle_bicycle_record) != CONTACT_MISS) {
     liu_kang_bicycle_bicycle_contact_end(fighter);
@@ -1519,7 +1501,7 @@ static void weapon_steal_take(Fighter *fighter) {
 
 /* 469caf: an armed victim and an unarmed thief allow the D[11] query. */
 static void weapon_steal_query(Fighter *fighter) {
-  AttackRecord weapon_steal_record = script_vm_attack_record(battle_data(), WEAPON_STEAL_ATTACK_RECORD);
+  AttackRecord weapon_steal_record = script_vm_attack_record(battle_data(), dat_weapon_steal_attack_record);
 
   const Fighter *victim = fighter_opponent(fighter);
   ContactResult result = victim->armed && !fighter->armed ? battle_contact(fighter, &weapon_steal_record) : CONTACT_MISS;
@@ -1656,7 +1638,7 @@ static void scorpion_spear_spear_projectile(Projectile *p) {
   for (int k = 0; k < 3; ++k) {
     p->pos[k] += p->vel[k];
   }
-  AttackRecord record = script_vm_attack_record(battle_data(), MK4_DATA_SPEAR_PROJECTILE);
+  AttackRecord record = script_vm_attack_record(battle_data(), dat_spear_projectile);
   ContactResult result = battle_contact_from(owner, &record, p->pos, p->facing);
   if ((result == CONTACT_HIT || result == CONTACT_AIR_HIT) && victim->health <= 0) {
     /* Retain the lethal contact's ordinary reaction; no live pull may park
@@ -1741,7 +1723,7 @@ static bool aerial_bicycle_height(const Fighter *fighter) {
 }
 
 static void aerial_bicycle_contact(Fighter *fighter) {
-  AttackRecord aerial_bicycle_record = script_vm_attack_record(battle_data(), AERIAL_BICYCLE_ATTACK_RECORD);
+  AttackRecord aerial_bicycle_record = script_vm_attack_record(battle_data(), dat_aerial_bicycle_attack_record);
 
   if (battle_contact(fighter, &aerial_bicycle_record) != CONTACT_MISS) {
     aerial_bicycle_fall(fighter);
@@ -1811,7 +1793,7 @@ static void sonya_cartwheel_cartwheel_recover(Fighter *fighter) {
 }
 
 void sonya_script_cartwheel_tail(Fighter *fighter) {
-  AttackRecord sonya_cartwheel_cartwheel_record = script_vm_attack_record(battle_data(), CARTWHEEL_ATTACK_RECORD);
+  AttackRecord sonya_cartwheel_cartwheel_record = script_vm_attack_record(battle_data(), dat_cartwheel_attack_record);
 
   fighter->cartwheel_ready = g_battle.ticks + 48;
   native_query_rows(fighter, &sonya_cartwheel_cartwheel_record, 9, 1, sonya_cartwheel_cartwheel_recover);
@@ -1857,7 +1839,7 @@ static void sonya_leg_grab_leg_stop(Fighter *fighter) {
 }
 
 static void sonya_leg_grab_leg_grab_contact(Fighter *fighter) {
-  AttackRecord sonya_leg_grab_leg_record = script_vm_attack_record(battle_data(), LEG_ATTACK_RECORD);
+  AttackRecord sonya_leg_grab_leg_record = script_vm_attack_record(battle_data(), dat_leg_attack_record);
 
   if (battle_contact(fighter, &sonya_leg_grab_leg_record) == CONTACT_MISS || fighter->contact == CONTACT_BLOCK) {
     fighter->action = 0x1012;
@@ -1979,7 +1961,7 @@ static void tanya_spin_kick_spin_blocked(Fighter *fighter) {
 }
 
 static void tanya_spin_kick_spin_query(Fighter *fighter) {
-  AttackRecord tanya_spin_kick_spin_record = script_vm_attack_record(battle_data(), SPIN_ATTACK_RECORD);
+  AttackRecord tanya_spin_kick_spin_record = script_vm_attack_record(battle_data(), dat_spin_attack_record);
 
   ContactResult result = battle_contact(fighter, &tanya_spin_kick_spin_record);
   if (result == CONTACT_MISS) {

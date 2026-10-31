@@ -370,12 +370,12 @@ enum {
 };
 
 static unsigned skin_part_count(void) {
-  return mk4_terminated_rows(battle_data(), MK4_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
+  return mk4_terminated_rows(battle_data(), dat_skin_sever_rows, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
 }
 
 static int skin_part_joint(int index) {
   require(index >= 0 && (unsigned)index < skin_part_count(), "Invalid native skin tear phase");
-  return (int)mk4_image_u32(battle_data(), MK4_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
+  return (int)mk4_image_u32(battle_data(), dat_skin_sever_rows + (unsigned)index * SKIN_PART_ROW_BYTES);
 }
 
 void fujin_second_blood(Fighter *fighter, int task_type) {
@@ -824,7 +824,6 @@ void kai_fatality_2(Fighter *fighter) {
 /* Native service cluster: 43c500, 43c540, 45ac30, 48f9f0. */
 enum {
 
-  DRAGON_VICTIM_ANIMATION_DESCRIPTOR = MK4_LINK_CINEMATICS_DRAGON_VICTIM_ANIMATION_DESCRIPTOR,
   DRAGON_ACTOR_START_DELAY = 121,
   DRAGON_VICTIM_START_DELAY = 269
 };
@@ -916,7 +915,7 @@ static void liu_kang_fatality_dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = DRAGON_ACTOR_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_actor, 2);
   int victim_end = DRAGON_VICTIM_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_target, NATIVE_COUNT(liu_kang_fatality_dragon_target)) +
-                   (int)mk4_image_u32(battle_data(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + MK4_ANIMATION_FRAME_COUNT_OFFSET);
+                   (int)mk4_image_u32(battle_data(), dat_animation_clip_419 + MK4_ANIMATION_FRAME_COUNT_OFFSET);
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {
@@ -2192,15 +2191,15 @@ static const MoveDef tanya_fatality_second_owner_pose = {.clip = 439, .last = 44
 /* Task-619 cue lists: {visits before the action, token or random list}. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const int tanya_fatality_second_owner_cue[][2] = {{33, 0xd2}, {20, 0x281}};
-static const int tanya_fatality_second_victim_cue[][2] = {{45, MK4_SOUND_FOOTSTEP_LIST}, {12, MK4_SOUND_FOOTSTEP_LIST}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
+static const int tanya_fatality_second_victim_cue[][2] = {{45, dat_sound_footstep_list}, {12, dat_sound_footstep_list}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
 // clang-format on
 
 static bool tanya_fatality_second_cue_frame(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   (void)owner;
   (void)opponent;
-  if (event->frame_value == MK4_SOUND_FOOTSTEP_LIST) {
+  if (event->frame_value == dat_sound_footstep_list) {
     /* 48a2a0 -> 489e80: one of four list 4ea8b0 tokens. */
-    action_native_sound_list(MK4_SOUND_FOOTSTEP_LIST);
+    action_native_sound_list(dat_sound_footstep_list);
   } else {
     battle_sound(SOUND_TOKEN, event->frame_value);
   }

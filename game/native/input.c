@@ -9,22 +9,22 @@
 
 /* Views contain addresses only; button targets remain in the loaded image. */
 const ButtonTable action_close_buttons[] = {
-    {.table_address = MK4_INPUT_TABLE_CLOSE_PRIMARY},
-    {.table_address = MK4_INPUT_TABLE_CLOSE_SECONDARY},
-    {.table_address = MK4_INPUT_TABLE_CLOSE_TERTIARY},
-    {.table_address = MK4_INPUT_TABLE_CLOSE_FOLLOWUP},
+    {.table_address = dat_input_table_close_primary},
+    {.table_address = dat_input_table_close_secondary},
+    {.table_address = dat_input_table_close_tertiary},
+    {.table_address = dat_input_table_close_followup},
 };
 
 const ButtonTable action_ground_buttons[] = {
-    {.table_address = MK4_INPUT_TABLE_STANDING},
-    {.table_address = MK4_INPUT_TABLE_CROUCHING},
+    {.table_address = dat_input_table_standing},
+    {.table_address = dat_input_table_crouching},
 };
 
 const ButtonTable action_air_buttons[] = {
-    {.table_address = MK4_INPUT_TABLE_STRAIGHT_AIR},
-    {.table_address = MK4_INPUT_TABLE_DIAGONAL_AIR},
-    {.table_address = MK4_INPUT_TABLE_AIR_COMBO},
-    {.table_address = MK4_INPUT_TABLE_TELEPORT_AIR},
+    {.table_address = dat_input_table_straight_air},
+    {.table_address = dat_input_table_diagonal_air},
+    {.table_address = dat_input_table_air_combo},
+    {.table_address = dat_input_table_teleport_air},
 };
 
 const Controls action_stances = {.stances = {
@@ -73,7 +73,7 @@ static void enter_action(Fighter *fighter, unsigned index) {
 }
 
 static FighterFn crouch_entry(unsigned index) {
-  uint32_t target = mk4_image_u32(battle_data(), MK4_DATA_CROUCH_ENTRY + index * 4);
+  uint32_t target = mk4_image_u32(battle_data(), dat_crouch_entry + index * 4);
   return script_native_entry(target);
 }
 
@@ -110,7 +110,7 @@ uint32_t action_button_target(const Mk4Image *image, uint32_t table, Button butt
 
 void action_combo_high_punch(Fighter *fighter) {
   unsigned slot = mk4_native_character_slot((unsigned)fighter->roster);
-  uint32_t entry = mk4_image_u32(battle_data(), MK4_DATA_COMBO_HIGH_PUNCH + slot * 4);
+  uint32_t entry = mk4_image_u32(battle_data(), dat_combo_high_punch + slot * 4);
   uint32_t script;
   switch (entry) {
     case MK4_NATIVE_JAX_COMBO_HP_ENTRY:
@@ -318,7 +318,7 @@ void action_close_high_punch_tail(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   ContactResult result = CONTACT_MISS;
   if (peer->action != ACTION_CODE_2001 && peer->action != ACTION_CODE_0106 && peer->action != ACTION_CODE_0107 &&
-      !contact(fighter, MK4_DATA_CONTACT_QUERY_A_TABLE, 16, &result)) {
+      !contact(fighter, dat_contact_query_a_table, 16, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -336,7 +336,7 @@ static void combo_finish(Fighter *fighter) {
 
 void action_combo_high_punch_tail(Fighter *fighter) {
   ContactResult result;
-  if (!contact(fighter, MK4_DATA_CONTACT_QUERY_A_TABLE, 16, &result)) {
+  if (!contact(fighter, dat_contact_query_a_table, 16, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -351,7 +351,7 @@ static void knee_blend(Fighter *fighter) {
   close_followup(fighter);
   const Mk4Image *image = battle_data();
   int clip = fighter->armed ? 286 : mk4_stance_clip(image, (unsigned)fighter->roster, false);
-  int count = (int)mk4_image_u32(image, MK4_ANIMATION_TABLE + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE + MK4_ANIMATION_FRAME_COUNT_OFFSET);
+  int count = (int)mk4_image_u32(image, dat_animation_table + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE + MK4_ANIMATION_FRAME_COUNT_OFFSET);
   mk4_mmove_blend_to(fighter, clip, count, 0, 0x1999, 0, fighter_ready);
 }
 
@@ -375,7 +375,7 @@ static void knee_miss_finished(Fighter *fighter) {
 
 void action_close_high_kick_tail(Fighter *fighter) {
   ContactResult result;
-  if (!contact(fighter, MK4_DATA_CONTACT_QUERY_B_TABLE, 38, &result)) {
+  if (!contact(fighter, dat_contact_query_b_table, 38, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -397,7 +397,7 @@ void action_close_high_kick(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   action_begin(fighter, S_KICK, ACTION_CODE_0103, false);
   if ((fighter_opponent(fighter)->action & 0xf000) == 0x4000) {
-    script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK) * 4, 0);
+    script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_close_high_kick) * 4, 0);
     native_play_rows(fighter, 4, 1, knee_script);
   } else {
     knee_script(fighter);

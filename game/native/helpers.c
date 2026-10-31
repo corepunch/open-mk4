@@ -161,10 +161,10 @@ void mk4_script_roster_sound(Fighter *fighter, int selector) {
   require(selector >= 0 && selector < 22 && fighter->roster >= 0 && fighter->roster < MK4_ROSTER_COUNT, "Invalid roster sound selector");
   const Mk4Image *image = battle_data();
   unsigned roster = fighter->roster == 16 ? 10u : (unsigned)fighter->roster;
-  uint32_t remap_address = MK4_DATA_SOUND_ROSTER_REMAP + roster;
+  uint32_t remap_address = dat_sound_roster_remap + roster;
   int remap = (int8_t)(mk4_image_u32(image, remap_address & ~3u) >> ((remap_address & 3u) * 8));
   require(remap >= 0 && remap < MK4_ROSTER_COUNT, "Invalid roster sound remap");
-  uint32_t table = mk4_image_u32(image, MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE + (unsigned)selector * 4) * 4;
+  uint32_t table = mk4_image_u32(image, dat_roster_sound_selector_table + (unsigned)selector * 4) * 4;
   if (table == 0) {
     return;
   }
@@ -344,7 +344,7 @@ void mk4_script_jab_contact(Fighter *fighter) {
     return;
   }
   const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
-  uint32_t record = mk4_image_u32(image, MK4_DATA_JAB_CONTACT);
+  uint32_t record = mk4_image_u32(image, dat_jab_contact);
   AttackRecord attack = script_vm_attack_record(image, record * 4);
   battle_contact(fighter, &attack);
 }
@@ -399,7 +399,7 @@ void mk4_script_landing_motion(Fighter *fighter) {
 
 void mk4_script_scene_pose(Fighter *fighter, int clip, int sample) {
   require(clip >= 0 && clip < MK4_CLIP_COUNT, "Invalid native scene animation");
-  script_vm_bind_animation(fighter, MK4_ANIMATION_TABLE + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, sample);
+  script_vm_bind_animation(fighter, dat_animation_table + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, sample);
   fighter->action = ACTION_CODE_0700;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
@@ -433,7 +433,7 @@ void mk4_script_shake(Fighter *fighter, int selector) {
 
   require(selector >= 0 && selector < CAMERA_SHAKE_ROW_COUNT, "Unexpected camera pulse selector");
   const Mk4Image *image = battle_data();
-  uint32_t row = MK4_DATA_CAMERA_SHAKE_ROWS + (unsigned)selector * CAMERA_SHAKE_ROW_BYTES;
+  uint32_t row = dat_camera_shake_rows + (unsigned)selector * CAMERA_SHAKE_ROW_BYTES;
   battle_camera_shake((int)mk4_image_u32(image, row), (int)mk4_image_u32(image, row + 4), (q16)mk4_image_u32(image, row + 8));
 }
 
@@ -506,8 +506,8 @@ void mk4_mmove_wait_grounded(Fighter *fighter) {
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
   const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
-  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_DATA_MMOVE_LK_OWNER_RETURN));
-  script_vm_bind_animation(fighter, mk4_image_u32(image, MK4_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN) * 4, 0);
+  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, dat_mmove_lk_owner_return));
+  script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_mmove_lk_owner_return) * 4, 0);
   int last = fighter_move(fighter)->last;
   native_begin(fighter, 0, last, end);
   for (int sample = 0; sample <= last; ++sample) {
@@ -526,7 +526,7 @@ void mk4_mmove_side_getup(Fighter *fighter) {
     script_vm_enter(fighter, scr_mmove_side_getup, mk4_mmove_thrown_finish);
     return;
   }
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_SIDE_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_side_getup);
 }
 
 static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_200E};
@@ -542,8 +542,8 @@ void action_crouch_return(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == MK4_GETUP_DESCRIPTOR_SIDE_GETUP || record == MK4_GETUP_DESCRIPTOR_FLIP_GETUP || record == MK4_GETUP_DESCRIPTOR_ROLL_GETUP ||
-              record == MK4_GETUP_DESCRIPTOR_FRONT_GETUP,
+  require(record == dat_getup_descriptor_side_getup || record == dat_getup_descriptor_flip_getup || record == dat_getup_descriptor_roll_getup ||
+              record == dat_getup_descriptor_front_getup,
       "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;

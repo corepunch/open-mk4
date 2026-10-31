@@ -19,7 +19,7 @@ static bool locked(const Fighter *fighter) {
 void battle_set_arena(int arena) {
   /* 423690 / 4dad60, in the archive stage order. */
   require(arena >= 0 && arena < MK4_ARENA_COUNT, "Invalid battle arena");
-  q16 radius = (q16)mk4_image_u32(battle_data(), MK4_DATA_ARENA_RADII + (unsigned)arena * 4);
+  q16 radius = (q16)mk4_image_u32(battle_data(), dat_arena_radii + (unsigned)arena * 4);
   require(radius > 0, "Invalid retail arena radius");
   g_battle.arena = arena;
   g_battle.arena_radius = radius;

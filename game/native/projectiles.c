@@ -4,23 +4,6 @@
 
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
-enum {
-  FIRE_ATTACK_RECORD = MK4_LINK_PROJECTILES_FIRE_ATTACK_RECORD,
-  ORB_ATTACK_RECORD = MK4_LINK_PROJECTILES_ORB_ATTACK_RECORD,
-  FIREBALL_ATTACK_RECORD = MK4_LINK_PROJECTILES_FIREBALL_ATTACK_RECORD,
-  BLADE_ATTACK_RECORD = MK4_LINK_PROJECTILES_BLADE_ATTACK_RECORD,
-  MISSILE_ATTACK_RECORD = MK4_LINK_PROJECTILES_MISSILE_ATTACK_RECORD,
-  DROP_ATTACK_RECORD = MK4_LINK_PROJECTILES_DROP_ATTACK_RECORD,
-  RISE_ATTACK_RECORD = MK4_LINK_PROJECTILES_RISE_ATTACK_RECORD,
-  FIREBALL_HIGH_ATTACK_RECORD = MK4_LINK_PROJECTILES_FIREBALL_HIGH_ATTACK_RECORD,
-  FIREBALL_LOW_ATTACK_RECORD = MK4_LINK_PROJECTILES_FIREBALL_LOW_ATTACK_RECORD,
-  SKULL_ATTACK_RECORD = MK4_LINK_PROJECTILES_SKULL_ATTACK_RECORD,
-  GENERIC_PROJECTILE_ATTACK_RECORD = MK4_LINK_PROJECTILES_GENERIC_PROJECTILE_ATTACK_RECORD,
-  STAR_ATTACK_RECORD = MK4_LINK_PROJECTILES_STAR_ATTACK_RECORD,
-  ACID_ATTACK_RECORD = MK4_LINK_PROJECTILES_ACID_ATTACK_RECORD,
-  RING_ATTACK_RECORD = MK4_LINK_PROJECTILES_RING_ATTACK_RECORD,
-  ICE_PROJECTILE_ATTACK_RECORD = MK4_LINK_PROJECTILES_ICE_PROJECTILE_ATTACK_RECORD
-};
 
 /* Native service cluster: 4970d0. */
 static const MoveDef cage_projectile_cast = {.clip = 28, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x311};
@@ -33,7 +16,7 @@ static const MeshAnimation cage_projectile_orb_mesh = {
 /* 4ed108 is a native callback descriptor (selector0,497340,4973a0,
  * 4973f0), not a VM program. The independent object owns motion and contact. */
 static void cage_projectile_orb_step(Projectile *projectile) {
-  AttackRecord cage_projectile_orb_record = script_vm_attack_record(battle_data(), ORB_ATTACK_RECORD);
+  AttackRecord cage_projectile_orb_record = script_vm_attack_record(battle_data(), dat_orb_attack_record);
 
   if (g_battle.contacts_off) {
     projectile->kind = 0;
@@ -305,7 +288,7 @@ static const MoveDef goro_projectile_s_fireball = {.clip = 592, .last = 24, .fla
 static const MeshAnimation goro_projectile_fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
 
 static void goro_projectile_fireball_step(Projectile *projectile) {
-  AttackRecord goro_projectile_fireball_record = script_vm_attack_record(battle_data(), FIREBALL_ATTACK_RECORD);
+  AttackRecord goro_projectile_fireball_record = script_vm_attack_record(battle_data(), dat_fireball_attack_record);
 
   if (g_battle.contacts_off) {
     projectile->kind = 0;
@@ -452,7 +435,7 @@ static void jarek_projectile_blade_hit(Projectile *projectile, ContactResult res
 }
 
 static void jarek_projectile_blade_step(Projectile *projectile) {
-  AttackRecord jarek_projectile_blade_record = script_vm_attack_record(battle_data(), BLADE_ATTACK_RECORD);
+  AttackRecord jarek_projectile_blade_record = script_vm_attack_record(battle_data(), dat_blade_attack_record);
 
   if (g_battle.contacts_off) {
     projectile->kind = 0;
@@ -623,7 +606,7 @@ bool jax_can_missile(const Fighter *fighter) {
  * calls 49bb00 on any contact (C[0x5e], explosion, removal). Otherwise
  * 49bbd0 removes the object outside the squared arena radius plus 12. */
 static void jax_projectile_missile_step(Projectile *object) {
-  AttackRecord jax_projectile_missile_record = script_vm_attack_record(battle_data(), MISSILE_ATTACK_RECORD);
+  AttackRecord jax_projectile_missile_record = script_vm_attack_record(battle_data(), dat_blade_attack_record);
 
   if (g_battle.contacts_off) {
     object->kind = 0;
@@ -757,7 +740,7 @@ static void kai_skull_skull_spawn_from(Fighter *fighter, ProjectileFn step, q16 
 }
 
 static void kai_skull_rising_step(Projectile *object) {
-  AttackRecord kai_skull_drop_record = script_vm_attack_record(battle_data(), DROP_ATTACK_RECORD);
+  AttackRecord kai_skull_drop_record = script_vm_attack_record(battle_data(), dat_drop_attack_record);
 
   if (g_battle.contacts_off) {
     object->kind = 0;
@@ -779,7 +762,7 @@ static void kai_skull_rising_step(Projectile *object) {
 }
 
 static void kai_skull_ground_step(Projectile *object) {
-  AttackRecord kai_skull_rise_record = script_vm_attack_record(battle_data(), RISE_ATTACK_RECORD);
+  AttackRecord kai_skull_rise_record = script_vm_attack_record(battle_data(), dat_rise_attack_record);
 
   if (g_battle.contacts_off) {
     object->kind = 0;
@@ -902,8 +885,8 @@ static const MoveDef liu_kang_projectile_s_fireball_low = {.clip = 19, .last = 4
 static const MoveDef liu_kang_projectile_s_fireball_air = {.clip = 20, .last = 5, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_030E};
 
 static void liu_kang_projectile_fireball_projectile(Projectile *p) {
-  AttackRecord liu_kang_projectile_fireball_high_record = script_vm_attack_record(battle_data(), FIREBALL_HIGH_ATTACK_RECORD);
-  AttackRecord liu_kang_projectile_fireball_low_record = script_vm_attack_record(battle_data(), FIREBALL_LOW_ATTACK_RECORD);
+  AttackRecord liu_kang_projectile_fireball_high_record = script_vm_attack_record(battle_data(), dat_orb_attack_record);
+  AttackRecord liu_kang_projectile_fireball_low_record = script_vm_attack_record(battle_data(), dat_fireball_low_attack_record);
 
   if (g_battle.contacts_off) {
     p->kind = 0;
@@ -1030,7 +1013,7 @@ static void quan_chi_skull_skull_bite(Projectile *skull) {
 /* 49c690(4ed3f8) waits for contact each tick; 499ae0 tests the arena bound
  * from 49bc00 and emits smoke on its first visit and then every third visit. */
 static void quan_chi_skull_skull_step(Projectile *skull) {
-  AttackRecord quan_chi_skull_skull_record = script_vm_attack_record(battle_data(), SKULL_ATTACK_RECORD);
+  AttackRecord quan_chi_skull_skull_record = script_vm_attack_record(battle_data(), dat_skull_attack_record);
 
   if (g_battle.contacts_off) {
     skull->kind = 0;
@@ -1103,7 +1086,7 @@ static const MoveDef raiden_projectile_s_projectile = {.clip = 17, .last = MOVE_
 static const MeshAnimation raiden_projectile_projectile_mesh = {.first = 41, .count = 1, .period = 1, .scale = Q16_ONE};
 
 static void raiden_projectile_projectile_step(Projectile *object) {
-  AttackRecord raiden_projectile_projectile_record = script_vm_attack_record(battle_data(), GENERIC_PROJECTILE_ATTACK_RECORD);
+  AttackRecord raiden_projectile_projectile_record = script_vm_attack_record(battle_data(), dat_generic_projectile_attack_record);
 
   mk4_script_projectile_step(object, &raiden_projectile_projectile_record, false);
 }
@@ -1143,7 +1126,7 @@ bool reiko_can_star(const Fighter *fighter) {
  * contact plays C[0x65] and retires the object; otherwise 49bc00 retires it
  * beyond the arena radius squared plus 12. The object list then moves it. */
 static void reiko_star_star_step(Projectile *star) {
-  AttackRecord reiko_star_star_record = script_vm_attack_record(battle_data(), STAR_ATTACK_RECORD);
+  AttackRecord reiko_star_star_record = script_vm_attack_record(battle_data(), dat_star_attack_record);
 
   if (g_battle.contacts_off) {
     star->kind = 0;
@@ -1286,7 +1269,7 @@ void reptile_script_acid_drool(Fighter *fighter) {
 }
 
 static void reptile_projectile_acid_step(Projectile *acid) {
-  AttackRecord reptile_projectile_acid_record = script_vm_attack_record(battle_data(), ACID_ATTACK_RECORD);
+  AttackRecord reptile_projectile_acid_record = script_vm_attack_record(battle_data(), dat_acid_attack_record);
 
   if (acid->phase > 0) {
     /* 498ac0: the contact visit retires the object and plays C[48]; ten
@@ -1356,7 +1339,7 @@ static void scorpion_fire_fire_contact(Fighter *fighter);
 static const MoveDef scorpion_fire_s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0115};
 
 static void scorpion_fire_fire_contact(Fighter *fighter) {
-  AttackRecord record = script_vm_attack_record(battle_data(), FIRE_ATTACK_RECORD);
+  AttackRecord record = script_vm_attack_record(battle_data(), dat_fire_attack_record);
   /* Native fire bypasses guarding; this explicit flag belongs to our contact
    * boundary, while the box, reactions and damage come from retail data. */
   record.flags |= ATTACK_UNBLOCKABLE;
@@ -1407,7 +1390,7 @@ static const MoveDef sonya_projectile_s_projectile = {.clip = 15, .last = MOVE_E
 static const MeshAnimation sonya_projectile_projectile_mesh = {.first = 42, .count = 2, .period = 1, .scale = Q16_ONE};
 
 static void sonya_projectile_projectile_step(Projectile *object) {
-  AttackRecord sonya_projectile_projectile_record = script_vm_attack_record(battle_data(), RING_ATTACK_RECORD);
+  AttackRecord sonya_projectile_projectile_record = script_vm_attack_record(battle_data(), dat_blade_attack_record);
 
   mk4_script_projectile_step(object, &sonya_projectile_projectile_record, false);
 }
@@ -1443,7 +1426,7 @@ static const ParticleSpray ice_projectile_trail = {.visual = &ice_projectile_tra
     .position_spread = {0x6666, 0x6666, 0x6666}};
 
 void sub_zero_ice_projectile(Projectile *p) {
-  AttackRecord ice_projectile_record = script_vm_attack_record(battle_data(), ICE_PROJECTILE_ATTACK_RECORD);
+  AttackRecord ice_projectile_record = script_vm_attack_record(battle_data(), dat_ice_projectile_attack_record);
 
   if (g_battle.contacts_off) {
     p->kind = 0;

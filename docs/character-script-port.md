@@ -15,6 +15,8 @@ Each fighter file carries its bytecode and relevant native ABI declarations,
 with symbolic cross-file references. Bare labels and executable embedded
 aliases become C constants named `scr_<label>` directly, without separate
 script export mappings or intermediate enums.
+Data labels and field aliases likewise become `dat_<label>` in C; keep field
+aliases beside their records rather than in a separate exports file.
 Explicit jumps preserve original fall-through when blocks move.
 
 Data tables stay in `scripts/mk4/tables/`. Normal builds link the checked-in

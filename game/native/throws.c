@@ -30,7 +30,7 @@ static bool jax_throws_slam_continue(Fighter *fighter) {
   if (fighter->native_variant >= JAX_THROWS_SLAM_LIMIT) {
     return false;
   }
-  uint32_t row = MK4_DATA_SLAM_CONTINUE_CHORDS + (uint32_t)fighter->native_variant++ * SLAM_CHORD_ROW_BYTES;
+  uint32_t row = dat_slam_continue_chords + (uint32_t)fighter->native_variant++ * SLAM_CHORD_ROW_BYTES;
   return action_native_button_chord(fighter, row);
 }
 

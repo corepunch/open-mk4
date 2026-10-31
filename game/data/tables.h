@@ -4,7 +4,7 @@
 #include "game.h"
 
 enum {
-  MK4_REACTION_COUNT = (MK4_REACTION_TABLE_END - MK4_REACTION_TABLE) / 4
+  MK4_REACTION_COUNT = (dat_reaction_table_end - dat_reaction_table) / 4
 };
 
 typedef struct Mk4Roster {

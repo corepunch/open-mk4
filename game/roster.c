@@ -149,10 +149,10 @@ static const FighterFn state_entries[S_COUNT] = {
 };
 
 static int descriptor_clip(uint32_t packed) {
-  require(packed >= MK4_ANIMATION_TABLE / 4 && packed < (MK4_ANIMATION_TABLE + MK4_CLIP_COUNT * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4 &&
-              (packed * 4 - MK4_ANIMATION_TABLE) % MK4_ANIMATION_DESCRIPTOR_SIZE == 0,
+  require(packed >= dat_animation_table / 4 && packed < (dat_animation_table + MK4_CLIP_COUNT * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4 &&
+              (packed * 4 - dat_animation_table) % MK4_ANIMATION_DESCRIPTOR_SIZE == 0,
       "Invalid native state descriptor");
-  return (int)((packed * 4 - MK4_ANIMATION_TABLE) / MK4_ANIMATION_DESCRIPTOR_SIZE);
+  return (int)((packed * 4 - dat_animation_table) / MK4_ANIMATION_DESCRIPTOR_SIZE);
 }
 
 int roster_count(void) {
@@ -182,7 +182,7 @@ const CharacterDef *roster_def(int index) {
     /* Native46b300 guard: the boss descriptor is a native literal and the
      * ordinary descriptor is loaded. Other native entries bind on takeover;
      * unstarted views do not invent fighter-compatible animation seeds. */
-    states[index][S_BLOCK].clip = descriptor_clip(index == 15 ? MK4_ANIMATION_DESCRIPTOR_CLIP_595 / 4 : mk4_image_u32(image, MK4_DATA_ROSTER_DEF));
+    states[index][S_BLOCK].clip = descriptor_clip(index == 15 ? dat_animation_clip_595 / 4 : mk4_image_u32(image, dat_roster_def));
     states[index][S_IDLE].clip = identities[index].idle;
     states[index][S_WALK].clip = identities[index].walk;
     definitions[index].moves = state_views[index];

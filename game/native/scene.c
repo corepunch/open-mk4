@@ -15,7 +15,7 @@ static void fan_cycle_enter(Fighter *fighter) {
   if (roster == 2 || roster == 9) {
     script_vm_enter(fighter, scr_jax_fan_fatality_owner_cycle, fighter_ready);
   } else {
-    script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_414, 0);
+    script_vm_bind_animation(fighter, dat_animation_clip_414, 0);
     script_vm_enter(fighter, scr_jarek_fan_fatality_male_victim_owner_cycle, fighter_ready);
   }
 }
@@ -48,7 +48,7 @@ void action_fan_cycle(Fighter *fighter) {
   script_vm_enter(victim, scr_jax_fan_fatality_victim_release, fighter_ready);
   mk4_native_fan_rise(fighter);
   /* CountdownStoreCallChain rebinds the release descriptor at sample 69. */
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_415, 69);
+  script_vm_bind_animation(fighter, dat_animation_clip_415, 69);
   script_vm_enter(fighter, scr_jax_fan_fatality_owner_release, fighter_ready);
 }
 
@@ -304,7 +304,7 @@ void action_scene_victim_hold(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_0700};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   fighter->facing = -fighter->facing;
-  script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD) * 4, 0);
+  script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_scene_victim_hold) * 4, 0);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
 

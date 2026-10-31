@@ -133,6 +133,34 @@ guard:
         with self.assertRaisesRegex(ValueError, 'Duplicate script export'):
             link(self.source(source + '.export scr_entry entry\n'))
 
+    def test_data_labels_and_fields_use_their_declared_section(self):
+        source = '''.section data
+table:
+.word 0
+text:
+.string "x"
+data_end:
+.section script
+entry:
+ready 0
+.alias data_field table + 4
+.alias field_chain data_field
+.alias byte_field text + 1
+.alias end_field data_end
+.alias code_alias entry
+.equ LOOKALIKE table
+'''
+        _, header, symbols = link(self.source(source))
+        for name in ('table', 'text', 'data_end', 'data_field', 'field_chain', 'byte_field', 'end_field'):
+            self.assertIn(f'#define dat_{name} 0x{symbols[name]:x}u', header)
+            self.assertNotIn('#define scr_' + name + ' ', header)
+        for name in ('entry', 'code_alias'):
+            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
+            self.assertNotIn('#define dat_' + name + ' ', header)
+        self.assertNotIn('#define dat_LOOKALIKE ', header)
+        with self.assertRaisesRegex(ValueError, 'Duplicate data export'):
+            link(self.source(source + '.export dat_table table\n'))
+
     def test_imported_data_and_wordcode_evidence(self):
         self.assertEqual({op:count for op,count in OPS.values()}, {op:row[1] for op,row in SCRIPT_OPS.items()})
         with TemporaryDirectory() as temp:
@@ -142,6 +170,8 @@ guard:
             export(RetailImage(ROOT/'MK4/MK-4.EXE'), destination)
             package, header, _ = link(destination/'project.asm')
             self.assertEqual(package[:4], b'MK4D')
+            self.assertFalse((destination / 'exports.inc').exists())
+            self.assertNotIn('MK4_LINK_', header)
         _, header, symbols = link(ROOT/'scripts/mk4/project.asm')
         layout = json.loads(SCRIPT_LAYOUT.read_text())
         names = [name for module in layout['modules'].values() for name in module['entries']]

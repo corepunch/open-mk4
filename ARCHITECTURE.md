@@ -168,6 +168,10 @@ Each executable script label or embedded alias becomes `scr_<label>` in C
 automatically. Bare assembly names are the single source of naming; there are
 no script export alias maps or intermediate C enums. The prefix keeps script
 addresses distinct from native C functions with the same bare name.
+Data labels and field aliases similarly become `dat_<label>` in C; the
+declared section of the alias root determines its namespace. Data end markers
+remain data even when they coincide with the first script word. Field aliases
+live beside their records, with no separate export list or C address wrapper.
 The host explicitly owns the loaded package; neither the VM nor simulation
 opens an EXE. Normal builds and startup need no EXE. `make scripts-export`
 regenerates bytecode from the hash-checked EXE; `make scripts-source-check` and

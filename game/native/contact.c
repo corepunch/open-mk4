@@ -8,7 +8,7 @@
  * authored move programs, its repeat/contact controller is native code. */
 static void hp_bind(Fighter *fighter, bool second, int first) {
   action_begin(fighter, S_PUNCH, ACTION_CODE_010A, true);
-  script_vm_bind_animation(fighter, second ? MK4_ANIMATION_DESCRIPTOR_CLIP_297 : MK4_ANIMATION_DESCRIPTOR_CLIP_296, first);
+  script_vm_bind_animation(fighter, second ? dat_animation_clip_297 : dat_animation_clip_296, first);
 }
 
 static void hp_build(Fighter *fighter);
@@ -18,7 +18,7 @@ static void hp_query(Fighter *fighter) {
   bool ducking_kick = victim->action == ACTION_CODE_0102 && victim->avoids_high;
   if (!fighter->connected && !ducking_kick) {
     const Mk4Image *image = battle_data();
-    uint32_t record = mk4_image_u32(image, MK4_DATA_CONTACT_QUERY_A_TABLE);
+    uint32_t record = mk4_image_u32(image, dat_contact_query_a_table);
     AttackRecord attack = script_vm_attack_record(image, record * 4);
     battle_contact(fighter, &attack);
   }
@@ -102,7 +102,7 @@ static void uppercut_default_contact(Fighter *fighter) {
   }
   const Mk4Image *image = battle_data();
   unsigned selector = fighter->flags & FF_FOLLOW_UP ? 6 : 2;
-  uint32_t packed = mk4_image_u32(image, MK4_DATA_CONTACT_QUERY_A_TABLE + selector * 4);
+  uint32_t packed = mk4_image_u32(image, dat_contact_query_a_table + selector * 4);
   AttackRecord record = script_vm_attack_record(image, packed * 4);
   if (battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_CODE_1006;

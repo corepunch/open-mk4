@@ -84,9 +84,9 @@ void action_slam_tail(Fighter *fighter) {
   action_slam_reaction(victim);
   fighter->action = 0;
   const Mk4Image *image = battle_data();
-  fighter_set_speed(fighter, (q16)mk4_image_u32(image, MK4_DATA_AIR_THROW_SLAM_RELEASE_SPEED));
-  fighter->body.vel[AXIS_Y] = (q16)mk4_image_u32(image, MK4_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY);
-  fighter->body.gravity = (q16)mk4_image_u32(image, MK4_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY);
+  fighter_set_speed(fighter, (q16)mk4_image_u32(image, dat_air_throw_slam_release_speed));
+  fighter->body.vel[AXIS_Y] = (q16)mk4_image_u32(image, dat_air_throw_slam_release_y_velocity);
+  fighter->body.gravity = (q16)mk4_image_u32(image, dat_air_throw_slam_release_gravity);
   int sample = fighter_sample(fighter), last = fighter_move(fighter)->last;
   if (sample >= last) {
     fighter_execution_finish(fighter, slam_flip);
@@ -200,7 +200,7 @@ static void air_getup_rise(Fighter *victim) {
     fighter_execution_finish(victim, NULL);
     return;
   }
-  script_vm_bind_animation(victim, mk4_image_u32(battle_data(), MK4_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE) * 4, 0);
+  script_vm_bind_animation(victim, mk4_image_u32(battle_data(), dat_animation_descriptor_air_getup_rise) * 4, 0);
   native_finish_clip(victim, mk4_mmove_thrown_finish);
 }
 
@@ -224,11 +224,11 @@ void action_air_slam_end(Fighter *fighter) {
 
 /* 488ba0 and 488c00 pass the original records to shared native 4914c0. */
 void action_getup_back(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_FLIP_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_flip_getup);
 }
 
 void action_getup_roll(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_ROLL_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_roll_getup);
 }
 
 /* 488b80 calls 490350 before the ordinary backward getup. Simulation
@@ -246,5 +246,5 @@ void action_getup_roll_flip(Fighter *fighter) {
 
 /*488c10 selects4ea230; round/KO result orchestration belongs to battle. */
 void action_getup_front(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_FRONT_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_front_getup);
 }

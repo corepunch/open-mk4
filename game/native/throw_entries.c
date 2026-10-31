@@ -15,7 +15,7 @@ static void victim_begin(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   if (clip >= 0) {
-    script_vm_bind_animation(fighter, MK4_ANIMATION_TABLE + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, sample);
+    script_vm_bind_animation(fighter, dat_animation_table + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, sample);
   }
   mk4_script_touchable(fighter);
 }
@@ -36,16 +36,16 @@ void action_native_sound_list(uint32_t address) {
 
 void action_impact_voice(Fighter *fighter) {
   (void)fighter;
-  action_native_sound_list(MK4_SOUND_IMPACT_VOICE_LIST);
+  action_native_sound_list(dat_sound_impact_voice_list);
 }
 
 void action_throw_grunt(void) {
-  action_native_sound_list(MK4_SOUND_THROW_GRUNT_LIST);
+  action_native_sound_list(dat_sound_throw_grunt_list);
 }
 
 static void victim_friction_impact(Fighter *fighter) {
   victim_begin(fighter);
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_168, 0);
+  script_vm_bind_animation(fighter, dat_animation_clip_168, 0);
   fighter->body.physics = fighter_friction;
   action_impact_voice(fighter);
   script_vm_enter(fighter, scr_victim_friction_impact, mk4_mmove_thrown_finish);
@@ -53,7 +53,7 @@ static void victim_friction_impact(Fighter *fighter) {
 
 static void victim_saved_motion(Fighter *fighter) {
   victim_begin(fighter);
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_177, 0);
+  script_vm_bind_animation(fighter, dat_animation_clip_177, 0);
   mk4_script_save_motion(fighter);
   script_vm_enter(fighter, scr_victim_saved_motion, mk4_mmove_thrown_finish);
 }
@@ -73,7 +73,7 @@ static void victim_disarm_raise(Fighter *fighter) {
 
 static void flip_getup(Fighter *fighter) {
   fighter->facing = -fighter->facing;
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_FLIP_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_flip_getup);
 }
 
 static void victim_pause_getup(Fighter *fighter) {
@@ -84,12 +84,12 @@ static void victim_finish_flip_getup(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   const Mk4Image *image = battle_data();
-  script_vm_bind_animation(fighter, mk4_image_u32(image, MK4_ANIMATION_DESCRIPTOR_VICTIM_FINISH_FLIP_GETUP) * 4, 0);
+  script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_victim_finish_flip_getup) * 4, 0);
   native_finish_clip(fighter, victim_pause_getup);
 }
 
 static void roll_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_GETUP_DESCRIPTOR_ROLL_GETUP);
+  mk4_mmove_getup(fighter, dat_getup_descriptor_roll_getup);
 }
 
 static void victim_pause_roll(Fighter *fighter) {
@@ -104,7 +104,7 @@ static void victim_impact_finish(Fighter *fighter) {
 static void victim_impact_roll_getup(Fighter *fighter) {
   victim_begin(fighter);
   const Mk4Image *image = battle_data();
-  script_vm_bind_animation(fighter, mk4_image_u32(image, MK4_ANIMATION_DESCRIPTOR_VICTIM_IMPACT_ROLL_GETUP) * 4, 0);
+  script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_victim_impact_roll_getup) * 4, 0);
   native_play_rows(fighter, 45, 1, victim_impact_finish);
 }
 
@@ -122,7 +122,7 @@ static void victim_pause_slide(Fighter *fighter) {
 static void victim_stance_blend(Fighter *fighter) {
   const Mk4Image *image = battle_data();
   int clip = mk4_stance_clip(image, (unsigned)fighter->roster, false);
-  unsigned count = mk4_image_u32(image, MK4_ANIMATION_TABLE + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE + MK4_ANIMATION_FRAME_COUNT_OFFSET);
+  unsigned count = mk4_image_u32(image, dat_animation_table + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE + MK4_ANIMATION_FRAME_COUNT_OFFSET);
   require(count > 0 && count <= 65535, "Invalid native stance animation length");
   mk4_mmove_blend_to(fighter, clip, (int)count, 0, 0x3333, 0, mk4_mmove_thrown_finish);
 }
@@ -160,13 +160,13 @@ void action_lp_victim(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   switch (entry) {
     case MK4_NATIVE_LP_VICTIM_TABLE_RELEASE:
-      native_animation_table(fighter, MK4_ANIMATION_ROWS_LP_VICTIM_TABLE_RELEASE);
+      native_animation_table(fighter, dat_animation_rows_lp_victim_table_release);
       break;
     case MK4_NATIVE_LP_VICTIM_REBASED_TABLE_RELEASE:
-      native_animation_table(fighter, MK4_ANIMATION_ROWS_LP_VICTIM_REBASED_RELEASE);
+      native_animation_table(fighter, dat_animation_rows_lp_victim_rebased_release);
       break;
     case MK4_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE:
-      native_animation_table(fighter, MK4_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE);
+      native_animation_table(fighter, dat_animation_rows_lp_victim_weapon_scatter_release);
       break;
     case MK4_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
       script_vm_enter(fighter, scr_lp_victim_two_speed_slide_release, mk4_mmove_thrown_finish);
@@ -192,7 +192,7 @@ void action_script_release_reaction(Fighter *fighter, int reaction) {
 static void victim_finish_captured_clip(Fighter *fighter) {
   victim_begin(fighter);
   mk4_script_stop_body(fighter);
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_586, 65);
+  script_vm_bind_animation(fighter, dat_animation_clip_586, 65);
   native_finish_clip(fighter, mk4_mmove_thrown_finish);
 }
 
@@ -212,7 +212,7 @@ void action_lk_victim(Fighter *fighter) {
   victim_begin(fighter);
   switch (entry) {
     case MK4_NATIVE_LK_VICTIM_CLIP_203_RECOVERY:
-      script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_203, sample);
+      script_vm_bind_animation(fighter, dat_animation_clip_203, sample);
       native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
       break;
     case MK4_NATIVE_LIU_KANG_LK_THROW_VICTIM_REACTION_80:
@@ -223,9 +223,9 @@ void action_lk_victim(Fighter *fighter) {
       break;
     case MK4_NATIVE_LK_VICTIM_EFFECT_SLIDE:
       mk4_script_effect(fighter, 0);
-      script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_169, 0);
-      script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE) * 4, 0);
-      fighter_set_speed(fighter, (q16)mk4_image_u32(battle_data(), MK4_DATA_LK_VICTIM_SLIDE_SPEED));
+      script_vm_bind_animation(fighter, dat_animation_clip_169, 0);
+      script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_lk_victim_slide) * 4, 0);
+      fighter_set_speed(fighter, (q16)mk4_image_u32(battle_data(), dat_lk_victim_slide_speed));
       native_play_rows(fighter, mini(fighter_move(fighter)->last, 26), 1, lk_impact_finish);
       break;
     default:
@@ -396,7 +396,7 @@ void action_throw_pair_start(Fighter *fighter) {
 static void idle_pose(Fighter *fighter) {
   const Mk4Image *image = battle_data();
   int clip = mk4_stance_clip(image, (unsigned)fighter->roster, false);
-  script_vm_bind_animation(fighter, MK4_ANIMATION_TABLE + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, 0);
+  script_vm_bind_animation(fighter, dat_animation_table + (uint32_t)clip * MK4_ANIMATION_DESCRIPTOR_SIZE, 0);
 }
 
 void action_lk_return(Fighter *fighter) {
@@ -416,7 +416,7 @@ void action_lk_pause_short(Fighter *fighter) {
 }
 
 void action_lk_jump_back(Fighter *fighter) {
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_301, 0);
+  script_vm_bind_animation(fighter, dat_animation_clip_301, 0);
   mk4_jump_backward(fighter);
 }
 
@@ -432,7 +432,7 @@ void action_lk_branch_continue(Fighter *fighter) {
 
 void action_lk_victim_return(Fighter *fighter) {
   const Mk4Image *image = fighter->execution.script.image;
-  script_vm_bind_animation(fighter, mk4_image_u32(image, MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_RETURN) * 4, 0);
+  script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_lk_victim_return) * 4, 0);
   script_vm_forward_return(fighter);
 }
 

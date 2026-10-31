@@ -9,7 +9,7 @@ enum {
 };
 
 static unsigned head_hand_part_count(void) {
-  return mk4_terminated_rows(battle_data(), MK4_DATA_HEAD_HAND_PART_PARAMETERS, HEAD_HAND_PART_ROW_BYTES, HEAD_HAND_PART_CAPACITY);
+  return mk4_terminated_rows(battle_data(), dat_head_hand_part_parameters, HEAD_HAND_PART_ROW_BYTES, HEAD_HAND_PART_CAPACITY);
 }
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
@@ -133,7 +133,7 @@ static void fujin_fatality_first_explode(Fighter *victim, Fighter *owner) {
     source.scene_model = &source.assets->cut_characters.data[roster_def(source.roster)->asset];
   }
   for (unsigned part = 0; part < head_hand_part_count(); ++part) {
-    uint32_t row = MK4_DATA_HEAD_HAND_PART_PARAMETERS + part * HEAD_HAND_PART_ROW_BYTES;
+    uint32_t row = dat_head_hand_part_parameters + part * HEAD_HAND_PART_ROW_BYTES;
     int joint = (int)mk4_image_u32(battle_data(), row);
     ScenePiece *piece = battle_detach_piece(&source, joint, (q16[3]){part == 1 ? -0x2147 : 0x2147, -0x2147, 0}, (q16[3]){0, 0x2147, 0});
     if (piece != NULL) {
@@ -497,7 +497,7 @@ static void jax_fatality_first_victim_stream(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  if (mk4_index_list_contains(battle_data(), MK4_DATA_ARM_TEAR_CLIP_204_ROSTERS, (unsigned)victim->roster, MK4_ROSTER_COUNT)) {
+  if (mk4_index_list_contains(battle_data(), dat_arm_tear_clip_204_rosters, (unsigned)victim->roster, MK4_ROSTER_COUNT)) {
     script_vm_enter(victim, scr_arm_tear_victim_clip_204, fighter_ready);
   } else {
     script_vm_enter(victim, scr_arm_tear_victim_clip_400, fighter_ready);
@@ -873,8 +873,8 @@ static const SceneClip quan_chi_fatality_first_victim_blends[] = {
  * both stepped at 0xccc; 44c7dc holds 45 ticks between them. Retail X,Z,Y
  * records remain in the loaded image in their original X,Z,Y order. */
 static const CameraShot quan_chi_fatality_first_camera_shots[] = {
-  {MK4_DATA_LEG_TEAR_CAMERA_SIDE, 45, 0xccc, 0, 0, 0},
-  {MK4_DATA_LEG_TEAR_CAMERA_ORBIT, 0, 0xccc, 0, 0, 0},
+  {dat_leg_tear_camera_side, 45, 0xccc, 0, 0, 0},
+  {dat_leg_tear_camera_orbit, 0, 0xccc, 0, 0, 0},
 };
 // clang-format on
 /* The owner keeps his stance pose through 44bd9b's sixteen-tick setup. */
@@ -1617,8 +1617,8 @@ static const SceneClip sub_zero_fatality_first_victim_blends[] = {
 // clang-format on
 // clang-format off: Keep table entries on one row, including long rows.
 static const CameraShot sub_zero_fatality_first_camera_shots[] = {
-  {MK4_DATA_SPINE_PULL_CAMERA_INTRO, 50, 0xccc, 0, 0, 0},
-  {MK4_DATA_SPINE_PULL_CAMERA_ORBIT, 0, 0x45a, 3, 80, -0x4000},
+  {dat_spine_pull_camera_intro, 50, 0xccc, 0, 0, 0},
+  {dat_spine_pull_camera_orbit, 0, 0x45a, 3, 80, -0x4000},
 };
 // clang-format on
 static const AttachmentDef sub_zero_fatality_first_spine = {.model = SCENE_MODEL_SPINE,
@@ -1850,7 +1850,7 @@ static bool tanya_fatality_first_burst_step(BattleEvent *event, Fighter *owner, 
     Mat3 unused;
     fighter_joint_position(owner, 2, &neck, &unused);
     for (unsigned i = 0; i < head_hand_part_count(); ++i) {
-      uint32_t row = MK4_DATA_HEAD_HAND_PART_PARAMETERS + i * HEAD_HAND_PART_ROW_BYTES;
+      uint32_t row = dat_head_hand_part_parameters + i * HEAD_HAND_PART_ROW_BYTES;
       int joint = (int)mk4_image_u32(battle_data(), row);
       q16 speed = (q16)mk4_image_u32(battle_data(), row + 4);
       q16 velocity[3] = {q16_mul(fighter_axis(peer, AXIS_X), speed), -speed, q16_mul(fighter_axis(peer, AXIS_Z), speed)};

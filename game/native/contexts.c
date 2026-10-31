@@ -5,9 +5,6 @@
 
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
-enum {
-  TORPEDO_ATTACK_RECORD = MK4_LINK_CONTEXTS_TORPEDO_ATTACK_RECORD
-};
 
 /* Native service cluster: 45b1f0, 45b230. */
 
@@ -67,7 +64,7 @@ void goro_script_uppercut_victim_slide(Fighter *victim) {
 void goro_quake_victim(Fighter *victim) {
   goro_victims_begin_victim(victim);
   mk4_script_disarm_self(victim);
-  action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+  action_native_sound_list(dat_sound_random_grunt_list);
   script_vm_enter(victim, scr_goro_quake_victim, fighter_ready);
 }
 
@@ -97,7 +94,7 @@ static void goro_victims_stomp_victim_next(Fighter *victim) {
 }
 
 static void goro_victims_stomp_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, MK4_GETUP_DESCRIPTOR_FLIP_GETUP);
+  mk4_mmove_getup(victim, dat_getup_descriptor_flip_getup);
 }
 
 static void goro_victims_stomp_victim_rest(Fighter *victim) {
@@ -122,7 +119,7 @@ void goro_script_stomp_victim_hold(Fighter *victim) {
 /* 482790 finishes the bound clip before 488ba0's getup. */
 /* 482540: 433c00 clears the CPU reaction latch, then 488ba0. */
 void goro_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, MK4_GETUP_DESCRIPTOR_FLIP_GETUP);
+  mk4_mmove_getup(victim, dat_getup_descriptor_flip_getup);
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
@@ -214,7 +211,7 @@ void raiden_script_torpedo_motion(Fighter *fighter) {
 }
 
 unsigned raiden_script_torpedo_query(Fighter *fighter) {
-  AttackRecord raiden_common_torpedo_record = script_vm_attack_record(battle_data(), TORPEDO_ATTACK_RECORD);
+  AttackRecord raiden_common_torpedo_record = script_vm_attack_record(battle_data(), dat_torpedo_attack_record);
 
   return battle_contact(fighter, &raiden_common_torpedo_record) == CONTACT_MISS ? 0u : 1u;
 }

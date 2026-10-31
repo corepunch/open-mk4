@@ -4,6 +4,7 @@
 
 ; Animation descriptors, indexed by clip(): resource field, frame count, packed format.
 ; Format high 16 bits = decoded words/frame; payload lives in FILESYS.DAT (common/mk4_assets.c).
+.alias animation_clip_0_frame_count animation_table + 4
 animation_table:
   .word 0, 13, 0x120000  ; clip 0
 
@@ -892,6 +893,7 @@ animation_clip_294:
 animation_clip_295:
   .word 0, 19, 0x120000  ; clip 295
 
+.alias animation_clip_296_frame_count animation_clip_296 + 4
 animation_clip_296:
   .word 0, 21, 0x120000  ; clip 296
 
@@ -1762,6 +1764,7 @@ animation_clip_584:
 animation_clip_585:
   .word 0, 48, 0x120000  ; clip 585
 
+.alias animation_clip_586_frame_count animation_clip_586 + 4
 animation_clip_586:
   .word 0, 131, 0x120000  ; clip 586
 

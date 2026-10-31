@@ -124,7 +124,7 @@ static void react_kick_air(Fighter *fighter) {
   fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
-  action_native_sound_list(MK4_SOUND_KNOCKDOWN_VOICE_LIST);
+  action_native_sound_list(dat_sound_knockdown_voice_list);
   hit_script(fighter, scr_react_kick_air, action_getup_roll);
 }
 
@@ -148,10 +148,10 @@ static void react_kick_hit(Fighter *fighter) {
 }
 
 static void react_jab_hit(Fighter *fighter) {
-  action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+  action_native_sound_list(dat_sound_random_grunt_list);
   bool crouch = fighter->action == ACTION_CODE_2001 || fighter->action == ACTION_CODE_2002;
   if (crouch) {
-    uint32_t physics = mk4_image_u32(battle_data(), MK4_CROUCH_REACTION_PHYSICS_WORD);
+    uint32_t physics = mk4_image_u32(battle_data(), dat_crouch_reaction_physics_word);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction callback");
     hit_script(fighter, scr_crouch_reaction_script, action_controller_return);
     return;
@@ -299,20 +299,20 @@ static void react_block(Fighter *fighter) {
   }
   if (entry != MK4_NATIVE_BLOCK_STANDING_NO_PHYSICS) {
     fighter_set_speed(fighter, -speed);
-    uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_BLOCK_REACTION_FRICTION_ROW);
+    uint32_t physics = mk4_image_u32(battle_data(), dat_block_reaction_friction_row);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
-    action_native_sound_list(MK4_SOUND_ARMED_IMPACT_LIST);
+    action_native_sound_list(dat_sound_armed_impact_list);
   } else {
     if (fighter->armed || variant >= 16) {
-      action_native_sound_list(MK4_SOUND_UNARMED_IMPACT_LIST);
+      action_native_sound_list(dat_sound_unarmed_impact_list);
     }
-    action_native_sound_list(variant % 16 < 5 ? MK4_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS : MK4_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS);
+    action_native_sound_list(variant % 16 < 5 ? dat_sound_list_block_low_variant_impacts : dat_sound_list_block_high_variant_impacts);
   }
   fighter->native_variant = repeat;
   if (crouch) {
-    uint32_t descriptor = mk4_image_u32(battle_data(), MK4_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
+    uint32_t descriptor = mk4_image_u32(battle_data(), dat_crouch_block_animation_descriptors + (fighter->armed ? 4 : 0)) * 4;
     script_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {

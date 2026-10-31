@@ -1,2119 +1,55 @@
 {
-  "exports": [
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SWORD",
-      "address": 5164536,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_SWORD"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SCEPTER",
-      "address": 5164472,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_SCEPTER"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_DRAGON_SWORD",
-      "address": 5164632,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_DRAGON_SWORD"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_RAIDEN_STAFF",
-      "address": 5164568,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_RAIDEN_STAFF"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SONYA",
-      "address": 5164600,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_SONYA"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_AXE",
-      "address": 5164760,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_AXE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_KAI",
-      "address": 5164792,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_KAI"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_CAGE",
-      "address": 5164888,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_CAGE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_JAREK",
-      "address": 5164504,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_JAREK"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_SHINNOK",
-      "address": 5164728,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_SHINNOK"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_FUJIN",
-      "address": 5164696,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_FUJIN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_REPTILE",
-      "address": 5164664,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_REPTILE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_TANYA",
-      "address": 5164440,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_TANYA"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_WEAPON_DESCRIPTOR_QUAN_CHI",
-      "address": 5164856,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_WEAPON_DESCRIPTOR_QUAN_CHI"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_INVENTORY_TABLE",
-      "address": 5494208,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_INVENTORY_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ROSTER_NAME_TABLE",
-      "address": 5169648,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ROSTER_NAME_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ROSTER_RECORD_TABLE",
-      "address": 5157608,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ROSTER_RECORD_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_IDLE_ANIMATION_TABLE",
-      "address": 5493768,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_IDLE_ANIMATION_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SPINE_RIG",
-      "address": 5326268,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SPINE_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SPINE_ASSET_SLOT",
-      "address": 5315868,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SPINE_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ICE_CLONE_RIG",
-      "address": 5269612,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ICE_CLONE_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ICE_CLONE_ASSET_SLOT",
-      "address": 5267612,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ICE_CLONE_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FLAYED_BODY_RIG",
-      "address": 5293124,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FLAYED_BODY_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FLAYED_BODY_ASSET_SLOT",
-      "address": 5292704,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FLAYED_BODY_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD",
-      "address": 5153828,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SCORPION_BEAST_RIG",
-      "address": 5294888,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SCORPION_BEAST_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SCORPION_BEAST_ASSET_SLOT",
-      "address": 5292776,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SCORPION_BEAST_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_LIU_KANG_DRAGON_RIG",
-      "address": 5276164,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_LIU_KANG_DRAGON_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT",
-      "address": 5267888,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SHINNOK_HAND_RIG",
-      "address": 5276612,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SHINNOK_HAND_RIG"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SHINNOK_HAND_ASSET_SLOT",
-      "address": 5267936,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SHINNOK_HAND_ASSET_SLOT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ARENA_RECORD_TABLE",
-      "address": 5101920,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ARENA_RECORD_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_A_TABLE",
-      "address": 5155248,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_A_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_B_TABLE",
-      "address": 5142456,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_B_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_C_TABLE",
-      "address": 5155352,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_C_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_INDEXED_TABLE",
-      "address": 5156144,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_INDEXED_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_IMPACT_VOICE_POINTER",
-      "address": 5492900,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_IMPACT_VOICE_POINTER"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_DRAW_VOICE_POINTER",
-      "address": 5492896,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_DRAW_VOICE_POINTER"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_CONTEXT_TABLE",
-      "address": 5155576,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_CONTEXT_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CAMERA_SHAKE_ROWS",
-      "address": 5125688,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CAMERA_SHAKE_ROWS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ARM_TEAR_CLIP_204_ROSTERS",
-      "address": 5143304,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ARM_TEAR_CLIP_204_ROSTERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_LEG_TEAR_CAMERA_SIDE",
-      "address": 5118592,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_LEG_TEAR_CAMERA_SIDE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_LEG_TEAR_CAMERA_ORBIT",
-      "address": 5118680,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_LEG_TEAR_CAMERA_ORBIT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SPINE_PULL_CAMERA_INTRO",
-      "address": 5115648,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SPINE_PULL_CAMERA_INTRO"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SPINE_PULL_CAMERA_ORBIT",
-      "address": 5115736,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SPINE_PULL_CAMERA_ORBIT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ARENA_RADII",
-      "address": 5090656,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ARENA_RADII"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SKIN_SEVER_ROWS",
-      "address": 5153824,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SKIN_SEVER_ROWS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_HEAD_HAND_PART_PARAMETERS",
-      "address": 5119184,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_HEAD_HAND_PART_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SLAM_CONTINUE_CHORDS",
-      "address": 5105032,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SLAM_CONTINUE_CHORDS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_PACKED_POINTERS_BEGIN",
-      "address": 5046272,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_PACKED_POINTERS_BEGIN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ASSET_FIXUPS_PRIMARY_BEGIN",
-      "address": 5062272,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ASSET_FIXUPS_PRIMARY_BEGIN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ASSET_FIXUPS_PRIMARY_END",
-      "address": 5084144,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ASSET_FIXUPS_PRIMARY_END"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ASSET_FIXUPS_SECONDARY_BEGIN",
-      "address": 5084152,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ASSET_FIXUPS_SECONDARY_BEGIN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ASSET_FIXUPS_SECONDARY_END",
-      "address": 5086560,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ASSET_FIXUPS_SECONDARY_END"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_RETURN",
-      "address": 5104144,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_RETURN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_MMOVE_LK_OWNER_RETURN",
-      "address": 5104472,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_MMOVE_LK_OWNER_RETURN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_THROW_TURN",
-      "address": 5105252,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_THROW_TURN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_COMMAND_NEXT",
-      "address": 5131968,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_COMMAND_NEXT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_STANDING",
-      "address": 5132376,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_STANDING"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_CROUCHING",
-      "address": 5132400,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_CROUCHING"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_TOWER_COLUMNS",
-      "address": 5133692,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_TOWER_COLUMNS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_TOWER_LABELS",
-      "address": 5133960,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_TOWER_LABELS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KICK_CONTACT_DEFAULT",
-      "address": 5135616,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KICK_CONTACT_DEFAULT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KICK_CONTACT_WIDE",
-      "address": 5135664,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KICK_CONTACT_WIDE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_THROW_SLAM_RELEASE_SPEED",
-      "address": 5136064,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_THROW_SLAM_RELEASE_SPEED"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY",
-      "address": 5136068,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY",
-      "address": 5136072,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_STRAIGHT_TAIL",
-      "address": 5136984,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_STRAIGHT_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_LK_TAIL",
-      "address": 5137464,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_LK_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_LK_ALT_TAIL",
-      "address": 5137520,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_LK_ALT_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_LK_WIDE_TAIL",
-      "address": 5137576,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_LK_WIDE_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_TAIL",
-      "address": 5137752,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_KICK_QUERY_30_ROW",
-      "address": 5137768,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_30_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_ALT_TAIL",
-      "address": 5137824,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_ALT_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_KICK_QUERY_31_ROW",
-      "address": 5137840,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_31_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_WIDE_TAIL",
-      "address": 5137896,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_WIDE_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_DIAGONAL_KICK_QUERY_32_ROW",
-      "address": 5137912,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_32_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_HP_TAIL",
-      "address": 5138032,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_HP_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_HIGH_PUNCH_CONTACT_ROW",
-      "address": 5138048,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_HIGH_PUNCH_CONTACT_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_AIR_HIGH_PUNCH_PARAMETERS",
-      "address": 5138144,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_AIR_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_AIR_LOW_PUNCH_PARAMETERS",
-      "address": 5138176,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_AIR_LOW_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_LP_TAIL",
-      "address": 5138216,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_LP_TAIL"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AIR_LOW_PUNCH_CONTACT_ROW",
-      "address": 5138232,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AIR_LOW_PUNCH_CONTACT_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KICK_CONTACT_NARROW",
-      "address": 5138808,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KICK_CONTACT_NARROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CLOSE_HIGH_PUNCH",
-      "address": 5139472,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CLOSE_HIGH_PUNCH"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_COMBO_HIGH_PUNCH",
-      "address": 5139536,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_COMBO_HIGH_PUNCH"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_STRAIGHT_AIR",
-      "address": 5140168,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_STRAIGHT_AIR"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_AIR_COMBO",
-      "address": 5140192,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_AIR_COMBO"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CROUCH_ENTRY",
-      "address": 5140512,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CROUCH_ENTRY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_CLOSE_PRIMARY",
-      "address": 5140600,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_CLOSE_PRIMARY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_CLOSE_SECONDARY",
-      "address": 5140624,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_CLOSE_SECONDARY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_CLOSE_TERTIARY",
-      "address": 5140648,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_CLOSE_TERTIARY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_CLOSE_FOLLOWUP",
-      "address": 5140672,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_CLOSE_FOLLOWUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_DIAGONAL_AIR",
-      "address": 5140696,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_DIAGONAL_AIR"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_HANDSTAND",
-      "address": 5145592,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_HANDSTAND"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_INPUT_TABLE_TELEPORT_AIR",
-      "address": 5146864,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_INPUT_TABLE_TELEPORT_AIR"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_REACTION_CLIP_180_FRICTION_CALLBACK",
-      "address": 5148380,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_REACTION_CLIP_180_FRICTION_CALLBACK"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_STAGGER_ENTRY",
-      "address": 5150704,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_STAGGER_ENTRY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_LK_VICTIM_SLIDE_SPEED",
-      "address": 5151164,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_LK_VICTIM_SLIDE_SPEED"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_BICYCLE_RELEASE",
-      "address": 5151436,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_BICYCLE_RELEASE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_ROWS_LP_VICTIM_TABLE_RELEASE",
-      "address": 5151672,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_ROWS_LP_VICTIM_TABLE_RELEASE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_ROWS_LP_VICTIM_REBASED_RELEASE",
-      "address": 5151680,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_ROWS_LP_VICTIM_REBASED_RELEASE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE",
-      "address": 5151688,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_RECORD_REACTION",
-      "address": 5152076,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_RECORD_REACTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_REACTION_CLIP_127_FRICTION_ROW",
-      "address": 5152128,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_REACTION_CLIP_127_FRICTION_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_BLOCK_REACTION_FRICTION_ROW",
-      "address": 5152352,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_BLOCK_REACTION_FRICTION_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_GETUP_DESCRIPTOR_SIDE_GETUP",
-      "address": 5153280,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_GETUP_DESCRIPTOR_SIDE_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_GETUP_DESCRIPTOR_FLIP_GETUP",
-      "address": 5153296,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_GETUP_DESCRIPTOR_FLIP_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_GETUP_DESCRIPTOR_ROLL_GETUP",
-      "address": 5153312,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_GETUP_DESCRIPTOR_ROLL_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_GETUP_DESCRIPTOR_FRONT_GETUP",
-      "address": 5153328,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_GETUP_DESCRIPTOR_FRONT_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_SOUND_LIST_WEAPON_IMPACT_VOICE",
-      "address": 5154944,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_SOUND_LIST_WEAPON_IMPACT_VOICE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS",
-      "address": 5155096,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS",
-      "address": 5155112,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_SOUND_LIST_STAGGER_REACTION",
-      "address": 5155128,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_SOUND_LIST_STAGGER_REACTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SOUND_ROSTER_REMAP",
-      "address": 5156120,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SOUND_ROSTER_REMAP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SPEAR_PROJECTILE",
-      "address": 5160632,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SPEAR_PROJECTILE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AUX_REACTION",
-      "address": 5161672,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AUX_REACTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_PARAMETERS_BEGIN",
-      "address": 5161984,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_PARAMETERS_BEGIN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_42_PARAMETERS",
-      "address": 5162016,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_42_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_231_QUERY_43_MOTION",
-      "address": 5162040,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_231_QUERY_43_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_231_QUERY_43_PARAMETERS",
-      "address": 5162056,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_231_QUERY_43_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SCEPTER_HIGH_PUNCH_PARAMETERS",
-      "address": 5162072,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SCEPTER_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_MOTION",
-      "address": 5162096,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_PARAMETERS",
-      "address": 5162112,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_250_QUERY_38_PARAMETERS",
-      "address": 5162128,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_250_QUERY_38_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_228_QUERY_39_MOTION",
-      "address": 5162152,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_228_QUERY_39_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_228_QUERY_39_PARAMETERS",
-      "address": 5162168,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_228_QUERY_39_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_239_QUERY_37_PARAMETERS",
-      "address": 5162184,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_239_QUERY_37_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_36_PARAMETERS",
-      "address": 5162256,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_36_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_228_QUERY_35_MOTION",
-      "address": 5162280,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_228_QUERY_35_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_228_QUERY_35_PARAMETERS",
-      "address": 5162296,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_228_QUERY_35_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KAI_WEAPON_HIGH_PUNCH_MOTION",
-      "address": 5162312,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KAI_WEAPON_HIGH_PUNCH_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KAI_WEAPON_HIGH_PUNCH_PARAMETERS",
-      "address": 5162328,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KAI_WEAPON_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_32_MOTION",
-      "address": 5162352,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_32_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_32_PARAMETERS",
-      "address": 5162368,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_32_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_237_QUERY_28_MOTION",
-      "address": 5162440,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_237_QUERY_28_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_237_QUERY_28_PARAMETERS",
-      "address": 5162456,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_237_QUERY_28_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_238_QUERY_29_MOTION",
-      "address": 5162480,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_238_QUERY_29_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_238_QUERY_29_PARAMETERS",
-      "address": 5162496,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_238_QUERY_29_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_243_QUERY_30_PARAMETERS",
-      "address": 5162520,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_243_QUERY_30_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_REPTILE_WEAPON_HIGH_PUNCH_PARAMETERS",
-      "address": 5162536,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_REPTILE_WEAPON_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_240_QUERY_21_PARAMETERS",
-      "address": 5162584,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_240_QUERY_21_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_LOW_PUNCH_OPEN_PARAMETERS",
-      "address": 5162760,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_LOW_PUNCH_OPEN_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION",
-      "address": 5162784,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS",
-      "address": 5162800,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_BACK_HIGH_PUNCH_MOTION",
-      "address": 5162816,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_BACK_HIGH_PUNCH_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_BACK_HIGH_PUNCH_PARAMETERS",
-      "address": 5162832,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_BACK_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_230_QUERY_8_PARAMETERS",
-      "address": 5162848,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_230_QUERY_8_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_9_PARAMETERS",
-      "address": 5162872,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_9_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY",
-      "address": 5162976,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED",
-      "address": 5162980,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION",
-      "address": 5162984,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_233_QUERY_4_PARAMETERS",
-      "address": 5163024,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_233_QUERY_4_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_238_QUERY_7_MOTION",
-      "address": 5163048,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_238_QUERY_7_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_238_QUERY_7_PARAMETERS",
-      "address": 5163064,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_238_QUERY_7_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_234_QUERY_5_PARAMETERS",
-      "address": 5163080,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_234_QUERY_5_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_STAFF_BACK_LOW_PUNCH_MOTION",
-      "address": 5163104,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_STAFF_BACK_LOW_PUNCH_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_STAFF_BACK_LOW_PUNCH_PARAMETERS",
-      "address": 5163120,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_STAFF_BACK_LOW_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_235_QUERY_1_PARAMETERS",
-      "address": 5163136,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_235_QUERY_1_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_236_QUERY_0_PARAMETERS",
-      "address": 5163160,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_236_QUERY_0_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_AXE_HIGH_PUNCH_PARAMETERS",
-      "address": 5163400,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_AXE_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_229_QUERY_23_PARAMETERS",
-      "address": 5163424,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_229_QUERY_23_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_232_QUERY_24_PARAMETERS",
-      "address": 5163440,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_232_QUERY_24_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_STRIKE_QUERY",
-      "address": 5163464,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_STRIKE_QUERY"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_231_PARAMETERS",
-      "address": 5163480,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_231_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_CLIP_239_PARAMETERS",
-      "address": 5163496,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_CLIP_239_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CAGE_WEAPON_LOW_PUNCH_PARAMETERS",
-      "address": 5163512,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CAGE_WEAPON_LOW_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KAI_WEAPON_FOLLOWUP_MOTION",
-      "address": 5163528,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KAI_WEAPON_FOLLOWUP_MOTION"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_KAI_WEAPON_FOLLOWUP_PARAMETERS",
-      "address": 5163544,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_KAI_WEAPON_FOLLOWUP_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_REPTILE_WEAPON_BACK_HIGH_PUNCH_PARAMETERS",
-      "address": 5163560,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_REPTILE_WEAPON_BACK_HIGH_PUNCH_PARAMETERS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_PARAMETERS_END",
-      "address": 5163776,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_PARAMETERS_END"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_WEAPON_DRAW_FOLLOWUP_ENTRIES",
-      "address": 5163840,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_WEAPON_DRAW_FOLLOWUP_ENTRIES"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FIREBALL_STANDING_CONTACT_ROW",
-      "address": 5165744,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FIREBALL_STANDING_CONTACT_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FIREBALL_AIR_CONTACT_ROW",
-      "address": 5165800,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FIREBALL_AIR_CONTACT_ROW"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FIREBALL_SPAWN_FORWARD_OFFSET",
-      "address": 5167112,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FIREBALL_SPAWN_FORWARD_OFFSET"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_FIREBALL_SPAWN_Y_OFFSET",
-      "address": 5167116,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_FIREBALL_SPAWN_Y_OFFSET"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_SCRIPT_REGION_END",
-      "address": 5173248,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_SCRIPT_REGION_END"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ANIMATION_TABLE",
-      "address": 5221756,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ANIMATION_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ANIMATION_CLIP_ZERO_FRAME_COUNT_WORD",
-      "address": 5221760,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ANIMATION_CLIP_ZERO_FRAME_COUNT_WORD"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_168",
-      "address": 5223772,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_168"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_169",
-      "address": 5223784,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_169"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_177",
-      "address": 5223880,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_177"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_185",
-      "address": 5223976,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_185"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_203",
-      "address": 5224192,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_203"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_296",
-      "address": 5225308,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_296"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_297",
-      "address": 5225320,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_297"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_301",
-      "address": 5225368,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_301"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_310",
-      "address": 5225476,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_310"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_414",
-      "address": 5226724,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_414"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_415",
-      "address": 5226736,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_415"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_586",
-      "address": 5228788,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_586"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLIP_595",
-      "address": 5228896,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLIP_595"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN",
-      "address": 5489984,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ROSTER_DEF",
-      "address": 5492272,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ROSTER_DEF"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_WEAPON_STANCE",
-      "address": 5492288,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_WEAPON_STANCE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CROUCH_HOLD_DESCRIPTORS",
-      "address": 5492304,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CROUCH_HOLD_DESCRIPTORS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CROUCH_LOW_PUNCH",
-      "address": 5492312,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CROUCH_LOW_PUNCH"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK",
-      "address": 5492320,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE",
-      "address": 5492592,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE",
-      "address": 5492600,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_VICTIM_FINISH_FLIP_GETUP",
-      "address": 5492604,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_VICTIM_FINISH_FLIP_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_VICTIM_IMPACT_ROLL_GETUP",
-      "address": 5492608,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_VICTIM_IMPACT_ROLL_GETUP"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS",
-      "address": 5492616,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_SQUARE_VICTIM",
-      "address": 5492628,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_SQUARE_VICTIM"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_BICYCLE_CYCLE",
-      "address": 5492640,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_BICYCLE_CYCLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD",
-      "address": 5492648,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE",
-      "address": 5492736,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CONTACT_QUERY_D_TABLE",
-      "address": 5493112,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CONTACT_QUERY_D_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_PROJECTILE_CONTACT_TABLE",
-      "address": 5493256,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_PROJECTILE_CONTACT_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CONTACT_QUERY_A_TABLE",
-      "address": 5493352,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CONTACT_QUERY_A_TABLE"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_JAB_CONTACT",
-      "address": 5493356,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_JAB_CONTACT"
-    },
-    {
-      "name": "MK4_LINK_MK4_ADDRESSES_MK4_DATA_CONTACT_QUERY_B_TABLE",
-      "address": 5493432,
-      "source": "common/mk4_addresses.h",
-      "original_name": "MK4_DATA_CONTACT_QUERY_B_TABLE"
-    },
-    {
-      "name": "MK4_LINK_WEAPONS_WEAPON_AIR_HP_ATTACK_RECORD",
-      "address": 5160200,
-      "source": "game/weapons.c",
-      "original_name": "WEAPON_AIR_HP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPONS_WEAPON_AIR_LP_ATTACK_RECORD",
-      "address": 5160176,
-      "source": "game/weapons.c",
-      "original_name": "WEAPON_AIR_LP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPONS_WEAPON_THROW_ATTACK_RECORD",
-      "address": 5160464,
-      "source": "game/weapons.c",
-      "original_name": "WEAPON_THROW_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPONS_AXE_FOLLOWUP_ATTACK_RECORD",
-      "address": 5158808,
-      "source": "game/weapons.c",
-      "original_name": "AXE_FOLLOWUP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_DIVE_ATTACK_RECORD",
-      "address": 5161208,
-      "source": "game/native/motion.c",
-      "original_name": "DIVE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_BALL_ATTACK_RECORD",
-      "address": 5161112,
-      "source": "game/native/motion.c",
-      "original_name": "BALL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_LUNGE_ATTACK_RECORD",
-      "address": 5159456,
-      "source": "game/native/motion.c",
-      "original_name": "LUNGE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_FLYING_ATTACK_RECORD",
-      "address": 5159888,
-      "source": "game/native/motion.c",
-      "original_name": "FLYING_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_FLIP_ATTACK_RECORD",
-      "address": 5160992,
-      "source": "game/native/motion.c",
-      "original_name": "FLIP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_STOMP_ATTACK_RECORD",
-      "address": 5161304,
-      "source": "game/native/motion.c",
-      "original_name": "STOMP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_FLIP_KICK_ATTACK_RECORD",
-      "address": 5160872,
-      "source": "game/native/motion.c",
-      "original_name": "FLIP_KICK_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_DASH_ATTACK_RECORD",
-      "address": 5161016,
-      "source": "game/native/motion.c",
-      "original_name": "DASH_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_ROLL_ATTACK_RECORD",
-      "address": 5161088,
-      "source": "game/native/motion.c",
-      "original_name": "ROLL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_TELEPORT_ATTACK_RECORD",
-      "address": 5160776,
-      "source": "game/native/motion.c",
-      "original_name": "TELEPORT_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_SQUARE_ATTACK_RECORD",
-      "address": 5161448,
-      "source": "game/native/motion.c",
-      "original_name": "SQUARE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_ICE_CLONE_ATTACK_RECORD",
-      "address": 5160752,
-      "source": "game/native/motion.c",
-      "original_name": "ICE_CLONE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_SLIDE_ATTACK_RECORD",
-      "address": 5161400,
-      "source": "game/native/motion.c",
-      "original_name": "SLIDE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_MOTION_DRILL_ATTACK_RECORD",
-      "address": 5161160,
-      "source": "game/native/motion.c",
-      "original_name": "DRILL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_CONTEXTS_TORPEDO_ATTACK_RECORD",
-      "address": 5161376,
-      "source": "game/native/contexts.c",
-      "original_name": "TORPEDO_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_GROIN_PUNCH_ATTACK_RECORD",
-      "address": 5160968,
-      "source": "game/native/attacks.c",
-      "original_name": "GROIN_PUNCH_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_SHADOW_ATTACK_RECORD",
-      "address": 5160920,
-      "source": "game/native/attacks.c",
-      "original_name": "SHADOW_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_POWER_ATTACK_RECORD",
-      "address": 5160944,
-      "source": "game/native/attacks.c",
-      "original_name": "POWER_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_TRIPLE_ATTACK_RECORD",
-      "address": 5161328,
-      "source": "game/native/attacks.c",
-      "original_name": "TRIPLE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_PUNCH_ATTACK_RECORD",
-      "address": 5161520,
-      "source": "game/native/attacks.c",
-      "original_name": "PUNCH_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_KICK_ATTACK_RECORD",
-      "address": 5161544,
-      "source": "game/native/attacks.c",
-      "original_name": "KICK_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_UPPERCUT_ATTACK_RECORD",
-      "address": 5161592,
-      "source": "game/native/attacks.c",
-      "original_name": "UPPERCUT_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_STOMP_ATTACK_RECORD",
-      "address": 5161568,
-      "source": "game/native/attacks.c",
-      "original_name": "STOMP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_DASH_ATTACK_RECORD",
-      "address": 5161040,
-      "source": "game/native/attacks.c",
-      "original_name": "DASH_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_AERIAL_ATTACK_RECORD",
-      "address": 5161184,
-      "source": "game/native/attacks.c",
-      "original_name": "AERIAL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_BICYCLE_ATTACK_RECORD",
-      "address": 5160032,
-      "source": "game/native/attacks.c",
-      "original_name": "BICYCLE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_WEAPON_STEAL_ATTACK_RECORD",
-      "address": 5161280,
-      "source": "game/native/attacks.c",
-      "original_name": "WEAPON_STEAL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_AERIAL_BICYCLE_ATTACK_RECORD",
-      "address": 5161424,
-      "source": "game/native/attacks.c",
-      "original_name": "AERIAL_BICYCLE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_CARTWHEEL_ATTACK_RECORD",
-      "address": 5161136,
-      "source": "game/native/attacks.c",
-      "original_name": "CARTWHEEL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_LEG_ATTACK_RECORD",
-      "address": 5160824,
-      "source": "game/native/attacks.c",
-      "original_name": "LEG_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_ATTACKS_SPIN_ATTACK_RECORD",
-      "address": 5160896,
-      "source": "game/native/attacks.c",
-      "original_name": "SPIN_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_FIRE_ATTACK_RECORD",
-      "address": 5160848,
-      "source": "game/native/projectiles.c",
-      "original_name": "FIRE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_ORB_ATTACK_RECORD",
-      "address": 5160656,
-      "source": "game/native/projectiles.c",
-      "original_name": "ORB_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_FIREBALL_ATTACK_RECORD",
-      "address": 5161616,
-      "source": "game/native/projectiles.c",
-      "original_name": "FIREBALL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_BLADE_ATTACK_RECORD",
-      "address": 5160800,
-      "source": "game/native/projectiles.c",
-      "original_name": "BLADE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_MISSILE_ATTACK_RECORD",
-      "address": 5160800,
-      "source": "game/native/projectiles.c",
-      "original_name": "MISSILE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_DROP_ATTACK_RECORD",
-      "address": 5160560,
-      "source": "game/native/projectiles.c",
-      "original_name": "DROP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_RISE_ATTACK_RECORD",
-      "address": 5160536,
-      "source": "game/native/projectiles.c",
-      "original_name": "RISE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_FIREBALL_HIGH_ATTACK_RECORD",
-      "address": 5160656,
-      "source": "game/native/projectiles.c",
-      "original_name": "FIREBALL_HIGH_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_FIREBALL_LOW_ATTACK_RECORD",
-      "address": 5160680,
-      "source": "game/native/projectiles.c",
-      "original_name": "FIREBALL_LOW_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_SKULL_ATTACK_RECORD",
-      "address": 5160584,
-      "source": "game/native/projectiles.c",
-      "original_name": "SKULL_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_GENERIC_PROJECTILE_ATTACK_RECORD",
-      "address": 5160704,
-      "source": "game/native/projectiles.c",
-      "original_name": "GENERIC_PROJECTILE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_STAR_ATTACK_RECORD",
-      "address": 5160512,
-      "source": "game/native/projectiles.c",
-      "original_name": "STAR_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_ACID_ATTACK_RECORD",
-      "address": 5160488,
-      "source": "game/native/projectiles.c",
-      "original_name": "ACID_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_RING_ATTACK_RECORD",
-      "address": 5160800,
-      "source": "game/native/projectiles.c",
-      "original_name": "RING_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_PROJECTILES_ICE_PROJECTILE_ATTACK_RECORD",
-      "address": 5160728,
-      "source": "game/native/projectiles.c",
-      "original_name": "ICE_PROJECTILE_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPON_ATTACKS_BOLT_ATTACK_RECORD",
-      "address": 5160608,
-      "source": "game/native/weapon_attacks.c",
-      "original_name": "BOLT_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPON_ATTACKS_FLURRY_ATTACK_RECORD",
-      "address": 5158880,
-      "source": "game/native/weapon_attacks.c",
-      "original_name": "FLURRY_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPON_ATTACKS_SWEEP_ATTACK_RECORD",
-      "address": 5158904,
-      "source": "game/native/weapon_attacks.c",
-      "original_name": "SWEEP_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_WEAPON_ATTACKS_BOOMERANG_ATTACK_RECORD",
-      "address": 5160416,
-      "source": "game/native/weapon_attacks.c",
-      "original_name": "BOOMERANG_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_CINEMATICS_DRAGON_VICTIM_ANIMATION_DESCRIPTOR",
-      "address": 5226784,
-      "source": "game/native/cinematics.c",
-      "original_name": "DRAGON_VICTIM_ANIMATION_DESCRIPTOR"
-    },
-    {
-      "name": "MK4_LINK_TELEPORT_TELEPORT_SLAM_ATTACK_RECORD",
-      "address": 5161232,
-      "source": "game/native/teleport.c",
-      "original_name": "TELEPORT_SLAM_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_HANDSTAND_HANDSTAND_SPIN_ATTACK_RECORD",
-      "address": 5161256,
-      "source": "game/native/handstand.c",
-      "original_name": "HANDSTAND_SPIN_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_HANDSTAND_HANDSTAND_FRONT_ATTACK_RECORD",
-      "address": 5159432,
-      "source": "game/native/handstand.c",
-      "original_name": "HANDSTAND_FRONT_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_HANDSTAND_HANDSTAND_REAR_ATTACK_RECORD",
-      "address": 5159408,
-      "source": "game/native/handstand.c",
-      "original_name": "HANDSTAND_REAR_ATTACK_RECORD"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_CROUCH_REACTION_PHYSICS_WORD",
-      "address": 5149528,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_CROUCH_REACTION_PHYSICS_WORD"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_REACTION_TABLE",
-      "address": 5154024,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_REACTION_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_REACTION_TABLE_END",
-      "address": 5154800,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_REACTION_TABLE_END"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ATTACK_RECORDS_BEGIN",
-      "address": 5156864,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ATTACK_RECORDS_BEGIN"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ATTACK_RECORDS_END",
-      "address": 5161640,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ATTACK_RECORDS_END"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_WEAPON_ATTACK_TABLE",
-      "address": 5492928,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_WEAPON_ATTACK_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_CPU_ACTION_TABLES",
-      "address": 5109992,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_CPU_ACTION_TABLES"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_WALK_ANIMATION_TABLE",
-      "address": 5493640,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_WALK_ANIMATION_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_LK_THROW_TABLE",
-      "address": 5103544,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_LK_THROW_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_FIRST_FINISH_TABLE",
-      "address": 5112984,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_FIRST_FINISH_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SECOND_FINISH_TABLE",
-      "address": 5111440,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SECOND_FINISH_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_FIRST_FINISH_DISTANCE_TABLE",
-      "address": 5111312,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_FIRST_FINISH_DISTANCE_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SECOND_FINISH_DISTANCE_TABLE",
-      "address": 5111376,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SECOND_FINISH_DISTANCE_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ACTION_TABLE_1",
-      "address": 5140216,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ACTION_TABLE_1"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ACTION_TABLE_2",
-      "address": 5167144,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ACTION_TABLE_2"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ACTION_TABLE_4",
-      "address": 5146896,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ACTION_TABLE_4"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ACTION_TABLE_8",
-      "address": 5140488,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ACTION_TABLE_8"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_ACTION_TABLE_32",
-      "address": 5110928,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_ACTION_TABLE_32"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_UP_COMMAND_TABLE",
-      "address": 5490824,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_UP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_UP_COMMAND_TABLE",
-      "address": 5491472,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_UP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_HP_COMMAND_TABLE",
-      "address": 5490896,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_HP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_HP_COMMAND_TABLE",
-      "address": 5491544,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_HP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_LP_COMMAND_TABLE",
-      "address": 5490968,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_LP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_LP_COMMAND_TABLE",
-      "address": 5491616,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_LP_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_BLOCK_COMMAND_TABLE",
-      "address": 5491040,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_BLOCK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_BLOCK_COMMAND_TABLE",
-      "address": 5491688,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_BLOCK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_HK_COMMAND_TABLE",
-      "address": 5491112,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_HK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_HK_COMMAND_TABLE",
-      "address": 5491760,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_HK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_LK_COMMAND_TABLE",
-      "address": 5491184,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_LK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_LK_COMMAND_TABLE",
-      "address": 5491832,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_LK_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_LK_RELEASE_COMMAND_TABLE",
-      "address": 5491256,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_LK_RELEASE_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_LK_RELEASE_COMMAND_TABLE",
-      "address": 5491328,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_LK_RELEASE_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P1_RUN_COMMAND_TABLE",
-      "address": 5491400,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P1_RUN_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_P2_RUN_COMMAND_TABLE",
-      "address": 5491904,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_P2_RUN_COMMAND_TABLE"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_THROW_GRUNT_LIST",
-      "address": 5154856,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_THROW_GRUNT_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_KNOCKDOWN_VOICE_LIST",
-      "address": 5154928,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_KNOCKDOWN_VOICE_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_IMPACT_VOICE_LIST",
-      "address": 5154976,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_IMPACT_VOICE_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_FOOTSTEP_LIST",
-      "address": 5154992,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_FOOTSTEP_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_UNARMED_IMPACT_LIST",
-      "address": 5155016,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_UNARMED_IMPACT_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_ARMED_IMPACT_LIST",
-      "address": 5155040,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_ARMED_IMPACT_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_RANDOM_GRUNT_LIST",
-      "address": 5155064,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_RANDOM_GRUNT_LIST"
-    },
-    {
-      "name": "MK4_LINK_LAYOUT_MK4_SOUND_UPPERCUT_VOICE_LIST",
-      "address": 5155168,
-      "source": "game/data/layout.h",
-      "original_name": "MK4_SOUND_UPPERCUT_VOICE_LIST"
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663552",
-      "address": 5701632
-    },
-    {
-      "name": "MK4_FIXTURE_REF_183676",
-      "address": 5221756
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663560",
-      "address": 5701640
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663572",
-      "address": 5701652
-    },
-    {
-      "name": "MK4_FIXTURE_REF_97584",
-      "address": 5135664
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663556",
-      "address": 5701636
-    },
-    {
-      "name": "MK4_FIXTURE_REF_455272",
-      "address": 5493352
-    },
-    {
-      "name": "MK4_FIXTURE_REF_187232",
-      "address": 5225312
-    },
-    {
-      "name": "MK4_FIXTURE_REF_73232",
-      "address": 5111312
-    },
-    {
-      "name": "MK4_FIXTURE_REF_74904",
-      "address": 5112984
-    },
-    {
-      "name": "MK4_FIXTURE_REF_453464",
-      "address": 5491544
-    },
-    {
-      "name": "MK4_FIXTURE_REF_131072",
-      "address": 5169152
-    },
-    {
-      "name": "MK4_FIXTURE_REF_102136",
-      "address": 5140216
-    },
-    {
-      "name": "MK4_FIXTURE_REF_93892",
-      "address": 5131972
-    },
-    {
-      "name": "MK4_FIXTURE_REF_71912",
-      "address": 5109992
-    },
-    {
-      "name": "MK4_FIXTURE_REF_456128",
-      "address": 5494208
-    },
-    {
-      "name": "MK4_FIXTURE_REF_115944",
-      "address": 5154024
-    },
-    {
-      "name": "MK4_FIXTURE_REF_115216",
-      "address": 5153296
-    },
-    {
-      "name": "MK4_FIXTURE_REF_115248",
-      "address": 5153328
-    },
-    {
-      "name": "MK4_FIXTURE_REF_115232",
-      "address": 5153312
-    },
-    {
-      "name": "MK4_FIXTURE_REF_123992",
-      "address": 5162072
-    },
-    {
-      "name": "MK4_FIXTURE_REF_124016",
-      "address": 5162096
-    },
-    {
-      "name": "MK4_FIXTURE_REF_454848",
-      "address": 5492928
-    },
-    {
-      "name": "MK4_FIXTURE_REF_125056",
-      "address": 5163136
-    },
-    {
-      "name": "MK4_FIXTURE_REF_125068",
-      "address": 5163148
-    },
-    {
-      "name": "MK4_FIXTURE_REF_124088",
-      "address": 5162168
-    },
-    {
-      "name": "MK4_FIXTURE_REF_454680",
-      "address": 5492760
-    },
-    {
-      "name": "MK4_FIXTURE_REF_118040",
-      "address": 5156120
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663808",
-      "address": 5701888
-    },
-    {
-      "name": "MK4_FIXTURE_REF_116776",
-      "address": 5154856
-    },
-    {
-      "name": "MK4_FIXTURE_REF_116780",
-      "address": 5154860
-    },
-    {
-      "name": "MK4_FIXTURE_REF_663936",
-      "address": 5702016
-    },
-    {
-      "name": "MK4_FIXTURE_REF_113592",
-      "address": 5151672
-    },
-    {
-      "name": "MK4_FIXTURE_REF_113596",
-      "address": 5151676
-    },
-    {
-      "name": "MK4_FIXTURE_REF_190712",
-      "address": 5228792
-    },
-    {
-      "name": "MK4_FIXTURE_REF_190708",
-      "address": 5228788
-    },
-    {
-      "name": "MK4_FIXTURE_REF_65464",
-      "address": 5103544
-    },
-    {
-      "name": "MK4_FIXTURE_REF_101392",
-      "address": 5139472
-    },
-    {
-      "name": "MK4_FIXTURE_REF_101396",
-      "address": 5139476
-    },
-    {
-      "name": "MK4_FIXTURE_REF_186112",
-      "address": 5224192
-    },
-    {
-      "name": "MK4_FIXTURE_REF_102520",
-      "address": 5140600
-    },
-    {
-      "name": "MK4_FIXTURE_REF_102408",
-      "address": 5140488
-    },
-    {
-      "name": "MK4_FIXTURE_REF_99988",
-      "address": 5138068
-    },
-    {
-      "name": "MK4_FIXTURE_REF_8192",
-      "address": 5046272
-    },
-    {
-      "name": "MK4_FIXTURE_REF_8200",
-      "address": 5046280
-    },
-    {
-      "name": "MK4_FIXTURE_REF_95612",
-      "address": 5133692
-    }
-  ],
   "names": {
-    "0x4ecdf8": "MK4_WEAPON_DESCRIPTOR_SWORD",
-    "0x4ecdb8": "MK4_WEAPON_DESCRIPTOR_SCEPTER",
-    "0x4ece58": "MK4_WEAPON_DESCRIPTOR_DRAGON_SWORD",
-    "0x4ece18": "MK4_WEAPON_DESCRIPTOR_RAIDEN_STAFF",
-    "0x4ece38": "MK4_WEAPON_DESCRIPTOR_SONYA",
-    "0x4eced8": "MK4_WEAPON_DESCRIPTOR_AXE",
-    "0x4ecef8": "MK4_WEAPON_DESCRIPTOR_KAI",
-    "0x4ecf58": "MK4_WEAPON_DESCRIPTOR_CAGE",
-    "0x4ecdd8": "MK4_WEAPON_DESCRIPTOR_JAREK",
-    "0x4eceb8": "MK4_WEAPON_DESCRIPTOR_SHINNOK",
-    "0x4ece98": "MK4_WEAPON_DESCRIPTOR_FUJIN",
-    "0x4ece78": "MK4_WEAPON_DESCRIPTOR_REPTILE",
-    "0x4ecd98": "MK4_WEAPON_DESCRIPTOR_TANYA",
-    "0x4ecf38": "MK4_WEAPON_DESCRIPTOR_QUAN_CHI",
-    "0x53d5c0": "MK4_DATA_WEAPON_INVENTORY_TABLE",
-    "0x4ee1f0": "MK4_DATA_ROSTER_NAME_TABLE",
-    "0x4eb2e8": "MK4_DATA_ROSTER_RECORD_TABLE",
-    "0x53d408": "MK4_DATA_IDLE_ANIMATION_TABLE",
-    "0x5145bc": "MK4_DATA_SPINE_RIG",
-    "0x511d1c": "MK4_DATA_SPINE_ASSET_SLOT",
-    "0x50686c": "MK4_DATA_ICE_CLONE_RIG",
-    "0x50609c": "MK4_DATA_ICE_CLONE_ASSET_SLOT",
-    "0x50c444": "MK4_DATA_FLAYED_BODY_RIG",
-    "0x50c2a0": "MK4_DATA_FLAYED_BODY_ASSET_SLOT",
-    "0x4ea424": "MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD",
-    "0x50cb28": "MK4_DATA_SCORPION_BEAST_RIG",
-    "0x50c2e8": "MK4_DATA_SCORPION_BEAST_ASSET_SLOT",
-    "0x508204": "MK4_DATA_LIU_KANG_DRAGON_RIG",
-    "0x5061b0": "MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT",
-    "0x5083c4": "MK4_DATA_SHINNOK_HAND_RIG",
-    "0x5061e0": "MK4_DATA_SHINNOK_HAND_ASSET_SLOT",
-    "0x4dd960": "MK4_DATA_ARENA_RECORD_TABLE",
-    "0x4ea9b0": "MK4_DATA_SOUND_A_TABLE",
-    "0x4e77b8": "MK4_DATA_SOUND_B_TABLE",
-    "0x4eaa18": "MK4_DATA_SOUND_C_TABLE",
-    "0x4ead30": "MK4_DATA_SOUND_INDEXED_TABLE",
-    "0x53d0a4": "MK4_DATA_SOUND_IMPACT_VOICE_POINTER",
-    "0x53d0a0": "MK4_DATA_SOUND_DRAW_VOICE_POINTER",
-    "0x4eaaf8": "MK4_DATA_SOUND_CONTEXT_TABLE",
-    "0x4e3638": "MK4_DATA_CAMERA_SHAKE_ROWS",
-    "0x4e7b08": "MK4_DATA_ARM_TEAR_CLIP_204_ROSTERS",
-    "0x4e1a80": "MK4_DATA_LEG_TEAR_CAMERA_SIDE",
-    "0x4e1ad8": "MK4_DATA_LEG_TEAR_CAMERA_ORBIT",
-    "0x4e0f00": "MK4_DATA_SPINE_PULL_CAMERA_INTRO",
-    "0x4e0f58": "MK4_DATA_SPINE_PULL_CAMERA_ORBIT",
-    "0x4dad60": "MK4_DATA_ARENA_RADII",
-    "0x4ea420": "MK4_DATA_SKIN_SEVER_ROWS",
-    "0x4e1cd0": "MK4_DATA_HEAD_HAND_PART_PARAMETERS",
-    "0x4de588": "MK4_DATA_SLAM_CONTINUE_CHORDS",
-    "0x4d0000": "MK4_DATA_PACKED_POINTERS_BEGIN",
+    "0x4ecdf8": "weapon_descriptor_sword",
+    "0x4ecdb8": "weapon_descriptor_scepter",
+    "0x4ece58": "weapon_descriptor_dragon_sword",
+    "0x4ece18": "weapon_descriptor_raiden_staff",
+    "0x4ece38": "weapon_descriptor_sonya",
+    "0x4eced8": "weapon_descriptor_axe",
+    "0x4ecef8": "weapon_descriptor_kai",
+    "0x4ecf58": "weapon_descriptor_cage",
+    "0x4ecdd8": "weapon_descriptor_jarek",
+    "0x4eceb8": "weapon_descriptor_shinnok",
+    "0x4ece98": "weapon_descriptor_fujin",
+    "0x4ece78": "weapon_descriptor_reptile",
+    "0x4ecd98": "weapon_descriptor_tanya",
+    "0x4ecf38": "weapon_descriptor_quan_chi",
+    "0x53d5c0": "weapon_inventory_table",
+    "0x4ee1f0": "roster_name_table",
+    "0x4eb2e8": "roster_record_table",
+    "0x53d408": "idle_animation_table",
+    "0x5145bc": "spine_rig",
+    "0x511d1c": "spine_asset_slot",
+    "0x50686c": "ice_clone_rig",
+    "0x50609c": "ice_clone_asset_slot",
+    "0x50c444": "flayed_body_rig",
+    "0x50c2a0": "flayed_body_asset_slot",
+    "0x4ea424": "skin_sever_first_rig_word",
+    "0x50cb28": "scorpion_beast_rig",
+    "0x50c2e8": "scorpion_beast_asset_slot",
+    "0x508204": "liu_kang_dragon_rig",
+    "0x5061b0": "liu_kang_dragon_asset_slot",
+    "0x5083c4": "shinnok_hand_rig",
+    "0x5061e0": "shinnok_hand_asset_slot",
+    "0x4dd960": "arena_record_table",
+    "0x4ea9b0": "sound_a_table",
+    "0x4e77b8": "sound_b_table",
+    "0x4eaa18": "sound_c_table",
+    "0x4ead30": "sound_indexed_table",
+    "0x53d0a4": "sound_impact_voice_pointer",
+    "0x53d0a0": "sound_draw_voice_pointer",
+    "0x4eaaf8": "sound_context_table",
+    "0x4e3638": "camera_shake_rows",
+    "0x4e7b08": "arm_tear_clip_204_rosters",
+    "0x4e1a80": "leg_tear_camera_side",
+    "0x4e1ad8": "leg_tear_camera_orbit",
+    "0x4e0f00": "spine_pull_camera_intro",
+    "0x4e0f58": "spine_pull_camera_orbit",
+    "0x4dad60": "arena_radii",
+    "0x4ea420": "skin_sever_rows",
+    "0x4e1cd0": "head_hand_part_parameters",
+    "0x4de588": "slam_continue_chords",
+    "0x4d0000": "packed_pointers_begin",
     "0x4d2bf0": "sub_zero_fatality_2_victim",
     "0x4d2c10": "sub_zero_fatality_2_breath",
     "0x4d2c78": "sub_zero_breath_approach",
@@ -2130,10 +66,10 @@
     "0x4d2eb0": "scorpion_fatality_2_creature_attack",
     "0x4d2ef8": "scorpion_fatality_2_victim",
     "0x4d2f10": "scorpion_beast_victim_pieces",
-    "0x4d3e80": "MK4_DATA_ASSET_FIXUPS_PRIMARY_BEGIN",
-    "0x4d93f0": "MK4_DATA_ASSET_FIXUPS_PRIMARY_END",
-    "0x4d93f8": "MK4_DATA_ASSET_FIXUPS_SECONDARY_BEGIN",
-    "0x4d9d60": "MK4_DATA_ASSET_FIXUPS_SECONDARY_END",
+    "0x4d3e80": "asset_fixups_primary_begin",
+    "0x4d93f0": "asset_fixups_primary_end",
+    "0x4d93f8": "asset_fixups_secondary_begin",
+    "0x4d9d60": "asset_fixups_secondary_end",
     "0x4ddff8": "jarek_lk_throw_startup",
     "0x4de038": "tanya_lk_throw_startup",
     "0x4de060": "lk_branch_continue",
@@ -2144,14 +80,14 @@
     "0x4de180": "lk_throw_rock_repeat_two",
     "0x4de190": "lk_throw_rock_release",
     "0x4de1b0": "quan_chi_lk_throw_startup",
-    "0x4de210": "MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_RETURN",
+    "0x4de210": "animation_descriptor_lk_victim_return",
     "0x4de218": "raiden_lk_throw_startup",
     "0x4de258": "kai_lk_throw_startup",
     "0x4de2a0": "fujin_lk_throw_startup",
     "0x4de2f8": "scorpion_lk_throw_startup",
     "0x4de318": "cage_lk_throw_damage",
     "0x4de328": "cage_lk_throw_release",
-    "0x4de358": "MK4_DATA_MMOVE_LK_OWNER_RETURN",
+    "0x4de358": "mmove_lk_owner_return",
     "0x4de360": "sonya_lk_throw_startup",
     "0x4de3b0": "liu_kang_lk_throw_startup",
     "0x4de3d0": "cage_lk_throw_startup",
@@ -2165,7 +101,7 @@
     "0x4de4f0": "jax_lp_throw_first_slam",
     "0x4de610": "lp_select_short",
     "0x4de640": "lp_select_long",
-    "0x4de664": "MK4_DATA_THROW_TURN",
+    "0x4de664": "throw_turn",
     "0x4de668": "lp_end",
     "0x4de6b8": "lp_select",
     "0x4de6e4": "goro_lp_throw_final_damage",
@@ -2321,11 +257,11 @@
     "0x4e2fb8": "shinnok_first_victim_crush",
     "0x4e2fc8": "shinnok_second_vanish",
     "0x4e2fd8": "shinnok_second_vanished",
-    "0x4e4ec0": "MK4_DATA_COMMAND_NEXT",
-    "0x4e5058": "MK4_INPUT_TABLE_STANDING",
-    "0x4e5070": "MK4_INPUT_TABLE_CROUCHING",
-    "0x4e557c": "MK4_DATA_TOWER_COLUMNS",
-    "0x4e5688": "MK4_DATA_TOWER_LABELS",
+    "0x4e4ec0": "command_next",
+    "0x4e5058": "input_table_standing",
+    "0x4e5070": "input_table_crouching",
+    "0x4e557c": "tower_columns",
+    "0x4e5688": "tower_labels",
     "0x4e56c8": "raiden_second_fatality",
     "0x4e56d8": "raiden_fatality_2_first_playback",
     "0x4e56f0": "raiden_fatality_2_repeated_playback",
@@ -2362,9 +298,9 @@
     "0x4e5c50": "fujin_wind",
     "0x4e5c70": "jax_high_kick_recovery",
     "0x4e5ca0": "high_kick",
-    "0x4e5d00": "MK4_DATA_KICK_CONTACT_DEFAULT",
+    "0x4e5d00": "kick_contact_default",
     "0x4e5d20": "fujin_high_kick_recovery",
-    "0x4e5d30": "MK4_DATA_KICK_CONTACT_WIDE",
+    "0x4e5d30": "kick_contact_wide",
     "0x4e5d90": "low_kick",
     "0x4e5dd8": "air_throw_lift",
     "0x4e5df8": "air_lift_fall",
@@ -2374,9 +310,9 @@
     "0x4e5e78": "air_throw_slam",
     "0x4e5ea0": "air_slam_fall",
     "0x4e5eb0": "quan_chi_air_throw_landing",
-    "0x4e5ec0": "MK4_DATA_AIR_THROW_SLAM_RELEASE_SPEED",
-    "0x4e5ec4": "MK4_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY",
-    "0x4e5ec8": "MK4_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY",
+    "0x4e5ec0": "air_throw_slam_release_speed",
+    "0x4e5ec4": "air_throw_slam_release_y_velocity",
+    "0x4e5ec8": "air_throw_slam_release_gravity",
     "0x4e5ed0": "air_throw_flip",
     "0x4e5fd0": "follow_crouch_hk",
     "0x4e6020": "crouch_high_kick",
@@ -2386,7 +322,7 @@
     "0x4e61d0": "knee_miss_finished",
     "0x4e61e0": "close_high_punch_2",
     "0x4e61f8": "air_straight_kick_startup",
-    "0x4e6258": "MK4_DATA_AIR_STRAIGHT_TAIL",
+    "0x4e6258": "air_straight_tail",
     "0x4e6270": "cage_air_kick_narrow_miss_reversal",
     "0x4e6280": "air_punch_contact",
     "0x4e62a0": "uppercut",
@@ -2397,36 +333,36 @@
     "0x4e6360": "cage_jab_repeat",
     "0x4e63b0": "cage_jab_recovery",
     "0x4e63d8": "air_diagonal_low_kick_startup",
-    "0x4e6438": "MK4_DATA_AIR_LK_TAIL",
+    "0x4e6438": "air_lk_tail",
     "0x4e6458": "air_low_kick_clip_58_reverse",
-    "0x4e6470": "MK4_DATA_AIR_LK_ALT_TAIL",
+    "0x4e6470": "air_lk_alt_tail",
     "0x4e6490": "air_low_kick_clip_59_reverse",
-    "0x4e64a8": "MK4_DATA_AIR_LK_WIDE_TAIL",
+    "0x4e64a8": "air_lk_wide_tail",
     "0x4e64c8": "air_low_kick_clip_60_reverse",
     "0x4e64e0": "air_low_kick_contact_hold",
     "0x4e6500": "air_diagonal_high_kick_startup",
-    "0x4e6558": "MK4_DATA_AIR_DIAGONAL_TAIL",
-    "0x4e6568": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_30_ROW",
+    "0x4e6558": "air_diagonal_tail",
+    "0x4e6568": "air_diagonal_kick_query_30_row",
     "0x4e6588": "air_diagonal_kick_clip_55_reverse",
-    "0x4e65a0": "MK4_DATA_AIR_DIAGONAL_ALT_TAIL",
-    "0x4e65b0": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_31_ROW",
+    "0x4e65a0": "air_diagonal_alt_tail",
+    "0x4e65b0": "air_diagonal_kick_query_31_row",
     "0x4e65d0": "air_diagonal_kick_clip_56_reverse",
-    "0x4e65e8": "MK4_DATA_AIR_DIAGONAL_WIDE_TAIL",
-    "0x4e65f8": "MK4_DATA_AIR_DIAGONAL_KICK_QUERY_32_ROW",
+    "0x4e65e8": "air_diagonal_wide_tail",
+    "0x4e65f8": "air_diagonal_kick_query_32_row",
     "0x4e6618": "air_diagonal_kick_clip_57_reverse",
     "0x4e6630": "air_diagonal_kick_contact_hold",
     "0x4e6658": "air_high_punch_startup",
-    "0x4e6670": "MK4_DATA_AIR_HP_TAIL",
-    "0x4e6680": "MK4_DATA_AIR_HIGH_PUNCH_CONTACT_ROW",
+    "0x4e6670": "air_hp_tail",
+    "0x4e6680": "air_high_punch_contact_row",
     "0x4e66a0": "air_high_punch_miss_reverse",
     "0x4e66b8": "air_high_contact_end",
     "0x4e66d0": "jax_draw_weapon_air_hp",
-    "0x4e66e0": "MK4_DATA_WEAPON_AIR_HIGH_PUNCH_PARAMETERS",
+    "0x4e66e0": "weapon_air_high_punch_parameters",
     "0x4e66f0": "jax_draw_weapon_air_lp",
-    "0x4e6700": "MK4_DATA_WEAPON_AIR_LOW_PUNCH_PARAMETERS",
+    "0x4e6700": "weapon_air_low_punch_parameters",
     "0x4e6710": "air_low_punch_startup",
-    "0x4e6728": "MK4_DATA_AIR_LP_TAIL",
-    "0x4e6738": "MK4_DATA_AIR_LOW_PUNCH_CONTACT_ROW",
+    "0x4e6728": "air_lp_tail",
+    "0x4e6738": "air_low_punch_contact_row",
     "0x4e6758": "air_low_punch_miss_reverse",
     "0x4e6770": "air_low_punch_contact_hold",
     "0x4e6798": "sweep",
@@ -2436,22 +372,22 @@
     "0x4e6890": "jax_roundhouse_fast_start",
     "0x4e68a8": "jax_roundhouse_normal_start",
     "0x4e6950": "spike_enter",
-    "0x4e6978": "MK4_DATA_KICK_CONTACT_NARROW",
+    "0x4e6978": "kick_contact_narrow",
     "0x4e6998": "kai_high_kick_recovery",
     "0x4e69b0": "jax_combo_hp_attacker",
     "0x4e69c8": "sub_zero_combo_hp_attacker",
     "0x4e6a28": "kitana_combo_high_punch_attacker",
     "0x4e6a40": "raiden_victory",
-    "0x4e6c10": "MK4_DATA_CLOSE_HIGH_PUNCH",
-    "0x4e6c50": "MK4_DATA_COMBO_HIGH_PUNCH",
-    "0x4e6ec8": "MK4_INPUT_TABLE_STRAIGHT_AIR",
-    "0x4e6ee0": "MK4_INPUT_TABLE_AIR_COMBO",
-    "0x4e7020": "MK4_DATA_CROUCH_ENTRY",
-    "0x4e7078": "MK4_INPUT_TABLE_CLOSE_PRIMARY",
-    "0x4e7090": "MK4_INPUT_TABLE_CLOSE_SECONDARY",
-    "0x4e70a8": "MK4_INPUT_TABLE_CLOSE_TERTIARY",
-    "0x4e70c0": "MK4_INPUT_TABLE_CLOSE_FOLLOWUP",
-    "0x4e70d8": "MK4_INPUT_TABLE_DIAGONAL_AIR",
+    "0x4e6c10": "close_high_punch",
+    "0x4e6c50": "combo_high_punch",
+    "0x4e6ec8": "input_table_straight_air",
+    "0x4e6ee0": "input_table_air_combo",
+    "0x4e7020": "crouch_entry",
+    "0x4e7078": "input_table_close_primary",
+    "0x4e7090": "input_table_close_secondary",
+    "0x4e70a8": "input_table_close_tertiary",
+    "0x4e70c0": "input_table_close_followup",
+    "0x4e70d8": "input_table_diagonal_air",
     "0x4e80a8": "cage_cpu_kick",
     "0x4e80d0": "cage_powered_punch",
     "0x4e8100": "quan_chi_flip_kick",
@@ -2475,7 +411,7 @@
     "0x4e83a0": "handstand_rear",
     "0x4e83d8": "kai_handstand_rear_contact",
     "0x4e83e8": "handstand_exit",
-    "0x4e83f8": "MK4_INPUT_TABLE_HANDSTAND",
+    "0x4e83f8": "input_table_handstand",
     "0x4e8440": "raiden_torpedo_fast_startup",
     "0x4e8458": "raiden_torpedo_ordinary_startup",
     "0x4e84b8": "power_rewind",
@@ -2499,7 +435,7 @@
     "0x4e8830": "fujin_wind_grab",
     "0x4e8870": "kai_lunge_kick",
     "0x4e88c8": "kai_armed_handstand_enter",
-    "0x4e88f0": "MK4_INPUT_TABLE_TELEPORT_AIR",
+    "0x4e88f0": "input_table_teleport_air",
     "0x4e89a0": "guard_airborne_fall",
     "0x4e89d8": "jax_dash_punch_airborne_victim_168",
     "0x4e8a18": "react_kick_air",
@@ -2525,7 +461,7 @@
     "0x4e8e50": "goro_special_uppercut_192_victim",
     "0x4e8e80": "goro_uppercut_victim_slide",
     "0x4e8ea8": "launch_clip_131_back_getup",
-    "0x4e8edc": "MK4_DATA_REACTION_CLIP_180_FRICTION_CALLBACK",
+    "0x4e8edc": "reaction_clip_180_friction_callback",
     "0x4e8ee0": "reaction_clip_180_slide_hold",
     "0x4e8f10": "launch_clip_131_native_finish_back_getup",
     "0x4e8f50": "sonya_weapon_lp_victim",
@@ -2567,7 +503,7 @@
     "0x4e9758": "uppercut_victim_recovery",
     "0x4e9798": "jab_hit_short_recovery",
     "0x4e97d0": "jab_hit_damage_stagger",
-    "0x4e97f0": "MK4_DATA_STAGGER_ENTRY",
+    "0x4e97f0": "stagger_entry",
     "0x4e97f8": "stagger_entry_2",
     "0x4e9818": "quan_chi_weapon_steal_grounded_victim",
     "0x4e9838": "quan_chi_weapon_steal_airborne_victim",
@@ -2579,23 +515,23 @@
     "0x4e9938": "scorpion_teleport_punch_grounded_victim",
     "0x4e9970": "scorpion_teleport_victim_tail",
     "0x4e9980": "teleport_punch_airborne_victim",
-    "0x4e99bc": "MK4_DATA_LK_VICTIM_SLIDE_SPEED",
+    "0x4e99bc": "lk_victim_slide_speed",
     "0x4e99c0": "victim_disarm_fall",
     "0x4e99e0": "victim_friction_impact",
     "0x4e99f0": "victim_saved_motion",
     "0x4e9a20": "victim_ground_turn",
     "0x4e9a68": "sonya_leg_grab_victim_recovery",
     "0x4e9a90": "liu_kang_lk_throw_victim",
-    "0x4e9acc": "MK4_DATA_BICYCLE_RELEASE",
+    "0x4e9acc": "bicycle_release",
     "0x4e9ad0": "raiden_torpedo_ground_release",
     "0x4e9ae8": "raiden_torpedo_air_release",
     "0x4e9b18": "lp_victim_slide_release",
     "0x4e9b40": "lp_victim_sliding_impact_release",
     "0x4e9b68": "lp_victim_impact_release",
     "0x4e9b88": "lp_victim_two_speed_slide_release",
-    "0x4e9bb8": "MK4_ANIMATION_ROWS_LP_VICTIM_TABLE_RELEASE",
-    "0x4e9bc0": "MK4_ANIMATION_ROWS_LP_VICTIM_REBASED_RELEASE",
-    "0x4e9bc8": "MK4_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE",
+    "0x4e9bb8": "animation_rows_lp_victim_table_release",
+    "0x4e9bc0": "animation_rows_lp_victim_rebased_release",
+    "0x4e9bc8": "animation_rows_lp_victim_weapon_scatter_release",
     "0x4e9c28": "hit_clip_324_recovery",
     "0x4e9c40": "hit_clip_325_recovery",
     "0x4e9c58": "launch_clip_131_no_impact",
@@ -2604,15 +540,15 @@
     "0x4e9cd8": "quan_chi_skull_reaction",
     "0x4e9d00": "scorpion_spear_victim_hit",
     "0x4e9d20": "guard_grounded_stagger",
-    "0x4e9d4c": "MK4_DATA_RECORD_REACTION",
+    "0x4e9d4c": "record_reaction",
     "0x4e9d50": "raiden_lightning_victim",
-    "0x4e9d80": "MK4_DATA_REACTION_CLIP_127_FRICTION_ROW",
+    "0x4e9d80": "reaction_clip_127_friction_row",
     "0x4e9d88": "reaction_clip_127_friction",
     "0x4e9db8": "tanya_weapon_reaction_reaction_169_victim",
     "0x4e9de8": "sonya_ring_victim",
     "0x4e9e10": "fujin_bolt_victim",
     "0x4e9e38": "jax_dash_punch_grounded_victim_168",
-    "0x4e9e60": "MK4_DATA_BLOCK_REACTION_FRICTION_ROW",
+    "0x4e9e60": "block_reaction_friction_row",
     "0x4e9e68": "block_unarmed_pose_cycle",
     "0x4e9ec8": "block_armed_recovery",
     "0x4e9ee0": "lk_thrown_release",
@@ -2634,10 +570,10 @@
     "0x4ea170": "kai_handstand_reaction_knockdown",
     "0x4ea1c0": "kai_handstand_reaction_rear_stagger",
     "0x4ea1e8": "mmove_side_getup",
-    "0x4ea200": "MK4_GETUP_DESCRIPTOR_SIDE_GETUP",
-    "0x4ea210": "MK4_GETUP_DESCRIPTOR_FLIP_GETUP",
-    "0x4ea220": "MK4_GETUP_DESCRIPTOR_ROLL_GETUP",
-    "0x4ea230": "MK4_GETUP_DESCRIPTOR_FRONT_GETUP",
+    "0x4ea200": "getup_descriptor_side_getup",
+    "0x4ea210": "getup_descriptor_flip_getup",
+    "0x4ea220": "getup_descriptor_roll_getup",
+    "0x4ea230": "getup_descriptor_front_getup",
     "0x4ea240": "kai_second_victim",
     "0x4ea270": "shinnok_second_victim",
     "0x4ea290": "reptile_fatality_2_victim_melt",
@@ -2651,76 +587,76 @@
     "0x4ea3d0": "throw_victim_impact",
     "0x4ea3e0": "goro_kick_victim",
     "0x4ea400": "goro_stomp_victim",
-    "0x4ea880": "MK4_SOUND_LIST_WEAPON_IMPACT_VOICE",
-    "0x4ea918": "MK4_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS",
-    "0x4ea928": "MK4_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS",
-    "0x4ea938": "MK4_SOUND_LIST_STAGGER_REACTION",
-    "0x4ead18": "MK4_DATA_SOUND_ROSTER_REMAP",
-    "0x4ebeb8": "MK4_DATA_SPEAR_PROJECTILE",
-    "0x4ec2c8": "MK4_DATA_AUX_REACTION",
-    "0x4ec400": "MK4_DATA_WEAPON_PARAMETERS_BEGIN",
-    "0x4ec420": "MK4_DATA_WEAPON_CLIP_229_QUERY_42_PARAMETERS",
-    "0x4ec438": "MK4_DATA_WEAPON_CLIP_231_QUERY_43_MOTION",
-    "0x4ec448": "MK4_DATA_WEAPON_CLIP_231_QUERY_43_PARAMETERS",
-    "0x4ec458": "MK4_DATA_SCEPTER_HIGH_PUNCH_PARAMETERS",
-    "0x4ec470": "MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_MOTION",
-    "0x4ec480": "MK4_DATA_SCEPTER_BACK_HIGH_PUNCH_PARAMETERS",
-    "0x4ec490": "MK4_DATA_WEAPON_CLIP_250_QUERY_38_PARAMETERS",
-    "0x4ec4a8": "MK4_DATA_WEAPON_CLIP_228_QUERY_39_MOTION",
-    "0x4ec4b8": "MK4_DATA_WEAPON_CLIP_228_QUERY_39_PARAMETERS",
-    "0x4ec4c8": "MK4_DATA_WEAPON_CLIP_239_QUERY_37_PARAMETERS",
+    "0x4ea880": "sound_list_weapon_impact_voice",
+    "0x4ea918": "sound_list_block_low_variant_impacts",
+    "0x4ea928": "sound_list_block_high_variant_impacts",
+    "0x4ea938": "sound_list_stagger_reaction",
+    "0x4ead18": "sound_roster_remap",
+    "0x4ebeb8": "spear_projectile",
+    "0x4ec2c8": "aux_reaction",
+    "0x4ec400": "weapon_parameters_begin",
+    "0x4ec420": "weapon_clip_229_query_42_parameters",
+    "0x4ec438": "weapon_clip_231_query_43_motion",
+    "0x4ec448": "weapon_clip_231_query_43_parameters",
+    "0x4ec458": "scepter_high_punch_parameters",
+    "0x4ec470": "scepter_back_high_punch_motion",
+    "0x4ec480": "scepter_back_high_punch_parameters",
+    "0x4ec490": "weapon_clip_250_query_38_parameters",
+    "0x4ec4a8": "weapon_clip_228_query_39_motion",
+    "0x4ec4b8": "weapon_clip_228_query_39_parameters",
+    "0x4ec4c8": "weapon_clip_239_query_37_parameters",
     "0x4ec4f0": "jarek_weapon_back_hp_upper",
-    "0x4ec510": "MK4_DATA_WEAPON_CLIP_229_QUERY_36_PARAMETERS",
-    "0x4ec528": "MK4_DATA_WEAPON_CLIP_228_QUERY_35_MOTION",
-    "0x4ec538": "MK4_DATA_WEAPON_CLIP_228_QUERY_35_PARAMETERS",
-    "0x4ec548": "MK4_DATA_KAI_WEAPON_HIGH_PUNCH_MOTION",
-    "0x4ec558": "MK4_DATA_KAI_WEAPON_HIGH_PUNCH_PARAMETERS",
-    "0x4ec570": "MK4_DATA_WEAPON_CLIP_229_QUERY_32_MOTION",
-    "0x4ec580": "MK4_DATA_WEAPON_CLIP_229_QUERY_32_PARAMETERS",
+    "0x4ec510": "weapon_clip_229_query_36_parameters",
+    "0x4ec528": "weapon_clip_228_query_35_motion",
+    "0x4ec538": "weapon_clip_228_query_35_parameters",
+    "0x4ec548": "kai_weapon_high_punch_motion",
+    "0x4ec558": "kai_weapon_high_punch_parameters",
+    "0x4ec570": "weapon_clip_229_query_32_motion",
+    "0x4ec580": "weapon_clip_229_query_32_parameters",
     "0x4ec5a8": "kai_draw_weapon_back_strike",
-    "0x4ec5c8": "MK4_DATA_WEAPON_CLIP_237_QUERY_28_MOTION",
-    "0x4ec5d8": "MK4_DATA_WEAPON_CLIP_237_QUERY_28_PARAMETERS",
-    "0x4ec5f0": "MK4_DATA_WEAPON_CLIP_238_QUERY_29_MOTION",
-    "0x4ec600": "MK4_DATA_WEAPON_CLIP_238_QUERY_29_PARAMETERS",
-    "0x4ec618": "MK4_DATA_WEAPON_CLIP_243_QUERY_30_PARAMETERS",
-    "0x4ec628": "MK4_DATA_REPTILE_WEAPON_HIGH_PUNCH_PARAMETERS",
+    "0x4ec5c8": "weapon_clip_237_query_28_motion",
+    "0x4ec5d8": "weapon_clip_237_query_28_parameters",
+    "0x4ec5f0": "weapon_clip_238_query_29_motion",
+    "0x4ec600": "weapon_clip_238_query_29_parameters",
+    "0x4ec618": "weapon_clip_243_query_30_parameters",
+    "0x4ec628": "reptile_weapon_high_punch_parameters",
     "0x4ec640": "reptile_weapon_back_hp_flurry_startup",
-    "0x4ec658": "MK4_DATA_WEAPON_CLIP_240_QUERY_21_PARAMETERS",
+    "0x4ec658": "weapon_clip_240_query_21_parameters",
     "0x4ec680": "liu_kang_sword_hp_repeat_program",
-    "0x4ec708": "MK4_DATA_SWORD_LOW_PUNCH_OPEN_PARAMETERS",
-    "0x4ec720": "MK4_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION",
-    "0x4ec730": "MK4_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS",
-    "0x4ec740": "MK4_DATA_SWORD_BACK_HIGH_PUNCH_MOTION",
-    "0x4ec750": "MK4_DATA_SWORD_BACK_HIGH_PUNCH_PARAMETERS",
-    "0x4ec760": "MK4_DATA_WEAPON_CLIP_230_QUERY_8_PARAMETERS",
-    "0x4ec778": "MK4_DATA_WEAPON_CLIP_229_QUERY_9_PARAMETERS",
+    "0x4ec708": "sword_low_punch_open_parameters",
+    "0x4ec720": "sword_low_punch_repeat_motion",
+    "0x4ec730": "sword_low_punch_repeat_parameters",
+    "0x4ec740": "sword_back_high_punch_motion",
+    "0x4ec750": "sword_back_high_punch_parameters",
+    "0x4ec760": "weapon_clip_230_query_8_parameters",
+    "0x4ec778": "weapon_clip_229_query_9_parameters",
     "0x4ec7a0": "sonya_weapon_back_hp_attacker",
     "0x4ec7c0": "sword_back_high_punch_hit_recovery",
     "0x4ec7d8": "sword_back_high_punch_block_recovery",
-    "0x4ec7e0": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY",
-    "0x4ec7e4": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED",
-    "0x4ec7e8": "MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION",
+    "0x4ec7e0": "sword_back_low_punch_speed_delay",
+    "0x4ec7e4": "sword_back_low_punch_speed",
+    "0x4ec7e8": "sword_back_low_punch_speed_duration",
     "0x4ec7f0": "sword_attack",
-    "0x4ec810": "MK4_DATA_WEAPON_CLIP_233_QUERY_4_PARAMETERS",
-    "0x4ec828": "MK4_DATA_WEAPON_CLIP_238_QUERY_7_MOTION",
-    "0x4ec838": "MK4_DATA_WEAPON_CLIP_238_QUERY_7_PARAMETERS",
-    "0x4ec848": "MK4_DATA_WEAPON_CLIP_234_QUERY_5_PARAMETERS",
-    "0x4ec860": "MK4_DATA_STAFF_BACK_LOW_PUNCH_MOTION",
-    "0x4ec870": "MK4_DATA_STAFF_BACK_LOW_PUNCH_PARAMETERS",
-    "0x4ec880": "MK4_DATA_WEAPON_CLIP_235_QUERY_1_PARAMETERS",
-    "0x4ec898": "MK4_DATA_WEAPON_CLIP_236_QUERY_0_PARAMETERS",
-    "0x4ec988": "MK4_DATA_AXE_HIGH_PUNCH_PARAMETERS",
-    "0x4ec9a0": "MK4_DATA_WEAPON_CLIP_229_QUERY_23_PARAMETERS",
-    "0x4ec9b0": "MK4_DATA_WEAPON_CLIP_232_QUERY_24_PARAMETERS",
-    "0x4ec9c8": "MK4_DATA_STRIKE_QUERY",
-    "0x4ec9d8": "MK4_DATA_WEAPON_CLIP_231_PARAMETERS",
-    "0x4ec9e8": "MK4_DATA_WEAPON_CLIP_239_PARAMETERS",
-    "0x4ec9f8": "MK4_DATA_CAGE_WEAPON_LOW_PUNCH_PARAMETERS",
-    "0x4eca08": "MK4_DATA_KAI_WEAPON_FOLLOWUP_MOTION",
-    "0x4eca18": "MK4_DATA_KAI_WEAPON_FOLLOWUP_PARAMETERS",
-    "0x4eca28": "MK4_DATA_REPTILE_WEAPON_BACK_HIGH_PUNCH_PARAMETERS",
-    "0x4ecb00": "MK4_DATA_WEAPON_PARAMETERS_END",
-    "0x4ecb40": "MK4_DATA_WEAPON_DRAW_FOLLOWUP_ENTRIES",
+    "0x4ec810": "weapon_clip_233_query_4_parameters",
+    "0x4ec828": "weapon_clip_238_query_7_motion",
+    "0x4ec838": "weapon_clip_238_query_7_parameters",
+    "0x4ec848": "weapon_clip_234_query_5_parameters",
+    "0x4ec860": "staff_back_low_punch_motion",
+    "0x4ec870": "staff_back_low_punch_parameters",
+    "0x4ec880": "weapon_clip_235_query_1_parameters",
+    "0x4ec898": "weapon_clip_236_query_0_parameters",
+    "0x4ec988": "axe_high_punch_parameters",
+    "0x4ec9a0": "weapon_clip_229_query_23_parameters",
+    "0x4ec9b0": "weapon_clip_232_query_24_parameters",
+    "0x4ec9c8": "strike_query",
+    "0x4ec9d8": "weapon_clip_231_parameters",
+    "0x4ec9e8": "weapon_clip_239_parameters",
+    "0x4ec9f8": "cage_weapon_low_punch_parameters",
+    "0x4eca08": "kai_weapon_followup_motion",
+    "0x4eca18": "kai_weapon_followup_parameters",
+    "0x4eca28": "reptile_weapon_back_high_punch_parameters",
+    "0x4ecb00": "weapon_parameters_end",
+    "0x4ecb40": "weapon_draw_followup_entries",
     "0x4ed038": "reiko_star",
     "0x4ed090": "jax_missile",
     "0x4ed0d8": "cast_orb",
@@ -2728,9 +664,9 @@
     "0x4ed190": "boomerang_start",
     "0x4ed1e8": "reptile_acid_spit",
     "0x4ed268": "tanya_fireball_caster",
-    "0x4ed2b0": "MK4_DATA_FIREBALL_STANDING_CONTACT_ROW",
+    "0x4ed2b0": "fireball_standing_contact_row",
     "0x4ed2c0": "air_fireball",
-    "0x4ed2e8": "MK4_DATA_FIREBALL_AIR_CONTACT_ROW",
+    "0x4ed2e8": "fireball_air_contact_row",
     "0x4ed2f8": "kai_ground_skull",
     "0x4ed330": "kai_rising_skull",
     "0x4ed348": "kai_rising_skull_spawn",
@@ -2747,155 +683,155 @@
     "0x4ed6f8": "liu_kang_air_fireball_air",
     "0x4ed788": "fujin_crossbow_followup_short_shot",
     "0x4ed790": "goro_fireball",
-    "0x4ed808": "MK4_DATA_FIREBALL_SPAWN_FORWARD_OFFSET",
-    "0x4ed80c": "MK4_DATA_FIREBALL_SPAWN_Y_OFFSET",
-    "0x4ef000": "MK4_SCRIPT_REGION_END",
-    "0x4fad7c": "MK4_DATA_ANIMATION_TABLE",
-    "0x4fad80": "MK4_DATA_ANIMATION_CLIP_ZERO_FRAME_COUNT_WORD",
-    "0x4fb55c": "MK4_ANIMATION_DESCRIPTOR_CLIP_168",
-    "0x4fb568": "MK4_ANIMATION_DESCRIPTOR_CLIP_169",
-    "0x4fb5c8": "MK4_ANIMATION_DESCRIPTOR_CLIP_177",
-    "0x4fb628": "MK4_ANIMATION_DESCRIPTOR_CLIP_185",
-    "0x4fb700": "MK4_ANIMATION_DESCRIPTOR_CLIP_203",
-    "0x4fbb5c": "MK4_ANIMATION_DESCRIPTOR_CLIP_296",
-    "0x4fbb68": "MK4_ANIMATION_DESCRIPTOR_CLIP_297",
-    "0x4fbb98": "MK4_ANIMATION_DESCRIPTOR_CLIP_301",
-    "0x4fbc04": "MK4_ANIMATION_DESCRIPTOR_CLIP_310",
-    "0x4fc0e4": "MK4_ANIMATION_DESCRIPTOR_CLIP_414",
-    "0x4fc0f0": "MK4_ANIMATION_DESCRIPTOR_CLIP_415",
-    "0x4fc8f4": "MK4_ANIMATION_DESCRIPTOR_CLIP_586",
-    "0x4fc960": "MK4_ANIMATION_DESCRIPTOR_CLIP_595",
-    "0x53c540": "MK4_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN",
-    "0x53ce30": "MK4_DATA_ROSTER_DEF",
-    "0x53ce40": "MK4_ANIMATION_DESCRIPTOR_WEAPON_STANCE",
-    "0x53ce50": "MK4_DATA_CROUCH_HOLD_DESCRIPTORS",
-    "0x53ce58": "MK4_DATA_CROUCH_LOW_PUNCH",
-    "0x53ce60": "MK4_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK",
-    "0x53cf70": "MK4_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE",
-    "0x53cf78": "MK4_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE",
-    "0x53cf7c": "MK4_ANIMATION_DESCRIPTOR_VICTIM_FINISH_FLIP_GETUP",
-    "0x53cf80": "MK4_ANIMATION_DESCRIPTOR_VICTIM_IMPACT_ROLL_GETUP",
-    "0x53cf88": "MK4_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS",
-    "0x53cf94": "MK4_ANIMATION_DESCRIPTOR_SQUARE_VICTIM",
-    "0x53cfa0": "MK4_ANIMATION_DESCRIPTOR_BICYCLE_CYCLE",
-    "0x53cfa8": "MK4_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD",
-    "0x53d000": "MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE",
-    "0x53d178": "MK4_DATA_CONTACT_QUERY_D_TABLE",
-    "0x53d208": "MK4_DATA_PROJECTILE_CONTACT_TABLE",
-    "0x53d268": "MK4_DATA_CONTACT_QUERY_A_TABLE",
-    "0x53d26c": "MK4_DATA_JAB_CONTACT",
-    "0x53d2b8": "MK4_DATA_CONTACT_QUERY_B_TABLE",
+    "0x4ed808": "fireball_spawn_forward_offset",
+    "0x4ed80c": "fireball_spawn_y_offset",
+    "0x4ef000": "region_end",
+    "0x4fad7c": "animation_table",
+    "0x4fad80": "animation_clip_0_frame_count",
+    "0x4fb55c": "animation_clip_168",
+    "0x4fb568": "animation_clip_169",
+    "0x4fb5c8": "animation_clip_177",
+    "0x4fb628": "animation_clip_185",
+    "0x4fb700": "animation_clip_203",
+    "0x4fbb5c": "animation_clip_296",
+    "0x4fbb68": "animation_clip_297",
+    "0x4fbb98": "animation_clip_301",
+    "0x4fbc04": "animation_clip_310",
+    "0x4fc0e4": "animation_clip_414",
+    "0x4fc0f0": "animation_clip_415",
+    "0x4fc8f4": "animation_clip_586",
+    "0x4fc960": "animation_clip_595",
+    "0x53c540": "animation_descriptor_mmove_lk_owner_return",
+    "0x53ce30": "roster_def",
+    "0x53ce40": "animation_descriptor_weapon_stance",
+    "0x53ce50": "crouch_hold_descriptors",
+    "0x53ce58": "crouch_low_punch",
+    "0x53ce60": "animation_descriptor_close_high_kick",
+    "0x53cf70": "animation_descriptor_air_getup_rise",
+    "0x53cf78": "animation_descriptor_lk_victim_slide",
+    "0x53cf7c": "animation_descriptor_victim_finish_flip_getup",
+    "0x53cf80": "animation_descriptor_victim_impact_roll_getup",
+    "0x53cf88": "crouch_block_animation_descriptors",
+    "0x53cf94": "animation_descriptor_square_victim",
+    "0x53cfa0": "animation_descriptor_bicycle_cycle",
+    "0x53cfa8": "animation_descriptor_scene_victim_hold",
+    "0x53d000": "roster_sound_selector_table",
+    "0x53d178": "contact_query_d_table",
+    "0x53d208": "projectile_contact_table",
+    "0x53d268": "contact_query_a_table",
+    "0x53d26c": "jab_contact",
+    "0x53d2b8": "contact_query_b_table",
     "0x4e9d38": "airborne_thaw_script",
-    "0x4ebd08": "WEAPON_AIR_HP_ATTACK_RECORD",
-    "0x4ebcf0": "WEAPON_AIR_LP_ATTACK_RECORD",
-    "0x4ebe10": "WEAPON_THROW_ATTACK_RECORD",
-    "0x4eb798": "AXE_FOLLOWUP_ATTACK_RECORD",
-    "0x4ec0f8": "DIVE_ATTACK_RECORD",
-    "0x4ec098": "BALL_ATTACK_RECORD",
-    "0x4eba20": "LUNGE_ATTACK_RECORD",
-    "0x4ebbd0": "FLYING_ATTACK_RECORD",
-    "0x4ec020": "FLIP_ATTACK_RECORD",
-    "0x4ec158": "STOMP_ATTACK_RECORD",
-    "0x4ebfa8": "FLIP_KICK_ATTACK_RECORD",
-    "0x4ec038": "DASH_ATTACK_RECORD",
-    "0x4ec080": "ROLL_ATTACK_RECORD",
-    "0x4ebf48": "TELEPORT_ATTACK_RECORD",
-    "0x4ec1e8": "SQUARE_ATTACK_RECORD",
-    "0x4ebf30": "ICE_CLONE_ATTACK_RECORD",
-    "0x4ec1b8": "SLIDE_ATTACK_RECORD",
-    "0x4ec0c8": "DRILL_ATTACK_RECORD",
-    "0x4ec1a0": "TORPEDO_ATTACK_RECORD",
-    "0x4ec008": "GROIN_PUNCH_ATTACK_RECORD",
-    "0x4ebfd8": "SHADOW_ATTACK_RECORD",
-    "0x4ebff0": "POWER_ATTACK_RECORD",
-    "0x4ec170": "TRIPLE_ATTACK_RECORD",
-    "0x4ec230": "PUNCH_ATTACK_RECORD",
-    "0x4ec248": "KICK_ATTACK_RECORD",
-    "0x4ec278": "UPPERCUT_ATTACK_RECORD",
-    "0x4ec260": "STOMP_ATTACK_RECORD",
-    "0x4ec050": "DASH_ATTACK_RECORD",
-    "0x4ec0e0": "AERIAL_ATTACK_RECORD",
-    "0x4ebc60": "BICYCLE_ATTACK_RECORD",
-    "0x4ec140": "WEAPON_STEAL_ATTACK_RECORD",
-    "0x4ec1d0": "AERIAL_BICYCLE_ATTACK_RECORD",
-    "0x4ec0b0": "CARTWHEEL_ATTACK_RECORD",
-    "0x4ebf78": "LEG_ATTACK_RECORD",
-    "0x4ebfc0": "SPIN_ATTACK_RECORD",
-    "0x4ebf90": "FIRE_ATTACK_RECORD",
-    "0x4ebed0": "ORB_ATTACK_RECORD",
-    "0x4ec290": "FIREBALL_ATTACK_RECORD",
-    "0x4ebf60": "BLADE_ATTACK_RECORD",
-    "0x4ebe70": "DROP_ATTACK_RECORD",
-    "0x4ebe58": "RISE_ATTACK_RECORD",
-    "0x4ebee8": "FIREBALL_LOW_ATTACK_RECORD",
-    "0x4ebe88": "SKULL_ATTACK_RECORD",
-    "0x4ebf00": "GENERIC_PROJECTILE_ATTACK_RECORD",
-    "0x4ebe40": "STAR_ATTACK_RECORD",
-    "0x4ebe28": "ACID_ATTACK_RECORD",
-    "0x4ebf18": "ICE_PROJECTILE_ATTACK_RECORD",
+    "0x4ebd08": "weapon_air_hp_attack_record",
+    "0x4ebcf0": "weapon_air_lp_attack_record",
+    "0x4ebe10": "weapon_throw_attack_record",
+    "0x4eb798": "axe_followup_attack_record",
+    "0x4ec0f8": "dive_attack_record",
+    "0x4ec098": "ball_attack_record",
+    "0x4eba20": "lunge_attack_record",
+    "0x4ebbd0": "flying_attack_record",
+    "0x4ec020": "flip_attack_record",
+    "0x4ec158": "stomp_attack_record",
+    "0x4ebfa8": "flip_kick_attack_record",
+    "0x4ec038": "dash_attack_record",
+    "0x4ec080": "roll_attack_record",
+    "0x4ebf48": "teleport_attack_record",
+    "0x4ec1e8": "square_attack_record",
+    "0x4ebf30": "ice_clone_attack_record",
+    "0x4ec1b8": "slide_attack_record",
+    "0x4ec0c8": "drill_attack_record",
+    "0x4ec1a0": "torpedo_attack_record",
+    "0x4ec008": "groin_punch_attack_record",
+    "0x4ebfd8": "shadow_attack_record",
+    "0x4ebff0": "power_attack_record",
+    "0x4ec170": "triple_attack_record",
+    "0x4ec230": "punch_attack_record",
+    "0x4ec248": "kick_attack_record",
+    "0x4ec278": "uppercut_attack_record",
+    "0x4ec260": "stomp_attack_record_666",
+    "0x4ec050": "dash_attack_record_648",
+    "0x4ec0e0": "aerial_attack_record",
+    "0x4ebc60": "bicycle_attack_record",
+    "0x4ec140": "weapon_steal_attack_record",
+    "0x4ec1d0": "aerial_bicycle_attack_record",
+    "0x4ec0b0": "cartwheel_attack_record",
+    "0x4ebf78": "leg_attack_record",
+    "0x4ebfc0": "spin_attack_record",
+    "0x4ebf90": "fire_attack_record",
+    "0x4ebed0": "orb_attack_record",
+    "0x4ec290": "fireball_attack_record",
+    "0x4ebf60": "blade_attack_record",
+    "0x4ebe70": "drop_attack_record",
+    "0x4ebe58": "rise_attack_record",
+    "0x4ebee8": "fireball_low_attack_record",
+    "0x4ebe88": "skull_attack_record",
+    "0x4ebf00": "generic_projectile_attack_record",
+    "0x4ebe40": "star_attack_record",
+    "0x4ebe28": "acid_attack_record",
+    "0x4ebf18": "ice_projectile_attack_record",
     "0x4e5b58": "fire_script_startup",
     "0x4e5b98": "fire_script_recovery",
     "0x4de518": "slam_first_script",
     "0x4de538": "slam_second_script",
     "0x4de558": "slam_second_release_script",
     "0x4de568": "slam_first_release_script",
-    "0x4ebea0": "BOLT_ATTACK_RECORD",
-    "0x4eb7e0": "FLURRY_ATTACK_RECORD",
-    "0x4eb7f8": "SWEEP_ATTACK_RECORD",
-    "0x4ebde0": "BOOMERANG_ATTACK_RECORD",
+    "0x4ebea0": "bolt_attack_record",
+    "0x4eb7e0": "flurry_attack_record",
+    "0x4eb7f8": "sweep_attack_record",
+    "0x4ebde0": "boomerang_attack_record",
     "0x4ec8b0": "sword_back_lp_script",
     "0x4ec918": "sword_back_hp_script",
     "0x4e8850": "sword_spin_script",
     "0x4e1f68": "wind_finish_cycle_script",
     "0x4e1f80": "wind_finish_exit_script",
     "0x4e1fa8": "dragon_victim_script",
-    "0x4fc120": "DRAGON_VICTIM_ANIMATION_DESCRIPTOR",
-    "0x4ec110": "TELEPORT_SLAM_ATTACK_RECORD",
-    "0x4ec128": "HANDSTAND_SPIN_ATTACK_RECORD",
-    "0x4eba08": "HANDSTAND_FRONT_ATTACK_RECORD",
-    "0x4eb9f0": "HANDSTAND_REAR_ATTACK_RECORD",
-    "0x4e9358": "MK4_CROUCH_REACTION_PHYSICS_WORD",
-    "0x4ea4e8": "MK4_REACTION_TABLE",
-    "0x4ea7f0": "MK4_REACTION_TABLE_END",
-    "0x4eb000": "MK4_ATTACK_RECORDS_BEGIN",
-    "0x4ec2a8": "MK4_ATTACK_RECORDS_END",
-    "0x53d0c0": "MK4_WEAPON_ATTACK_TABLE",
-    "0x4df8e8": "MK4_CPU_ACTION_TABLES",
-    "0x53d388": "MK4_WALK_ANIMATION_TABLE",
-    "0x4ddfb8": "MK4_LK_THROW_TABLE",
-    "0x4e0498": "MK4_FIRST_FINISH_TABLE",
-    "0x4dfe90": "MK4_SECOND_FINISH_TABLE",
-    "0x4dfe10": "MK4_FIRST_FINISH_DISTANCE_TABLE",
-    "0x4dfe50": "MK4_SECOND_FINISH_DISTANCE_TABLE",
-    "0x4e6ef8": "MK4_ACTION_TABLE_1",
-    "0x4ed828": "MK4_ACTION_TABLE_2",
-    "0x4e8910": "MK4_ACTION_TABLE_4",
-    "0x4e7008": "MK4_ACTION_TABLE_8",
-    "0x4dfc90": "MK4_ACTION_TABLE_32",
-    "0x53c888": "MK4_P1_UP_COMMAND_TABLE",
-    "0x53cb10": "MK4_P2_UP_COMMAND_TABLE",
-    "0x53c8d0": "MK4_P1_HP_COMMAND_TABLE",
-    "0x53cb58": "MK4_P2_HP_COMMAND_TABLE",
-    "0x53c918": "MK4_P1_LP_COMMAND_TABLE",
-    "0x53cba0": "MK4_P2_LP_COMMAND_TABLE",
-    "0x53c960": "MK4_P1_BLOCK_COMMAND_TABLE",
-    "0x53cbe8": "MK4_P2_BLOCK_COMMAND_TABLE",
-    "0x53c9a8": "MK4_P1_HK_COMMAND_TABLE",
-    "0x53cc30": "MK4_P2_HK_COMMAND_TABLE",
-    "0x53c9f0": "MK4_P1_LK_COMMAND_TABLE",
-    "0x53cc78": "MK4_P2_LK_COMMAND_TABLE",
-    "0x53ca38": "MK4_P1_LK_RELEASE_COMMAND_TABLE",
-    "0x53ca80": "MK4_P2_LK_RELEASE_COMMAND_TABLE",
-    "0x53cac8": "MK4_P1_RUN_COMMAND_TABLE",
-    "0x53ccc0": "MK4_P2_RUN_COMMAND_TABLE",
-    "0x4ea828": "MK4_SOUND_THROW_GRUNT_LIST",
-    "0x4ea870": "MK4_SOUND_KNOCKDOWN_VOICE_LIST",
-    "0x4ea8a0": "MK4_SOUND_IMPACT_VOICE_LIST",
-    "0x4ea8b0": "MK4_SOUND_FOOTSTEP_LIST",
-    "0x4ea8c8": "MK4_SOUND_UNARMED_IMPACT_LIST",
-    "0x4ea8e0": "MK4_SOUND_ARMED_IMPACT_LIST",
-    "0x4ea8f8": "MK4_SOUND_RANDOM_GRUNT_LIST",
-    "0x4ea960": "MK4_SOUND_UPPERCUT_VOICE_LIST",
+    "0x4fc120": "animation_clip_419",
+    "0x4ec110": "teleport_slam_attack_record",
+    "0x4ec128": "handstand_spin_attack_record",
+    "0x4eba08": "handstand_front_attack_record",
+    "0x4eb9f0": "handstand_rear_attack_record",
+    "0x4e9358": "crouch_reaction_physics_word",
+    "0x4ea4e8": "reaction_table",
+    "0x4ea7f0": "reaction_table_end",
+    "0x4eb000": "attack_records_begin",
+    "0x4ec2a8": "attack_records_end",
+    "0x53d0c0": "weapon_attack_table",
+    "0x4df8e8": "cpu_action_tables",
+    "0x53d388": "walk_animation_table",
+    "0x4ddfb8": "lk_throw_table",
+    "0x4e0498": "first_finish_table",
+    "0x4dfe90": "second_finish_table",
+    "0x4dfe10": "first_finish_distance_table",
+    "0x4dfe50": "second_finish_distance_table",
+    "0x4e6ef8": "action_table_1",
+    "0x4ed828": "action_table_2",
+    "0x4e8910": "action_table_4",
+    "0x4e7008": "action_table_8",
+    "0x4dfc90": "action_table_32",
+    "0x53c888": "p1_up_command_table",
+    "0x53cb10": "p2_up_command_table",
+    "0x53c8d0": "p1_hp_command_table",
+    "0x53cb58": "p2_hp_command_table",
+    "0x53c918": "p1_lp_command_table",
+    "0x53cba0": "p2_lp_command_table",
+    "0x53c960": "p1_block_command_table",
+    "0x53cbe8": "p2_block_command_table",
+    "0x53c9a8": "p1_hk_command_table",
+    "0x53cc30": "p2_hk_command_table",
+    "0x53c9f0": "p1_lk_command_table",
+    "0x53cc78": "p2_lk_command_table",
+    "0x53ca38": "p1_lk_release_command_table",
+    "0x53ca80": "p2_lk_release_command_table",
+    "0x53cac8": "p1_run_command_table",
+    "0x53ccc0": "p2_run_command_table",
+    "0x4ea828": "sound_throw_grunt_list",
+    "0x4ea870": "sound_knockdown_voice_list",
+    "0x4ea8a0": "sound_impact_voice_list",
+    "0x4ea8b0": "sound_footstep_list",
+    "0x4ea8c8": "sound_unarmed_impact_list",
+    "0x4ea8e0": "sound_armed_impact_list",
+    "0x4ea8f8": "sound_random_grunt_list",
+    "0x4ea960": "sound_uppercut_voice_list",
     "0x4e6844": "scorpion_roundhouse_attacker",
     "0x4e60b8": "crouch_high_kick_clip_54",
     "0x4e5c80": "high_kick_clip_71",
@@ -2996,7 +932,24 @@
     "0x4ed614": "raiden_lightning_open_clip_1",
     "0x4ed624": "raiden_lightning_spawn_1",
     "0x4ed7f0": "shared_open_clip_entry",
-    "0x4ed818": "shared_double_to_entry"
+    "0x4ed818": "shared_double_to_entry",
+    "0x570000": "unresolved_stance_and_queries_010",
+    "0x570008": "unresolved_stance_and_queries_012",
+    "0x570014": "unresolved_stance_and_queries_013",
+    "0x570004": "unresolved_stance_and_queries_011",
+    "0x4fbb60": "animation_clip_296_frame_count",
+    "0x4ee000": "unresolved_projectile_parameters_020",
+    "0x4e4ec4": "unresolved_dispatch_and_motion_001",
+    "0x4ec88c": "unresolved_weapons_001",
+    "0x53d018": "unresolved_stance_and_queries_004",
+    "0x570100": "unresolved_stance_and_queries_014",
+    "0x4ea82c": "unresolved_reactions_and_audio_002",
+    "0x570180": "unresolved_stance_and_queries_015",
+    "0x4e9bbc": "unresolved_reaction_parameters_009",
+    "0x4fc8f8": "animation_clip_586_frame_count",
+    "0x4e6c14": "unresolved_dispatch_and_motion_018",
+    "0x4e6694": "unresolved_dispatch_and_motion_017",
+    "0x4d0008": "unresolved_retained_frontend_001"
   },
   "roots": [
     5057520,
@@ -3530,5 +1483,29 @@
     5166840,
     5166984,
     5166992
+  ],
+  "rig_roots": [
+    5269612,
+    5276164,
+    5276612,
+    5293124,
+    5294888,
+    5326268
+  ],
+  "weapon_descriptors": [
+    5164440,
+    5164472,
+    5164504,
+    5164536,
+    5164568,
+    5164600,
+    5164632,
+    5164664,
+    5164696,
+    5164728,
+    5164760,
+    5164792,
+    5164856,
+    5164888
   ]
 }

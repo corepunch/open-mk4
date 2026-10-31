@@ -15,9 +15,6 @@ static const MoveDef s_slammed = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK
 static const MoveDef s_recoil = {.clip = 301, .last = 8, .flags = SF_LOCK, .action = ACTION_CODE_1011};
 
 /* 47c2d5 queries D[14]: no damage; 480fc0(8) replaces the hit reaction. */
-enum {
-  TELEPORT_SLAM_ATTACK_RECORD = MK4_LINK_TELEPORT_TELEPORT_SLAM_ATTACK_RECORD
-};
 
 static void teleport_landing(Fighter *fighter);
 
@@ -150,7 +147,7 @@ void action_teleport_slam(Fighter *fighter) {
     teleport_landing(fighter);
     return;
   }
-  AttackRecord record = script_vm_attack_record(battle_data(), TELEPORT_SLAM_ATTACK_RECORD);
+  AttackRecord record = script_vm_attack_record(battle_data(), dat_teleport_slam_attack_record);
   ContactResult result = battle_contact(fighter, &record);
   if (result == CONTACT_MISS) {
     teleport_landing(fighter);

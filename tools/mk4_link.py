@@ -30,14 +30,14 @@ def evaluate(text, symbols):
             if node.func.id == 'word' and n % 4 == 0 and BASE <= n < BASE + MAX_SIZE:
                 return n // 4
             if node.func.id == 'clip' and 0 <= n < 612:
-                return (symbols['MK4_DATA_ANIMATION_TABLE'] + 12 * n) // 4
+                return (symbols['animation_table'] + 12 * n) // 4
         raise ValueError('Invalid expression: ' + text)
     return visit(ast.parse(text, mode='eval').body)
 
 
 def link(path):
     symbols, aliases, exports, rows = {}, {}, {}, []
-    script_labels, alias_names = set(), set()
+    label_sections = {}
     pc, section, script_begin = BASE, None, None
     for location, line in lines(Path(path)):
         try:
@@ -61,14 +61,12 @@ def link(path):
                         symbols[name] = evaluate(value, symbols)
                     else:
                         aliases[name] = value
-                        alias_names.add(name)
             elif line.endswith(':'):
                 name = line[:-1]
                 if section is None or not re.fullmatch(r'[A-Za-z_]\w*', name) or name in symbols or name in aliases:
                     raise ValueError('Invalid/duplicate label ' + name)
                 symbols[name] = pc
-                if section == 'script':
-                    script_labels.add(name)
+                label_sections[name] = section
             else:
                 if section is None:
                     raise ValueError('Missing section')
@@ -117,6 +115,10 @@ def link(path):
         for name, value in aliases.items():
             try:
                 symbols[name] = evaluate(value, symbols)
+                origins = {label_sections[node.id] for node in ast.walk(ast.parse(value, mode='eval'))
+                           if isinstance(node, ast.Name) and node.id in label_sections}
+                if len(origins) == 1:
+                    label_sections[name] = origins.pop()
                 resolved.append(name)
             except KeyError:
                 pass
@@ -157,18 +159,23 @@ def link(path):
             if not (script_begin <= target < pc and target % 4 == 0 and mask[offset // 32] & (1 << (offset // 4 % 8))):
                 raise ValueError(f'{location}: branch does not name a linked script word')
     constants = {name: evaluate(value, symbols) for name, value in exports.items()}
-    # Script labels already identify their entries. Expose the same names to C
-    # in one short namespace, including typed aliases into operand words.
-    for name in script_labels | alias_names:
+    # C names follow the section of the declared label or its alias root.
+    # Numeric constants do not become addresses merely by matching a range.
+    for name, kind in label_sections.items():
         address = symbols[name]
-        if not script_begin <= address < pc or address % 4 != 0:
-            continue
-        offset = address - BASE
-        if not mask[offset // 32] & (1 << (offset // 4 % 8)):
-            continue
-        c_name = 'scr_' + name
+        if kind == 'script':
+            if not script_begin <= address < pc or address % 4 != 0:
+                continue
+            offset = address - BASE
+            if not mask[offset // 32] & (1 << (offset // 4 % 8)):
+                continue
+            c_name = 'scr_' + name
+        else:
+            if not BASE <= address <= script_begin:
+                continue
+            c_name = 'dat_' + name
         if c_name in constants:
-            raise ValueError('Duplicate script export ' + c_name)
+            raise ValueError(f'Duplicate {kind} export ' + c_name)
         constants[c_name] = address
     constants.update(MK4_DATA_IMAGE_BASE=BASE, MK4_DATA_IMAGE_END=pc,
                      SCRIPT_ADDRESS_BEGIN=script_begin, SCRIPT_ADDRESS_END=pc,

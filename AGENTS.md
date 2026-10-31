@@ -165,7 +165,10 @@ enums. Explicit jumps preserve original fall-through after regrouping.
 `make scripts-source-check` compares without writing and is part of
 `make scripts-check`. Normal builds use checked-in wordcode and need no EXE.
 
-Data tables stay in `scripts/mk4/tables/`. `scripts/mk4/program.asm` lists the
+Data tables stay in `scripts/mk4/tables/`; bare data labels and field aliases
+become `dat_<label>` in C automatically. Keep field aliases beside their data
+records, with no export map or address-wrapper enum/header.
+`scripts/mk4/program.asm` lists the
 fighter files. The linker emits `build/mk4.data`, `build/mk4_linked.h` and
 compiled diagnostic names, with executable-word membership and layout checks.
 Names such as `jax_fatality_2` remain visible in sources and runtime errors;

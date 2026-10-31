@@ -1,7 +1,7 @@
 #ifndef MK4_IMAGE_H
 #define MK4_IMAGE_H
 #include "binary.h"
-#include "mk4_addresses.h"
+#include "mk4_linked.h"
 
 /* Linked project data and wordcode. Offsets are checked indices, never pointers. */
 typedef struct Mk4Image {

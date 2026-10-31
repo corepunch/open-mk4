@@ -2,4 +2,3 @@
 .include "native.inc"
 .include "tables.asm"
 .include "program.asm"
-.include "exports.inc"

@@ -6,12 +6,6 @@
 
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
-enum {
-  BOLT_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_BOLT_ATTACK_RECORD,
-  FLURRY_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_FLURRY_ATTACK_RECORD,
-  SWEEP_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_SWEEP_ATTACK_RECORD,
-  BOOMERANG_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_BOOMERANG_ATTACK_RECORD
-};
 
 /* Native service cluster: 482790. */
 static const MoveDef cage_weapon_upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0113};
@@ -47,7 +41,7 @@ static void fujin_weapon_bow_cleanup(Fighter *fighter) {
 }
 
 static void fujin_weapon_bolt_step(Projectile *bolt) {
-  AttackRecord fujin_weapon_bolt_record = script_vm_attack_record(battle_data(), BOLT_ATTACK_RECORD);
+  AttackRecord fujin_weapon_bolt_record = script_vm_attack_record(battle_data(), dat_bolt_attack_record);
 
   if (g_battle.contacts_off) {
     bolt->kind = 0;
@@ -312,7 +306,7 @@ static void liu_kang_weapon_sword_recover(Fighter *fighter) {
     /* 496500 -> 4ec720/730, delayed travel then second strike. The move
      * rebind keeps the action's cleanup for the second strike. */
     fighter->execution.cleanup = NULL;
-    fighter->loaded_weapon_strike = weapon_decode_strike(MK4_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS, MK4_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION, ACTION_CODE_010E);
+    fighter->loaded_weapon_strike = weapon_decode_strike(dat_sword_low_punch_repeat_parameters, dat_sword_low_punch_repeat_motion, ACTION_CODE_010E);
     fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
     fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
     fighter->script_phase = 1;
@@ -366,20 +360,19 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
     static const MoveDef back_lp = {.clip = -1, .last = MOVE_END, .flags = RETAIL, .action = ACTION_CODE_0112};
     fighter_start_move(fighter, S_PUNCH, &back_lp);
     const Mk4Image *image = battle_data();
-    native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED),
-        maxi(0, (int)mk4_image_u32(image, MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY) - 1),
-        (int)mk4_image_u32(image, MK4_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION));
+    native_schedule_speed(fighter, (q16)mk4_image_u32(image, dat_sword_back_low_punch_speed),
+        maxi(0, (int)mk4_image_u32(image, dat_sword_back_low_punch_speed_delay) - 1), (int)mk4_image_u32(image, dat_sword_back_low_punch_speed_duration));
     fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
     script_vm_enter(fighter, scr_sword_attack, fighter_ready);
     return;
   }
   require(index >= 0 && index <= 2, "Invalid native weapon strike selection");
   if (index == 0) {
-    fighter->loaded_weapon_strike = weapon_decode_strike(MK4_DATA_SWORD_LOW_PUNCH_OPEN_PARAMETERS, 0, ACTION_CODE_010E);
+    fighter->loaded_weapon_strike = weapon_decode_strike(dat_sword_low_punch_open_parameters, 0, ACTION_CODE_010E);
   } else if (index == 1) {
-    fighter->loaded_weapon_strike = weapon_decode_strike(MK4_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS, MK4_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION, ACTION_CODE_010E);
+    fighter->loaded_weapon_strike = weapon_decode_strike(dat_sword_low_punch_repeat_parameters, dat_sword_low_punch_repeat_motion, ACTION_CODE_010E);
   } else {
-    fighter->loaded_weapon_strike = weapon_decode_strike(MK4_DATA_SWORD_BACK_HIGH_PUNCH_PARAMETERS, MK4_DATA_SWORD_BACK_HIGH_PUNCH_MOTION, ACTION_CODE_0212);
+    fighter->loaded_weapon_strike = weapon_decode_strike(dat_sword_back_high_punch_parameters, dat_sword_back_high_punch_motion, ACTION_CODE_0212);
   }
   fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
   fighter->script_phase = index;
@@ -545,7 +538,7 @@ static void reptile_weapon_flurry_continue(Fighter *fighter) {
 }
 
 static void reptile_weapon_flurry_query(Fighter *fighter) {
-  AttackRecord reptile_weapon_flurry_record = script_vm_attack_record(battle_data(), FLURRY_ATTACK_RECORD);
+  AttackRecord reptile_weapon_flurry_record = script_vm_attack_record(battle_data(), dat_flurry_attack_record);
 
   /* Every 495de8 query is a fresh WEAPON[20] contact for its cycle. */
   ContactResult result = battle_contact(fighter, &reptile_weapon_flurry_record);
@@ -574,7 +567,7 @@ static void reptile_weapon_flurry_cycle_start(Fighter *fighter) {
 /* 495db0 state 0 at 248/8: a blocked query recoils; anything else plays
  * out 248 into the first 249 cycle. */
 void reptile_weapon_flurry(Fighter *fighter) {
-  AttackRecord reptile_weapon_flurry_record = script_vm_attack_record(battle_data(), FLURRY_ATTACK_RECORD);
+  AttackRecord reptile_weapon_flurry_record = script_vm_attack_record(battle_data(), dat_flurry_attack_record);
 
   require(fighter_move(fighter)->clip == 248 && fighter_sample(fighter) == 8, "Reptile weapon flurry needs its retail 248 startup");
   ContactResult result = battle_contact(fighter, &reptile_weapon_flurry_record);
@@ -606,7 +599,7 @@ static void reptile_weapon_back_low_recover(Fighter *fighter) {
 }
 
 static void reptile_weapon_back_low_query(Fighter *fighter) {
-  AttackRecord reptile_weapon_sweep_record = script_vm_attack_record(battle_data(), SWEEP_ATTACK_RECORD);
+  AttackRecord reptile_weapon_sweep_record = script_vm_attack_record(battle_data(), dat_sweep_attack_record);
 
   if (!fighter->connected && battle_contact(fighter, &reptile_weapon_sweep_record) != CONTACT_MISS) {
     reptile_weapon_back_low_recover(fighter);
@@ -711,7 +704,7 @@ void scorpion_sword_spin_control(Fighter *fighter) {
 
 void scorpion_sword_spin_query(Fighter *fighter) {
   const Mk4Image *image = battle_data();
-  uint32_t packed = mk4_image_u32(image, MK4_WEAPON_ATTACK_TABLE + SWORD_SPIN_ATTACK_SELECTOR * 4);
+  uint32_t packed = mk4_image_u32(image, dat_weapon_attack_table + SWORD_SPIN_ATTACK_SELECTOR * 4);
   AttackRecord record = script_vm_attack_record(image, packed * 4);
   if (battle_contact(fighter, &record) == CONTACT_BLOCK) {
     scorpion_weapon_sword_spin_recover(fighter);
@@ -852,7 +845,7 @@ static void tanya_weapon_boomerang_home(Projectile *projectile) {
  * skips a victim in action 2001, and turns back on contact or outside
  * the arena radius squared plus twelve. */
 static void tanya_weapon_boomerang_step(Projectile *projectile) {
-  AttackRecord tanya_weapon_boomerang_record = script_vm_attack_record(battle_data(), BOOMERANG_ATTACK_RECORD);
+  AttackRecord tanya_weapon_boomerang_record = script_vm_attack_record(battle_data(), dat_boomerang_attack_record);
 
   if (projectile->phase == TANYA_WEAPON_BOOMERANG_HOME) {
     tanya_weapon_boomerang_home(projectile);

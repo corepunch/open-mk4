@@ -11,8 +11,8 @@ uint32_t action_reaction_native(const Fighter *fighter) {
  * of the selected script/model aliases. Script words supply subsequent sound. */
 static void stagger_voice(Fighter *fighter) {
   if (fighter_peer(fighter)->roster == 13) {
-    action_native_sound_list(MK4_SOUND_UNARMED_IMPACT_LIST);
-    action_native_sound_list(MK4_SOUND_KNOCKDOWN_VOICE_LIST);
+    action_native_sound_list(dat_sound_unarmed_impact_list);
+    action_native_sound_list(dat_sound_knockdown_voice_list);
   } else {
     mk4_script_indexed_sound(fighter, 1);
   }
@@ -36,7 +36,7 @@ void action_stagger_reaction(Fighter *fighter) {
     case MK4_NATIVE_STAGGER_STANCE_SELECT_DISARM:
       mk4_script_disarm_self(fighter);
       if (crouch) {
-        uint32_t physics = mk4_image_u32(battle_data(), MK4_CROUCH_REACTION_PHYSICS_WORD);
+        uint32_t physics = mk4_image_u32(battle_data(), dat_crouch_reaction_physics_word);
         require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction motion callback");
       }
       script = crouch ? scr_crouch_reaction_script : scr_kai_handstand_reaction_standing_stagger;
@@ -47,7 +47,7 @@ void action_stagger_reaction(Fighter *fighter) {
     case MK4_NATIVE_STAGGER_CLIP_134:
     case MK4_NATIVE_STAGGER_CLIP_134_IMPACT:
       mk4_script_disarm_self(fighter);
-      action_native_sound_list(MK4_SOUND_LIST_STAGGER_REACTION);
+      action_native_sound_list(dat_sound_list_stagger_reaction);
       script = crouch                                 ? scr_crouch_stagger_clip_254
                : entry == MK4_NATIVE_STAGGER_CLIP_134 ? scr_stagger_clip_134_friction
                                                       : scr_stagger_clip_134_friction_impact;
@@ -112,7 +112,7 @@ void action_launch_reaction(Fighter *fighter) {
 /* 482790 and483610 both finish the inherited descriptor; their native
  * completion differs. Engine continuations replace the task84 resume flag. */
 void action_reaction_getup_back(Fighter *fighter) {
-  mk4_mmove_finish_getup(fighter, MK4_GETUP_DESCRIPTOR_FLIP_GETUP);
+  mk4_mmove_finish_getup(fighter, dat_getup_descriptor_flip_getup);
 }
 
 void action_reaction_finish(Fighter *fighter) {
@@ -133,7 +133,7 @@ static void weapon_impact_voice(Fighter *fighter) {
   if (type == 0x61) {
     mk4_script_indexed_sound(fighter, 2);
   } else if (type != 0x69) {
-    action_native_sound_list(MK4_SOUND_LIST_WEAPON_IMPACT_VOICE);
+    action_native_sound_list(dat_sound_list_weapon_impact_voice);
   }
 }
 
@@ -210,7 +210,7 @@ void action_script_reaction(Fighter *fighter) {
     mk4_script_disarm_self(fighter);
   }
   if (entry == MK4_NATIVE_SWEEP_KNOCKDOWN_VICTIM) {
-    action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+    action_native_sound_list(dat_sound_random_grunt_list);
     mk4_script_stop_body(fighter);
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
   } else if (entry == MK4_NATIVE_LIU_KANG_FIREBALL_REACTION_ENTRY) {
@@ -230,7 +230,7 @@ void action_script_reaction(Fighter *fighter) {
       script = scr_goro_special_punch_189_victim;
       break;
     case MK4_NATIVE_REACTION_CLIP_180_SLIDE_HOLD: {
-      uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_REACTION_CLIP_180_FRICTION_CALLBACK);
+      uint32_t physics = mk4_image_u32(battle_data(), dat_reaction_clip_180_friction_callback);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native reaction motion callback");
       script = scr_reaction_clip_180_slide_hold;
       break;
@@ -242,7 +242,7 @@ void action_script_reaction(Fighter *fighter) {
       script = scr_sweep_victim_recovery;
       break;
     case MK4_NATIVE_REACTION_CLIP_127_FRICTION: {
-      uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_REACTION_CLIP_127_FRICTION_ROW);
+      uint32_t physics = mk4_image_u32(battle_data(), dat_reaction_clip_127_friction_row);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native recoil motion callback");
       script = scr_reaction_clip_127_friction;
       break;
@@ -288,7 +288,7 @@ void action_scaled_reaction(Fighter *fighter) {
       break;
     case MK4_NATIVE_REPTILE_DASH_VICTIM_SCALED:
       fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
-      action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+      action_native_sound_list(dat_sound_random_grunt_list);
       script = scr_reptile_dash_victim;
       break;
     case MK4_NATIVE_WEAPON_CLIP_132_DIRECTIONAL_FALL:
@@ -405,7 +405,7 @@ void action_weapon_reaction(Fighter *fighter) {
       script = scr_sonya_weapon_lp_victim;
       break;
     case MK4_NATIVE_WEAPON_SWEEP_GROUNDED_VICTIM:
-      action_native_sound_list(MK4_SOUND_RANDOM_GRUNT_LIST);
+      action_native_sound_list(dat_sound_random_grunt_list);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
       script = scr_shinnok_weapon_reaction_sweep_victim;
@@ -421,7 +421,7 @@ static bool uppercut_voice(BattleEvent *event, Fighter *owner, Fighter *peer) {
   (void)event;
   (void)owner;
   (void)peer;
-  action_native_sound_list(MK4_SOUND_UPPERCUT_VOICE_LIST);
+  action_native_sound_list(dat_sound_uppercut_voice_list);
   return false;
 }
 
@@ -517,7 +517,7 @@ void action_stagger_entry(Fighter *fighter) {
   }
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_STAGGER_ENTRY);
+  uint32_t physics = mk4_image_u32(battle_data(), dat_stagger_entry);
   require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native stagger callback");
   script_vm_enter(fighter, scr_stagger_entry_2, mk4_script_thrown_ready);
 }
@@ -554,7 +554,7 @@ void action_bicycle_release(Fighter *fighter) {
   } else {
     mk4_script_stop_body(fighter);
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
-    uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_BICYCLE_RELEASE);
+    uint32_t physics = mk4_image_u32(battle_data(), dat_bicycle_release);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native release callback");
     script_vm_enter(fighter, scr_raiden_torpedo_ground_release, mk4_script_thrown_ready);
   }
@@ -616,7 +616,7 @@ void action_bicycle_cycle(Fighter *fighter) {
     return;
   }
   mk4_script_effect(fighter, 14);
-  script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_ANIMATION_DESCRIPTOR_BICYCLE_CYCLE) * 4, 4);
+  script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_bicycle_cycle) * 4, 4);
   native_finish_clip(fighter, action_bicycle_cycle);
 }
 
@@ -663,7 +663,7 @@ void action_record_reaction(Fighter *fighter) {
       script = scr_raiden_staff_hp_weapon_victim;
       break;
     case MK4_NATIVE_LIGHTNING_VICTIM_FRICTION: {
-      uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_RECORD_REACTION);
+      uint32_t physics = mk4_image_u32(battle_data(), dat_record_reaction);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native record callback");
       script = scr_raiden_lightning_victim;
       break;
@@ -768,7 +768,7 @@ void action_aux_reaction(Fighter *fighter) {
       fighter->action = 0x1014;
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      uint32_t physics = mk4_image_u32(battle_data(), MK4_DATA_AUX_REACTION);
+      uint32_t physics = mk4_image_u32(battle_data(), dat_aux_reaction);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native impact friction callback");
       script = scr_groin_punch_groin_victim;
       break;
@@ -803,7 +803,7 @@ void action_shake_stun(Fighter *fighter) {
 
 void action_guard_fall(Fighter *fighter) {
   bool airborne = fighter_airborne(fighter);
-  action_native_sound_list(fighter->armed ? MK4_SOUND_ARMED_IMPACT_LIST : MK4_SOUND_UNARMED_IMPACT_LIST);
+  action_native_sound_list(fighter->armed ? dat_sound_armed_impact_list : dat_sound_unarmed_impact_list);
   if (airborne) {
     mk4_script_disarm_self(fighter);
     battle_wall_recoil(fighter);

@@ -436,7 +436,7 @@ static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const 
 
 /* Native484b60: bind185, turn/disarm, then native488b40's loaded side-getup. */
 void mk4_mmove_air_getup(Fighter *victim) {
-  script_vm_bind_animation(victim, MK4_ANIMATION_DESCRIPTOR_CLIP_185, 0);
+  script_vm_bind_animation(victim, dat_animation_clip_185, 0);
   victim->facing = -victim->facing;
   mk4_script_disarm_self(victim);
   mk4_mmove_side_getup(victim);

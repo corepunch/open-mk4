@@ -143,7 +143,7 @@ static void air_contact_query(Fighter *fighter) {
   require(query == MK4_NATIVE_CONTACT_QUERY_A || query == MK4_NATIVE_CONTACT_QUERY_B, "Unsupported native air contact query");
   unsigned selector = mk4_image_u32(image, row + 4);
   require(selector < 256, "Invalid native air contact selector");
-  uint32_t bank = query == MK4_NATIVE_CONTACT_QUERY_A ? MK4_DATA_CONTACT_QUERY_A_TABLE : MK4_DATA_CONTACT_QUERY_B_TABLE;
+  uint32_t bank = query == MK4_NATIVE_CONTACT_QUERY_A ? dat_contact_query_a_table : dat_contact_query_b_table;
   AttackRecord record = script_vm_attack_record(image, mk4_image_u32(image, bank + selector * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_CODE_1006;
@@ -194,22 +194,22 @@ static void air_continue(Fighter *fighter, uint32_t target) {
   switch (target) {
     case MK4_NATIVE_AIR_HIGH_PUNCH_CONTACT_WINDOW:
       fighter->sample_override = mini(9, fighter_move(fighter)->last);
-      air_contact_begin(fighter, MK4_DATA_AIR_HIGH_PUNCH_CONTACT_ROW);
+      air_contact_begin(fighter, dat_air_high_punch_contact_row);
       return;
     case MK4_NATIVE_AIR_CONTACT_BEGIN:
-      air_contact_begin(fighter, MK4_DATA_AIR_LOW_PUNCH_CONTACT_ROW);
+      air_contact_begin(fighter, dat_air_low_punch_contact_row);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_30:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_DATA_AIR_DIAGONAL_KICK_QUERY_30_ROW);
+      air_contact_begin(fighter, dat_air_diagonal_kick_query_30_row);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_31:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_DATA_AIR_DIAGONAL_KICK_QUERY_31_ROW);
+      air_contact_begin(fighter, dat_air_diagonal_kick_query_31_row);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_32:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_DATA_AIR_DIAGONAL_KICK_QUERY_32_ROW);
+      air_contact_begin(fighter, dat_air_diagonal_kick_query_32_row);
       return;
     case MK4_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK:
       air_punch_contact(fighter, true);
@@ -266,39 +266,39 @@ static void air_continue(Fighter *fighter, uint32_t target) {
 }
 
 void action_air_hp_tail(Fighter *fighter) {
-  air_open(fighter, MK4_DATA_AIR_HP_TAIL);
+  air_open(fighter, dat_air_hp_tail);
 }
 
 void action_air_lp_tail(Fighter *fighter) {
-  air_open(fighter, MK4_DATA_AIR_LP_TAIL);
+  air_open(fighter, dat_air_lp_tail);
 }
 
 void action_air_diagonal_tail(Fighter *fighter) {
-  air_open(fighter, MK4_DATA_AIR_DIAGONAL_TAIL);
+  air_open(fighter, dat_air_diagonal_tail);
 }
 
 void action_air_diagonal_alt_tail(Fighter *fighter) {
-  air_open(fighter, MK4_DATA_AIR_DIAGONAL_ALT_TAIL);
+  air_open(fighter, dat_air_diagonal_alt_tail);
 }
 
 void action_air_diagonal_wide_tail(Fighter *fighter) {
-  air_open(fighter, MK4_DATA_AIR_DIAGONAL_WIDE_TAIL);
+  air_open(fighter, dat_air_diagonal_wide_tail);
 }
 
 void action_air_lk_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_DATA_AIR_LK_TAIL);
+  air_contact_begin(fighter, dat_air_lk_tail);
 }
 
 void action_air_lk_alt_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_DATA_AIR_LK_ALT_TAIL);
+  air_contact_begin(fighter, dat_air_lk_alt_tail);
 }
 
 void action_air_lk_wide_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_DATA_AIR_LK_WIDE_TAIL);
+  air_contact_begin(fighter, dat_air_lk_wide_tail);
 }
 
 void action_air_straight_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_DATA_AIR_STRAIGHT_TAIL);
+  air_contact_begin(fighter, dat_air_straight_tail);
 }
 
 static void air_wide_landed(Fighter *fighter) {
@@ -319,7 +319,7 @@ static void air_wide_query(Fighter *fighter) {
     air_wide_landed(fighter);
     return;
   }
-  AttackRecord record = script_vm_attack_record(battle_data(), mk4_image_u32(battle_data(), MK4_DATA_CONTACT_QUERY_B_TABLE + 39 * 4) * 4);
+  AttackRecord record = script_vm_attack_record(battle_data(), mk4_image_u32(battle_data(), dat_contact_query_b_table + 39 * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     air_punch_contact(fighter, false);
   }

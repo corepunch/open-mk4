@@ -52,6 +52,6 @@ void action_flip_facing(Fighter *fighter) {
 }
 
 void action_throw_turn(Fighter *fighter) {
-  uint32_t callback = mk4_image_u32(battle_data(), MK4_DATA_THROW_TURN);
+  uint32_t callback = mk4_image_u32(battle_data(), dat_throw_turn);
   require(script_native_dispatch(fighter, callback, MK4_CALL, 0), "Unsupported throw callback table entry");
 }

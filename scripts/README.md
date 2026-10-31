@@ -19,7 +19,6 @@ still supplies meshes, textures, animation payloads and sampled audio.
 - `mk4/program.asm`: generated include order for fighter bytecode.
 - `mk4/tables.asm`: include order for data records in `mk4/tables/`.
 - `mk4/constants.inc`: named encoding fields.
-- `mk4/exports.inc`: shared data exports and aliases.
 - `mk4/native.inc`: shared ABI include entry point; native declarations live
   beside bytecode and are exported by the linker.
 
@@ -104,15 +103,21 @@ that alias's offset and no-op operand interpretation.
 `.export_equ NAME value` defines a constant and exposes the same name to C in
 one line, for example `.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`.
 It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
-private constants and `.export C_NAME label` when the C interface name differs
-from its source label. These are build-time directives, not retail VM opcodes.
+private constants. These are build-time directives, not retail VM opcodes.
 
 Script labels and executable embedded aliases automatically become C constants
 with the `scr_` prefix. Assembly uses `quan_chi_lk_throw_startup` directly;
 C uses `scr_quan_chi_lk_throw_startup` from `mk4_linked.h`. No script `.export`
 line, intermediate C enum or redundant JSON export mapping is needed. Native
 function names remain distinct from script addresses, even when the bare names
-match. Data exports retain their existing interface.
+match.
+
+Data labels and field aliases automatically become `dat_<label>` constants
+in C, for example `animation_table` becomes `dat_animation_table`. Field
+aliases live beside their records. There is no separate `exports.inc`, C
+address-wrapper header or JSON export map. Alias namespaces follow the section
+of their referenced label, including data end markers and byte-sized fields;
+numeric constants are not inferred to be addresses from their values.
 
 The host loads one package; `--data PATH` selects a compatible one. The loader
 checks package shape, compiled layout identity and executable-word membership.

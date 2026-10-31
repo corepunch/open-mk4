@@ -204,7 +204,7 @@ def verify_scripts(image, project):
             row = rows[owner]
             op = int(row['opcode'], 16)
             if 'clip' in row and index == 0:
-                expected = (symbols['MK4_DATA_ANIMATION_TABLE'] + 12 * row['clip']) // 4
+                expected = (symbols['animation_table'] + 12 * row['clip']) // 4
             elif op in (0x2f, 0x33, 0x3c, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f) or (op in (0x36, 0x43, 0x55) and index == 1):
                 expected = symbols[entries[expected * 4][0]] // 4
         actual = struct.unpack_from('<I', payload, linked - BASE)[0]
@@ -234,8 +234,6 @@ def verify_scripts(image, project):
 def export(image, destination):
     layout = json.loads(LAYOUT.read_text())
     names = {int(a,16):name for a,name in layout['names'].items()}
-    for row in layout['exports']:
-        names.setdefault(row['address'], 'data_' + format(row['address'], '06x'))
     used = set()
     for address, name in sorted(names.items()):
         if name in used:
@@ -278,9 +276,9 @@ def export(image, destination):
         asset(image.word(rec)*4)
         raw(0x4ee1f0+i*4)
     for i in range(11):roots.add(image.word(0x4dd960+i*64+12)*4)
-    for e in layout['exports']:
-        if e.get('original_name','').endswith('_RIG'):roots.add(e['address'])
-        if e.get('original_name','').startswith('MK4_WEAPON_DESCRIPTOR_'):roots.add(image.word(e['address']+4)*4)
+    roots.update(layout['rig_roots'])
+    for descriptor in layout['weapon_descriptors']:
+        roots.add(image.word(descriptor + 4) * 4)
     for i in range(18):
         inventory=image.word(0x53d5c0+i*4)*4
         if inventory:roots.add(image.word(inventory+4)*4)
@@ -344,19 +342,11 @@ def export(image, destination):
         program.append(names[a]+':')
         program.append('  '+NAMES[int(row['opcode'],16)]+' '+', '.join([hex(row['inline'])]+[value(a+4*(i+1)) for i in range(len(row['operands']))]))
         previous=a+4*(1+len(row['operands']))
-    exports=aliases[:]
-    for e in layout['exports']:
-        if e['address']==HI:target=names[HI]
-        else:target=names[e['address']]
-        exports.append(f'.export {e["name"]} {target}')
-    # clip() uses this name when editing a program, independent of C export spelling.
-    if names[0x4fad7c]!='MK4_DATA_ANIMATION_TABLE':exports.append('.alias MK4_DATA_ANIMATION_TABLE '+names[0x4fad7c])
     destination.mkdir(parents=True)
     (destination/'native.inc').write_text('; Stable native ABI identifiers; these are never host pointers.\n'+''.join(f'.equ {name} {v:#x}\n' for v,name in sorted(native.items())))
-    (destination/'tables.asm').write_text('\n'.join(data)+'\n')
+    (destination/'tables.asm').write_text('\n'.join(data + aliases)+'\n')
     (destination/'program.asm').write_text('\n'.join(program)+'\n')
-    (destination/'exports.inc').write_text('\n'.join(exports)+'\n')
-    (destination/'project.asm').write_text('.include "native.inc"\n.include "tables.asm"\n.include "program.asm"\n.include "exports.inc"\n')
+    (destination/'project.asm').write_text('.include "native.inc"\n.include "tables.asm"\n.include "program.asm"\n')
     package,header,symbols=link(destination/'project.asm')
     # Verify every retained byte, every typed reference and every instruction.
     payload=package[HEADER.size:HEADER.size+struct.unpack_from('<I',package,8)[0]]

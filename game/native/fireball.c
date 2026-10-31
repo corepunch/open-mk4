@@ -32,10 +32,10 @@ static bool fireball_contact(Projectile *projectile, bool air) {
     return false;
   }
   const Mk4Image *image = battle_data();
-  uint32_t waiter = air ? MK4_DATA_FIREBALL_AIR_CONTACT_ROW : MK4_DATA_FIREBALL_STANDING_CONTACT_ROW;
+  uint32_t waiter = air ? dat_fireball_air_contact_row : dat_fireball_standing_contact_row;
   unsigned selector = mk4_image_u32(image, waiter);
   require(selector < 256, "Invalid native projectile contact selector");
-  AttackRecord record = script_vm_attack_record(image, mk4_image_u32(image, MK4_DATA_PROJECTILE_CONTACT_TABLE + selector * 4) * 4);
+  AttackRecord record = script_vm_attack_record(image, mk4_image_u32(image, dat_projectile_contact_table + selector * 4) * 4);
   if (battle_projectile_contact(projectile, &record) == CONTACT_MISS) {
     return false;
   }
@@ -90,8 +90,8 @@ static Projectile *spawn(Fighter *fighter, ProjectileFn step) {
   projectile->heading[0] = fighter_axis(fighter, AXIS_X);
   projectile->heading[1] = fighter_axis(fighter, AXIS_Z);
   const Mk4Image *image = battle_data();
-  q16 offset = (q16)mk4_image_u32(image, MK4_DATA_FIREBALL_SPAWN_FORWARD_OFFSET);
-  projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, MK4_DATA_FIREBALL_SPAWN_Y_OFFSET);
+  q16 offset = (q16)mk4_image_u32(image, dat_fireball_spawn_forward_offset);
+  projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, dat_fireball_spawn_y_offset);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     projectile->pos[axis] += q16_mul(fighter_axis(fighter, axis), offset);
     projectile->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
@@ -144,7 +144,7 @@ static void fall_hold(Fighter *fighter) {
  * and the peer-facing update 490bd0; one fall sample per visit until 18. */
 void action_fireball_fall(Fighter *fighter) {
   fighter_start_move(fighter, S_JUMP, &fall);
-  script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_310, 7);
+  script_vm_bind_animation(fighter, dat_animation_clip_310, 7);
   fighter->body.vel[AXIS_Y] = 0;
   fighter->body.gravity = 0x20c;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;

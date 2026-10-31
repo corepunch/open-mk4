@@ -85,11 +85,11 @@ void script_vm_reset(Fighter *fighter) {
 
 static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed, int first) {
   /* Descriptors are packed word addresses after the retail data fixups. */
-  if (packed < MK4_ANIMATION_TABLE / 4 || packed >= (MK4_ANIMATION_TABLE + MK4_CLIP_COUNT * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4 ||
-      (packed * 4 - MK4_ANIMATION_TABLE) % MK4_ANIMATION_DESCRIPTOR_SIZE != 0) {
+  if (packed < dat_animation_table / 4 || packed >= (dat_animation_table + MK4_CLIP_COUNT * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4 ||
+      (packed * 4 - dat_animation_table) % MK4_ANIMATION_DESCRIPTOR_SIZE != 0) {
     vm_error(fighter, "invalid animation descriptor");
   }
-  int clip = (int)((packed * 4 - MK4_ANIMATION_TABLE) / MK4_ANIMATION_DESCRIPTOR_SIZE);
+  int clip = (int)((packed * 4 - dat_animation_table) / MK4_ANIMATION_DESCRIPTOR_SIZE);
   uint32_t count = mk4_image_u32(image, packed * 4 + MK4_ANIMATION_FRAME_COUNT_OFFSET);
   if (count == 0 || count > 65535 || first >= (int)count) {
     vm_error(fighter, "invalid animation length or initial cursor");
@@ -179,7 +179,7 @@ void script_vm_forward_return(Fighter *fighter) {
 }
 
 AttackRecord script_vm_attack_record(const Mk4Image *image, uint32_t address) {
-  require(address >= MK4_ATTACK_RECORDS_BEGIN && address <= MK4_ATTACK_RECORDS_END - MK4_ATTACK_RECORD_SIZE, "Attack record outside reviewed retail data");
+  require(address >= dat_attack_records_begin && address <= dat_attack_records_end - MK4_ATTACK_RECORD_SIZE, "Attack record outside reviewed retail data");
   uint32_t reactions = mk4_image_u32(image, address + 16);
   return (AttackRecord){(q16)mk4_image_u32(image, address), (q16)mk4_image_u32(image, address + 4), (q16)mk4_image_u32(image, address + 8),
       (q16)mk4_image_u32(image, address + 12), reactions & 255u, (reactions >> 8) & 255u, (reactions >> 16) & 255u, reactions >> 24,
@@ -189,7 +189,7 @@ AttackRecord script_vm_attack_record(const Mk4Image *image, uint32_t address) {
 static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
   ScriptVm *vm = &fighter->execution.script;
   uint32_t packed = mk4_image_u32(vm->image, table + selector * 4);
-  if (packed < MK4_ATTACK_RECORDS_BEGIN / 4 || packed > (MK4_ATTACK_RECORDS_END - MK4_ATTACK_RECORD_SIZE) / 4) {
+  if (packed < dat_attack_records_begin / 4 || packed > (dat_attack_records_end - MK4_ATTACK_RECORD_SIZE) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
   AttackRecord record = script_vm_attack_record(vm->image, packed * 4);
@@ -224,7 +224,7 @@ void script_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
   fighter->execution.generation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
-    bind(fighter, (MK4_ANIMATION_TABLE + (uint32_t)move->clip * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4, fighter_sample(fighter));
+    bind(fighter, (dat_animation_table + (uint32_t)move->clip * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4, fighter_sample(fighter));
   }
   script_vm_step(fighter);
 }
@@ -697,7 +697,7 @@ void script_vm_step(Fighter *fighter) {
       case MK4_OP_QUERY_BRANCH: {
         uint32_t target = fetch(fighter);
         uint64_t continuation = fighter->execution.generation;
-        contact(fighter, MK4_DATA_CONTACT_QUERY_B_TABLE, arg);
+        contact(fighter, dat_contact_query_b_table, arg);
         if (vm->active && fighter->execution.generation == continuation && (vm->result & 1u)) {
           jump(fighter, target);
         }
@@ -845,10 +845,10 @@ void script_vm_step(Fighter *fighter) {
       case MK4_OP_QUERY_D:
       case MK4_OP_WEAPON_QUERY:
         contact(fighter,
-            opcode == MK4_OP_QUERY_B   ? MK4_DATA_CONTACT_QUERY_B_TABLE
-            : opcode == MK4_OP_QUERY_A ? MK4_DATA_CONTACT_QUERY_A_TABLE
-            : opcode == MK4_OP_QUERY_D ? MK4_DATA_CONTACT_QUERY_D_TABLE
-                                       : MK4_WEAPON_ATTACK_TABLE,
+            opcode == MK4_OP_QUERY_B   ? dat_contact_query_b_table
+            : opcode == MK4_OP_QUERY_A ? dat_contact_query_a_table
+            : opcode == MK4_OP_QUERY_D ? dat_contact_query_d_table
+                                       : dat_weapon_attack_table,
             arg);
         break;
       default:
