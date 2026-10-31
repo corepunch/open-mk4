@@ -9,7 +9,7 @@ weapon_parameters_begin:
   .zero 4
 
 weapon_clip_229_query_42_parameters:
-  .word clip(229), 0x4070301, 0x20002a, MK4_NATIVE_TANYA_WEAPON_BACK_HP_ENTRY, MK4_NATIVE_TANYA_WEAPON_BACK_HP_ENTRY
+  .word clip(229), 0x4070301, 0x20002a, native_tanya_weapon_back_hp_entry, native_tanya_weapon_back_hp_entry
   .zero 4
 
 weapon_clip_231_query_43_motion:
@@ -17,10 +17,10 @@ weapon_clip_231_query_43_motion:
   .zero 4
 
 weapon_clip_231_query_43_parameters:
-  .word clip(231), 0xa100401, 0x20062b, MK4_NATIVE_TANYA_WEAPON_LP_ENTRY
+  .word clip(231), 0xa100401, 0x20062b, native_tanya_weapon_lp_entry
 
 scepter_high_punch_parameters:
-  .word clip(231), 0xa100401, 0x20061a, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_HP_ENTRY, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_HP_ENTRY
+  .word clip(231), 0xa100401, 0x20061a, native_sub_zero_scepter_back_hp_entry, native_sub_zero_scepter_back_hp_entry
   .zero 4
 
 scepter_back_high_punch_motion:
@@ -28,10 +28,10 @@ scepter_back_high_punch_motion:
   .zero 4
 
 scepter_back_high_punch_parameters:
-  .word clip(237), 0x9100400, 0x220006, MK4_NATIVE_SUB_ZERO_SCEPTER_LP_ENTRY
+  .word clip(237), 0x9100400, 0x220006, native_sub_zero_scepter_lp_entry
 
 weapon_clip_250_query_38_parameters:
-  .word clip(250), 0x40c0209, 0x220026, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_LP_ENTRY, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_LP_ENTRY
+  .word clip(250), 0x40c0209, 0x220026, native_sub_zero_scepter_back_lp_entry, native_sub_zero_scepter_back_lp_entry
   .zero 4
 
 weapon_clip_228_query_39_motion:
@@ -39,16 +39,16 @@ weapon_clip_228_query_39_motion:
   .zero 4
 
 weapon_clip_228_query_39_parameters:
-  .word clip(228), 0xa100505, 0x220027, MK4_NATIVE_JAREK_WEAPON_HP_ENTRY
+  .word clip(228), 0xa100505, 0x220027, native_jarek_weapon_hp_entry
 
 weapon_clip_239_query_37_parameters:
-  .word clip(239), 0x3090205, 0x220025, MK4_NATIVE_CAGE_WEAPON_UPPER_ENTRY, MK4_NATIVE_CAGE_WEAPON_UPPER_ENTRY
+  .word clip(239), 0x3090205, 0x220025, native_cage_weapon_upper_entry, native_cage_weapon_upper_entry
   .zero 4
   .word 0x8, 0x1999, 0xd
   .zero 36
 
 weapon_clip_229_query_36_parameters:
-  .word clip(229), 0x4070301, 0x200024, MK4_NATIVE_JAREK_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_JAREK_WEAPON_BACK_LP_ENTRY
+  .word clip(229), 0x4070301, 0x200024, native_jarek_weapon_back_lp_entry, native_jarek_weapon_back_lp_entry
   .zero 4
 
 weapon_clip_228_query_35_motion:
@@ -56,14 +56,14 @@ weapon_clip_228_query_35_motion:
   .zero 4
 
 weapon_clip_228_query_35_parameters:
-  .word clip(228), 0xa100505, 0x220023, MK4_NATIVE_KAI_WEAPON_HIGH_PUNCH_FRONTEND
+  .word clip(228), 0xa100505, 0x220023, native_kai_weapon_high_punch_frontend
 
 kai_weapon_high_punch_motion:
   .word 0x1, 0x2147, 0xa
   .zero 4
 
 kai_weapon_high_punch_parameters:
-  .word clip(230), 0x80b0301, 0x22001f, MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_FRONTEND, MK4_NATIVE_KAI_WEAPON_LOW_PUNCH_FRONTEND
+  .word clip(230), 0x80b0301, 0x22001f, native_kai_weapon_back_strike_frontend, native_kai_weapon_low_punch_frontend
   .zero 4
 
 weapon_clip_229_query_32_motion:
@@ -71,7 +71,7 @@ weapon_clip_229_query_32_motion:
   .zero 4
 
 weapon_clip_229_query_32_parameters:
-  .word clip(229), 0x4070301, 0x200020, MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_FRONTEND, MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_FRONTEND
+  .word clip(229), 0x4070301, 0x200020, native_kai_weapon_back_strike_frontend, native_kai_weapon_back_strike_frontend
   .zero 4
   .word 0x8, 0x1999, 0xd
   .zero 36
@@ -81,7 +81,7 @@ weapon_clip_237_query_28_motion:
   .zero 4
 
 weapon_clip_237_query_28_parameters:
-  .word clip(237), 0x9100400, 0x22001c, MK4_NATIVE_LIU_KANG_SWORD_BACK_HP_ENTRY, MK4_NATIVE_SHINNOK_WEAPON_LP_ENTRY
+  .word clip(237), 0x9100400, 0x22001c, native_liu_kang_sword_back_hp_entry, native_shinnok_weapon_lp_entry
   .zero 4
 
 weapon_clip_238_query_29_motion:
@@ -89,25 +89,25 @@ weapon_clip_238_query_29_motion:
   .zero 4
 
 weapon_clip_238_query_29_parameters:
-  .word clip(238), 0x9190405, 0x22001d, MK4_NATIVE_SHINNOK_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_SHINNOK_WEAPON_BACK_LP_ENTRY
+  .word clip(238), 0x9190405, 0x22001d, native_shinnok_weapon_back_lp_entry, native_shinnok_weapon_back_lp_entry
   .zero 4
 
 weapon_clip_243_query_30_parameters:
-  .word clip(243), 0x30f0209, 0x22001e, MK4_NATIVE_SHINNOK_WEAPON_BACK_LP_ENTRY
+  .word clip(243), 0x30f0209, 0x22001e, native_shinnok_weapon_back_lp_entry
 
 reptile_weapon_high_punch_parameters:
-  .word clip(230), 0x80a0305, 0x220012, MK4_NATIVE_REPTILE_WEAPON_BACK_HP_ENTRY, MK4_NATIVE_REPTILE_WEAPON_BACK_HP_ENTRY
+  .word clip(230), 0x80a0305, 0x220012, native_reptile_weapon_back_hp_entry, native_reptile_weapon_back_hp_entry
   .zero 24
   .word 0x3333
 
 weapon_clip_240_query_21_parameters:
-  .word clip(240), 0x80d0306, 0x220015, MK4_NATIVE_REPTILE_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_REPTILE_WEAPON_BACK_LP_ENTRY
+  .word clip(240), 0x80d0306, 0x220015, native_reptile_weapon_back_lp_entry, native_reptile_weapon_back_lp_entry
   .zero 4
   .word 0x1, 0x3333, 0x7
   .zero 140
 
 sword_low_punch_open_parameters:
-  .word clip(240), 0x80d0304, 0x22000d, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY, 0x496500
+  .word clip(240), 0x80d0304, 0x22000d, native_cage_weapon_back_lp_entry, 0x496500
   .zero 4
 
 sword_low_punch_repeat_motion:
@@ -122,14 +122,14 @@ sword_back_high_punch_motion:
   .zero 4
 
 sword_back_high_punch_parameters:
-  .word clip(242), 0x90b0308, 0x220011, MK4_NATIVE_SONYA_WEAPON_HP_ENTRY
+  .word clip(242), 0x90b0308, 0x220011, native_sonya_weapon_hp_entry
 
 weapon_clip_230_query_8_parameters:
-  .word clip(230), 0x80b0301, 0x220008, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_SONYA_WEAPON_LP_ENTRY
+  .word clip(230), 0x80b0301, 0x220008, native_cage_weapon_back_lp_entry, native_sonya_weapon_lp_entry
   .zero 4
 
 weapon_clip_229_query_9_parameters:
-  .word clip(229), 0x4070301, 0x200009, MK4_NATIVE_SONYA_WEAPON_BACK_HP_ENTRY, MK4_NATIVE_SONYA_WEAPON_BACK_HP_ENTRY
+  .word clip(229), 0x4070301, 0x200009, native_sonya_weapon_back_hp_entry, native_sonya_weapon_back_hp_entry
   .zero 4
   .word 0x3, 0x1999, 0xc
   .zero 68
@@ -145,7 +145,7 @@ sword_back_low_punch_speed_duration:
   .zero 36
 
 weapon_clip_233_query_4_parameters:
-  .word clip(233), 0x8100500, 0x220004, MK4_NATIVE_QUAN_CHI_WEAPON_HP_ENTRY, MK4_NATIVE_QUAN_CHI_WEAPON_HP_ENTRY
+  .word clip(233), 0x8100500, 0x220004, native_quan_chi_weapon_hp_entry, native_quan_chi_weapon_hp_entry
   .zero 4
 
 weapon_clip_238_query_7_motion:
@@ -156,7 +156,7 @@ weapon_clip_238_query_7_parameters:
   .word clip(238), 0x8190300, 0x220007, 0x496ad0
 
 weapon_clip_234_query_5_parameters:
-  .word clip(234), 0x8100400, 0x220005, MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY, MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY
+  .word clip(234), 0x8100400, 0x220005, native_raiden_staff_back_lp_entry, native_raiden_staff_back_lp_entry
   .zero 4
 
 staff_back_low_punch_motion:
@@ -164,29 +164,29 @@ staff_back_low_punch_motion:
   .zero 4
 
 staff_back_low_punch_parameters:
-  .word clip(237), 0x9100400, 0x220006, MK4_NATIVE_SONYA_DRAW_WEAPON_HP_SLASH
+  .word clip(237), 0x9100400, 0x220006, native_sonya_draw_weapon_hp_slash
 
 weapon_clip_235_query_1_parameters:
   .word clip(235), 0x8100400, 0x220001
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_001:
-  .word MK4_NATIVE_SWORD_BACK_HP, MK4_NATIVE_SONYA_DRAW_WEAPON_LP_SLASH
+  .word native_sword_back_hp, native_sonya_draw_weapon_lp_slash
   .zero 4
 
 weapon_clip_236_query_0_parameters:
-  .word clip(236), 0x8100400, 0x220000, MK4_NATIVE_SWORD_BACK_LP, MK4_NATIVE_SWORD_BACK_LP
+  .word clip(236), 0x8100400, 0x220000, native_sword_back_lp, native_sword_back_lp
   .zero 220
 
 axe_high_punch_parameters:
-  .word clip(231), 0xa100401, 0x20061a, MK4_NATIVE_JAX_AXE_BACK_HP_ENTRY, MK4_NATIVE_JAX_AXE_BACK_HP_ENTRY
+  .word clip(231), 0xa100401, 0x20061a, native_jax_axe_back_hp_entry, native_jax_axe_back_hp_entry
   .zero 4
 
 weapon_clip_229_query_23_parameters:
-  .word clip(229), 0x4070301, 0x200017, MK4_NATIVE_JAX_AXE_LP_ENTRY
+  .word clip(229), 0x4070301, 0x200017, native_jax_axe_lp_entry
 
 weapon_clip_232_query_24_parameters:
-  .word clip(232), 0x40d0401, 0x200018, MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY, MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY
+  .word clip(232), 0x40d0401, 0x200018, native_jax_axe_back_lp_entry, native_jax_axe_back_lp_entry
   .zero 4
 
 strike_query:
@@ -201,7 +201,7 @@ weapon_clip_239_parameters:
   .zero 4
 
 cage_weapon_low_punch_parameters:
-  .word clip(230), 0x80a0305, 0x220012, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY
+  .word clip(230), 0x80a0305, 0x220012, native_cage_weapon_back_lp_entry
 
 kai_weapon_followup_motion:
   .word 0x1, 0x2147, 0xa
@@ -252,89 +252,89 @@ weapon_parameters_end:
   .word 0xffffeb86, 0x191eb, 0xffff0000
 
 weapon_draw_followup_entries:
-  .word MK4_NATIVE_SWORD_BACK_LP, MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY, MK4_NATIVE_SONYA_WEAPON_HP_ENTRY, MK4_NATIVE_KAI_WEAPON_FOLLOWUP_ENTRY, MK4_NATIVE_SWORD_BACK_LP, MK4_NATIVE_SWORD_BACK_LP
-  .word MK4_NATIVE_LIU_WEAPON_LOW_PUNCH, MK4_NATIVE_REPTILE_WEAPON_ALTERNATE_HIGH_PUNCH, MK4_NATIVE_FUJIN_CROSSBOW_FOLLOWUP_ENTRY, MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY, MK4_NATIVE_JAREK_WEAPON_LP_ENTRY, MK4_NATIVE_SUB_ZERO_DRAW_WEAPON_SCEPTER_FOLLOW_UP
-  .word 0x496da0, MK4_NATIVE_TANYA_WEAPON_HP_ENTRY, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY, 0x494d00, 0x495110
+  .word native_sword_back_lp, native_raiden_staff_back_lp_entry, native_sonya_weapon_hp_entry, native_kai_weapon_followup_entry, native_sword_back_lp, native_sword_back_lp
+  .word native_liu_weapon_low_punch, native_reptile_weapon_alternate_high_punch, native_fujin_crossbow_followup_entry, native_jax_axe_back_lp_entry, native_jarek_weapon_lp_entry, native_sub_zero_draw_weapon_scepter_follow_up
+  .word 0x496da0, native_tanya_weapon_hp_entry, native_cage_weapon_back_lp_entry, native_raiden_staff_back_lp_entry, 0x494d00, 0x495110
   .word 0x4951b0, 0x4951b0, 0x4951c0, 0x495280, 0x4951e0, 0x494f30
   .word 0x494e10, 0x495300
   .zero 16
-  .word MK4_NATIVE_SONYA_DRAW_WEAPON_HP_SLASH, MK4_NATIVE_QUAN_CHI_WEAPON_HP_ENTRY, MK4_NATIVE_SONYA_WEAPON_LP_ENTRY, MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_FRONTEND, MK4_NATIVE_SHINNOK_WEAPON_HP_ENTRY, MK4_NATIVE_SWORD_BACK_LP
-  .word MK4_NATIVE_LIU_WEAPON_LOW_PUNCH, MK4_NATIVE_REPTILE_WEAPON_LP_ENTRY, 0x495cc0, MK4_NATIVE_JAX_AXE_BACK_HP_ENTRY, MK4_NATIVE_JAREK_WEAPON_HP_ENTRY, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_HP_ENTRY
+  .word native_sonya_draw_weapon_hp_slash, native_quan_chi_weapon_hp_entry, native_sonya_weapon_lp_entry, native_kai_weapon_back_strike_frontend, native_shinnok_weapon_hp_entry, native_sword_back_lp
+  .word native_liu_weapon_low_punch, native_reptile_weapon_lp_entry, 0x495cc0, native_jax_axe_back_hp_entry, native_jarek_weapon_hp_entry, native_sub_zero_scepter_back_hp_entry
   .word 0x496da0, 0x496da0, 0x496da0, 0x496da0, 0x496da0
   .zero 4
-  .word MK4_NATIVE_SWORD_BACK_LP, MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_KAI_WEAPON_LOW_PUNCH_FRONTEND, MK4_NATIVE_SHINNOK_WEAPON_BACK_LP_ENTRY, MK4_NATIVE_SWORD_BACK_LP
-  .word MK4_NATIVE_LIU_KANG_SWORD_BACK_HP_ENTRY, MK4_NATIVE_REPTILE_WEAPON_HP_ENTRY, 0x495c90, MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY, MK4_NATIVE_CAGE_WEAPON_UPPER_ENTRY, MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_LP_ENTRY
+  .word native_sword_back_lp, native_raiden_staff_back_lp_entry, native_cage_weapon_back_lp_entry, native_kai_weapon_low_punch_frontend, native_shinnok_weapon_back_lp_entry, native_sword_back_lp
+  .word native_liu_kang_sword_back_hp_entry, native_reptile_weapon_hp_entry, 0x495c90, native_jax_axe_back_lp_entry, native_cage_weapon_upper_entry, native_sub_zero_scepter_back_lp_entry
   .word 0x496da0, 0x496da0, 0x496da0, 0x496da0, 0x496da0
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_006:
-  .word MK4_NATIVE_QUAN_CHI_WEAPON_BACK_HP_ENTRY, MK4_NATIVE_RAIDEN_STAFF_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_quan_chi_weapon_back_hp_entry, native_raiden_staff_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_007:
-  .word MK4_NATIVE_CAGE_WEAPON_BACK_HP_ENTRY, MK4_NATIVE_CAGE_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_cage_weapon_back_hp_entry, native_cage_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_008:
-  .word MK4_NATIVE_TANYA_WEAPON_HP_ENTRY, MK4_NATIVE_TANYA_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_tanya_weapon_hp_entry, native_tanya_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_009:
-  .word MK4_NATIVE_SUB_ZERO_SCEPTER_HP_ENTRY, MK4_NATIVE_SUB_ZERO_SCEPTER_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_sub_zero_scepter_hp_entry, native_sub_zero_scepter_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_010:
-  .word MK4_NATIVE_JAREK_WEAPON_HP_ENTRY, MK4_NATIVE_JAREK_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_jarek_weapon_hp_entry, native_jarek_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_011:
-  .word MK4_NATIVE_KAI_WEAPON_HIGH_PUNCH_FRONTEND, MK4_NATIVE_KAI_WEAPON_LOW_PUNCH_FRONTEND, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_kai_weapon_high_punch_frontend, native_kai_weapon_low_punch_frontend, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_012:
-  .word MK4_NATIVE_SHINNOK_WEAPON_HP_ENTRY, MK4_NATIVE_SHINNOK_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_shinnok_weapon_hp_entry, native_shinnok_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_013:
-  .word MK4_NATIVE_JAX_AXE_HP_ENTRY, MK4_NATIVE_JAX_AXE_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_jax_axe_hp_entry, native_jax_axe_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_014:
-  .word MK4_NATIVE_SONYA_DRAW_WEAPON_HP_SLASH, MK4_NATIVE_SONYA_DRAW_WEAPON_LP_SLASH, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_sonya_draw_weapon_hp_slash, native_sonya_draw_weapon_lp_slash, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_015:
-  .word MK4_NATIVE_RAIDEN_STAFF_HP_ENTRY, MK4_NATIVE_RAIDEN_STAFF_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_raiden_staff_hp_entry, native_raiden_staff_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_016:
-  .word MK4_NATIVE_SONYA_WEAPON_HP_ENTRY, MK4_NATIVE_SONYA_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_sonya_weapon_hp_entry, native_sonya_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_017:
-  .word MK4_NATIVE_LIU_WEAPON_HIGH_PUNCH, MK4_NATIVE_LIU_WEAPON_LOW_PUNCH, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_liu_weapon_high_punch, native_liu_weapon_low_punch, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_018:
-  .word MK4_NATIVE_REPTILE_WEAPON_HP_ENTRY, MK4_NATIVE_REPTILE_WEAPON_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_reptile_weapon_hp_entry, native_reptile_weapon_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.
 unresolved_weapons_019:
-  .word MK4_NATIVE_FUJIN_CROSSBOW_HP_ENTRY, MK4_NATIVE_FUJIN_CROSSBOW_LP_ENTRY, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_fujin_crossbow_hp_entry, native_fujin_crossbow_lp_entry, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 ; Weapon inventory: type, packed rig, hand binding, buttons, idle, forward, backward, reserved.

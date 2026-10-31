@@ -120,7 +120,7 @@ def native_entries():
     layout = json.loads((ROOT / 'tools/mk4_script_layout.json').read_text())
     constants = {name: int(value, 16) for name, value in layout['natives'].items()}
     result = {}
-    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|MK4_NATIVE_\w+),\s*(\w+)\}', table):
+    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|native_\w+),\s*(\w+)\}', table):
         value = int(address, 16) if address.startswith('0x') else constants[address]
         result[value] = symbol
     return result

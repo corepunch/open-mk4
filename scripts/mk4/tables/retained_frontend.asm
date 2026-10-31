@@ -1784,12 +1784,12 @@ unresolved_retained_frontend_089:
   .zero 4
   .word 0x40000df, 0x3000000, 0x35000000, 0x4082d0, 0x28000000, 0x3e000000
   .word 0x3000000, 0x35000000, 0x4082d0, 0x1000000, clip(112), 0x3e000000
-  .word MK4_NATIVE_DISARM_SELF
+  .word native_disarm_self
   .zero 252
   .word 0x40000000, 0x42, 0x41b920, 0x27000000, 0x32000000, 0x41b910
   .word word(unresolved_scene_assets_264), 0xccc, 0xfffffd71, word(unresolved_scene_assets_195)
   .zero 320
-  .word MK4_NATIVE_FACE_PEER_ORIENT_GROUP
+  .word native_face_peer_orient_group
   .zero 236
   .word 0x1000000, clip(583), 0x11000000, clip(582), 0x32000000, 0x41ef10
 

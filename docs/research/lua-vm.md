@@ -83,7 +83,7 @@ Temporary assembly is removed at exit; checked-in Lua is used by normal builds.
 | conditional branch | `if mk4.blocked() then return S.other() end` |
 | `wait_branch 0x4002` | `mk4.wait_branch(2, 4)` (miss, hit) |
 | `prefixed_to WITH_CLIP + 10, clip(65)` | `mk4.forward_to(10, 65)` |
-| `tail 0, MK4_NATIVE_X` | `mk4.tail(native.X)` as a statement; the function ends after it |
+| `tail 0, native_x` | `mk4.tail(native.X)` as a statement; the function ends after it |
 | embedded entry (`high_kick + 64`, `… + 4`) | its own function owning the stream after the no-op words |
 | no-op opcodes | omitted |
 

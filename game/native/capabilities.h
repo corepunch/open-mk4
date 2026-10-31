@@ -1,5 +1,5 @@
-#ifndef MK4_NATIVE_SERVICES_H
-#define MK4_NATIVE_SERVICES_H
+#ifndef MK4_GAME_NATIVE_CAPABILITIES_H
+#define MK4_GAME_NATIVE_CAPABILITIES_H
 
 /* Engine implementations of retail native routines. Fighter definitions,
  * input/action/stance tables and VM behavior are loaded by the shared runtime. */

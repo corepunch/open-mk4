@@ -33,7 +33,7 @@ def main():
     # Native ABI constants live beside fighter bytecode and are exported to C.
     for path in (ROOT / 'fighters').glob('*.asm'):
         named['Native'].update(int(value, 16) for value in re.findall(
-            r'^\.(?:equ|export_equ) MK4_NATIVE_\w+ (0x[0-9a-f]+)$', path.read_text(), re.M))
+            r'^\.(?:equ|export_equ) native_\w+ (0x[0-9a-f]+)$', path.read_text(), re.M))
     literals = []
     vague = []
     paths = [path for directory in ('game', 'common') for path in (ROOT / directory).rglob('*')]
@@ -42,7 +42,7 @@ def main():
             continue
         source = mask_c(path.read_text())
         for match in re.finditer(
-                r'\bn[0-9a-f]{6}_\w+|\bMK4_NATIVE_(?:NATIVE_VM|VM_ENTER)_\w+|'
+                r'\bn[0-9a-f]{6}_\w+|\bnative_(?:native_vm|vm_enter)_\w+|'
                 r'\bMK4_SCRIPT_(?:NATIVE_VM|LK_SCRIPT)_\w+|'
                 r'\baction_(?:weapon_native|scene)_[0-9a-f]{6}\w*|'
                 r'\b[A-Za-z_]\w*_[45][0-9a-fA-F]{5}(?:_\w+)?\b', source):

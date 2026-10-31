@@ -198,18 +198,18 @@ cpu_action_tables_row_63:
   .zero 4
   .word 0x6, 0x436d20, 0x43a3d0, 0x43a2c0, 0x43a200, 0x43a140
   .word 0x43a0b0, 0x43aa50, 0x43b0c0, 0x43bc20, 0x43bd00, 0x43bc40
-  .word 0x43bd50, 0x43bd20, 0x43a930, MK4_NATIVE_GORO_SPECIAL_UPPERCUT, 0x4, MK4_NATIVE_GORO_LEAP_STOMP
+  .word 0x43bd50, 0x43bd20, 0x43a930, native_goro_special_uppercut, 0x4, native_goro_leap_stomp
   .word 0x43b2a0, 0x43a940, 0x437f50
   .zero 4
-  .word 0x6, 0x43b2a0, MK4_NATIVE_GORO_LEAP_STOMP, 0x43abc0, 0x43b310, 0x43ae50
-  .word MK4_NATIVE_GORO_QUAKE_STOMP
+  .word 0x6, 0x43b2a0, native_goro_leap_stomp, 0x43abc0, 0x43b310, 0x43ae50
+  .word native_goro_quake_stomp
   .zero 4
-  .word 0x5, 0x43a9f0, MK4_NATIVE_GORO_SPECIAL_PUNCH, 0x43ac70, 0x439090, 0x43ad90
-  .word 0x6, 0x43ae70, MK4_NATIVE_GORO_SPECIAL_KICK, 0x43abc0, 0x43ac70, 0x43b310
+  .word 0x5, 0x43a9f0, native_goro_special_punch, 0x43ac70, 0x439090, 0x43ad90
+  .word 0x6, 0x43ae70, native_goro_special_kick, 0x43abc0, 0x43ac70, 0x43b310
   .word 0x43ad90
   .zero 4
-  .word 0x9, 0x43ae70, 0x43abc0, 0x43abc0, 0x43b2a0, MK4_NATIVE_GORO_LEAP_STOMP
-  .word 0x43b310, 0x43ae50, 0x43ad90, MK4_NATIVE_GORO_QUAKE_STOMP, 0x74000000, 0x4700022d
+  .word 0x9, 0x43ae70, 0x43abc0, 0x43abc0, 0x43b2a0, native_goro_leap_stomp
+  .word 0x43b310, 0x43ae50, 0x43ad90, native_goro_quake_stomp, 0x74000000, 0x4700022d
   .word clip(596), 0x5000039, 0x27000016, 0x5000045, 0x27000016, 0x5000051
   .word 0x27000016, 0x500005d, 0x27000016, 0x500005e, 0x1200002d, 0x5000039
   .word 0x27000016, 0x5000045, 0x27000016, 0x5000051, 0x27000016, 0x500005d
@@ -220,15 +220,15 @@ cpu_action_tables_row_63:
   .word 0x43ae90
   .zero 36
   .word 0x4700020a, clip(591), 0x58000000, 0x2b85, 0xffffeb86, 0x189
-  .word 0x5000011, 0x60000000, 0x35000000, MK4_NATIVE_DISTURB_RESTING_WEAPONS, 0x28000000, 0x3000000
+  .word 0x5000011, 0x60000000, 0x35000000, native_disturb_resting_weapons, 0x28000000, 0x3000000
   .word 0x32000000, 0x43b2c0
   .zero 184
-  .word 0x3, 0x43b310, MK4_NATIVE_GORO_LEAP_STOMP, 0x433ba0, 0x3, 0x43b310
+  .word 0x3, 0x43b310, native_goro_leap_stomp, 0x433ba0, 0x3, 0x43b310
   .word 0x436ad0, 0x438c70
 
 action_table_32:
   .word 0x437a30  ; numeric; printable bytes do not establish text
-  .word 0x4370a0, 0x438f10, 0x437b00, MK4_NATIVE_GORO_SPECIAL_KICK, MK4_NATIVE_GORO_LEAP_STOMP, 0x437a30
+  .word 0x4370a0, 0x438f10, 0x437b00, native_goro_special_kick, native_goro_leap_stomp, 0x437a30
   .word 0x437a30, 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0
   .word 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0, 0x4366a0, 0x436620
   .word 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0, 0x433ba0
@@ -349,56 +349,56 @@ second_finish_distance_table_row_15:
 
 ; Indexed table; reader in game/data/tables.c. Script slots 16/17 alias 2/7 where the reader specifies it.
 second_finish_table:
-  .word MK4_NATIVE_SCORPION_BEAST_FATALITY  ; row 0
+  .word native_scorpion_beast_fatality  ; row 0
 
 second_finish_table_row_01:
-  .word MK4_NATIVE_RAIDEN_SECOND_FATALITY  ; row 1
+  .word native_raiden_second_fatality  ; row 1
 
 second_finish_table_row_02:
-  .word MK4_NATIVE_SONYA_SECOND_FATALITY  ; row 2
+  .word native_sonya_second_fatality  ; row 2
 
 second_finish_table_row_03:
-  .word MK4_NATIVE_LIU_KANG_SECOND_FATALITY  ; row 3
+  .word native_liu_kang_second_fatality  ; row 3
 
 second_finish_table_row_04:
-  .word MK4_NATIVE_SUB_ZERO_SECOND_FATALITY  ; row 4
+  .word native_sub_zero_second_fatality  ; row 4
 
 second_finish_table_row_05:
-  .word MK4_NATIVE_FUJIN_SECOND_FATALITY  ; row 5
+  .word native_fujin_second_fatality  ; row 5
 
 second_finish_table_row_06:
-  .word MK4_NATIVE_SHINNOK_FATALITY_2  ; row 6
+  .word native_shinnok_fatality_2  ; row 6
 
 second_finish_table_row_07:
-  .word MK4_NATIVE_REIKO_SECOND_FATALITY  ; row 7
+  .word native_reiko_second_fatality  ; row 7
 
 second_finish_table_row_08:
-  .word MK4_NATIVE_QUAN_CHI_SECOND_FATALITY  ; row 8
+  .word native_quan_chi_second_fatality  ; row 8
 
 second_finish_table_row_09:
-  .word MK4_NATIVE_TANYA_FATALITY_2  ; row 9
+  .word native_tanya_fatality_2  ; row 9
 
 second_finish_table_row_10:
-  .word MK4_NATIVE_REPTILE_FATALITY_2  ; row 10
+  .word native_reptile_fatality_2  ; row 10
 
 second_finish_table_row_11:
-  .word MK4_NATIVE_KAI_FATALITY_2  ; row 11
+  .word native_kai_fatality_2  ; row 11
 
 second_finish_table_row_12:
-  .word MK4_NATIVE_JAREK_FATALITY_2  ; row 12
+  .word native_jarek_fatality_2  ; row 12
 
 second_finish_table_row_13:
-  .word MK4_NATIVE_JAX_FATALITY_2  ; row 13
+  .word native_jax_fatality_2  ; row 13
 
 second_finish_table_row_14:
-  .word MK4_NATIVE_CAGE_FATALITY_2  ; row 14
+  .word native_cage_fatality_2  ; row 14
 
 second_finish_table_row_15:
   .word 0  ; row 15
   .zero 280
   .word word(unresolved_body_assets_009), 0x3333, 0xffffcccd, word(unresolved_scene_assets_471)
   .zero 32
-  .word MK4_NATIVE_KAI_SECOND_CHILD_WALK
+  .word native_kai_second_child_walk
   .zero 92
   .word word(unresolved_scene_assets_263), 0x1999, 0xffff8ccd, word(unresolved_scene_assets_194)
   .zero 240
@@ -436,49 +436,49 @@ unresolved_cpu_finishers_004:
 
 ; Indexed table; reader in game/data/tables.c. Script slots 16/17 alias 2/7 where the reader specifies it.
 first_finish_table:
-  .word MK4_NATIVE_SCORPION_BURN_FATALITY  ; row 0
+  .word native_scorpion_burn_fatality  ; row 0
 
 first_finish_table_row_01:
-  .word MK4_NATIVE_RAIDEN_FIRST_FATALITY  ; row 1
+  .word native_raiden_first_fatality  ; row 1
 
 first_finish_table_row_02:
-  .word MK4_NATIVE_SONYA_FIRST_FATALITY  ; row 2
+  .word native_sonya_first_fatality  ; row 2
 
 first_finish_table_row_03:
-  .word MK4_NATIVE_LIU_KANG_FIRST_FATALITY  ; row 3
+  .word native_liu_kang_first_fatality  ; row 3
 
 first_finish_table_row_04:
-  .word MK4_NATIVE_SUB_ZERO_FIRST_FATALITY  ; row 4
+  .word native_sub_zero_first_fatality  ; row 4
 
 first_finish_table_row_05:
-  .word MK4_NATIVE_FUJIN_FIRST_FATALITY  ; row 5
+  .word native_fujin_first_fatality  ; row 5
 
 first_finish_table_row_06:
-  .word MK4_NATIVE_SHINNOK_FATALITY_1  ; row 6
+  .word native_shinnok_fatality_1  ; row 6
 
 first_finish_table_row_07:
-  .word MK4_NATIVE_REIKO_FIRST_FATALITY  ; row 7
+  .word native_reiko_first_fatality  ; row 7
 
 first_finish_table_row_08:
-  .word MK4_NATIVE_QUAN_CHI_FIRST_FATALITY  ; row 8
+  .word native_quan_chi_first_fatality  ; row 8
 
 first_finish_table_row_09:
-  .word MK4_NATIVE_TANYA_FATALITY_1  ; row 9
+  .word native_tanya_fatality_1  ; row 9
 
 first_finish_table_row_10:
-  .word MK4_NATIVE_REPTILE_FATALITY_1  ; row 10
+  .word native_reptile_fatality_1  ; row 10
 
 first_finish_table_row_11:
-  .word MK4_NATIVE_KAI_FATALITY_1  ; row 11
+  .word native_kai_fatality_1  ; row 11
 
 first_finish_table_row_12:
-  .word MK4_NATIVE_JAREK_FATALITY_1  ; row 12
+  .word native_jarek_fatality_1  ; row 12
 
 first_finish_table_row_13:
-  .word MK4_NATIVE_JAX_FATALITY_1  ; row 13
+  .word native_jax_fatality_1  ; row 13
 
 first_finish_table_row_14:
-  .word MK4_NATIVE_CAGE_FATALITY_1  ; row 14
+  .word native_cage_fatality_1  ; row 14
 
 first_finish_table_row_15:
   .word 0  ; row 15

@@ -15,12 +15,12 @@ static void kick_row(Fighter *fighter) {
   if (pose < 0) {
     uint32_t next = mk4_image_u32(vm->image, vm->native_cursor);
     uint32_t script;
-    if (next == MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY || next == MK4_NATIVE_FUJIN_HIGH_KICK_CONTACT_RECOVERY) {
+    if (next == native_jax_high_kick_contact_recovery || next == native_fujin_high_kick_contact_recovery) {
       /* 470e80 marks the recovery action before these two continuations. */
       fighter->action = ACTION_CODE_1006;
-      script = next == MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY ? fn_jax_high_kick_recovery : fn_fujin_high_kick_recovery;
+      script = next == native_jax_high_kick_contact_recovery ? fn_jax_high_kick_recovery : fn_fujin_high_kick_recovery;
     } else {
-      require(next == MK4_NATIVE_HIGH_KICK_NARROW_CONTACT_RECOVERY, "Unimplemented native contact-row continuation");
+      require(next == native_high_kick_narrow_contact_recovery, "Unimplemented native contact-row continuation");
       script = fn_kai_high_kick_recovery;
     }
     script_vm_enter(fighter, script, vm->finish);
@@ -30,7 +30,7 @@ static void kick_row(Fighter *fighter) {
   fighter->sample_override = pose;
   uint64_t continuation = fighter->execution.generation;
   if (!vm->native_contact && fighter_opponent(fighter)->action != ACTION_CODE_2001) {
-    require(vm->native_query == MK4_NATIVE_CONTACT_QUERY_B, "Unimplemented native contact-row query");
+    require(vm->native_query == native_contact_query_b, "Unimplemented native contact-row query");
     uint32_t record = mk4_image_u32(vm->image, dat_contact_query_b_table + vm->native_selector * 4);
     AttackRecord attack = script_vm_attack_record(vm->image, record * 4);
     ContactResult result = battle_contact(fighter, &attack);

@@ -53,7 +53,7 @@ static void native_address_resume(Fighter *fighter) {
 /* Install after native_begin or a non-immediate native helper. Native callback
  * addresses remain distinct from script entries and are never host pointers. */
 void native_address_end(Fighter *fighter, uint32_t address) {
-  require(address >= MK4_NATIVE_ID_BEGIN && address < MK4_NATIVE_ID_END, "Invalid native address continuation");
+  require(address >= native_id_begin && address < native_id_end, "Invalid native address continuation");
   fighter->execution.native_frames.script_end = (ScriptContinuation){0};
   fighter->execution.native_frames.native_end = (NativeContinuation){address};
   fighter->execution.native_frames.move.endfunc = native_address_resume;

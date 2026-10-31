@@ -1,37 +1,37 @@
 ; Generated reiko bytecode and native IDs. Do not edit; run make scripts-export.
 ; The shared C VM executes these words; native IDs select shared C services.
 
-.export_equ MK4_NATIVE_REIKO_SECOND_FATALITY 0x41c360
-.export_equ MK4_NATIVE_REIKO_SECOND_VICTIM_FALL 0x41c4b0
-.export_equ MK4_NATIVE_REIKO_SECOND_VICTIM_END 0x41c4e0
-.export_equ MK4_NATIVE_REIKO_SECOND_STARS 0x41d260
-.export_equ MK4_NATIVE_REIKO_LK_THROW_ENTRY 0x42bbe0
-.export_equ MK4_NATIVE_REIKO_FIRST_FATALITY 0x452730
-.export_equ MK4_NATIVE_REIKO_FIRST_VICTORY 0x4528a0
-.export_equ MK4_NATIVE_REIKO_FIRST_TEAR 0x452ac0
-.export_equ MK4_NATIVE_REIKO_FIRST_VICTIM_118 0x452bb0
-.export_equ MK4_NATIVE_REIKO_FIRST_VICTIM_165 0x452c10
-.export_equ MK4_NATIVE_REIKO_LEG_TEAR_VICTIM_FINISH 0x452c50
-.export_equ MK4_NATIVE_REIKO_FIRST_TORSO_29 0x452e50
-.export_equ MK4_NATIVE_REIKO_FIRST_TORSO_END 0x452e90
-.export_equ MK4_NATIVE_REIKO_FIRST_HEAD_59 0x452f00
-.export_equ MK4_NATIVE_REIKO_FIRST_HEAD_83 0x452f40
-.export_equ MK4_NATIVE_REIKO_LEG_TEAR_HEAD_FINISH 0x452f90
-.export_equ MK4_NATIVE_REIKO_FIRST_LEFT_ARM_56 0x452fe0
-.export_equ MK4_NATIVE_REIKO_FIRST_LEFT_ARM_LAND 0x453020
-.export_equ MK4_NATIVE_REIKO_LEG_TEAR_LEFT_ARM_FINISH 0x453040
-.export_equ MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_44 0x453090
-.export_equ MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_LAND 0x4530d0
-.export_equ MK4_NATIVE_REIKO_LEG_TEAR_RIGHT_ARM_FINISH 0x4530f0
-.export_equ MK4_NATIVE_REIKO_CAN_FIRST_FATALITY 0x45e360
-.export_equ MK4_NATIVE_REIKO_CAN_STAR 0x45e6d0
-.export_equ MK4_NATIVE_REIKO_CAN_ORBIT 0x45e710
-.export_equ MK4_NATIVE_REIKO_CAN_FLIP_KICK 0x45e7a0
-.export_equ MK4_NATIVE_REIKO_ORBIT 0x478ee0
-.export_equ MK4_NATIVE_REIKO_FLIP_KICK 0x4791a0
-.export_equ MK4_NATIVE_REIKO_STAR_REACTION_45 0x483d40
-.export_equ MK4_NATIVE_REIKO_STAR 0x496db0
-.export_equ MK4_NATIVE_REIKO_STAR_SPAWN 0x496e00
+.export_equ native_reiko_second_fatality 0x41c360
+.export_equ native_reiko_second_victim_fall 0x41c4b0
+.export_equ native_reiko_second_victim_end 0x41c4e0
+.export_equ native_reiko_second_stars 0x41d260
+.export_equ native_reiko_lk_throw_entry 0x42bbe0
+.export_equ native_reiko_first_fatality 0x452730
+.export_equ native_reiko_first_victory 0x4528a0
+.export_equ native_reiko_first_tear 0x452ac0
+.export_equ native_reiko_first_victim_118 0x452bb0
+.export_equ native_reiko_first_victim_165 0x452c10
+.export_equ native_reiko_leg_tear_victim_finish 0x452c50
+.export_equ native_reiko_first_torso_29 0x452e50
+.export_equ native_reiko_first_torso_end 0x452e90
+.export_equ native_reiko_first_head_59 0x452f00
+.export_equ native_reiko_first_head_83 0x452f40
+.export_equ native_reiko_leg_tear_head_finish 0x452f90
+.export_equ native_reiko_first_left_arm_56 0x452fe0
+.export_equ native_reiko_first_left_arm_land 0x453020
+.export_equ native_reiko_leg_tear_left_arm_finish 0x453040
+.export_equ native_reiko_first_right_arm_44 0x453090
+.export_equ native_reiko_first_right_arm_land 0x4530d0
+.export_equ native_reiko_leg_tear_right_arm_finish 0x4530f0
+.export_equ native_reiko_can_first_fatality 0x45e360
+.export_equ native_reiko_can_star 0x45e6d0
+.export_equ native_reiko_can_orbit 0x45e710
+.export_equ native_reiko_can_flip_kick 0x45e7a0
+.export_equ native_reiko_orbit 0x478ee0
+.export_equ native_reiko_flip_kick 0x4791a0
+.export_equ native_reiko_star_reaction_45 0x483d40
+.export_equ native_reiko_star 0x496db0
+.export_equ native_reiko_star_spawn 0x496e00
 
 ; Retail source 0x004d2d10; branches use linked names.
 reiko_second_fatality:
@@ -40,7 +40,7 @@ reiko_second_fatality:
   wait 0x0
   scene_active 0x0
   play_clip 0x1d, clip(553)
-  spawn 0x0, 0x0, MK4_NATIVE_REIKO_SECOND_STARS
+  spawn 0x0, 0x0, native_reiko_second_stars
   loop 0x9
   cursor_set 0x1d
   forward_to 0x26
@@ -49,7 +49,7 @@ reiko_second_fatality:
   forward_to 0x21
   wait 0x14
   forward 0x0
-  tail 0x0, MK4_NATIVE_TASK_PARK_60_TICK_LOOP
+  tail 0x0, native_task_park_60_tick_loop
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004d2d60; branches use linked names.
@@ -62,7 +62,7 @@ victim_stagger:
   repeat 0x0
   native_release 0x41
   forward_to 0x87
-  tail 0x0, MK4_NATIVE_REIKO_SECOND_VICTIM_FALL
+  tail 0x0, native_reiko_second_victim_fall
 
 ; Retail source 0x004d2d90; branches use linked names.
 reiko_second_victim_fall:
@@ -71,7 +71,7 @@ reiko_second_victim_fall:
   forward 0x0
   sound_special 0x0
   native_release 0x42
-  tail 0x0, MK4_NATIVE_REIKO_SECOND_VICTIM_END
+  tail 0x0, native_reiko_second_victim_end
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004de138; branches use linked names.
@@ -84,20 +84,20 @@ reiko_lk_throw_startup:
   sound_a 0x24
   sound_roster 0x1
   damage 0x0, 0x35c2
-  tail 0x0, MK4_NATIVE_LK_THROW_ROCK_REPEAT_ONE
+  tail 0x0, native_lk_throw_rock_repeat_one
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004de170; branches use linked names.
 lk_throw_rock_repeat_one:
   playback_single 0x2b
   playback_pair_reverse 0x2a
-  tail 0x0, MK4_NATIVE_LK_THROW_ROCK_REPEAT_TWO
+  tail 0x0, native_lk_throw_rock_repeat_two
 
 ; Retail source 0x004de180; branches use linked names.
 lk_throw_rock_repeat_two:
   playback_single 0x2b
   playback_pair_reverse 0x2a
-  tail 0x0, MK4_NATIVE_LK_THROW_ROCK_RELEASE
+  tail 0x0, native_lk_throw_rock_release
 
 ; Retail source 0x004de190; branches use linked names.
 lk_throw_rock_release:
@@ -119,7 +119,7 @@ owner_tear:
   forward_to 0x2b
   playback_pair 0x29
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_VICTORY
+  tail 0x0, native_reiko_first_victory
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2d18; branches use linked names.
@@ -130,35 +130,35 @@ owner_victory_loop:
 ; Retail source 0x004e2d28; branches use linked names.
 victim_place:
   prefixed_to 0x225, clip(428)
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_TEAR
+  tail 0x0, native_reiko_first_tear
 
 ; Retail source 0x004e2d38; branches use linked names.
 reiko_first_tear:
   cursor_set 0x26
   forward_to 0x75
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_VICTIM_118
+  tail 0x0, native_reiko_first_victim_118
 
 ; Retail source 0x004e2d48; branches use linked names.
 reiko_first_victim_118:
   forward_to 0xa5
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_VICTIM_165
+  tail 0x0, native_reiko_first_victim_165
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2d58; branches use linked names.
 reiko_first_victim_165:
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_LEG_TEAR_VICTIM_FINISH
+  tail 0x0, native_reiko_leg_tear_victim_finish
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2d68; branches use linked names.
 torso_start:
   prefixed_to 0x21d, clip(429)
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_TORSO_29
+  tail 0x0, native_reiko_first_torso_29
 
 ; Retail source 0x004e2d78; branches use linked names.
 reiko_first_torso_29:
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_TORSO_END
+  tail 0x0, native_reiko_first_torso_end
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2d88; branches use linked names.
@@ -174,18 +174,18 @@ head_start:
   forward_to 0x29
   cursor_set 0x15
   forward_to 0x3a
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_HEAD_59
+  tail 0x0, native_reiko_first_head_59
 
 ; Retail source 0x004e2dc0; branches use linked names.
 reiko_first_head_59:
   forward_to 0x52
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_HEAD_83
+  tail 0x0, native_reiko_first_head_83
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2dd0; branches use linked names.
 reiko_first_head_83:
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_LEG_TEAR_HEAD_FINISH
+  tail 0x0, native_reiko_leg_tear_head_finish
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2de0; branches use linked names.
@@ -193,18 +193,18 @@ left_arm_start:
   prefixed_to 0x219, clip(427)
   cursor_set 0x4
   forward_to 0x37
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_LEFT_ARM_56
+  tail 0x0, native_reiko_first_left_arm_56
 
 ; Retail source 0x004e2df8; branches use linked names.
 reiko_first_left_arm_56:
   forward_to 0x42
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_LEFT_ARM_LAND
+  tail 0x0, native_reiko_first_left_arm_land
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2e08; branches use linked names.
 reiko_first_left_arm_land:
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_LEG_TEAR_LEFT_ARM_FINISH
+  tail 0x0, native_reiko_leg_tear_left_arm_finish
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2e18; branches use linked names.
@@ -216,25 +216,25 @@ right_arm_start:
   forward_to 0x1d
   cursor_set 0x4
   forward_to 0x2b
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_44
+  tail 0x0, native_reiko_first_right_arm_44
 
 ; Retail source 0x004e2e40; branches use linked names.
 reiko_first_right_arm_44:
   forward_to 0x44
-  tail 0x0, MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_LAND
+  tail 0x0, native_reiko_first_right_arm_land
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e2e50; branches use linked names.
 reiko_first_right_arm_land:
   forward 0x0
-  tail 0x0, MK4_NATIVE_REIKO_LEG_TEAR_RIGHT_ARM_FINISH
+  tail 0x0, native_reiko_leg_tear_right_arm_finish
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004ed038; branches use linked names.
 reiko_star:
   sound_c 0x64
   prefixed_to 0x20d, clip(437)
-  spawn 0x0, 0x52, MK4_NATIVE_REIKO_STAR_SPAWN
+  spawn 0x0, 0x52, native_reiko_star_spawn
   forward_to 0x12
   playback_pair 0x10
   forward_to 0x12

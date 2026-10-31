@@ -109,6 +109,6 @@ static void uppercut_default_contact(Fighter *fighter) {
   }
 }
 
-void native_uppercut_default(Fighter *fighter) {
+void action_uppercut_default(Fighter *fighter) {
   native_uppercut_tail(fighter, uppercut_default_contact);
 }

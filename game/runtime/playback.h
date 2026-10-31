@@ -1,5 +1,5 @@
-#ifndef MK4_NATIVE_H
-#define MK4_NATIVE_H
+#ifndef MK4_RUNTIME_PLAYBACK_H
+#define MK4_RUNTIME_PLAYBACK_H
 #include "game.h"
 
 /* Assemble bounded native playback once on entry. Original script words run
@@ -41,5 +41,5 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
 void weapon_axe_reaction(Fighter *victim, bool followup, ScriptContinuation script);
 
 bool native_grounded(const Fighter *fighter);
-void native_uppercut_default(Fighter *fighter);
+void action_uppercut_default(Fighter *fighter);
 #endif

@@ -1,5 +1,5 @@
-#ifndef MK4_NATIVE_ACTIONS_H
-#define MK4_NATIVE_ACTIONS_H
+#ifndef MK4_GAME_NATIVE_ACTIONS_H
+#define MK4_GAME_NATIVE_ACTIONS_H
 #include "game.h"
 #include "script/bindings.h"
 #include "script/native_ids.h"

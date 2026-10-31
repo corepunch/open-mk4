@@ -1,34 +1,34 @@
 ; Generated goro bytecode and native IDs. Do not edit; run make scripts-export.
 ; The shared C VM executes these words; native IDs select shared C services.
 
-.export_equ MK4_NATIVE_GORO_LK_THROW_ENTRY 0x42c750
-.export_equ MK4_NATIVE_GORO_LP_THROW_FIVE_PHASE_SEQUENCE 0x42c770
-.export_equ MK4_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT 0x42c7b0
-.export_equ MK4_NATIVE_GORO_SPECIAL_PUNCH 0x43af90
-.export_equ MK4_NATIVE_GORO_SCRIPT_PUNCH_TAIL 0x43afc0
-.export_equ MK4_NATIVE_GORO_SPECIAL_KICK 0x43b170
-.export_equ MK4_NATIVE_GORO_SCRIPT_KICK_TAIL 0x43b1a0
-.export_equ MK4_NATIVE_GORO_LEAP_STOMP 0x43b320
-.export_equ MK4_NATIVE_GORO_SCRIPT_LEAP_CONTINUE 0x43b370
-.export_equ MK4_NATIVE_GORO_SCRIPT_STOMP_RETURN 0x43b590
-.export_equ MK4_NATIVE_GORO_SPECIAL_UPPERCUT 0x43b640
-.export_equ MK4_NATIVE_GORO_QUAKE_STOMP 0x43b7e0
-.export_equ MK4_NATIVE_GORO_SCRIPT_QUAKE_LAND 0x43b8c0
-.export_equ MK4_NATIVE_GORO_AIR_KICK_RECOVERY_CALLBACK 0x46cb10
-.export_equ MK4_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK 0x46e7c0
-.export_equ MK4_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK 0x46ef10
-.export_equ MK4_NATIVE_GORO_STOMP_HOLD_SEPARATION 0x480f40
-.export_equ MK4_NATIVE_GORO_SPECIAL_PUNCH_189_ENTRY 0x482420
-.export_equ MK4_NATIVE_GORO_SPECIAL_UPPERCUT_192_ENTRY 0x482480
-.export_equ MK4_NATIVE_GORO_SCRIPT_UPPERCUT_VICTIM_SLIDE 0x4824f0
-.export_equ MK4_NATIVE_GORO_VICTIM_GETUP 0x482540
-.export_equ MK4_NATIVE_GORO_QUAKE_VICTIM 0x4834d0
-.export_equ MK4_NATIVE_GORO_KICK_VICTIM 0x483570
-.export_equ MK4_NATIVE_GORO_KICK_VICTIM_DISARM 0x483580
-.export_equ MK4_NATIVE_GORO_STOMP_VICTIM 0x4842d0
-.export_equ MK4_NATIVE_GORO_SCRIPT_STOMP_VICTIM_HOLD 0x484330
-.export_equ MK4_NATIVE_GORO_FIREBALL 0x49ca70
-.export_equ MK4_NATIVE_GORO_FIREBALL_SPAWN 0x49ca90
+.export_equ native_goro_lk_throw_entry 0x42c750
+.export_equ native_goro_lp_throw_five_phase_sequence 0x42c770
+.export_equ native_goro_script_lp_phase_repeat 0x42c7b0
+.export_equ native_goro_special_punch 0x43af90
+.export_equ native_goro_script_punch_tail 0x43afc0
+.export_equ native_goro_special_kick 0x43b170
+.export_equ native_goro_script_kick_tail 0x43b1a0
+.export_equ native_goro_leap_stomp 0x43b320
+.export_equ native_goro_script_leap_continue 0x43b370
+.export_equ native_goro_script_stomp_return 0x43b590
+.export_equ native_goro_special_uppercut 0x43b640
+.export_equ native_goro_quake_stomp 0x43b7e0
+.export_equ native_goro_script_quake_land 0x43b8c0
+.export_equ native_goro_air_kick_recovery_callback 0x46cb10
+.export_equ native_goro_air_hp_recovery_callback 0x46e7c0
+.export_equ native_goro_air_lp_recovery_callback 0x46ef10
+.export_equ native_goro_stomp_hold_separation 0x480f40
+.export_equ native_goro_special_punch_189_entry 0x482420
+.export_equ native_goro_special_uppercut_192_entry 0x482480
+.export_equ native_goro_script_uppercut_victim_slide 0x4824f0
+.export_equ native_goro_victim_getup 0x482540
+.export_equ native_goro_quake_victim 0x4834d0
+.export_equ native_goro_kick_victim 0x483570
+.export_equ native_goro_kick_victim_disarm 0x483580
+.export_equ native_goro_stomp_victim 0x4842d0
+.export_equ native_goro_script_stomp_victim_hold 0x484330
+.export_equ native_goro_fireball 0x49ca70
+.export_equ native_goro_fireball_spawn 0x49ca90
 
 ; Retail source 0x004de6e4; branches use linked names.
 goro_lp_throw_final_damage:
@@ -40,12 +40,12 @@ goro_lp_throw_final_damage:
   native_word 0x0, 0x1eb8
   damage 0x0, 0x2666
   forward 0x0
-  tail 0x0, MK4_NATIVE_LP_THROW_VICTIM_ADJUST_RETURN
+  tail 0x0, native_lp_throw_victim_adjust_return
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004de720; branches use linked names.
 goro_lk_throw_startup:
-  call 0x0, MK4_NATIVE_THROW_PAIR_START
+  call 0x0, native_throw_pair_start
   native_release 0x52
   open_peer_clip 0x0, clip(610)
   open_clip 0x0, clip(609)
@@ -55,11 +55,11 @@ goro_lk_throw_startup:
   sound_roster 0x8
   damage 0x0, 0x3333
   playback_single 0x8c
-  tail 0x0, MK4_NATIVE_LP_ALIGN_AND_RELEASE
+  tail 0x0, native_lp_align_and_release
 
 ; Retail source 0x004de760; branches use linked names.
 goro_lk_throw_startup_call_1:
-  call 0x0, MK4_NATIVE_THROW_PAIR_START
+  call 0x0, native_throw_pair_start
   native_release 0x51
   open_peer_clip 0x0, clip(606)
   open_clip 0x0, clip(604)
@@ -68,7 +68,7 @@ goro_lk_throw_startup_call_1:
   spawn_effect 0x1
   effect 0x15
   effect 0x15
-  tail 0x0, MK4_NATIVE_GORO_LP_THROW_FIVE_PHASE_SEQUENCE
+  tail 0x0, native_goro_lp_throw_five_phase_sequence
   jump 0, word(lp_throw_script)
   .zero 4 ; non-executable guard
 
@@ -89,7 +89,7 @@ goro_lp_throw_repeated_damage:
   effect 0x15
   effect 0x15
   damage 0x0, 0x7ae
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT
+  tail 0x0, native_goro_script_lp_phase_repeat
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004de840; branches use linked names.
@@ -100,24 +100,24 @@ lp_shared_release:
 ; Retail source 0x004dfb60; branches use linked names.
 goro_special_punch:
   prefixed_to 0x20e, clip(599)
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_PUNCH_TAIL
+  tail 0x0, native_goro_script_punch_tail
 
 ; Retail source 0x004dfb70; branches use linked names.
 goro_special_kick:
   prefixed_to 0x208, clip(598)
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_KICK_TAIL
+  tail 0x0, native_goro_script_kick_tail
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004dfbb8; branches use linked names.
 goro_leap_stomp:
   open_clip 0x0, clip(601)
   double_to 0x17
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_LEAP_CONTINUE
+  tail 0x0, native_goro_script_leap_continue
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004dfbd0; branches use linked names.
 goro_leap_stomp_stomp_hit:
-  handler 0x0, MK4_NATIVE_GORO_STOMP_HOLD_SEPARATION
+  handler 0x0, native_goro_stomp_hold_separation
   prefixed_sample 0x2e
   native_context 0x0
   forward 0x0
@@ -131,11 +131,11 @@ goro_leap_stomp_stomp_hit:
   motion 0x0, 0xffffe148, 0xffffe148, 0x28f
   forward_to 0x19
   native_context 0x0
-  call 0x0, MK4_NATIVE_DISTURB_RESTING_WEAPONS
+  call 0x0, native_disturb_resting_weapons
   sound_special 0x0
   landing 0x0
   forward 0x0
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_STOMP_RETURN
+  tail 0x0, native_goro_script_stomp_return
 
 ; Retail source 0x004dfc38; branches use linked names.
 goro_leap_stomp_miss_landing:
@@ -148,7 +148,7 @@ goro_leap_stomp_miss_landing:
 ; Retail source 0x004dfc50; branches use linked names.
 quake_jump:
   prefixed_to 0x215, clip(602)
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_QUAKE_LAND
+  tail 0x0, native_goro_script_quake_land
 
 ; Retail source 0x004dfc60; branches use linked names.
 goro_quake_land:
@@ -169,7 +169,7 @@ goro_special_punch_189_victim:
   play_clip 0x22, clip(319)
   native_context 0x0
   forward_count 0x8
-  tail 0x0, MK4_NATIVE_REACTION_GETUP_BACK
+  tail 0x0, native_reaction_getup_back
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e8e50; branches use linked names.
@@ -180,7 +180,7 @@ goro_special_uppercut_192_victim:
   sound_b 0x1
   sound_context 0x0
   motion 0x0, 0x0, 0xffffc7af, 0x20c
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_UPPERCUT_VICTIM_SLIDE
+  tail 0x0, native_goro_script_uppercut_victim_slide
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e8e80; branches use linked names.
@@ -191,7 +191,7 @@ goro_uppercut_victim_slide:
   native_context 0x0
   sound_a 0x17
   forward 0x0
-  tail 0x0, MK4_NATIVE_GORO_VICTIM_GETUP
+  tail 0x0, native_goro_victim_getup
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e95c8; branches use linked names.
@@ -217,7 +217,7 @@ goro_stomp_victim:
   sound_context 0xd
   sound_b 0x1
   prefixed_finish 0x200, clip(178)
-  tail 0x0, MK4_NATIVE_GORO_SCRIPT_STOMP_VICTIM_HOLD
+  tail 0x0, native_goro_script_stomp_victim_hold
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004ed790; branches use linked names.
@@ -225,7 +225,7 @@ goro_fireball:
   open_clip 0x0, clip(592)
   forward_to 0xe
   sound_a 0x21
-  spawn 0x0, 0x53, MK4_NATIVE_GORO_FIREBALL_SPAWN
+  spawn 0x0, 0x53, native_goro_fireball_spawn
   playback_pair 0xc
   forward_to 0xe
   playback_pair 0xc

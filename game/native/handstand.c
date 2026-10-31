@@ -244,21 +244,20 @@ void kai_handstand_reaction(Fighter *fighter) {
   static const MoveDef stagger = {.clip = 134, .last = 17, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
   static const MoveDef knockdown = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
   bool crouch = fighter->action == 0x2001 || fighter->action == 0x2010 || fighter->action == 0x2002 || fighter->action == 0x106 || fighter->action == 0x107;
-  require(action_reaction_native(fighter) == MK4_NATIVE_KAI_HANDSTAND_REACTION_ENTRY ||
-              action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ||
-              action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER,
+  require(action_reaction_native(fighter) == native_kai_handstand_reaction_entry || action_reaction_native(fighter) == native_handstand_victim_knockdown ||
+              action_reaction_native(fighter) == native_handstand_victim_rear_stagger,
       "Unexpected handstand victim reaction");
   mk4_script_stop_body(fighter);
-  if (action_reaction_native(fighter) != MK4_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER) {
+  if (action_reaction_native(fighter) != native_handstand_victim_rear_stagger) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  fighter_start_move(fighter, action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ? S_KNOCKDOWN : S_HIT,
-      action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ? &knockdown : &stagger);
+  fighter_start_move(fighter, action_reaction_native(fighter) == native_handstand_victim_knockdown ? S_KNOCKDOWN : S_HIT,
+      action_reaction_native(fighter) == native_handstand_victim_knockdown ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
-  if (action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN) {
+  if (action_reaction_native(fighter) == native_handstand_victim_knockdown) {
     script_vm_enter(fighter, fn_kai_handstand_reaction_knockdown, mk4_mmove_thrown_finish);
-  } else if (action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER) {
+  } else if (action_reaction_native(fighter) == native_handstand_victim_rear_stagger) {
     fighter->body.physics = fighter_friction;
     script_vm_enter(fighter, fn_kai_handstand_reaction_rear_stagger, mk4_mmove_thrown_finish);
   } else {

@@ -148,7 +148,7 @@ static void victim_slide_to_stance(Fighter *fighter) {
  * with distinct slide/impact paths; none of that playback is authored here. */
 void action_lp_victim(Fighter *fighter) {
   uint32_t entry = mk4_reaction_target(battle_data(), (unsigned)fighter->reaction);
-  if (entry == MK4_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE && fighter_peer(fighter)->roster == 15) {
+  if (entry == native_lp_victim_weapon_scatter_release && fighter_peer(fighter)->roster == 15) {
     action_disturb_resting_weapons();
   }
   mk4_script_disarm_self(fighter);
@@ -159,25 +159,25 @@ void action_lp_victim(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   switch (entry) {
-    case MK4_NATIVE_LP_VICTIM_TABLE_RELEASE:
+    case native_lp_victim_table_release:
       native_animation_table(fighter, dat_animation_rows_lp_victim_table_release);
       break;
-    case MK4_NATIVE_LP_VICTIM_REBASED_TABLE_RELEASE:
+    case native_lp_victim_rebased_table_release:
       native_animation_table(fighter, dat_animation_rows_lp_victim_rebased_release);
       break;
-    case MK4_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE:
+    case native_lp_victim_weapon_scatter_release:
       native_animation_table(fighter, dat_animation_rows_lp_victim_weapon_scatter_release);
       break;
-    case MK4_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
+    case native_lp_victim_two_speed_slide_release:
       script_vm_enter(fighter, fn_lp_victim_two_speed_slide_release, mk4_mmove_thrown_finish);
       break;
-    case MK4_NATIVE_LP_VICTIM_IMPACT_RELEASE:
+    case native_lp_victim_impact_release:
       script_vm_enter(fighter, fn_lp_victim_impact_release, mk4_mmove_thrown_finish);
       break;
-    case MK4_NATIVE_LP_VICTIM_SLIDING_IMPACT_RELEASE:
+    case native_lp_victim_sliding_impact_release:
       script_vm_enter(fighter, fn_lp_victim_sliding_impact_release, mk4_mmove_thrown_finish);
       break;
-    case MK4_NATIVE_LP_VICTIM_SLIDE_RELEASE:
+    case native_lp_victim_slide_release:
       script_vm_enter(fighter, fn_lp_victim_slide_release, mk4_mmove_thrown_finish);
       break;
     default:
@@ -211,17 +211,17 @@ void action_lk_victim(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   victim_begin(fighter);
   switch (entry) {
-    case MK4_NATIVE_LK_VICTIM_CLIP_203_RECOVERY:
+    case native_lk_victim_clip_203_recovery:
       script_vm_bind_animation(fighter, dat_animation_clip_203, sample);
       native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
       break;
-    case MK4_NATIVE_LIU_KANG_LK_THROW_VICTIM_REACTION_80:
+    case native_liu_kang_lk_throw_victim_reaction_80:
       script_vm_enter(fighter, fn_liu_kang_lk_throw_victim, mk4_mmove_thrown_finish);
       break;
-    case MK4_NATIVE_SONYA_LEG_GRAB_VICTIM_RECOVERY:
+    case native_sonya_leg_grab_victim_recovery:
       script_vm_enter(fighter, fn_sonya_leg_grab_victim_recovery, mk4_mmove_thrown_finish);
       break;
-    case MK4_NATIVE_LK_VICTIM_EFFECT_SLIDE:
+    case native_lk_victim_effect_slide:
       mk4_script_effect(fighter, 0);
       script_vm_bind_animation(fighter, dat_animation_clip_169, 0);
       script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_lk_victim_slide) * 4, 0);
@@ -235,47 +235,47 @@ void action_lk_victim(Fighter *fighter) {
 
 FighterFn action_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (mk4_reaction_target(image, reaction)) {
-    case MK4_NATIVE_LIU_KANG_LK_THROW_VICTIM_REACTION_80:
-    case MK4_NATIVE_LK_VICTIM_CLIP_203_RECOVERY:
-    case MK4_NATIVE_SONYA_LEG_GRAB_VICTIM_RECOVERY:
-    case MK4_NATIVE_LK_VICTIM_EFFECT_SLIDE:
+    case native_liu_kang_lk_throw_victim_reaction_80:
+    case native_lk_victim_clip_203_recovery:
+    case native_sonya_leg_grab_victim_recovery:
+    case native_lk_victim_effect_slide:
       return action_lk_victim;
-    case MK4_NATIVE_LP_VICTIM_TABLE_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_REBASED_TABLE_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_IMPACT_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_SLIDING_IMPACT_RELEASE:
-    case MK4_NATIVE_LP_VICTIM_SLIDE_RELEASE:
+    case native_lp_victim_table_release:
+    case native_lp_victim_rebased_table_release:
+    case native_lp_victim_weapon_scatter_release:
+    case native_lp_victim_two_speed_slide_release:
+    case native_lp_victim_impact_release:
+    case native_lp_victim_sliding_impact_release:
+    case native_lp_victim_slide_release:
       return action_lp_victim;
-    case MK4_NATIVE_VICTIM_FINISH_CAPTURED_CLIP:
+    case native_victim_finish_captured_clip:
       return victim_finish_captured_clip;
-    case MK4_NATIVE_SLAM_REACTION:
+    case native_slam_reaction:
       return action_slam_reaction;
-    case MK4_NATIVE_AIR_VICTIM_FLIP:
+    case native_air_victim_flip:
       return action_air_victim_flip;
-    case MK4_NATIVE_AIR_VICTIM_DEFAULT:
+    case native_air_victim_default:
       return action_air_victim_default;
-    case MK4_NATIVE_AIR_VICTIM_LIFT:
+    case native_air_victim_lift:
       return action_air_victim_lift;
 
-    case MK4_NATIVE_VICTIM_FINISH_FLIP_GETUP:
+    case native_victim_finish_flip_getup:
       return victim_finish_flip_getup;
-    case MK4_NATIVE_VICTIM_IMPACT_ROLL_GETUP:
+    case native_victim_impact_roll_getup:
       return victim_impact_roll_getup;
-    case MK4_NATIVE_VICTIM_PAUSE_SLIDE:
+    case native_victim_pause_slide:
       return victim_pause_slide;
-    case MK4_NATIVE_VICTIM_SLIDE_TO_STANCE:
+    case native_victim_slide_to_stance:
       return victim_slide_to_stance;
-    case MK4_NATIVE_VICTIM_GROUND_TURN:
+    case native_victim_ground_turn:
       return victim_ground_turn;
-    case MK4_NATIVE_VICTIM_FRICTION_IMPACT:
+    case native_victim_friction_impact:
       return victim_friction_impact;
-    case MK4_NATIVE_VICTIM_SAVED_MOTION:
+    case native_victim_saved_motion:
       return victim_saved_motion;
-    case MK4_NATIVE_VICTIM_DISARM_FALL:
+    case native_victim_disarm_fall:
       return victim_disarm_fall;
-    case MK4_NATIVE_VICTIM_DISARM_RAISE:
+    case native_victim_disarm_raise:
       return victim_disarm_raise;
     default:
       return NULL;
@@ -328,35 +328,35 @@ static void pair_edge_task(Fighter *fighter) {
  * selection itself comes exclusively from the loaded4ddfb8 table. */
 static uint32_t lk_script(uint32_t native) {
   switch (native) {
-    case MK4_NATIVE_CAGE_LK_THROW_ENTRY:
+    case native_cage_lk_throw_entry:
       return fn_cage_lk_throw_startup;
-    case MK4_NATIVE_JAREK_LK_THROW_ENTRY:
+    case native_jarek_lk_throw_entry:
       return fn_jarek_lk_throw_startup;
-    case MK4_NATIVE_TANYA_LK_THROW_ENTRY:
+    case native_tanya_lk_throw_entry:
       return fn_tanya_lk_throw_startup;
-    case MK4_NATIVE_SHINNOK_LK_THROW_ENTRY:
+    case native_shinnok_lk_throw_entry:
       return fn_shinnok_lk_throw_startup;
-    case MK4_NATIVE_REPTILE_LK_THROW_ENTRY:
+    case native_reptile_lk_throw_entry:
       return fn_reptile_lk_throw_startup;
-    case MK4_NATIVE_REIKO_LK_THROW_ENTRY:
+    case native_reiko_lk_throw_entry:
       return fn_reiko_lk_throw_startup;
-    case MK4_NATIVE_QUAN_CHI_LK_THROW_ENTRY:
+    case native_quan_chi_lk_throw_entry:
       return fn_quan_chi_lk_throw_startup;
-    case MK4_NATIVE_RAIDEN_LK_THROW_ENTRY:
+    case native_raiden_lk_throw_entry:
       return fn_raiden_lk_throw_startup;
-    case MK4_NATIVE_KAI_LK_THROW_ENTRY:
+    case native_kai_lk_throw_entry:
       return fn_kai_lk_throw_startup;
-    case MK4_NATIVE_FUJIN_LK_THROW_ENTRY:
+    case native_fujin_lk_throw_entry:
       return fn_fujin_lk_throw_startup;
-    case MK4_NATIVE_SCORPION_LK_THROW_ENTRY:
+    case native_scorpion_lk_throw_entry:
       return fn_scorpion_lk_throw_startup;
-    case MK4_NATIVE_SONYA_LK_THROW_ENTRY:
+    case native_sonya_lk_throw_entry:
       return fn_sonya_lk_throw_startup;
-    case MK4_NATIVE_LIU_KANG_LK_THROW_ENTRY:
+    case native_liu_kang_lk_throw_entry:
       return fn_liu_kang_lk_throw_startup;
-    case MK4_NATIVE_SUB_ZERO_LK_THROW_ENTRY:
+    case native_sub_zero_lk_throw_entry:
       return fn_sub_zero_lk_throw_startup;
-    case MK4_NATIVE_GORO_LK_THROW_ENTRY:
+    case native_goro_lk_throw_entry:
       return fn_goro_lk_throw_startup;
     default:
       require(false, "Unimplemented native LK entry");
@@ -372,17 +372,17 @@ void action_lk_throw(Fighter *fighter) {
   const Mk4Image *image = battle_data();
   uint32_t native = mk4_lk_target(image, (unsigned)fighter->roster);
   uint32_t script = lk_script(native);
-  action_throw_capture(fighter, ACTION_CODE_0501, native != MK4_NATIVE_SUB_ZERO_LK_THROW_ENTRY);
-  if (native == MK4_NATIVE_SUB_ZERO_LK_THROW_ENTRY) {
+  action_throw_capture(fighter, ACTION_CODE_0501, native != native_sub_zero_lk_throw_entry);
+  if (native == native_sub_zero_lk_throw_entry) {
     fighter_set_speed(fighter, -0x1999);
     mk4_script_save_motion(fighter);
-  } else if (native == MK4_NATIVE_LIU_KANG_LK_THROW_ENTRY) {
+  } else if (native == native_liu_kang_lk_throw_entry) {
     Fighter *peer = (Fighter *)fighter_opponent(fighter);
     peer->body.pos[AXIS_X] += q16_mul(fighter_axis(fighter, AXIS_X), 0xcccc);
     peer->body.pos[AXIS_Z] += q16_mul(fighter_axis(fighter, AXIS_Z), 0xcccc);
-  } else if (native == MK4_NATIVE_QUAN_CHI_LK_THROW_ENTRY) {
+  } else if (native == native_quan_chi_lk_throw_entry) {
     pair_edge_task(fighter);
-  } else if (native == MK4_NATIVE_GORO_LK_THROW_ENTRY) {
+  } else if (native == native_goro_lk_throw_entry) {
     battle_sound(SOUND_TOKEN, 0x654);
   }
   script_vm_enter(fighter, script, fighter_ready);
@@ -449,7 +449,7 @@ void action_lk_rock_release(Fighter *fighter) {
 }
 
 void action_lp_align_and_release(Fighter *fighter) {
-  require(script_native_dispatch(fighter, MK4_NATIVE_LIU_KANG_LIU_SCRIPT_FATAL_ALIGN, MK4_CALL, 0), "Missing shared pair alignment native");
+  require(script_native_dispatch(fighter, native_liu_kang_liu_script_fatal_align, MK4_CALL, 0), "Missing shared pair alignment native");
   script_vm_enter(fighter, fn_lp_shared_release, fighter_ready);
 }
 

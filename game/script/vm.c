@@ -634,14 +634,13 @@ void script_vm_step(Fighter *fighter) {
       }
       case MK4_OP_SCENE_EVENT:
       case MK4_OP_FACE:
-        if (!vm->dispatch(fighter, opcode == MK4_OP_SCENE_EVENT ? MK4_NATIVE_CONTEXT : MK4_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, MK4_HANDLER, arg)) {
+        if (!vm->dispatch(fighter, opcode == MK4_OP_SCENE_EVENT ? native_context : native_face_peer_and_resume_script, MK4_HANDLER, arg)) {
           vm_error(fighter, "unreviewed scene/facing binding");
         }
         break;
       case MK4_OP_NATIVE_RETURN:
       case MK4_OP_NATIVE_STEP:
-        if (!vm->dispatch(
-                fighter, opcode == MK4_OP_NATIVE_RETURN ? MK4_NATIVE_SCRIPT_REACTION_DISPATCH : MK4_NATIVE_DISPATCH_OPPONENT_REACTION, MK4_HANDLER, arg)) {
+        if (!vm->dispatch(fighter, opcode == MK4_OP_NATIVE_RETURN ? native_script_reaction_dispatch : native_dispatch_opponent_reaction, MK4_HANDLER, arg)) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
@@ -675,7 +674,7 @@ void script_vm_step(Fighter *fighter) {
         q16 limit = (q16)fetch(fighter);
         if (g_battle.distance <= limit) {
           uint64_t continuation = fighter->execution.generation;
-          if (!vm->dispatch(fighter, MK4_NATIVE_SCRIPT_REACTION_DISPATCH, MK4_HANDLER, arg)) {
+          if (!vm->dispatch(fighter, native_script_reaction_dispatch, MK4_HANDLER, arg)) {
             vm_error(fighter, "unreviewed distance reaction binding");
           }
           if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {

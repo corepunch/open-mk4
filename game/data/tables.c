@@ -133,7 +133,7 @@ void mk4_roster_read(const Mk4Image *image, unsigned character, Mk4Roster *roste
 
 uint32_t mk4_finish_target(const Mk4Image *image, unsigned character, bool second) {
   uint32_t target = mk4_image_u32(image, (second ? dat_second_finish_table : dat_first_finish_table) + mk4_character_slot(character) * 4);
-  require(target == 0 || (target >= MK4_NATIVE_ID_BEGIN && target < MK4_NATIVE_ID_END), "Invalid retail scene native target");
+  require(target == 0 || (target >= native_id_begin && target < native_id_end), "Invalid retail scene native target");
   return target;
 }
 
@@ -149,14 +149,14 @@ q16 mk4_cpu_finish_distance(const Mk4Image *image, unsigned character, bool seco
 uint32_t mk4_reaction_target(const Mk4Image *image, unsigned reaction) {
   require(reaction < MK4_REACTION_COUNT, "Invalid retail reaction selector");
   uint32_t target = mk4_image_u32(image, dat_reaction_table + reaction * 4);
-  require(target == 0 || (target >= MK4_NATIVE_ID_BEGIN && target < MK4_NATIVE_ID_END), "Invalid retail reaction native");
+  require(target == 0 || (target >= native_id_begin && target < native_id_end), "Invalid retail reaction native");
   return target;
 }
 
 uint32_t mk4_lk_target(const Mk4Image *image, unsigned character) {
   unsigned slot = mk4_native_character_slot(character);
   uint32_t target = mk4_image_u32(image, dat_lk_throw_table + slot * 4);
-  require(target >= MK4_NATIVE_ID_BEGIN && target < MK4_NATIVE_ID_END, "Invalid native LK entry");
+  require(target >= native_id_begin && target < native_id_end, "Invalid native LK entry");
   return target;
 }
 

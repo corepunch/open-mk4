@@ -101,7 +101,7 @@ Changing an instruction containing an embedded entry also requires checking
 that alias's offset and no-op operand interpretation.
 
 `.export_equ NAME value` defines a constant and exposes the same name to C in
-one line, for example `.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`.
+one line, for example `.export_equ native_jax_missile 0x496f80`.
 It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
 private constants. These are build-time directives, not retail VM opcodes.
 

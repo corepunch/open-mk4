@@ -961,7 +961,7 @@ CHARACTER_BINDINGS[15] = {
                       evidence='46c7f0 block 4e6258: four B[40] queries at narrow pose 7, miss enters 4e6270'),
     0x46c820: Binding('native_air_straight_land', 'game/native/contact.c', ('tail',), flow='terminal', mmove=True,
                       evidence='46c820 preserves gravity or restores 51e and waits for landing after narrow reversal 4e6270'),
-    0x46cde0: Binding('native_uppercut_default', 'game/native/contact.c', ('tail',), flow='terminal', mmove=True,
+    0x46cde0: Binding('action_uppercut_default', 'game/native/contact.c', ('tail',), flow='terminal', mmove=True,
                       evidence='46cde0 A2/A6 contacts and hit/block/miss recovery use nonblocking shared native frames'),
     0x46e150: Binding('goro_script_air_finish', 'game/goro/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
                       evidence='46e150 diagonal low air-kick B[29] contact and landing'),
@@ -1402,7 +1402,7 @@ for _cid in (6, 8, 10, 12, 14):
         flow='terminal', mmove=True, evidence='46c820 preserves gravity or restores51e and waits for landing after generated narrow reversal4e6270')
 
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
-    CHARACTER_BINDINGS[_cid][0x46cde0] = Binding('native_uppercut_default', 'game/native/contact.c', ('tail',),
+    CHARACTER_BINDINGS[_cid][0x46cde0] = Binding('action_uppercut_default', 'game/native/contact.c', ('tail',),
         flow='terminal', mmove=True, evidence='46cde0 A2/A6 contacts and hit/block/miss recovery use nonblocking shared native frames')
 for _cid in (0, 1, 2, 3, 16):
     CHARACTER_BINDINGS[_cid][0x46cde0] = replace(CHARACTER_BINDINGS[_cid][0x46cde0], mmove=True)
@@ -1472,7 +1472,7 @@ def bindings_for(character):
                               (0x46f390, 'action_roundhouse_wide_start'), (0x46f3e0, 'action_roundhouse_wide_tail')):
         result[address] = Binding(function, 'game/native/basic_attacks.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Shared native roundhouse branches/cursor/contact/recovery; checked local 46f220..46f644 and matching mk4decomp handlers')
-    result[0x46cde0] = Binding('native_uppercut_default', 'game/native/contact.c', ('tail',), flow='terminal', mmove=True,
+    result[0x46cde0] = Binding('action_uppercut_default', 'game/native/contact.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Shared native 46cde0 contact/recovery; A2/A6 are read live from the retail image')
     result[0x467fc0] = Binding('mk4_script_spike_tail', 'game/native/helpers.c', ('tail',), flow='terminal', mmove=True,
                                evidence='One shared native spike recovery; checked467e70/467fc0 and original4e6950 playback')

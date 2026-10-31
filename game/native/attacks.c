@@ -184,7 +184,7 @@ static void cage_powered_punch_power_release(Fighter *fighter) {
     fighter->native_followup = false;
     fighter->flags &= ~(unsigned)FF_PAIRED;
     victim->flags &= ~(unsigned)FF_PAIRED;
-    if ((action_reaction_native(victim) == MK4_NATIVE_CAGE_POWER_VICTIM || action_reaction_native(victim) == MK4_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM) &&
+    if ((action_reaction_native(victim) == native_cage_power_victim || action_reaction_native(victim) == native_fujin_triple_middle_victim) &&
         fighter_airborne(victim)) {
       fighter_interrupt(victim, cage_powered_punch_power_victim_fall);
     }
@@ -198,7 +198,7 @@ static void cage_powered_punch_power_victim_ground(Fighter *fighter) {
 static void cage_powered_punch_power_victim_fall(Fighter *fighter) {
   static const MoveDef first = {.clip = 127, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_CODE_4001};
   static const MoveDef middle = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = ACTION_CODE_4001};
-  bool second = action_reaction_native(fighter) == MK4_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM;
+  bool second = action_reaction_native(fighter) == native_fujin_triple_middle_victim;
   int pose = fighter_sample(fighter);
   bool inherited = fighter_move(fighter)->clip == (second ? 311 : 127);
   fighter_start_move(fighter, S_HIT, second ? &middle : &first);
@@ -358,7 +358,7 @@ void cage_script_powered_punch_tail(Fighter *fighter) {
 }
 
 void cage_power_victim(Fighter *fighter) {
-  require(action_reaction_native(fighter) == MK4_NATIVE_CAGE_POWER_VICTIM, "Invalid Cage powered-punch victim entry");
+  require(action_reaction_native(fighter) == native_cage_power_victim, "Invalid Cage powered-punch victim entry");
   static const MoveDef victim = {.clip = 127, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_CODE_4001};
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_HIT, &victim);
@@ -396,7 +396,7 @@ static void fujin_triple_kick_triple_release(Fighter *fighter) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   /* An interrupted owner cannot leave a captured intermediate victim
    * hovering at the paired -.3 offset with its old zero gravity. */
-  if ((action_reaction_native(victim) == MK4_NATIVE_FUJIN_TRIPLE_FIRST_VICTIM || action_reaction_native(victim) == MK4_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM) &&
+  if ((action_reaction_native(victim) == native_fujin_triple_first_victim || action_reaction_native(victim) == native_fujin_triple_middle_victim) &&
       fighter_airborne(victim)) {
     victim->body.gravity = 0x51e;
   }
@@ -511,12 +511,12 @@ void fujin_triple_fast(Fighter *fighter) {
 }
 
 void fujin_triple_victim(Fighter *fighter) {
-  if (action_reaction_native(fighter) == MK4_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM) {
+  if (action_reaction_native(fighter) == native_fujin_triple_middle_victim) {
     fighter_start_move(fighter, S_HIT, &fujin_triple_kick_middle_victim);
     fighter->flags |= FF_REACTING;
     script_vm_enter(fighter, fn_fujin_triple_victim, mk4_mmove_thrown_finish);
   } else {
-    require(action_reaction_native(fighter) == MK4_NATIVE_FUJIN_TRIPLE_FIRST_VICTIM, "Invalid Fujin triple-kick victim stage");
+    require(action_reaction_native(fighter) == native_fujin_triple_first_victim, "Invalid Fujin triple-kick victim stage");
     /* Native488420/488440 and488830/488850 are also the exact
      * first/second axe victim entries; reuse their shared adaptations. */
     weapon_axe_reaction(fighter, false, (ScriptContinuation){fn_cage_power_victim, mk4_mmove_thrown_finish});

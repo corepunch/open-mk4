@@ -464,7 +464,7 @@ struct Fighter {
   ActionExecution execution;
   NativeMotion native_motion;
   bool native_immediate;
-  const void *native_context;
+  const void *native_profile;
   uint32_t native_getup; /* borrowed retail native recovery record */
   const AttackRecord *native_record;
   AttackRecord native_record_value;

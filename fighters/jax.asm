@@ -1,42 +1,42 @@
 ; Generated jax bytecode and native IDs. Do not edit; run make scripts-export.
 ; The shared C VM executes these words; native IDs select shared C services.
 
-.export_equ MK4_NATIVE_JAX_FATALITY_2_SPARKS 0x412d80
-.export_equ MK4_NATIVE_JAX_FATALITY_2_FLASH 0x412ec0
-.export_equ MK4_NATIVE_JAX_LP_THROW_THROW_CONTINUATION 0x42c7f0
-.export_equ MK4_NATIVE_JAX_LP_SLAM_FIRST 0x42c820
-.export_equ MK4_NATIVE_JAX_LP_SLAM_SECOND 0x42c8c0
-.export_equ MK4_NATIVE_JAX_LP_SLAM_THIRD 0x42c8f0
-.export_equ MK4_NATIVE_JAX_LP_THROW_RETURN 0x42c9f0
-.export_equ MK4_NATIVE_JAX_FATALITY_1 0x4494c0
-.export_equ MK4_NATIVE_JAX_FATALITY_1_VICTORY 0x449620
-.export_equ MK4_NATIVE_JAX_FATALITY_1_GRAB 0x449890
-.export_equ MK4_NATIVE_JAX_FATALITY_1_FIRST_ARM 0x4498d0
-.export_equ MK4_NATIVE_JAX_FATALITY_1_SECOND_ARM 0x449940
-.export_equ MK4_NATIVE_JAX_CAN_FATALITY_1 0x45e1b0
-.export_equ MK4_NATIVE_JAX_CAN_MISSILE 0x45e7e0
-.export_equ MK4_NATIVE_JAX_CAN_DASH_PUNCH 0x45e910
-.export_equ MK4_NATIVE_JAX_AIR_THROW_COMMAND_GATE 0x45ed70
-.export_equ MK4_NATIVE_JAX_FATALITY_2 0x4669c0
-.export_equ MK4_NATIVE_JAX_FATALITY_2_APPROACH 0x466a90
-.export_equ MK4_NATIVE_JAX_FATALITY_2_HEAD 0x466b40
-.export_equ MK4_NATIVE_JAX_FATALITY_2_FINISH 0x466bb0
-.export_equ MK4_NATIVE_JAX_FATALITY_2_VICTIM_PAUSE 0x466df0
-.export_equ MK4_NATIVE_JAX_GROUND_POUND 0x468f00
-.export_equ MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY 0x46a770
-.export_equ MK4_NATIVE_JAX_COMBO_HP_ENTRY 0x46c290
-.export_equ MK4_NATIVE_JAX_GROUND_POUND_CONTROLLER_RETURN 0x46f650
-.export_equ MK4_NATIVE_JAX_DASH_PUNCH 0x47ab10
-.export_equ MK4_NATIVE_JAX_DASH_PUNCH_CONTACT 0x47ab50
-.export_equ MK4_NATIVE_JAX_DASH_VICTIM_THROW 0x4867b0
-.export_equ MK4_NATIVE_JAX_DASH_VICTIM_HIT 0x4883f0
-.export_equ MK4_NATIVE_JAX_DASH_PUNCH_ROLL_GETUP 0x488c00
-.export_equ MK4_NATIVE_JAX_AXE_HP_ENTRY 0x496cd0
-.export_equ MK4_NATIVE_JAX_AXE_BACK_HP_ENTRY 0x496ce0
-.export_equ MK4_NATIVE_JAX_AXE_LP_ENTRY 0x496cf0
-.export_equ MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY 0x496d10
-.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80
-.export_equ MK4_NATIVE_JAX_MISSILE_SPAWN 0x496fc0
+.export_equ native_jax_fatality_2_sparks 0x412d80
+.export_equ native_jax_fatality_2_flash 0x412ec0
+.export_equ native_jax_lp_throw_throw_continuation 0x42c7f0
+.export_equ native_jax_lp_slam_first 0x42c820
+.export_equ native_jax_lp_slam_second 0x42c8c0
+.export_equ native_jax_lp_slam_third 0x42c8f0
+.export_equ native_jax_lp_throw_return 0x42c9f0
+.export_equ native_jax_fatality_1 0x4494c0
+.export_equ native_jax_fatality_1_victory 0x449620
+.export_equ native_jax_fatality_1_grab 0x449890
+.export_equ native_jax_fatality_1_first_arm 0x4498d0
+.export_equ native_jax_fatality_1_second_arm 0x449940
+.export_equ native_jax_can_fatality_1 0x45e1b0
+.export_equ native_jax_can_missile 0x45e7e0
+.export_equ native_jax_can_dash_punch 0x45e910
+.export_equ native_jax_air_throw_command_gate 0x45ed70
+.export_equ native_jax_fatality_2 0x4669c0
+.export_equ native_jax_fatality_2_approach 0x466a90
+.export_equ native_jax_fatality_2_head 0x466b40
+.export_equ native_jax_fatality_2_finish 0x466bb0
+.export_equ native_jax_fatality_2_victim_pause 0x466df0
+.export_equ native_jax_ground_pound 0x468f00
+.export_equ native_jax_high_kick_contact_recovery 0x46a770
+.export_equ native_jax_combo_hp_entry 0x46c290
+.export_equ native_jax_ground_pound_controller_return 0x46f650
+.export_equ native_jax_dash_punch 0x47ab10
+.export_equ native_jax_dash_punch_contact 0x47ab50
+.export_equ native_jax_dash_victim_throw 0x4867b0
+.export_equ native_jax_dash_victim_hit 0x4883f0
+.export_equ native_jax_dash_punch_roll_getup 0x488c00
+.export_equ native_jax_axe_hp_entry 0x496cd0
+.export_equ native_jax_axe_back_hp_entry 0x496ce0
+.export_equ native_jax_axe_lp_entry 0x496cf0
+.export_equ native_jax_axe_back_lp_entry 0x496d10
+.export_equ native_jax_missile 0x496f80
+.export_equ native_jax_missile_spawn 0x496fc0
 
 ; Retail source 0x004de4f0; branches use linked names.
 jax_lp_throw_first_slam:
@@ -44,24 +44,24 @@ jax_lp_throw_first_slam:
   open_clip 0x0, clip(83)
   playback_single 0x37
   spawn_effect 0x0
-  call 0x0, MK4_NATIVE_THROW_GRUNT
-  tail 0x0, MK4_NATIVE_JAX_LP_SLAM_FIRST
+  call 0x0, native_throw_grunt
+  tail 0x0, native_jax_lp_slam_first
 
 ; Retail source 0x004de518; branches use linked names.
 slam_first_script:
   playback_single 0x52
   damage 0x0, 0xccc
   spawn_effect 0x0
-  call 0x0, MK4_NATIVE_THROW_GRUNT
-  tail 0x0, MK4_NATIVE_JAX_LP_SLAM_SECOND
+  call 0x0, native_throw_grunt
+  tail 0x0, native_jax_lp_slam_second
 
 ; Retail source 0x004de538; branches use linked names.
 slam_second_script:
   playback_single 0x74
   spawn_effect 0x0
   damage 0x0, 0xccc
-  call 0x0, MK4_NATIVE_THROW_GRUNT
-  tail 0x0, MK4_NATIVE_JAX_LP_SLAM_THIRD
+  call 0x0, native_throw_grunt
+  tail 0x0, native_jax_lp_slam_third
 
 ; Retail source 0x004de558; branches use linked names.
 slam_second_release_script:
@@ -77,13 +77,13 @@ slam_first_release_script:
 slam_first_release_script_native_word_1:
   native_word 0x0, 0xf5c
   damage 0x0, 0xccc
-  tail 0x0, MK4_NATIVE_JAX_LP_THROW_RETURN
+  tail 0x0, native_jax_lp_throw_return
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e0118; branches use linked names.
 jax_fan_fatality_performer:
   prefixed_to 0x245, clip(415)
-  tail 0x0, MK4_NATIVE_FAN_TAIL
+  tail 0x0, native_fan_tail
   jump 0, word(jarek_fan_fatality_male_victim_owner_cycle)
   .zero 4 ; non-executable guard
 
@@ -91,13 +91,13 @@ jax_fan_fatality_performer:
 jax_fan_fatality_owner_cycle:
   forward_to 0x4d
   cursor_set 0x45
-  tail 0x0, MK4_NATIVE_FAN_FEMALE_VICTIM_OWNER_CYCLE
+  tail 0x0, native_fan_female_victim_owner_cycle
 
 ; Retail source 0x004e0148; branches use linked names.
 jax_fan_fatality_owner_release:
   cursor_set 0x4e
   forward_to 0x6b
-  tail 0x0, MK4_NATIVE_FAN_VICTORY
+  tail 0x0, native_fan_victory
   jump 0, word(fan_victory)
   .zero 4 ; non-executable guard
 
@@ -115,13 +115,13 @@ jax_fan_fatality_victim_forward_to_1:
 jax_fan_fatality_victim_release:
   cursor_set 0x4e
   forward_to 0x6b
-  tail 0x0, MK4_NATIVE_FAN_VICTIM_END
+  tail 0x0, native_fan_victim_end
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e1390; branches use linked names.
 jax_fatality_1_owner_opening:
   prefixed_finish 0x200, clip(384)
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_1_VICTORY
+  tail 0x0, native_jax_fatality_1_victory
 
 ; Retail source 0x004e13a0; branches use linked names.
 jax_fatality_1_owner_loop:
@@ -139,24 +139,24 @@ arm_tear_victim_clip_400:
 
 ; Retail source 0x004e13c8; branches use linked names.
 arm_tear_victim_clip_400_tail_1:
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_1_GRAB
+  tail 0x0, native_jax_fatality_1_grab
 
 ; Retail source 0x004e13d0; branches use linked names.
 jax_fatality_1_grab:
   forward_to 0x4e
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_1_FIRST_ARM
+  tail 0x0, native_jax_fatality_1_first_arm
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e13e0; branches use linked names.
 jax_fatality_1_first_arm:
   forward_to 0x80
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_1_SECOND_ARM
+  tail 0x0, native_jax_fatality_1_second_arm
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e13f0; branches use linked names.
 jax_fatality_1_second_arm:
   forward 0x0
-  tail 0x0, MK4_NATIVE_TASK_RETIRE
+  tail 0x0, native_task_retire
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e5a80; branches use linked names.
@@ -164,11 +164,11 @@ jax_fatality_2:
   native_release 0x43
   bind_cursor 0x0, clip(284)
   wait 0x14
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_2_APPROACH
+  tail 0x0, native_jax_fatality_2_approach
 
 ; Retail source 0x004e5a98; branches use linked names.
 jax_fatality_2_approach:
-  spawn 0x0, 0x26b, MK4_NATIVE_JAX_FATALITY_2_SPARKS
+  spawn 0x0, 0x26b, native_jax_fatality_2_sparks
   native_release 0x43
   sound_c 0x46
   wait 0xf
@@ -177,7 +177,7 @@ jax_fatality_2_approach:
   wait 0xf
   sound_c 0x2
   prefixed_finish 0x200, clip(555)
-  spawn 0x0, 0x26b, MK4_NATIVE_JAX_FATALITY_2_FLASH
+  spawn 0x0, 0x26b, native_jax_fatality_2_flash
   spawn_effect 0x6
   sound_c 0x69
   sound_c 0x2c
@@ -198,9 +198,9 @@ jax_fatality_2_approach_playback_pair_1:
 jax_fatality_2_head:
   sound_b 0x8
   clip 0x0, clip(557)
-  spawn 0x0, 0x26b, MK4_NATIVE_SCENE_KEEPALIVE_TASK
+  spawn 0x0, 0x26b, native_scene_keepalive_task
   clip 0x0, clip(206)
-  tail 0x0, MK4_NATIVE_JAX_FATALITY_2_FINISH
+  tail 0x0, native_jax_fatality_2_finish
   jump 0, word(cage_fatality_2_victim_start)
   .zero 4 ; non-executable guard
 
@@ -218,7 +218,7 @@ air_throw_lift:
   open_peer_clip 0x0, clip(144)
   open_clip 0x0, clip(84)
   playback_single 0x14
-  tail 0x0, MK4_NATIVE_AIR_LIFT_FALL
+  tail 0x0, native_air_lift_fall
 
 ; Retail source 0x004e5df8; branches use linked names.
 air_lift_fall:
@@ -228,7 +228,7 @@ air_lift_fall:
   spawn_effect 0x6
   playback_single 0x2b
   disarm_peer 0x0
-  tail 0x0, MK4_NATIVE_AIR_LIFT_RELEASE
+  tail 0x0, native_air_lift_release
 
 ; Retail source 0x004e5e18; branches use linked names.
 air_lift_release:
@@ -240,13 +240,13 @@ air_lift_release:
 ; Retail source 0x004e66d0; branches use linked names.
 jax_draw_weapon_air_hp:
   attack_selector 0x0, 0x104
-  tail 0x0, MK4_NATIVE_WEAPON_AIR_HIGH_PUNCH_OPEN
+  tail 0x0, native_weapon_air_high_punch_open
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e66f0; branches use linked names.
 jax_draw_weapon_air_lp:
   attack_selector 0x0, 0x108
-  tail 0x0, MK4_NATIVE_WEAPON_AIR_LOW_PUNCH_OPEN
+  tail 0x0, native_weapon_air_low_punch_open
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e6890; branches use linked names.
@@ -254,7 +254,7 @@ jax_roundhouse_fast_start:
   double_to 0xc
   sound_c 0x1c
   double_to 0x14
-  tail 0x0, MK4_NATIVE_ROUNDHOUSE_WIDE_TAIL
+  tail 0x0, native_roundhouse_wide_tail
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e68a8; branches use linked names.
@@ -262,14 +262,14 @@ jax_roundhouse_normal_start:
   double_to 0xc
   sound_c 0x1c
   forward_to 0x14
-  tail 0x0, MK4_NATIVE_ROUNDHOUSE_WIDE_TAIL
+  tail 0x0, native_roundhouse_wide_tail
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e69b0; branches use linked names.
 jax_combo_hp_attacker:
   open_clip 0x2, clip(261)
   forward_to 0xb
-  tail 0x0, MK4_NATIVE_COMBO_HIGH_PUNCH_TAIL
+  tail 0x0, native_combo_high_punch_tail
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e8150; branches use linked names.
@@ -279,7 +279,7 @@ jax_dash_punch:
   speed 0x0, 0x2666
   open_clip 0x0, clip(299)
   double_to 0x12
-  tail 0x0, MK4_NATIVE_JAX_DASH_PUNCH_CONTACT
+  tail 0x0, native_jax_dash_punch_contact
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e89d8; branches use linked names.
@@ -293,7 +293,7 @@ jax_dash_punch_airborne_victim_168:
   task_callback 0x0
   clip 0x0, clip(189)
   native_context 0x0
-  tail 0x0, MK4_NATIVE_JAX_DASH_PUNCH_ROLL_GETUP
+  tail 0x0, native_jax_dash_punch_roll_getup
   .zero 4 ; non-executable guard
 
 ; Retail source 0x004e98e8; branches use linked names.
@@ -302,7 +302,7 @@ air_victim_lift:
   task_callback 0x0
   prefixed_to 0x223, clip(140)
   native_context 0x0
-  tail 0x0, MK4_NATIVE_AIR_LIFT_GETUP
+  tail 0x0, native_air_lift_getup
   jump 0, word(air_victim_default)
   .zero 4 ; non-executable guard
 
@@ -327,7 +327,7 @@ jax_dash_victim_hit:
 jax_missile:
   prefixed_to 0x20a, clip(29)
   sound_c 0x5d
-  spawn 0x0, 0x50, MK4_NATIVE_JAX_MISSILE_SPAWN
+  spawn 0x0, 0x50, native_jax_missile_spawn
   forward_to 0x19
   half_finish 0x0
   ready 0x0

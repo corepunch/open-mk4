@@ -168,72 +168,72 @@ unresolved_reaction_parameters_008:
   .zero 40
   .word 0x47af90
   .zero 192
-  .word 0xf, 0x10, MK4_NATIVE_CONTACT_QUERY_D, 0x47be50, 0x47bed0, 0x47bd60
+  .word 0xf, 0x10, native_contact_query_d, 0x47be50, 0x47bed0, 0x47bd60
   .word 0x47bf50
   .zero 44
-  .word 0x3c, 0xf, MK4_NATIVE_CONTACT_QUERY_D, 0x47bfb0, MK4_NATIVE_FUJIN_DIVE_LAND, 0x47bfb0
+  .word 0x3c, 0xf, native_contact_query_d, 0x47bfb0, native_fujin_dive_land, 0x47bfb0
   .zero 112
   .word 0x47c4d0
   .zero 68
   .word 0x6666
   .zero 28
-  .word 0xa, MK4_NATIVE_CONTACT_QUERY_B, 0xa, 0xb, 0xb, 0xffffffff
+  .word 0xa, native_contact_query_b, 0xa, 0xb, 0xb, 0xffffffff
   .word 0x47cc70
   .zero 44
-  .word 0xb, MK4_NATIVE_CONTACT_QUERY_B, 0xa, 0xb, 0xc, 0xffffffff
+  .word 0xb, native_contact_query_b, 0xa, 0xb, 0xc, 0xffffffff
   .word 0x47cce0
   .zero 36
 
 input_table_handstand:
   .zero 4
-  .word MK4_NATIVE_HANDSTAND_SPIN, MK4_NATIVE_HANDSTAND_EXIT, MK4_NATIVE_HANDSTAND_FRONT, MK4_NATIVE_HANDSTAND_REAR
+  .word native_handstand_spin, native_handstand_exit, native_handstand_front, native_handstand_rear
   .zero 4
-  .word 0x47d550, MK4_NATIVE_GORO_STOMP_HOLD_SEPARATION, clip(88), 0x47d1a0, clip(90), 0x47d320
+  .word 0x47d550, native_goro_stomp_hold_separation, clip(88), 0x47d1a0, clip(90), 0x47d320
   .word 0xffffe667, 0xffffcccd, 0x28f
   .zero 4
-  .word clip(91), MK4_NATIVE_JAX_GROUND_POUND_CONTROLLER_RETURN
+  .word clip(91), native_jax_ground_pound_controller_return
   .zero 104
   .word 0xfffff334, 0xffffdc29, 0x168
   .zero 28
-  .word MK4_NATIVE_LANDING_MOTION
+  .word native_landing_motion
   .zero 148
   .word 0x1, 0x3333, 0x7
   .zero 132
   .word 0x58000000, 0xfffffae2, 0xffffd1ec, 0x1ca, 0x32000000, 0x47e2b0
   .zero 72
-  .word 0x3c, 0x6, MK4_NATIVE_CONTACT_QUERY_D, 0x47eb50, 0x47ed20, 0x47eb50
+  .word 0x3c, 0x6, native_contact_query_d, 0x47eb50, 0x47ed20, 0x47eb50
   .word 0x480ee0
   .zero 284
   .word 0xfffffae2, 0xffffe667, 0x147
   .zero 4
   .word 0xffffe8f6, 0xffffd70b, 0x28f
   .zero 52
-  .word 0x3c, 0x4, MK4_NATIVE_CONTACT_QUERY_D, 0x47fd90, 0x47fe40, 0x47fd90
+  .word 0x3c, 0x4, native_contact_query_d, 0x47fd90, 0x47fe40, 0x47fd90
   .word 0xfffffd71, 0xffffe667, 0x1ca
   .zero 4
   .word 0xfffffd71, 0xffffdeb9, 0x1ca
   .zero 84
   .word 0x1999
   .zero 52
-  .word 0x9, MK4_NATIVE_CONTACT_QUERY_B, 0x1e, 0x1f, 0x20, 0x21
+  .word 0x9, native_contact_query_b, 0x1e, 0x1f, 0x20, 0x21
   .word 0x22, 0xffffffff, 0x478e40
   .zero 44
 
 input_table_teleport_air:
-  .word MK4_NATIVE_PRESS_STRAIGHT_AIR_HIGH_PUNCH, MK4_NATIVE_PRESS_STRAIGHT_AIR_LOW_PUNCH, MK4_NATIVE_TELEPORT_SLAM, MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK, MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK
+  .word native_press_straight_air_high_punch, native_press_straight_air_low_punch, native_teleport_slam, native_press_straight_air_kick, native_press_straight_air_kick
   .zero 12
 
 action_table_4:
-  .word MK4_NATIVE_SCORPION_TELEPORT, MK4_NATIVE_SUB_ZERO_CLONE, MK4_NATIVE_SUB_ZERO_SLIDE, MK4_NATIVE_LIU_KANG_FLYING_KICK, MK4_NATIVE_LIU_KANG_BICYCLE_KICK, MK4_NATIVE_SONYA_BICYCLE
-  .word MK4_NATIVE_SONYA_SQUARE_WAVE, MK4_NATIVE_SONYA_LEG_GRAB, MK4_NATIVE_FUJIN_WIND_GRAB, MK4_NATIVE_FUJIN_TRIPLE_KICK, MK4_NATIVE_RAIDEN_TORPEDO, MK4_NATIVE_QUAN_CHI_TELEPORT_STOMP
-  .word MK4_NATIVE_RAIDEN_TELEPORT, MK4_NATIVE_KAI_HANDSTAND_ENTRY, MK4_NATIVE_TELEPORT, 0x47c050, MK4_NATIVE_FUJIN_DIVE, MK4_NATIVE_KAI_AERIAL_PUNCH_ENTRY
-  .word MK4_NATIVE_TANYA_DRILL_KICK, MK4_NATIVE_SONYA_CARTWHEEL, MK4_NATIVE_JAREK_QUAKE, MK4_NATIVE_JAREK_CANNONBALL, MK4_NATIVE_REPTILE_ROLL_ENTRY, MK4_NATIVE_JAX_DASH_PUNCH
-  .word MK4_NATIVE_REPTILE_DASH_ENTRY, 0x480770, MK4_NATIVE_QUAN_CHI_FLIP_KICK, MK4_NATIVE_CAGE_CPU_KICK, MK4_NATIVE_CAGE_POWERED_PUNCH, MK4_NATIVE_JAREK_UPWARD_BALL
-  .word MK4_NATIVE_TANYA_SPIN_KICK, MK4_NATIVE_REIKO_FLIP_KICK, MK4_NATIVE_REIKO_ORBIT, MK4_NATIVE_KAI_LUNGE_KICK_ENTRY, 0x481010
+  .word native_scorpion_teleport, native_sub_zero_clone, native_sub_zero_slide, native_liu_kang_flying_kick, native_liu_kang_bicycle_kick, native_sonya_bicycle
+  .word native_sonya_square_wave, native_sonya_leg_grab, native_fujin_wind_grab, native_fujin_triple_kick, native_raiden_torpedo, native_quan_chi_teleport_stomp
+  .word native_raiden_teleport, native_kai_handstand_entry, native_teleport, 0x47c050, native_fujin_dive, native_kai_aerial_punch_entry
+  .word native_tanya_drill_kick, native_sonya_cartwheel, native_jarek_quake, native_jarek_cannonball, native_reptile_roll_entry, native_jax_dash_punch
+  .word native_reptile_dash_entry, 0x480770, native_quan_chi_flip_kick, native_cage_cpu_kick, native_cage_powered_punch, native_jarek_upward_ball
+  .word native_tanya_spin_kick, native_reiko_flip_kick, native_reiko_orbit, native_kai_lunge_kick_entry, 0x481010
   .zero 1344
 
 reaction_clip_180_friction_callback:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 800
   .word 0x482b60
   .zero 172
@@ -241,25 +241,25 @@ reaction_clip_180_friction_callback:
   .zero 4
   .word 0x62000004, 0x2a000001, 0x2b000003, 0x26000001, 0x58000000, 0xffffee15
   .word 0xffffdc29, 0x28f, 0x22000000, 0x1000000, clip(183), 0x60000000
-  .word 0x3000000, 0x34000002, 0x32000000, MK4_NATIVE_MMOVE_SIDE_GETUP
+  .word 0x3000000, 0x34000002, 0x32000000, native_mmove_side_getup
   .zero 80
 
 crouch_reaction_physics_word:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 1172
 
 stagger_entry:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 456
 
 lk_victim_slide_speed:
   .word 0xf5c
   .zero 240
-  .word 0x5a000000, 0x3333, 0x38000000, MK4_NATIVE_VELOCITY_FRICTION, 0x4a000000, 0x32000000
+  .word 0x5a000000, 0x3333, 0x38000000, native_velocity_friction, 0x4a000000, 0x32000000
   .word 0x485940
 
 bicycle_release:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 232
 
 animation_rows_lp_victim_table_release:
@@ -267,41 +267,41 @@ animation_rows_lp_victim_table_release:
 
 ; Retained referenced block; semantic role is not established.
 unresolved_reaction_parameters_009:
-  .word MK4_NATIVE_LP_TABLE_VICTIM_STOP_AND_FLIP_GETUP
+  .word native_lp_table_victim_stop_and_flip_getup
 
 animation_rows_lp_victim_rebased_release:
-  .word clip(173), MK4_NATIVE_LP_TABLE_VICTIM_STOP_AND_FLIP_GETUP
+  .word clip(173), native_lp_table_victim_stop_and_flip_getup
 
 animation_rows_lp_victim_weapon_scatter_release:
-  .word clip(173), MK4_NATIVE_LP_TABLE_VICTIM_STOP_AND_FLIP_GETUP, 0x26000005, 0x2b000003, 0x4e000000, 0x22000000
+  .word clip(173), native_lp_table_victim_stop_and_flip_getup, 0x26000005, 0x2b000003, 0x4e000000, 0x22000000
   .word 0x59000000, 0xfffff5c3, 0xa3d, 0xffffeb86, 0xde, 0x38000000
-  .word MK4_NATIVE_LANDING_MOTION, 0x1000000, clip(142), 0x1000000, clip(141), 0x200000c
-  .word clip(143), 0x39000000, 0x3000000, 0x34000014, 0x32000000, MK4_NATIVE_RETURN_TO_PLAYER_OR_CPU_CONTROL
+  .word native_landing_motion, 0x1000000, clip(142), 0x1000000, clip(141), 0x200000c
+  .word clip(143), 0x39000000, 0x3000000, 0x34000014, 0x32000000, native_return_to_player_or_cpu_control
   .zero 292
 
 record_reaction:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 48
 
 reaction_clip_127_friction_row:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 132
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 40
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 40
 
 block_reaction_friction_row:
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 204
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 4
   .word 0x5a000000, 0x4ccc, 0x32000000, 0x487570
   .zero 312
   .word 0x5b000000, 0x2a000000, 0x3000000, 0x34000030, 0x32000000, 0x488700
   .word 0x5b000000, 0x2a000000, 0x3000000, 0x34000010, 0x3f000000
   .zero 268
-  .word MK4_NATIVE_VELOCITY_FRICTION
+  .word native_velocity_friction
   .zero 68
 
 getup_descriptor_side_getup:
@@ -321,7 +321,7 @@ getup_descriptor_front_getup:
   .zero 136
   .word 0x48eb40
   .zero 4
-  .word 0x22000000, 0x3400000a, 0x35000000, MK4_NATIVE_SCORPION_SCRIPT_BEAST_VOICE, 0x60000000, 0x32000000
+  .word 0x22000000, 0x3400000a, 0x35000000, native_scorpion_script_beast_voice, 0x60000000, 0x32000000
   .word 0x4838d0
   .zero 4
   .word 0x34000014, 0x2500003f, 0x3e000000

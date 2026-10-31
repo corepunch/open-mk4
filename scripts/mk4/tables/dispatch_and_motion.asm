@@ -7,18 +7,18 @@ command_next:
 
 ; Retained referenced block; semantic role is not established.
 unresolved_dispatch_and_motion_001:
-  .word MK4_NATIVE_SUB_ZERO_CAN_SLIDE, MK4_NATIVE_WEAPON_CAN_PICKUP, MK4_NATIVE_WEAPON_CAN_DRAW, MK4_NATIVE_CAN_PLAYER_PAIR_AIR_THROW, MK4_NATIVE_SONYA_CAN_LEG_GRAB, MK4_NATIVE_JAX_AIR_THROW_COMMAND_GATE
-  .word MK4_NATIVE_SCORPION_CAN_TELEPORT, MK4_NATIVE_SUB_ZERO_CAN_CLONE, MK4_NATIVE_FUJIN_CAN_WIND, MK4_NATIVE_FUJIN_CAN_WIND_SLAM, 0x45eba0, MK4_NATIVE_SUB_ZERO_CAN_ICE
-  .word MK4_NATIVE_KAI_CAN_HANDSTAND, MK4_NATIVE_FUJIN_CAN_DIVE, MK4_NATIVE_KAI_CAN_GROUND_SKULL, 0x45ea50, MK4_NATIVE_LIU_KANG_CAN_BICYCLE, MK4_NATIVE_HAS_GRAVITY
-  .word MK4_NATIVE_KAI_CAN_RISING_SKULL, MK4_NATIVE_FUJIN_CAN_WIND_GRAB, MK4_NATIVE_SCORPION_CAN_SPEAR, MK4_NATIVE_RAIDEN_CAN_TELEPORT, MK4_NATIVE_REPTILE_CAN_INVISIBILITY, MK4_NATIVE_REPTILE_CAN_SPIT
-  .word MK4_NATIVE_SONYA_CAN_CARTWHEEL, MK4_NATIVE_CAN_FAN_FINISH, MK4_NATIVE_CAN_FINISH_CLOSE, MK4_NATIVE_SUB_ZERO_CAN_FIRST_FATALITY, MK4_NATIVE_CAN_SIDESTEP, MK4_NATIVE_REPTILE_CAN_DASH
-  .word MK4_NATIVE_JAX_CAN_DASH_PUNCH, MK4_NATIVE_CAGE_CAN_GROIN_PUNCH, MK4_NATIVE_TANYA_CAN_SPIN_KICK, MK4_NATIVE_JAX_CAN_MISSILE, MK4_NATIVE_REIKO_CAN_FLIP_KICK, MK4_NATIVE_REIKO_CAN_ORBIT
-  .word MK4_NATIVE_CAN_FINISH_RANGE, MK4_NATIVE_LIU_KANG_CAN_FIRST_FATALITY, MK4_NATIVE_FUJIN_CAN_FIRST_FATALITY
+  .word native_sub_zero_can_slide, native_weapon_can_pickup, native_weapon_can_draw, native_can_player_pair_air_throw, native_sonya_can_leg_grab, native_jax_air_throw_command_gate
+  .word native_scorpion_can_teleport, native_sub_zero_can_clone, native_fujin_can_wind, native_fujin_can_wind_slam, 0x45eba0, native_sub_zero_can_ice
+  .word native_kai_can_handstand, native_fujin_can_dive, native_kai_can_ground_skull, 0x45ea50, native_liu_kang_can_bicycle, native_has_gravity
+  .word native_kai_can_rising_skull, native_fujin_can_wind_grab, native_scorpion_can_spear, native_raiden_can_teleport, native_reptile_can_invisibility, native_reptile_can_spit
+  .word native_sonya_can_cartwheel, native_can_fan_finish, native_can_finish_close, native_sub_zero_can_first_fatality, native_can_sidestep, native_reptile_can_dash
+  .word native_jax_can_dash_punch, native_cage_can_groin_punch, native_tanya_can_spin_kick, native_jax_can_missile, native_reiko_can_flip_kick, native_reiko_can_orbit
+  .word native_can_finish_range, native_liu_kang_can_first_fatality, native_fujin_can_first_fatality
   .zero 4
-  .word MK4_NATIVE_REIKO_CAN_FIRST_FATALITY, MK4_NATIVE_QUAN_CHI_CAN_FIRST_FATALITY, MK4_NATIVE_TANYA_CAN_FIRST_FATALITY, MK4_NATIVE_REPTILE_CAN_FIRST_FATALITY, MK4_NATIVE_KAI_CAN_FIRST_FATALITY, MK4_NATIVE_JAX_CAN_FATALITY_1
-  .word MK4_NATIVE_SONYA_CAN_FIRST_FATALITY
+  .word native_reiko_can_first_fatality, native_quan_chi_can_first_fatality, native_tanya_can_first_fatality, native_reptile_can_first_fatality, native_kai_can_first_fatality, native_jax_can_fatality_1
+  .word native_sonya_can_first_fatality
   .zero 4
-  .word MK4_NATIVE_REIKO_CAN_STAR, MK4_NATIVE_SHINNOK_CAN_MORPH, MK4_NATIVE_CAN_SPIKE_FINISH, clip(317), 0x4609f0
+  .word native_reiko_can_star, native_shinnok_can_morph, native_can_spike_finish, clip(317), 0x4609f0
   .zero 4
   .word 0x460c00, 0x45fc90
   .zero 8
@@ -37,11 +37,11 @@ unresolved_dispatch_and_motion_001:
   .word 0x48e070, 0x48e070, 0x48e070, 0x48e070
 
 input_table_standing:
-  .word MK4_NATIVE_PRESS_STANDING_HIGH_PUNCH, MK4_NATIVE_PRESS_STANDING_LOW_PUNCH, MK4_NATIVE_PRESS_STANDING_BLOCK, MK4_NATIVE_PRESS_STANDING_HIGH_KICK, MK4_NATIVE_PRESS_STANDING_LOW_KICK
+  .word native_press_standing_high_punch, native_press_standing_low_punch, native_press_standing_block, native_press_standing_high_kick, native_press_standing_low_kick
   .zero 4
 
 input_table_crouching:
-  .word MK4_NATIVE_PRESS_CROUCHING_HIGH_PUNCH, MK4_NATIVE_PRESS_CROUCHING_LOW_PUNCH, MK4_NATIVE_PRESS_CROUCHING_BLOCK, MK4_NATIVE_PRESS_CROUCHING_HIGH_KICK, MK4_NATIVE_PRESS_CROUCHING_LOW_KICK
+  .word native_press_crouching_high_punch, native_press_crouching_low_punch, native_press_crouching_block, native_press_crouching_high_kick, native_press_crouching_low_kick
   .zero 12
   .word 0x50000, 0x1
   .zero 4
@@ -183,8 +183,8 @@ text_kode_27_kombat_zone_ice_pit:
   .word 0x303303, 0x4617a0, 0x313313, 0x4617c0, 0xffffffff
   .zero 4
   .word 0x4, 0x462720, 0x8, 0x4627d0, 0x400, 0x462740
-  .word 0x800, 0x4627f0, 0x1, MK4_NATIVE_TASK_RETIRE, 0x2, MK4_NATIVE_TASK_RETIRE
-  .word 0x100, MK4_NATIVE_TASK_RETIRE, 0x200, MK4_NATIVE_TASK_RETIRE
+  .word 0x800, 0x4627f0, 0x1, native_task_retire, 0x2, native_task_retire
+  .word 0x100, native_task_retire, 0x200, native_task_retire
 
 ; Retained referenced block; semantic role is not established.
 unresolved_dispatch_and_motion_002:
@@ -266,12 +266,12 @@ tower_labels:
 
 kick_contact_default:
   .zero 4
-  .word MK4_NATIVE_CONTACT_QUERY_B, 0xa, 0xa, 0x9, 0xffffffff, MK4_NATIVE_FUJIN_HIGH_KICK_CONTACT_RECOVERY
+  .word native_contact_query_b, 0xa, 0xa, 0x9, 0xffffffff, native_fujin_high_kick_contact_recovery
   .zero 20
 
 kick_contact_wide:
-  .word 0x1, MK4_NATIVE_CONTACT_QUERY_B, 0x11, 0x11, 0x10, 0xffffffff
-  .word MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY
+  .word 0x1, native_contact_query_b, 0x11, 0x11, 0x10, 0xffffffff
+  .word native_jax_high_kick_contact_recovery
   .zero 4
   .word 0x6000002, 0x24000000, 0x7000000, 0x3f000000, 0x1f000000, 0x2
   .word 0x20000001, 0x4700020a, clip(71), 0x67003002, 0x29000000, 0x4000002
@@ -333,67 +333,67 @@ unresolved_dispatch_and_motion_016:
   .zero 260
 
 air_straight_tail:
-  .word 0x4, 0x28, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_GORO_AIR_KICK_RECOVERY_CALLBACK, MK4_NATIVE_AIR_STRAIGHT_KICK_LAND, MK4_NATIVE_AIR_STRAIGHT_KICK_MISS_REVERSE
+  .word 0x4, 0x28, native_contact_query_b, native_goro_air_kick_recovery_callback, native_air_straight_kick_land, native_air_straight_kick_miss_reverse
   .zero 456
 
 air_lk_tail:
-  .word 0xa, 0x1b, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_LOW_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_LOW_KICK_CLIP_58_REVERSE
+  .word 0xa, 0x1b, native_contact_query_b, native_air_low_kick_contact_hold, native_air_attack_land_or_finish, native_air_low_kick_clip_58_reverse
   .word 0x46e300
   .zero 28
 
 air_lk_alt_tail:
-  .word 0xa, 0x1c, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_LOW_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_LOW_KICK_CLIP_59_REVERSE
+  .word 0xa, 0x1c, native_contact_query_b, native_air_low_kick_contact_hold, native_air_attack_land_or_finish, native_air_low_kick_clip_59_reverse
   .word 0x46e300
   .zero 28
 
 air_lk_wide_tail:
-  .word 0xa, 0x1d, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_LOW_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_LOW_KICK_CLIP_60_REVERSE
+  .word 0xa, 0x1d, native_contact_query_b, native_air_low_kick_contact_hold, native_air_attack_land_or_finish, native_air_low_kick_clip_60_reverse
   .word 0x46e300
   .zero 148
 
 air_diagonal_tail:
   .word clip(55)
   .zero 4
-  .word MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_30
+  .word native_air_diagonal_kick_query_30
   .zero 4
 
 air_diagonal_kick_query_30_row:
-  .word 0xa, 0x1e, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_55_REVERSE
+  .word 0xa, 0x1e, native_contact_query_b, native_air_diagonal_kick_contact_hold, native_air_attack_land_or_finish, native_air_diagonal_kick_clip_55_reverse
   .word 0x46e300
   .zero 28
 
 air_diagonal_alt_tail:
   .word clip(56)
   .zero 4
-  .word MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_31
+  .word native_air_diagonal_kick_query_31
   .zero 4
 
 air_diagonal_kick_query_31_row:
-  .word 0xa, 0x1f, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_56_REVERSE
+  .word 0xa, 0x1f, native_contact_query_b, native_air_diagonal_kick_contact_hold, native_air_attack_land_or_finish, native_air_diagonal_kick_clip_56_reverse
   .word 0x46e300
   .zero 28
 
 air_diagonal_wide_tail:
   .word clip(57)
   .zero 4
-  .word MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_32
+  .word native_air_diagonal_kick_query_32
   .zero 4
 
 air_diagonal_kick_query_32_row:
-  .word 0xa, 0x20, MK4_NATIVE_CONTACT_QUERY_B, MK4_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_57_REVERSE
+  .word 0xa, 0x20, native_contact_query_b, native_air_diagonal_kick_contact_hold, native_air_attack_land_or_finish, native_air_diagonal_kick_clip_57_reverse
   .word 0x46e300
   .zero 92
 
 air_hp_tail:
-  .word clip(97), 0x5, MK4_NATIVE_AIR_HIGH_PUNCH_CONTACT_WINDOW
+  .word clip(97), 0x5, native_air_high_punch_contact_window
   .zero 4
 
 air_high_punch_contact_row:
-  .word 0xa, 0x4, MK4_NATIVE_CONTACT_QUERY_A, MK4_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH
+  .word 0xa, 0x4, native_contact_query_a, native_goro_air_hp_recovery_callback, native_air_attack_land_or_finish
 
 ; Retained referenced block; semantic role is not established.
 unresolved_dispatch_and_motion_017:
-  .word MK4_NATIVE_AIR_HIGH_PUNCH_MISS_REVERSE, 0x46e300
+  .word native_air_high_punch_miss_reverse, 0x46e300
   .zero 68
 
 weapon_air_high_punch_parameters:
@@ -405,11 +405,11 @@ weapon_air_low_punch_parameters:
   .zero 24
 
 air_lp_tail:
-  .word clip(96), 0x9, MK4_NATIVE_AIR_CONTACT_BEGIN
+  .word clip(96), 0x9, native_air_contact_begin
   .zero 4
 
 air_low_punch_contact_row:
-  .word 0xa, 0x5, MK4_NATIVE_CONTACT_QUERY_A, MK4_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK, MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH, MK4_NATIVE_AIR_LOW_PUNCH_MISS_REVERSE
+  .word 0xa, 0x5, native_contact_query_a, native_goro_air_lp_recovery_callback, native_air_attack_land_or_finish, native_air_low_punch_miss_reverse
   .word 0x46e300
   .zero 60
   .word 0x26, 0x46ef30
@@ -420,7 +420,7 @@ air_low_punch_contact_row:
   .zero 8
   .word 0x460570, 0x460c40
   .zero 24
-  .word 0xffffcf5d, 0x28f, MK4_NATIVE_LANDING_MOTION, 0x46fcd0, 0x4706f0
+  .word 0xffffcf5d, 0x28f, native_landing_motion, 0x46fcd0, 0x4706f0
   .zero 4
   .word 0xe14, 0xffffcf5d, 0x24d, 0x470650, 0xfffff1ec, 0xffffd1ec
   .word 0x24d
@@ -432,8 +432,8 @@ air_low_punch_contact_row:
   .word 0x4f000028, 0x3e000000
 
 kick_contact_narrow:
-  .word 0x2, MK4_NATIVE_CONTACT_QUERY_B, 0xa, 0xb, 0xc, 0xffffffff
-  .word MK4_NATIVE_HIGH_KICK_NARROW_CONTACT_RECOVERY
+  .word 0x2, native_contact_query_b, 0xa, 0xb, 0xc, 0xffffffff
+  .word native_high_kick_narrow_contact_recovery
   .zero 636
 
 close_high_punch:
@@ -446,9 +446,9 @@ unresolved_dispatch_and_motion_018:
   .word clip(263), clip(264), clip(263)
 
 combo_high_punch:
-  .word MK4_NATIVE_JAX_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY, MK4_NATIVE_KITANA_COMBO_HP_ENTRY, MK4_NATIVE_JAX_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY, MK4_NATIVE_KITANA_COMBO_HP_ENTRY
-  .word MK4_NATIVE_JAX_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY, MK4_NATIVE_KITANA_COMBO_HP_ENTRY, MK4_NATIVE_JAX_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY, MK4_NATIVE_KITANA_COMBO_HP_ENTRY
-  .word MK4_NATIVE_JAX_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY, MK4_NATIVE_KITANA_COMBO_HP_ENTRY, MK4_NATIVE_COMBO_HP_ENTRY
+  .word native_jax_combo_hp_entry, native_combo_hp_entry, native_kitana_combo_hp_entry, native_jax_combo_hp_entry, native_combo_hp_entry, native_kitana_combo_hp_entry
+  .word native_jax_combo_hp_entry, native_combo_hp_entry, native_kitana_combo_hp_entry, native_jax_combo_hp_entry, native_combo_hp_entry, native_kitana_combo_hp_entry
+  .word native_jax_combo_hp_entry, native_combo_hp_entry, native_kitana_combo_hp_entry, native_combo_hp_entry
   .zero 536
   .word 0x8, 0x20, 0x2, 0x21
   .zero 4
@@ -456,40 +456,40 @@ combo_high_punch:
   .zero 4
 
 input_table_straight_air:
-  .word MK4_NATIVE_PRESS_STRAIGHT_AIR_HIGH_PUNCH, MK4_NATIVE_PRESS_STRAIGHT_AIR_LOW_PUNCH
+  .word native_press_straight_air_high_punch, native_press_straight_air_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK, MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK
+  .word native_press_straight_air_kick, native_press_straight_air_kick
   .zero 4
 
 input_table_air_combo:
   .zero 4
-  .word MK4_NATIVE_PRESS_STRAIGHT_AIR_LOW_PUNCH
+  .word native_press_straight_air_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK, MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK
+  .word native_press_straight_air_kick, native_press_straight_air_kick
   .zero 4
 
 action_table_1:
-  .word MK4_NATIVE_TASK_PARK_40_TICK_LOOP, MK4_NATIVE_UPPERCUT_ENTRY, 0x42c560, MK4_NATIVE_WEAPON_PICKUP, MK4_NATIVE_NORMAL_LOW_KICK, MK4_NATIVE_HIGH_KICK
-  .word MK4_NATIVE_SWEEP, MK4_NATIVE_ROUNDHOUSE, MK4_NATIVE_NORMAL_LOW_PUNCH, MK4_NATIVE_CLOSE_HIGH_PUNCH, MK4_NATIVE_AIR_HIGH_PUNCH, MK4_NATIVE_HIGH_PUNCH
-  .word MK4_NATIVE_CLOSE_HIGH_KICK, MK4_NATIVE_AIR_KICK, MK4_NATIVE_AIR_LOW_PUNCH, MK4_NATIVE_SIDESTEP, MK4_NATIVE_AIR_DIAGONAL_HIGH_KICK, MK4_NATIVE_AIR_DIAGONAL_LOW_KICK
-  .word MK4_NATIVE_QUAN_CHI_WEAPON_STEAL, MK4_NATIVE_SHINNOK_MORPH_SCORPION, MK4_NATIVE_SHINNOK_MORPH_RAIDEN, MK4_NATIVE_SHINNOK_MORPH_SONYA, MK4_NATIVE_SHINNOK_MORPH_LIU_KANG, MK4_NATIVE_SHINNOK_MORPH_SUB_ZERO
-  .word MK4_NATIVE_SHINNOK_MORPH_FUJIN, MK4_NATIVE_SHINNOK_MORPH_JAREK, MK4_NATIVE_SHINNOK_MORPH_QUAN_CHI, MK4_NATIVE_SHINNOK_MORPH_TANYA, MK4_NATIVE_SHINNOK_MORPH_REPTILE, MK4_NATIVE_SHINNOK_MORPH_KAI
-  .word MK4_NATIVE_SHINNOK_MORPH_JAX, MK4_NATIVE_REPTILE_INVISIBILITY, MK4_NATIVE_AIR_THROW_SLAM, MK4_NATIVE_AIR_THROW_FLIP, MK4_NATIVE_AIR_THROW, MK4_NATIVE_AIR_THROW_LIFT
-  .word MK4_NATIVE_SHINNOK_MORPH_REIKO, MK4_NATIVE_SHINNOK_MORPH_CAGE
+  .word native_task_park_40_tick_loop, native_uppercut_entry, 0x42c560, native_weapon_pickup, native_normal_low_kick, native_high_kick
+  .word native_sweep, native_roundhouse, native_normal_low_punch, native_close_high_punch, native_air_high_punch, native_high_punch
+  .word native_close_high_kick, native_air_kick, native_air_low_punch, native_sidestep, native_air_diagonal_high_kick, native_air_diagonal_low_kick
+  .word native_quan_chi_weapon_steal, native_shinnok_morph_scorpion, native_shinnok_morph_raiden, native_shinnok_morph_sonya, native_shinnok_morph_liu_kang, native_shinnok_morph_sub_zero
+  .word native_shinnok_morph_fujin, native_shinnok_morph_jarek, native_shinnok_morph_quan_chi, native_shinnok_morph_tanya, native_shinnok_morph_reptile, native_shinnok_morph_kai
+  .word native_shinnok_morph_jax, native_reptile_invisibility, native_air_throw_slam, native_air_throw_flip, native_air_throw, native_air_throw_lift
+  .word native_shinnok_morph_reiko, native_shinnok_morph_cage
   .zero 8
-  .word MK4_NATIVE_SCORPION_FIRE, MK4_NATIVE_WEAPON_DRAW, MK4_NATIVE_CAGE_GROIN_PUNCH, MK4_NATIVE_FUJIN_WIND_SLAM, MK4_NATIVE_JAX_GROUND_POUND, MK4_NATIVE_FUJIN_WIND
-  .word 0x469810, 0x46b430, MK4_NATIVE_GORO_LEAP_STOMP, MK4_NATIVE_GORO_SPECIAL_PUNCH, MK4_NATIVE_GORO_SPECIAL_KICK, MK4_NATIVE_GORO_SPECIAL_UPPERCUT
-  .word MK4_NATIVE_GORO_QUAKE_STOMP
+  .word native_scorpion_fire, native_weapon_draw, native_cage_groin_punch, native_fujin_wind_slam, native_jax_ground_pound, native_fujin_wind
+  .word 0x469810, 0x46b430, native_goro_leap_stomp, native_goro_special_punch, native_goro_special_kick, native_goro_special_uppercut
+  .word native_goro_quake_stomp
   .zero 36
-  .word 0x46a1e0, 0x46a470, MK4_NATIVE_FINISH_FIRST, MK4_NATIVE_FAN_FINISH, MK4_NATIVE_SPIKE_FINISH, MK4_NATIVE_FINISH_SECOND
+  .word 0x46a1e0, 0x46a470, native_finish_first, native_fan_finish, native_spike_finish, native_finish_second
 
 action_table_8:
-  .word MK4_NATIVE_AIR_HIGH_PUNCH, MK4_NATIVE_AIR_LOW_PUNCH, MK4_NATIVE_AIR_DIAGONAL_HIGH_KICK, MK4_NATIVE_AIR_DIAGONAL_LOW_KICK, MK4_NATIVE_AIR_KICK
+  .word native_air_high_punch, native_air_low_punch, native_air_diagonal_high_kick, native_air_diagonal_low_kick, native_air_kick
   .zero 4
 
 crouch_entry:
   .word 0x46b5e0, 0x46b1b0, 0x46f7e0, 0x46fdf0, 0x46fe80, 0x46afa0
-  .word MK4_NATIVE_CROUCH_LOW_KICK, MK4_NATIVE_CROUCH_HIGH_KICK, MK4_NATIVE_CROUCH_LOW_PUNCH, 0x46b350, 0x4692d0
+  .word native_crouch_low_kick, native_crouch_high_kick, native_crouch_low_punch, 0x46b350, 0x4692d0
   .zero 4
   .word 0x46b1f0
   .zero 4
@@ -499,33 +499,33 @@ crouch_entry:
   .zero 8
 
 input_table_close_primary:
-  .word MK4_NATIVE_PRESS_CLOSE_PUNCH_COMBO_HIGH_PUNCH, MK4_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH
+  .word native_press_close_punch_combo_high_punch, native_press_followup_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_FOLLOWUP_HIGH_KICK, MK4_NATIVE_PRESS_FOLLOWUP_LOW_KICK
+  .word native_press_followup_high_kick, native_press_followup_low_kick
   .zero 4
 
 input_table_close_secondary:
-  .word MK4_NATIVE_PRESS_COMBO_PUNCH_HIGH_PUNCH, MK4_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH
+  .word native_press_combo_punch_high_punch, native_press_followup_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_COMBO_PUNCH_HIGH_KICK, MK4_NATIVE_PRESS_FOLLOWUP_LOW_KICK
+  .word native_press_combo_punch_high_kick, native_press_followup_low_kick
   .zero 4
 
 input_table_close_tertiary:
-  .word MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_PUNCH, MK4_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH
+  .word native_press_close_kick_high_punch, native_press_followup_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_KICK, MK4_NATIVE_PRESS_FOLLOWUP_LOW_KICK
+  .word native_press_close_kick_high_kick, native_press_followup_low_kick
   .zero 4
 
 input_table_close_followup:
-  .word MK4_NATIVE_PRESS_AIR_CONTACT_HIGH_PUNCH, MK4_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH
+  .word native_press_air_contact_high_punch, native_press_followup_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_FOLLOWUP_HIGH_KICK, MK4_NATIVE_PRESS_FOLLOWUP_LOW_KICK
+  .word native_press_followup_high_kick, native_press_followup_low_kick
   .zero 4
 
 input_table_diagonal_air:
-  .word MK4_NATIVE_PRESS_DIAGONAL_AIR_HIGH_PUNCH, MK4_NATIVE_PRESS_DIAGONAL_AIR_LOW_PUNCH
+  .word native_press_diagonal_air_high_punch, native_press_diagonal_air_low_punch
   .zero 4
-  .word MK4_NATIVE_PRESS_DIAGONAL_AIR_HIGH_KICK, MK4_NATIVE_PRESS_DIAGONAL_AIR_LOW_KICK
+  .word native_press_diagonal_air_high_kick, native_press_diagonal_air_low_kick
   .zero 4
 
 ; Retained referenced block; semantic role is not established.

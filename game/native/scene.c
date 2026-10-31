@@ -220,13 +220,13 @@ void action_scene_reaction(Fighter *fighter) {
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
   uint32_t script;
   switch (entry) {
-    case MK4_NATIVE_RAIDEN_FATALITY_2_SCENE_VICTIM:
+    case native_raiden_fatality_2_scene_victim:
       script = fn_raiden_fatality_2_victim;
       break;
-    case MK4_NATIVE_TANYA_FATALITY_2_VICTIM_REACTION_186:
+    case native_tanya_fatality_2_victim_reaction_186:
       script = fn_tanya_fatality_2_victim_scene;
       break;
-    case MK4_NATIVE_SONYA_FATALITY_2_SCENE_VICTIM:
+    case native_sonya_fatality_2_scene_victim:
       script = fn_sonya_fatality_2_victim;
       break;
     default:

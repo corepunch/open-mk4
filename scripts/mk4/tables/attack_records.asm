@@ -727,7 +727,7 @@ attack_records_end:
   .word 0x48fee0
 
 aux_reaction:
-  .word MK4_NATIVE_VELOCITY_FRICTION, 0x41
+  .word native_velocity_friction, 0x41
   .zero 8
   .word 0x45fc90
   .zero 52

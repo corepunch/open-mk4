@@ -81,7 +81,7 @@ def export_scripts(image, destination, check=False):
 
     def named_owner(values):
         found = {fighter for fighter in CHARACTERS for name in values
-                 if re.sub(r'^mk4_native_', '', name.lower()).startswith(fighter + '_')
+                 if re.sub(r'^native_', '', name.lower()).startswith(fighter + '_')
                  or name.lower().endswith('_' + fighter)}
         return next(iter(found)) if len(found) == 1 else None
 

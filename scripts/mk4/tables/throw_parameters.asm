@@ -3,13 +3,13 @@
 
 
 lk_throw_table:
-  .word MK4_NATIVE_SCORPION_LK_THROW_ENTRY, MK4_NATIVE_RAIDEN_LK_THROW_ENTRY, MK4_NATIVE_SONYA_LK_THROW_ENTRY, MK4_NATIVE_LIU_KANG_LK_THROW_ENTRY, MK4_NATIVE_SUB_ZERO_LK_THROW_ENTRY, MK4_NATIVE_FUJIN_LK_THROW_ENTRY
-  .word MK4_NATIVE_SHINNOK_LK_THROW_ENTRY, MK4_NATIVE_REIKO_LK_THROW_ENTRY, MK4_NATIVE_QUAN_CHI_LK_THROW_ENTRY, MK4_NATIVE_TANYA_LK_THROW_ENTRY, MK4_NATIVE_REPTILE_LK_THROW_ENTRY, MK4_NATIVE_KAI_LK_THROW_ENTRY
-  .word MK4_NATIVE_JAREK_LK_THROW_ENTRY, MK4_NATIVE_JAREK_LK_THROW_ENTRY, MK4_NATIVE_CAGE_LK_THROW_ENTRY, MK4_NATIVE_GORO_LK_THROW_ENTRY
+  .word native_scorpion_lk_throw_entry, native_raiden_lk_throw_entry, native_sonya_lk_throw_entry, native_liu_kang_lk_throw_entry, native_sub_zero_lk_throw_entry, native_fujin_lk_throw_entry
+  .word native_shinnok_lk_throw_entry, native_reiko_lk_throw_entry, native_quan_chi_lk_throw_entry, native_tanya_lk_throw_entry, native_reptile_lk_throw_entry, native_kai_lk_throw_entry
+  .word native_jarek_lk_throw_entry, native_jarek_lk_throw_entry, native_cage_lk_throw_entry, native_goro_lk_throw_entry
   .zero 536
 
 animation_descriptor_lk_victim_return:
-  .word clip(39), MK4_NATIVE_JAX_GROUND_POUND_CONTROLLER_RETURN
+  .word clip(39), native_jax_ground_pound_controller_return
   .zero 320
 
 mmove_lk_owner_return:
@@ -27,9 +27,9 @@ slam_continue_chords:
   .zero 92
 
 throw_turn:
-  .word MK4_NATIVE_FLIP_FACING
+  .word native_flip_facing
   .zero 72
-  .word MK4_NATIVE_FACE_PEER_ORIENT_GROUP
+  .word native_face_peer_orient_group
   .zero 404
   .word 0x42cb40, 0x42cb50, 0x42cb60, 0x42cb70
   .zero 88

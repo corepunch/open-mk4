@@ -21,7 +21,7 @@ shared. Kitana and Noob keep their established retail sharing/remaps instead
 of receiving invented script copies.
 
 For example, `sonya_fatality_2_second_cycle` and
-`MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END` are both in `sonya.asm`. The linker
+`native_sonya_script_second_cycle_end` are both in `sonya.asm`. The linker
 automatically exposes each script label to C as `fn_<label>`: for example,
 `quan_chi_lk_throw_startup` becomes `fn_quan_chi_lk_throw_startup`. There is
 no separate script export declaration or JSON name mapping. Other bytecode
@@ -29,8 +29,10 @@ branches to the bare label. Native C implementations remain
 in shared capability modules under `game/native/`.
 
 Native constants use one build-time declaration, such as
-`.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`, to define the value and expose
-its existing name to C. No separate self-export line is needed.
+`.export_equ native_jax_missile 0x496f80`, to define the value and expose
+the same `native_<name>` identifier to assembly and C. These are stable
+integer ABI IDs; C implementations use separate function names. No separate
+self-export line is needed.
 
 The instruction set and packing are the original MK4 word format. A mnemonic
 such as `wait 5` assembles to the original opcode/argument word. The interpreter

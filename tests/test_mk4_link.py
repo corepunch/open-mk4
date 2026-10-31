@@ -212,7 +212,7 @@ ready 0
             module = destination / 'fighters/sonya.asm'
             original = module.read_text()
             self.assertIn('sonya_fatality_2_second_cycle:', original)
-            self.assertIn('.export_equ MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END ', original)
+            self.assertIn('.export_equ native_sonya_script_second_cycle_end ', original)
             modified = original.replace('  wait 0xf', '  wait 0xe', 1)
             self.assertNotEqual(modified, original)
             module.write_text(modified)

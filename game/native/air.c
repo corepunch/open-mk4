@@ -140,10 +140,10 @@ static void air_contact_query(Fighter *fighter) {
     return;
   }
   uint32_t query = mk4_image_u32(image, row + 8);
-  require(query == MK4_NATIVE_CONTACT_QUERY_A || query == MK4_NATIVE_CONTACT_QUERY_B, "Unsupported native air contact query");
+  require(query == native_contact_query_a || query == native_contact_query_b, "Unsupported native air contact query");
   unsigned selector = mk4_image_u32(image, row + 4);
   require(selector < 256, "Invalid native air contact selector");
-  uint32_t bank = query == MK4_NATIVE_CONTACT_QUERY_A ? dat_contact_query_a_table : dat_contact_query_b_table;
+  uint32_t bank = query == native_contact_query_a ? dat_contact_query_a_table : dat_contact_query_b_table;
   AttackRecord record = script_vm_attack_record(image, mk4_image_u32(image, bank + selector * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_CODE_1006;
@@ -192,72 +192,72 @@ static void air_open(Fighter *fighter, uint32_t row) {
 
 static void air_continue(Fighter *fighter, uint32_t target) {
   switch (target) {
-    case MK4_NATIVE_AIR_HIGH_PUNCH_CONTACT_WINDOW:
+    case native_air_high_punch_contact_window:
       fighter->sample_override = mini(9, fighter_move(fighter)->last);
       air_contact_begin(fighter, dat_air_high_punch_contact_row);
       return;
-    case MK4_NATIVE_AIR_CONTACT_BEGIN:
+    case native_air_contact_begin:
       air_contact_begin(fighter, dat_air_low_punch_contact_row);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_30:
+    case native_air_diagonal_kick_query_30:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, dat_air_diagonal_kick_query_30_row);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_31:
+    case native_air_diagonal_kick_query_31:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, dat_air_diagonal_kick_query_31_row);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_QUERY_32:
+    case native_air_diagonal_kick_query_32:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, dat_air_diagonal_kick_query_32_row);
       return;
-    case MK4_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK:
+    case native_goro_air_hp_recovery_callback:
       air_punch_contact(fighter, true);
       return;
-    case MK4_NATIVE_GORO_AIR_KICK_RECOVERY_CALLBACK:
+    case native_goro_air_kick_recovery_callback:
       air_punch_contact(fighter, false);
       return;
-    case MK4_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK:
+    case native_goro_air_lp_recovery_callback:
       air_script(fighter, fn_air_low_punch_contact_hold, false);
       return;
-    case MK4_NATIVE_AIR_LOW_KICK_CONTACT_HOLD:
+    case native_air_low_kick_contact_hold:
       air_script(fighter, fn_air_low_kick_contact_hold, false);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD:
+    case native_air_diagonal_kick_contact_hold:
       air_script(fighter, fn_air_diagonal_kick_contact_hold, false);
       return;
-    case MK4_NATIVE_AIR_HIGH_PUNCH_MISS_REVERSE:
+    case native_air_high_punch_miss_reverse:
       air_script(fighter, fn_air_high_punch_miss_reverse, true);
       return;
-    case MK4_NATIVE_AIR_LOW_PUNCH_MISS_REVERSE:
+    case native_air_low_punch_miss_reverse:
       air_script(fighter, fn_air_low_punch_miss_reverse, true);
       return;
-    case MK4_NATIVE_AIR_LOW_KICK_CLIP_58_REVERSE:
+    case native_air_low_kick_clip_58_reverse:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, fn_air_low_kick_clip_58_reverse, true);
       return;
-    case MK4_NATIVE_AIR_LOW_KICK_CLIP_59_REVERSE:
+    case native_air_low_kick_clip_59_reverse:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, fn_air_low_kick_clip_59_reverse, true);
       return;
-    case MK4_NATIVE_AIR_LOW_KICK_CLIP_60_REVERSE:
+    case native_air_low_kick_clip_60_reverse:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, fn_air_low_kick_clip_60_reverse, true);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_55_REVERSE:
+    case native_air_diagonal_kick_clip_55_reverse:
       air_script(fighter, fn_air_diagonal_kick_clip_55_reverse, true);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_56_REVERSE:
+    case native_air_diagonal_kick_clip_56_reverse:
       air_script(fighter, fn_air_diagonal_kick_clip_56_reverse, true);
       return;
-    case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_57_REVERSE:
+    case native_air_diagonal_kick_clip_57_reverse:
       air_script(fighter, fn_air_diagonal_kick_clip_57_reverse, true);
       return;
-    case MK4_NATIVE_AIR_STRAIGHT_KICK_MISS_REVERSE:
+    case native_air_straight_kick_miss_reverse:
       air_script(fighter, fn_cage_air_kick_narrow_miss_reversal, false);
       return;
-    case MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH:
-    case MK4_NATIVE_AIR_STRAIGHT_KICK_LAND:
+    case native_air_attack_land_or_finish:
+    case native_air_straight_kick_land:
       action_air_land(fighter);
       return;
     default:

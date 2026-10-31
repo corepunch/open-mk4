@@ -15,37 +15,37 @@ typedef struct WeaponNative {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const WeaponNative weapon_natives[] = {
-  {MK4_NATIVE_SONYA_DRAW_WEAPON_HP_SLASH, dat_weapon_clip_235_query_1_parameters, 0, 0x0, false, true},
-  {MK4_NATIVE_SONYA_DRAW_WEAPON_LP_SLASH, dat_weapon_clip_236_query_0_parameters, 0, 0x0, true, true},
-  {MK4_NATIVE_RAIDEN_STAFF_HP_ENTRY, dat_weapon_clip_233_query_4_parameters, 0, 0x112, false, true},
-  {MK4_NATIVE_RAIDEN_STAFF_LP_ENTRY, dat_weapon_clip_234_query_5_parameters, 0, 0x112, true, true},
-  {MK4_NATIVE_SONYA_WEAPON_HP_ENTRY, dat_weapon_clip_230_query_8_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_SONYA_WEAPON_LP_ENTRY, dat_weapon_clip_229_query_9_parameters, 0, 0x111, true, true},
-  {MK4_NATIVE_SUB_ZERO_SCEPTER_HP_ENTRY, dat_scepter_high_punch_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_SUB_ZERO_SCEPTER_LP_ENTRY, dat_weapon_clip_250_query_38_parameters, 0, 0x0, true, true},
-  {MK4_NATIVE_SHINNOK_WEAPON_HP_ENTRY, dat_weapon_clip_237_query_28_parameters, dat_weapon_clip_237_query_28_motion, 0x0, false, true},
-  {MK4_NATIVE_SHINNOK_WEAPON_LP_ENTRY, dat_weapon_clip_238_query_29_parameters, dat_weapon_clip_238_query_29_motion, 0x0, true, true},
-  {MK4_NATIVE_JAX_AXE_HP_ENTRY, dat_axe_high_punch_parameters, 0, 0x0, false, true},
-  {MK4_NATIVE_JAX_AXE_LP_ENTRY, dat_weapon_clip_232_query_24_parameters, 0, 0x0, true, true},
-  {MK4_NATIVE_TANYA_WEAPON_HP_ENTRY, dat_weapon_clip_229_query_42_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_KAI_WEAPON_HIGH_PUNCH_FRONTEND, dat_kai_weapon_high_punch_parameters, dat_kai_weapon_high_punch_motion, 0x0, false, true},
-  {MK4_NATIVE_KAI_WEAPON_LOW_PUNCH_FRONTEND, dat_weapon_clip_229_query_32_parameters, dat_weapon_clip_229_query_32_motion, 0x0, true, true},
-  {MK4_NATIVE_JAREK_WEAPON_HP_ENTRY, dat_weapon_clip_239_query_37_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_JAREK_WEAPON_LP_ENTRY, dat_weapon_clip_229_query_36_parameters, 0, 0x111, true, true},
-  {MK4_NATIVE_CAGE_WEAPON_LP_ENTRY, dat_cage_weapon_low_punch_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_REPTILE_WEAPON_LP_ENTRY, dat_weapon_clip_240_query_21_parameters, 0, 0x111, true, true},
-  {MK4_NATIVE_REPTILE_WEAPON_HP_ENTRY, dat_reptile_weapon_high_punch_parameters, 0, 0x111, false, true},
-  {MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_HP_ENTRY, dat_scepter_back_high_punch_parameters, dat_scepter_back_high_punch_motion, 0x0, false, false},
-  {MK4_NATIVE_SUB_ZERO_SCEPTER_BACK_LP_ENTRY, dat_weapon_clip_228_query_39_parameters, dat_weapon_clip_228_query_39_motion, 0x113, false, false},
-  {MK4_NATIVE_QUAN_CHI_WEAPON_HP_ENTRY, dat_weapon_clip_238_query_7_parameters, dat_weapon_clip_238_query_7_motion, 0x112, false, false},
-  {MK4_NATIVE_RAIDEN_STAFF_BACK_LP_ENTRY, dat_staff_back_low_punch_parameters, dat_staff_back_low_punch_motion, 0x112, false, false},
-  {MK4_NATIVE_TANYA_WEAPON_BACK_HP_ENTRY, dat_weapon_clip_231_query_43_parameters, dat_weapon_clip_231_query_43_motion, 0x0, false, false},
-  {MK4_NATIVE_JAREK_WEAPON_BACK_LP_ENTRY, dat_weapon_clip_228_query_35_parameters, dat_weapon_clip_228_query_35_motion, 0x0, false, false},
-  {MK4_NATIVE_JAX_AXE_BACK_HP_ENTRY, dat_weapon_clip_229_query_23_parameters, 0, 0x0, false, false},
-  {MK4_NATIVE_SHINNOK_WEAPON_BACK_LP_ENTRY, dat_weapon_clip_243_query_30_parameters, 0, 0x0, false, false},
-  {MK4_NATIVE_SUB_ZERO_DRAW_WEAPON_SCEPTER_FOLLOW_UP, dat_scepter_back_high_punch_parameters, 0, 0x0, false, false},
-  {MK4_NATIVE_KAI_WEAPON_FOLLOWUP_ENTRY, dat_kai_weapon_followup_parameters, dat_kai_weapon_followup_motion, 0x0, false, false},
-  {MK4_NATIVE_REPTILE_WEAPON_ALTERNATE_HIGH_PUNCH, dat_reptile_weapon_back_high_punch_parameters, 0, 0x0, false, false},
+  {native_sonya_draw_weapon_hp_slash, dat_weapon_clip_235_query_1_parameters, 0, 0x0, false, true},
+  {native_sonya_draw_weapon_lp_slash, dat_weapon_clip_236_query_0_parameters, 0, 0x0, true, true},
+  {native_raiden_staff_hp_entry, dat_weapon_clip_233_query_4_parameters, 0, 0x112, false, true},
+  {native_raiden_staff_lp_entry, dat_weapon_clip_234_query_5_parameters, 0, 0x112, true, true},
+  {native_sonya_weapon_hp_entry, dat_weapon_clip_230_query_8_parameters, 0, 0x111, false, true},
+  {native_sonya_weapon_lp_entry, dat_weapon_clip_229_query_9_parameters, 0, 0x111, true, true},
+  {native_sub_zero_scepter_hp_entry, dat_scepter_high_punch_parameters, 0, 0x111, false, true},
+  {native_sub_zero_scepter_lp_entry, dat_weapon_clip_250_query_38_parameters, 0, 0x0, true, true},
+  {native_shinnok_weapon_hp_entry, dat_weapon_clip_237_query_28_parameters, dat_weapon_clip_237_query_28_motion, 0x0, false, true},
+  {native_shinnok_weapon_lp_entry, dat_weapon_clip_238_query_29_parameters, dat_weapon_clip_238_query_29_motion, 0x0, true, true},
+  {native_jax_axe_hp_entry, dat_axe_high_punch_parameters, 0, 0x0, false, true},
+  {native_jax_axe_lp_entry, dat_weapon_clip_232_query_24_parameters, 0, 0x0, true, true},
+  {native_tanya_weapon_hp_entry, dat_weapon_clip_229_query_42_parameters, 0, 0x111, false, true},
+  {native_kai_weapon_high_punch_frontend, dat_kai_weapon_high_punch_parameters, dat_kai_weapon_high_punch_motion, 0x0, false, true},
+  {native_kai_weapon_low_punch_frontend, dat_weapon_clip_229_query_32_parameters, dat_weapon_clip_229_query_32_motion, 0x0, true, true},
+  {native_jarek_weapon_hp_entry, dat_weapon_clip_239_query_37_parameters, 0, 0x111, false, true},
+  {native_jarek_weapon_lp_entry, dat_weapon_clip_229_query_36_parameters, 0, 0x111, true, true},
+  {native_cage_weapon_lp_entry, dat_cage_weapon_low_punch_parameters, 0, 0x111, false, true},
+  {native_reptile_weapon_lp_entry, dat_weapon_clip_240_query_21_parameters, 0, 0x111, true, true},
+  {native_reptile_weapon_hp_entry, dat_reptile_weapon_high_punch_parameters, 0, 0x111, false, true},
+  {native_sub_zero_scepter_back_hp_entry, dat_scepter_back_high_punch_parameters, dat_scepter_back_high_punch_motion, 0x0, false, false},
+  {native_sub_zero_scepter_back_lp_entry, dat_weapon_clip_228_query_39_parameters, dat_weapon_clip_228_query_39_motion, 0x113, false, false},
+  {native_quan_chi_weapon_hp_entry, dat_weapon_clip_238_query_7_parameters, dat_weapon_clip_238_query_7_motion, 0x112, false, false},
+  {native_raiden_staff_back_lp_entry, dat_staff_back_low_punch_parameters, dat_staff_back_low_punch_motion, 0x112, false, false},
+  {native_tanya_weapon_back_hp_entry, dat_weapon_clip_231_query_43_parameters, dat_weapon_clip_231_query_43_motion, 0x0, false, false},
+  {native_jarek_weapon_back_lp_entry, dat_weapon_clip_228_query_35_parameters, dat_weapon_clip_228_query_35_motion, 0x0, false, false},
+  {native_jax_axe_back_hp_entry, dat_weapon_clip_229_query_23_parameters, 0, 0x0, false, false},
+  {native_shinnok_weapon_back_lp_entry, dat_weapon_clip_243_query_30_parameters, 0, 0x0, false, false},
+  {native_sub_zero_draw_weapon_scepter_follow_up, dat_scepter_back_high_punch_parameters, 0, 0x0, false, false},
+  {native_kai_weapon_followup_entry, dat_kai_weapon_followup_parameters, dat_kai_weapon_followup_motion, 0x0, false, false},
+  {native_reptile_weapon_alternate_high_punch, dat_reptile_weapon_back_high_punch_parameters, 0, 0x0, false, false},
 };
 // clang-format on
 
@@ -78,40 +78,40 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
     return;
   }
   switch (address) {
-    case MK4_NATIVE_LIU_WEAPON_HIGH_PUNCH:
+    case native_liu_weapon_high_punch:
       if (back) {
         action_liu_kang_sword_back_high_punch(fighter);
       } else {
         action_liu_kang_sword_high_punch(fighter);
       }
       break;
-    case MK4_NATIVE_LIU_WEAPON_LOW_PUNCH:
+    case native_liu_weapon_low_punch:
       if (mk4_can_ground_throw(fighter, false)) {
         action_lp_throw(fighter);
       } else if (back) {
-        weapon_native(fighter, MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY, false);
+        weapon_native(fighter, native_cage_weapon_back_lp_entry, false);
       } else {
         action_liu_kang_sword_low_punch(fighter);
       }
       break;
-    case MK4_NATIVE_QUAN_CHI_WEAPON_BACK_HP_ENTRY:
+    case native_quan_chi_weapon_back_hp_entry:
       if (back) {
-        weapon_native(fighter, MK4_NATIVE_QUAN_CHI_WEAPON_HP_ENTRY, false);
+        weapon_native(fighter, native_quan_chi_weapon_hp_entry, false);
       } else {
         weapon_start_encoded_strike(fighter, dat_weapon_clip_231_parameters, 0, 0x112, false);
       }
       break;
-    case MK4_NATIVE_CAGE_WEAPON_BACK_HP_ENTRY:
+    case native_cage_weapon_back_hp_entry:
       if (back) {
         action_cage_weapon_back_upper(fighter);
       } else {
         weapon_start_encoded_strike(fighter, dat_weapon_clip_239_parameters, 0, 0x111, false);
       }
       break;
-    case MK4_NATIVE_FUJIN_CROSSBOW_HP_ENTRY:
+    case native_fujin_crossbow_hp_entry:
       action_bow_high_punch(fighter);
       break;
-    case MK4_NATIVE_FUJIN_CROSSBOW_LP_ENTRY:
+    case native_fujin_crossbow_lp_entry:
       if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
         action_lp_throw(fighter);
       } else if (back) {
@@ -120,40 +120,40 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
         action_bow_low_punch(fighter);
       }
       break;
-    case MK4_NATIVE_FUJIN_CROSSBOW_FOLLOWUP_ENTRY:
+    case native_fujin_crossbow_followup_entry:
       action_bow_followup_strike(fighter);
       break;
-    case MK4_NATIVE_TANYA_WEAPON_LP_ENTRY:
+    case native_tanya_weapon_lp_entry:
       action_boomerang_low_punch(fighter);
       break;
-    case MK4_NATIVE_SWORD_BACK_LP:
+    case native_sword_back_lp:
       action_sword_back_low_punch(fighter);
       break;
-    case MK4_NATIVE_SWORD_BACK_HP:
+    case native_sword_back_hp:
       action_sword_back_high_punch(fighter);
       break;
-    case MK4_NATIVE_LIU_KANG_SWORD_BACK_HP_ENTRY:
+    case native_liu_kang_sword_back_hp_entry:
       action_liu_kang_sword_back_high_punch(fighter);
       break;
-    case MK4_NATIVE_CAGE_WEAPON_BACK_LP_ENTRY:
+    case native_cage_weapon_back_lp_entry:
       action_liu_kang_sword_back_low_punch(fighter);
       break;
-    case MK4_NATIVE_SONYA_WEAPON_BACK_HP_ENTRY:
+    case native_sonya_weapon_back_hp_entry:
       action_sonya_weapon_back_high_punch(fighter);
       break;
-    case MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_FRONTEND:
+    case native_kai_weapon_back_strike_frontend:
       action_kai_weapon_back_strike(fighter);
       break;
-    case MK4_NATIVE_CAGE_WEAPON_UPPER_ENTRY:
+    case native_cage_weapon_upper_entry:
       action_cage_weapon_back_upper(fighter);
       break;
-    case MK4_NATIVE_REPTILE_WEAPON_BACK_HP_ENTRY:
+    case native_reptile_weapon_back_hp_entry:
       action_reptile_weapon_flurry(fighter);
       break;
-    case MK4_NATIVE_REPTILE_WEAPON_BACK_LP_ENTRY:
+    case native_reptile_weapon_back_lp_entry:
       action_reptile_weapon_back_low_punch(fighter);
       break;
-    case MK4_NATIVE_JAX_AXE_BACK_LP_ENTRY:
+    case native_jax_axe_back_lp_entry:
       action_axe_back_low_punch(fighter);
       break;
     default:

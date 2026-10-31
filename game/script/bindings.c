@@ -18,91 +18,91 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
   switch (kind) {
     case MK4_CALL:
       switch (address) {
-        case MK4_NATIVE_FLIP_FACING:
+        case native_flip_facing:
           action_flip_facing(fighter);
           return true;
-        case MK4_NATIVE_IMPACT_VOICE:
+        case native_impact_voice:
           action_impact_voice(fighter);
           return true;
-        case MK4_NATIVE_KAI_SECOND_CHILD_WALK:
+        case native_kai_second_child_walk:
           kai_second_child_walk(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_HEAD_CLOSE:
+        case native_reptile_script_head_close:
           reptile_script_head_close(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_HEAD_OPEN:
+        case native_reptile_script_head_open:
           reptile_script_head_open(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_HEAD_WIDE:
+        case native_reptile_script_head_wide:
           reptile_script_head_wide(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_ACID_DROOL:
+        case native_reptile_script_acid_drool:
           reptile_script_acid_drool(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_VICTORY_EFFECT:
+        case native_raiden_script_victory_effect:
           raiden_script_victory_effect(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_FIRE_DECOR:
+        case native_scorpion_script_fire_decor:
           scorpion_script_fire_decor(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_FIRE_FLAME:
+        case native_scorpion_script_fire_flame:
           scorpion_script_fire_flame(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_GORE_19_PIECES:
+        case native_shinnok_second_gore_19_pieces:
           shinnok_second_gore(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_GORE_8_PIECES:
+        case native_shinnok_second_gore_8_pieces:
           shinnok_second_gore(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_GORE_7_PIECES:
+        case native_shinnok_second_gore_7_pieces:
           shinnok_second_gore(fighter);
           return true;
-        case MK4_NATIVE_JAREK_SECOND_GLOW:
+        case native_jarek_second_glow:
           jarek_second_glow(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_PARTICLES:
+        case native_raiden_script_second_particles:
           raiden_script_second_particles(fighter);
           return true;
-        case MK4_NATIVE_THROW_PAIR_START:
+        case native_throw_pair_start:
           action_throw_pair_start(fighter);
           return true;
-        case MK4_NATIVE_DISTURB_RESTING_WEAPONS:
+        case native_disturb_resting_weapons:
           action_disturb_resting_weapons();
           return true;
-        case MK4_NATIVE_AVOID_CLEAR:
+        case native_avoid_clear:
           mk4_script_avoid_clear(fighter);
           return true;
-        case MK4_NATIVE_AVOID_SET:
+        case native_avoid_set:
           mk4_script_avoid_set(fighter);
           return true;
-        case MK4_NATIVE_JAB_CONTACT:
+        case native_jab_contact:
           mk4_script_jab_contact(fighter);
           return true;
-        case MK4_NATIVE_JAB_REPEAT_PREDICATE:
+        case native_jab_repeat_predicate:
           fighter->execution.script.result = mk4_script_jab_gate(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_TORPEDO_STEP:
+        case native_raiden_script_torpedo_step:
           raiden_script_torpedo_step(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BEAST_VOICE:
+        case native_scorpion_script_beast_voice:
           scorpion_script_beast_voice(fighter);
           return true;
-        case MK4_NATIVE_THROW_GRUNT:
+        case native_throw_grunt:
           action_throw_grunt();
           return true;
-        case MK4_NATIVE_SAVE_MOTION:
+        case native_save_motion:
           mk4_script_save_motion(fighter);
           return true;
-        case MK4_NATIVE_RESTORE_MOTION:
+        case native_restore_motion:
           mk4_script_restore_motion(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_FATAL_ALIGN:
+        case native_liu_kang_liu_script_fatal_align:
           liu_kang_liu_script_fatal_align(fighter);
           return true;
-        case MK4_NATIVE_TOUCHABLE:
+        case native_touchable:
           mk4_script_touchable(fighter);
           return true;
-        case MK4_NATIVE_DISARM_SELF:
+        case native_disarm_self:
           mk4_script_disarm_self(fighter);
           return true;
         default:
@@ -110,1021 +110,1021 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
       }
     case MK4_TAIL:
       switch (address) {
-        case MK4_NATIVE_JAX_GROUND_POUND_CONTROLLER_RETURN:
+        case native_jax_ground_pound_controller_return:
           mk4_mmove_thrown_finish(fighter);
           return true;
-        case MK4_NATIVE_LP_ALIGN_AND_RELEASE:
+        case native_lp_align_and_release:
           action_lp_align_and_release(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_BREATH_VICTIM_END:
+        case native_sub_zero_script_breath_victim_end:
           sub_zero_script_breath_victim_end(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_BREATH_APPROACH:
+        case native_sub_zero_script_breath_approach:
           sub_zero_script_breath_approach(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_BREATH_SLIDE:
+        case native_sub_zero_script_breath_slide:
           sub_zero_script_breath_slide(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_BREATH_SHATTER:
+        case native_sub_zero_script_breath_shatter:
           sub_zero_script_breath_shatter(fighter);
           return true;
-        case MK4_NATIVE_REIKO_SECOND_VICTIM_FALL:
+        case native_reiko_second_victim_fall:
           reiko_second_victim_fall(fighter);
           return true;
-        case MK4_NATIVE_REIKO_SECOND_VICTIM_END:
+        case native_reiko_second_victim_end:
           reiko_second_victim_end(fighter);
           return true;
-        case MK4_NATIVE_JAREK_SECOND_HANDOFF:
+        case native_jarek_second_handoff:
           jarek_second_handoff(fighter);
           return true;
-        case MK4_NATIVE_JAREK_SECOND_VICTIM_HOLD:
+        case native_jarek_second_victim_hold:
           jarek_second_victim_hold(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BEAST_BEGIN:
+        case native_scorpion_script_beast_begin:
           scorpion_script_beast_begin(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BEAST_ATTACK:
+        case native_scorpion_script_beast_attack:
           scorpion_script_beast_attack(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BEAST_VICTIM_PIECES:
+        case native_scorpion_script_beast_victim_pieces:
           scorpion_script_beast_victim_pieces(fighter);
           return true;
-        case MK4_NATIVE_TASK_PARK_60_TICK_LOOP:
+        case native_task_park_60_tick_loop:
           action_task_pause(fighter);
           return true;
-        case MK4_NATIVE_CAGE_LK_THROW_PAIRED_CONTINUATION:
+        case native_cage_lk_throw_paired_continuation:
           script_vm_enter(fighter, fn_cage_lk_throw_damage, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_CAGE_LK_THROW_RELEASE:
+        case native_cage_lk_throw_release:
           script_vm_enter(fighter, fn_cage_lk_throw_release, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_CAGE_LK_THROW_OWNER_RETURN:
-        case MK4_NATIVE_JAREK_LK_THROW_OWNER_RETURN:
+        case native_cage_lk_throw_owner_return:
+        case native_jarek_lk_throw_owner_return:
           action_lk_return(fighter);
           return true;
-        case MK4_NATIVE_LK_PAUSE_LONG:
+        case native_lk_pause_long:
           action_lk_pause_long(fighter);
           return true;
-        case MK4_NATIVE_LK_PAUSE_SHORT:
+        case native_lk_pause_short:
           action_lk_pause_short(fighter);
           return true;
-        case MK4_NATIVE_LK_JUMP_BACK:
+        case native_lk_jump_back:
           action_lk_jump_back(fighter);
           return true;
-        case MK4_NATIVE_LK_RECOIL:
+        case native_lk_recoil:
           action_lk_recoil(fighter);
           return true;
-        case MK4_NATIVE_LK_BRANCH_CONTINUE:
+        case native_lk_branch_continue:
           action_lk_branch_continue(fighter);
           return true;
-        case MK4_NATIVE_LK_VICTIM_RETURN:
+        case native_lk_victim_return:
           action_lk_victim_return(fighter);
           return true;
-        case MK4_NATIVE_LK_THROW_ROCK_REPEAT_ONE:
+        case native_lk_throw_rock_repeat_one:
           action_lk_rock_repeat_one(fighter);
           return true;
-        case MK4_NATIVE_LK_THROW_ROCK_REPEAT_TWO:
+        case native_lk_throw_rock_repeat_two:
           action_lk_rock_repeat_two(fighter);
           return true;
-        case MK4_NATIVE_LK_THROW_ROCK_RELEASE:
+        case native_lk_throw_rock_release:
           action_lk_rock_release(fighter);
           return true;
-        case MK4_NATIVE_MMOVE_LK_OWNER_READY:
+        case native_mmove_lk_owner_ready:
           mk4_mmove_lk_owner_ready(fighter);
           return true;
-        case MK4_NATIVE_MMOVE_LK_BLEND_RETURN:
+        case native_mmove_lk_blend_return:
           mk4_mmove_lk_blend_return(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_LK_CONTINUE:
+        case native_liu_kang_liu_script_lk_continue:
           liu_kang_liu_script_lk_continue(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_LK_DAMAGE:
+        case native_liu_kang_liu_script_lk_damage:
           liu_kang_liu_script_lk_damage(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LK_THROW_RETREAT:
+        case native_liu_kang_lk_throw_retreat:
           script_vm_enter(fighter, fn_liu_kang_lk_throw_retreat, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_LK_REBASE:
+        case native_sub_zero_script_lk_rebase:
           sub_zero_script_lk_rebase(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_LK_DAMAGE:
+        case native_sub_zero_script_lk_damage:
           sub_zero_script_lk_damage(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_LK_OWNER_RETURN:
+        case native_sub_zero_script_lk_owner_return:
           sub_zero_script_lk_owner_return(fighter);
           return true;
-        case MK4_NATIVE_GORO_LP_THROW_FIVE_PHASE_SEQUENCE:
+        case native_goro_lp_throw_five_phase_sequence:
           script_vm_enter(fighter, fn_goro_lp_throw_repeated_damage, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT:
+        case native_goro_script_lp_phase_repeat:
           goro_script_lp_phase_repeat(fighter);
           return true;
-        case MK4_NATIVE_JAX_LP_THROW_THROW_CONTINUATION:
+        case native_jax_lp_throw_throw_continuation:
           script_vm_enter(fighter, fn_jax_lp_throw_first_slam, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_JAX_LP_SLAM_FIRST:
+        case native_jax_lp_slam_first:
           jax_lp_slam_first(fighter);
           return true;
-        case MK4_NATIVE_JAX_LP_SLAM_SECOND:
+        case native_jax_lp_slam_second:
           jax_lp_slam_second(fighter);
           return true;
-        case MK4_NATIVE_JAX_LP_SLAM_THIRD:
+        case native_jax_lp_slam_third:
           jax_lp_slam_third(fighter);
           return true;
-        case MK4_NATIVE_JAX_LP_THROW_RETURN:
+        case native_jax_lp_throw_return:
           jax_lp_throw_return(fighter);
           return true;
-        case MK4_NATIVE_LP_SELECT_SHORT:
+        case native_lp_select_short:
           action_lp_select_short(fighter);
           return true;
-        case MK4_NATIVE_LP_THROW_OWNER_READY:
+        case native_lp_throw_owner_ready:
           action_throw_ready(fighter);
           return true;
-        case MK4_NATIVE_LP_SELECT_LONG:
+        case native_lp_select_long:
           action_lp_select_long(fighter);
           return true;
-        case MK4_NATIVE_LP_END:
+        case native_lp_end:
           action_lp_end(fighter);
           return true;
-        case MK4_NATIVE_LP_THROW_VICTIM_ADJUST_RETURN:
+        case native_lp_throw_victim_adjust_return:
           action_throw_ready(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_LP_THROW_OWNER_RETURN:
+        case native_sub_zero_lp_throw_owner_return:
           action_throw_ready(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_PUNCH_TAIL:
+        case native_goro_script_punch_tail:
           goro_script_punch_tail(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_KICK_TAIL:
+        case native_goro_script_kick_tail:
           goro_script_kick_tail(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_LEAP_CONTINUE:
+        case native_goro_script_leap_continue:
           goro_script_leap_continue(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_STOMP_RETURN:
+        case native_goro_script_stomp_return:
           goro_script_stomp_return(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_QUAKE_LAND:
+        case native_goro_script_quake_land:
           goro_script_quake_land(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_FATAL_SETUP:
+        case native_liu_kang_liu_script_fatal_setup:
           liu_kang_liu_script_fatal_setup(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_VANISH:
+        case native_shinnok_second_vanish:
           shinnok_second_vanish(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_CLAP:
+        case native_shinnok_second_clap:
           shinnok_second_clap(fighter);
           return true;
-        case MK4_NATIVE_FAN_TAIL:
+        case native_fan_tail:
           action_fan_tail(fighter);
           return true;
-        case MK4_NATIVE_FAN_MALE_VICTIM_OWNER_CYCLE:
+        case native_fan_male_victim_owner_cycle:
           action_fan_cycle(fighter);
           return true;
-        case MK4_NATIVE_FAN_FEMALE_VICTIM_OWNER_CYCLE:
+        case native_fan_female_victim_owner_cycle:
           action_fan_cycle(fighter);
           return true;
-        case MK4_NATIVE_FAN_VICTORY:
+        case native_fan_victory:
           action_fan_victory(fighter);
           return true;
-        case MK4_NATIVE_FAN_VICTIM_END:
+        case native_fan_victim_end:
           action_fan_victim_end(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_FIRST_RELEASE:
+        case native_sonya_script_first_release:
           sonya_script_first_release(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_FIRST_RELEASE:
+        case native_raiden_script_first_release:
           raiden_script_first_release(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_FIRST_END:
+        case native_raiden_script_first_end:
           raiden_script_first_end(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_BEGIN:
+        case native_scorpion_script_burn_begin:
           scorpion_script_burn_begin(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_START:
+        case native_scorpion_script_burn_victim_start:
           scorpion_script_burn_victim_start(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_REPEAT1:
+        case native_scorpion_script_burn_repeat1:
           scorpion_script_burn_repeat1(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_REPEAT2:
+        case native_scorpion_script_burn_repeat2:
           scorpion_script_burn_repeat2(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTORY:
+        case native_scorpion_script_burn_victory:
           scorpion_script_burn_victory(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_CUE:
+        case native_scorpion_script_burn_victim_cue:
           scorpion_script_burn_victim_cue(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_REPEAT:
+        case native_scorpion_script_burn_victim_repeat:
           scorpion_script_burn_victim_repeat(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_BLEND:
+        case native_scorpion_script_burn_victim_blend:
           scorpion_script_burn_victim_blend(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_IMPACT:
+        case native_scorpion_script_burn_victim_impact:
           scorpion_script_burn_victim_impact(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_SETTLE:
+        case native_scorpion_script_burn_victim_settle:
           scorpion_script_burn_victim_settle(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BURN_VICTIM_END:
+        case native_scorpion_script_burn_victim_end:
           scorpion_script_burn_victim_end(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_BEGIN:
+        case native_sub_zero_script_first_begin:
           sub_zero_script_first_begin(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_PULL:
+        case native_sub_zero_script_first_pull:
           sub_zero_script_first_pull(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_CUES1:
+        case native_sub_zero_script_first_cues1:
           sub_zero_script_first_cues1(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_CUES2:
+        case native_sub_zero_script_first_cues2:
           sub_zero_script_first_cues2(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_CUES3:
+        case native_sub_zero_script_first_cues3:
           sub_zero_script_first_cues3(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_CUES4:
+        case native_sub_zero_script_first_cues4:
           sub_zero_script_first_cues4(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_HEAD:
+        case native_sub_zero_script_first_head:
           sub_zero_script_first_head(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_VICTIM_BLENDS:
+        case native_sub_zero_script_first_victim_blends:
           sub_zero_script_first_victim_blends(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_VICTIM_COLLAPSE:
+        case native_sub_zero_script_first_victim_collapse:
           sub_zero_script_first_victim_collapse(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_FIRST_VICTIM_END:
+        case native_sub_zero_script_first_victim_end:
           sub_zero_script_first_victim_end(fighter);
           return true;
-        case MK4_NATIVE_JAREK_FIRST_HEART:
+        case native_jarek_first_heart:
           jarek_first_heart(fighter);
           return true;
-        case MK4_NATIVE_JAREK_FIRST_VICTIM_RIP:
+        case native_jarek_first_victim_rip:
           jarek_first_victim_rip(fighter);
           return true;
-        case MK4_NATIVE_JAREK_FIRST_VICTIM_IMPACT:
+        case native_jarek_first_victim_impact:
           jarek_first_victim_impact(fighter);
           return true;
-        case MK4_NATIVE_JAREK_FIRST_VICTIM_END:
+        case native_jarek_first_victim_end:
           jarek_first_victim_end(fighter);
           return true;
-        case MK4_NATIVE_CAGE_SCRIPT_FATALITY_1_SIGNAL:
+        case native_cage_script_fatality_1_signal:
           cage_script_fatality_1_signal(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_59:
+        case native_cage_first_victim_59:
           cage_first_victim_59(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_131:
+        case native_cage_first_victim_131:
           cage_first_victim_131(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_148:
+        case native_cage_first_victim_148:
           cage_first_victim_148(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_166:
+        case native_cage_first_victim_166:
           cage_first_victim_166(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_185:
+        case native_cage_first_victim_185:
           cage_first_victim_185(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_VICTIM_206:
+        case native_cage_first_victim_206:
           cage_first_victim_206(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_SEVER:
+        case native_cage_first_sever:
           cage_first_sever(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_TORSO_HALF:
+        case native_cage_first_torso_half:
           cage_first_torso_half(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_TORSO_123:
+        case native_cage_first_torso_123:
           cage_first_torso_123(fighter);
           return true;
-        case MK4_NATIVE_CAGE_FIRST_TORSO_FINISH:
+        case native_cage_first_torso_finish:
           cage_first_torso_finish(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_1_VICTORY:
+        case native_jax_fatality_1_victory:
           jax_fatality_1_victory(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_1_GRAB:
+        case native_jax_fatality_1_grab:
           jax_fatality_1_grab(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_1_FIRST_ARM:
+        case native_jax_fatality_1_first_arm:
           jax_fatality_1_first_arm(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_1_SECOND_ARM:
+        case native_jax_fatality_1_second_arm:
           jax_fatality_1_second_arm(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_OWNER_GRAB:
+        case native_kai_first_owner_grab:
           kai_first_owner_grab(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_OWNER_SPIN:
+        case native_kai_first_owner_spin:
           kai_first_owner_spin(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_OWNER_TEAR:
+        case native_kai_first_owner_tear:
           kai_first_owner_tear(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_VICTIM_71:
+        case native_kai_first_victim_71:
           kai_first_victim_71(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_VICTIM_TURN:
+        case native_kai_first_victim_turn:
           kai_first_victim_turn(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_VICTIM_SEVER:
+        case native_kai_first_victim_sever:
           kai_first_victim_sever(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_TORSO_203:
+        case native_kai_first_torso_203:
           kai_first_torso_203(fighter);
           return true;
-        case MK4_NATIVE_KAI_FIRST_TORSO_IMPACT:
+        case native_kai_first_torso_impact:
           kai_first_torso_impact(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_CUE_40:
+        case native_quan_chi_fatality_cue_40:
           quan_chi_fatality_cue_40(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_LEG:
+        case native_quan_chi_fatality_leg:
           quan_chi_fatality_leg(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_HIT_179:
+        case native_quan_chi_fatality_hit_179:
           quan_chi_fatality_hit_179(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_HIT_241:
+        case native_quan_chi_fatality_hit_241:
           quan_chi_fatality_hit_241(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_1_OWNER_BEAT:
+        case native_quan_chi_fatality_1_owner_beat:
           script_vm_enter(fighter, fn_quan_chi_fatality_1_owner_beat, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_QUAN_CHI_FATALITY_BEAT:
+        case native_quan_chi_fatality_beat:
           quan_chi_fatality_beat(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_OWNER_53:
+        case native_tanya_first_owner_53:
           tanya_first_owner_53(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_OWNER_DRIFT:
+        case native_tanya_first_owner_drift:
           tanya_first_owner_drift(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_OWNER_REPLAYS:
+        case native_tanya_first_owner_replays:
           tanya_first_owner_replays(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_OWNER_LOOP:
+        case native_tanya_first_owner_loop:
           tanya_first_owner_loop(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_VICTIM_SWELL:
+        case native_tanya_first_victim_swell:
           tanya_first_victim_swell(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_VICTIM_REPEAT:
+        case native_tanya_first_victim_repeat:
           tanya_first_victim_repeat(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FIRST_VICTIM_BURST:
+        case native_tanya_first_victim_burst:
           tanya_first_victim_burst(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_FIRST_LOOP_START:
+        case native_fujin_first_loop_start:
           fujin_first_loop_start(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_FIRST_CYCLE:
+        case native_fujin_first_cycle:
           fujin_first_cycle(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_FIRST_SHOOT:
+        case native_fujin_first_shoot:
           fujin_first_shoot(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_VICTORY:
+        case native_reiko_first_victory:
           reiko_first_victory(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_TEAR:
+        case native_reiko_first_tear:
           reiko_first_tear(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_VICTIM_118:
+        case native_reiko_first_victim_118:
           reiko_first_victim_118(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_VICTIM_165:
+        case native_reiko_first_victim_165:
           reiko_first_victim_165(fighter);
           return true;
-        case MK4_NATIVE_REIKO_LEG_TEAR_VICTIM_FINISH:
+        case native_reiko_leg_tear_victim_finish:
           reiko_first_piece_end(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_TORSO_29:
+        case native_reiko_first_torso_29:
           reiko_first_torso_29(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_TORSO_END:
+        case native_reiko_first_torso_end:
           reiko_first_torso_end(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_HEAD_59:
+        case native_reiko_first_head_59:
           reiko_first_head_59(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_HEAD_83:
+        case native_reiko_first_head_83:
           reiko_first_head_83(fighter);
           return true;
-        case MK4_NATIVE_REIKO_LEG_TEAR_HEAD_FINISH:
+        case native_reiko_leg_tear_head_finish:
           reiko_first_piece_end(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_LEFT_ARM_56:
+        case native_reiko_first_left_arm_56:
           reiko_first_left_arm_56(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_LEFT_ARM_LAND:
+        case native_reiko_first_left_arm_land:
           reiko_first_left_arm_land(fighter);
           return true;
-        case MK4_NATIVE_REIKO_LEG_TEAR_LEFT_ARM_FINISH:
+        case native_reiko_leg_tear_left_arm_finish:
           reiko_first_piece_end(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_44:
+        case native_reiko_first_right_arm_44:
           reiko_first_right_arm_44(fighter);
           return true;
-        case MK4_NATIVE_REIKO_FIRST_RIGHT_ARM_LAND:
+        case native_reiko_first_right_arm_land:
           reiko_first_right_arm_land(fighter);
           return true;
-        case MK4_NATIVE_REIKO_LEG_TEAR_RIGHT_ARM_FINISH:
+        case native_reiko_leg_tear_right_arm_finish:
           reiko_first_piece_end(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_OWNER_CYCLE:
+        case native_reptile_first_owner_cycle:
           reptile_first_owner_cycle(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_OWNER_BITE:
+        case native_reptile_first_owner_bite:
           reptile_first_owner_bite(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_OWNER_LOOP:
+        case native_reptile_first_owner_loop:
           reptile_first_owner_loop(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_VICTIM_BITE:
+        case native_reptile_first_victim_bite:
           reptile_first_victim_bite(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_VICTIM_SHAKE:
+        case native_reptile_first_victim_shake:
           reptile_first_victim_shake(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_FIRST_VICTIM_COLLAPSE:
+        case native_reptile_first_victim_collapse:
           reptile_first_victim_collapse(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_VANISHED:
+        case native_shinnok_first_vanished:
           shinnok_first_vanished(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_HIDDEN:
+        case native_shinnok_first_hidden:
           shinnok_first_hidden(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FATALITY_REAPPEAR:
+        case native_shinnok_fatality_reappear:
           shinnok_fatality_reappear(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FATALITY_VICTORY:
+        case native_shinnok_fatality_victory:
           shinnok_fatality_victory(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_VANISHED:
+        case native_shinnok_second_vanished:
           shinnok_second_vanished(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_SECOND_HANDS:
+        case native_shinnok_second_hands:
           shinnok_second_hands(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_HAND_SQUEEZE:
+        case native_shinnok_first_hand_squeeze:
           shinnok_first_hand_squeeze(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_HAND_SQUEEZE_CYCLE:
+        case native_shinnok_hand_squeeze_cycle:
           shinnok_first_squeeze_cycle(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_VICTIM_HELD:
+        case native_shinnok_first_victim_held:
           shinnok_first_victim_held(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_VICTIM_SQUEEZE:
+        case native_shinnok_first_victim_squeeze:
           shinnok_first_victim_squeeze(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_VICTIM_SQUEEZE_CYCLE:
+        case native_shinnok_victim_squeeze_cycle:
           shinnok_first_squeeze_cycle(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_FIRST_VICTIM_CRUSH:
+        case native_shinnok_first_victim_crush:
           shinnok_first_victim_crush(fighter);
           return true;
-        case MK4_NATIVE_CROUCH_RETURN:
+        case native_crouch_return:
           action_crouch_return(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_BLEND:
+        case native_raiden_script_second_blend:
           raiden_script_second_blend(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_EFFECT:
+        case native_raiden_script_second_effect:
           raiden_script_second_effect(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_FATALITY_2_HELD_POSE:
+        case native_raiden_fatality_2_held_pose:
           script_vm_enter(fighter, fn_raiden_fatality_2_held_pose, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_RELEASE:
+        case native_raiden_script_second_release:
           raiden_script_second_release(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_END:
+        case native_raiden_script_second_end:
           raiden_script_second_end(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_VICTIM_END:
+        case native_raiden_script_second_victim_end:
           raiden_script_second_victim_end(fighter);
           return true;
-        case MK4_NATIVE_TANYA_SECOND_HEIGHT:
+        case native_tanya_second_height:
           tanya_second_height(fighter);
           return true;
-        case MK4_NATIVE_TANYA_SECOND_FINISH:
+        case native_tanya_second_finish:
           tanya_second_finish(fighter);
           return true;
-        case MK4_NATIVE_TANYA_FATALITY_2_VICTIM_COLLAPSE:
+        case native_tanya_fatality_2_victim_collapse:
           script_vm_enter(fighter, fn_tanya_fatality_2_victim_collapse, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_CAGE_SCRIPT_FATALITY_2_CONTINUE:
+        case native_cage_script_fatality_2_continue:
           cage_script_fatality_2_continue(fighter);
           return true;
-        case MK4_NATIVE_CAGE_SECOND_REPEATED_UPPERCUTS:
+        case native_cage_second_repeated_uppercuts:
           cage_second_repeated_uppercuts(fighter);
           return true;
-        case MK4_NATIVE_CAGE_SECOND_VICTIM_FINISH:
+        case native_cage_second_victim_finish:
           cage_second_victim_finish(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_OPEN:
+        case native_sonya_script_second_open:
           sonya_script_second_open(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_REPEAT:
+        case native_sonya_script_second_repeat:
           sonya_script_second_repeat(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_BRANCH:
+        case native_sonya_script_second_branch:
           sonya_script_second_branch(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_PAUSE:
+        case native_sonya_script_second_pause:
           sonya_script_second_pause(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END:
+        case native_sonya_script_second_cycle_end:
           sonya_script_second_cycle_end(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SECOND_VICTIM_END:
+        case native_sonya_script_second_victim_end:
           sonya_script_second_victim_end(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_2_APPROACH:
+        case native_jax_fatality_2_approach:
           jax_fatality_2_approach(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_2_FINISH:
+        case native_jax_fatality_2_finish:
           jax_fatality_2_finish(fighter);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_2_VICTIM_PAUSE:
+        case native_jax_fatality_2_victim_pause:
           action_task_pause(fighter);
           return true;
-        case MK4_NATIVE_STAGE_OWNER:
+        case native_stage_owner:
           action_stage_owner(fighter);
           return true;
-        case MK4_NATIVE_FIRE_CONTACT:
+        case native_fire_contact:
           scorpion_fire_script(fighter);
           return true;
-        case MK4_NATIVE_FIRE_RECOVERY:
+        case native_fire_recovery:
           action_fire_recovery_finish(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_INVISIBILITY:
+        case native_reptile_script_invisibility:
           reptile_script_invisibility(fighter);
           return true;
-        case MK4_NATIVE_KAI_SECOND_VICTIM_FALL:
+        case native_kai_second_victim_fall:
           kai_second_victim_fall(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_WIND_RECOVERY:
+        case native_fujin_wind_recovery:
           fujin_wind_recovery(fighter);
           return true;
-        case MK4_NATIVE_KICK_CONTACT_DEFAULT:
+        case native_kick_contact_default:
           action_kick_contact_default(fighter);
           return true;
-        case MK4_NATIVE_HIGH_KICK_REVERSE_RETURN:
+        case native_high_kick_reverse_return:
           script_vm_reverse_return(fighter);
           return true;
-        case MK4_NATIVE_KICK_CONTACT_WIDE:
+        case native_kick_contact_wide:
           action_kick_contact_wide(fighter);
           return true;
-        case MK4_NATIVE_KICK_CONTACT_NARROW:
+        case native_kick_contact_narrow:
           action_kick_contact_narrow(fighter);
           return true;
-        case MK4_NATIVE_LOW_KICK_REVERSE_RETURN:
+        case native_low_kick_reverse_return:
           script_vm_reverse_return(fighter);
           return true;
-        case MK4_NATIVE_LOW_KICK_NARROW_REVERSE_RETURN:
+        case native_low_kick_narrow_reverse_return:
           script_vm_reverse_return(fighter);
           return true;
-        case MK4_NATIVE_AIR_LIFT_FALL:
+        case native_air_lift_fall:
           action_air_lift_fall(fighter);
           return true;
-        case MK4_NATIVE_AIR_LIFT_RELEASE:
+        case native_air_lift_release:
           action_air_lift_release(fighter);
           return true;
-        case MK4_NATIVE_AIR_THROW_RELEASE:
+        case native_air_throw_release:
           action_air_throw_release(fighter);
           return true;
-        case MK4_NATIVE_AIR_THROW_LAND:
+        case native_air_throw_land:
           action_air_throw_land(fighter);
           return true;
-        case MK4_NATIVE_AIR_SLAM_FALL:
+        case native_air_slam_fall:
           action_air_slam_fall(fighter);
           return true;
-        case MK4_NATIVE_NOOB_SAIBOT_AIR_THROW_LANDING_LINK:
+        case native_noob_saibot_air_throw_landing_link:
           script_vm_enter(fighter, fn_quan_chi_air_throw_landing, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_AIR_SLAM_END:
+        case native_air_slam_end:
           action_air_slam_end(fighter);
           return true;
-        case MK4_NATIVE_AIR_FLIP_RELEASE:
+        case native_air_flip_release:
           action_air_flip_release(fighter);
           return true;
-        case MK4_NATIVE_CROUCH_LOW_KICK_TAIL:
+        case native_crouch_low_kick_tail:
           action_crouch_low_kick_tail(fighter);
           return true;
-        case MK4_NATIVE_CLOSE_HIGH_KICK_TAIL:
+        case native_close_high_kick_tail:
           action_close_high_kick_tail(fighter);
           return true;
-        case MK4_NATIVE_CLOSE_HIGH_PUNCH_TAIL:
+        case native_close_high_punch_tail:
           action_close_high_punch_tail(fighter);
           return true;
-        case MK4_NATIVE_COMBO_HIGH_PUNCH_TAIL:
+        case native_combo_high_punch_tail:
           action_combo_high_punch_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_STRAIGHT_TAIL:
+        case native_air_straight_tail:
           action_air_straight_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH:
+        case native_air_attack_land_or_finish:
           action_air_land(fighter);
           return true;
-        case MK4_NATIVE_AIR_LOW_KICK_LAND:
+        case native_air_low_kick_land:
           action_air_land(fighter);
           return true;
-        case MK4_NATIVE_AIR_STRAIGHT_KICK_LAND:
+        case native_air_straight_kick_land:
           action_air_land(fighter);
           return true;
-        case MK4_NATIVE_AIR_STRAIGHT_LAND:
+        case native_air_straight_land:
           action_air_straight_land(fighter);
           return true;
-        case MK4_NATIVE_AIR_STRAIGHT_WIDE_TAIL:
+        case native_air_straight_wide_tail:
           action_air_straight_wide_tail(fighter);
           return true;
-        case MK4_NATIVE_UPPERCUT_DEFAULT:
-          native_uppercut_default(fighter);
+        case native_uppercut_default:
+          action_uppercut_default(fighter);
           return true;
-        case MK4_NATIVE_WEAPON_DRAW_EQUIP:
+        case native_weapon_draw_equip:
           action_weapon_draw_equip(fighter);
           return true;
-        case MK4_NATIVE_CAGE_JAB_SECOND_PUNCH:
+        case native_cage_jab_second_punch:
           script_vm_enter(fighter, fn_cage_jab_second_punch, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_CAGE_JAB_REPEAT:
+        case native_cage_jab_repeat:
           script_vm_enter(fighter, fn_cage_jab_repeat, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_CAGE_JAB_RECOVERY:
+        case native_cage_jab_recovery:
           script_vm_enter(fighter, fn_cage_jab_recovery, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_AIR_LK_TAIL:
+        case native_air_lk_tail:
           action_air_lk_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_LK_ALT_TAIL:
+        case native_air_lk_alt_tail:
           action_air_lk_alt_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_LK_WIDE_TAIL:
+        case native_air_lk_wide_tail:
           action_air_lk_wide_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_DIAGONAL_TAIL:
+        case native_air_diagonal_tail:
           action_air_diagonal_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_DIAGONAL_ALT_TAIL:
+        case native_air_diagonal_alt_tail:
           action_air_diagonal_alt_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_DIAGONAL_WIDE_TAIL:
+        case native_air_diagonal_wide_tail:
           action_air_diagonal_wide_tail(fighter);
           return true;
-        case MK4_NATIVE_AIR_HP_TAIL:
+        case native_air_hp_tail:
           action_air_hp_tail(fighter);
           return true;
-        case MK4_NATIVE_WEAPON_AIR_HIGH_PUNCH_OPEN:
+        case native_weapon_air_high_punch_open:
           weapon_air_frames_native(fighter, fighter->execution.script.selector);
           return true;
-        case MK4_NATIVE_WEAPON_AIR_LOW_PUNCH_OPEN:
+        case native_weapon_air_low_punch_open:
           weapon_air_frames_native(fighter, fighter->execution.script.selector);
           return true;
-        case MK4_NATIVE_AIR_LP_TAIL:
+        case native_air_lp_tail:
           action_air_lp_tail(fighter);
           return true;
-        case MK4_NATIVE_SWEEP_ADVANCING_TAIL:
+        case native_sweep_advancing_tail:
           action_sweep_advancing_tail(fighter);
           return true;
-        case MK4_NATIVE_SWEEP_STANDARD_TAIL:
+        case native_sweep_standard_tail:
           action_sweep_standard_tail(fighter);
           return true;
-        case MK4_NATIVE_ROUNDHOUSE_START:
+        case native_roundhouse_start:
           action_roundhouse_start(fighter);
           return true;
-        case MK4_NATIVE_ROUNDHOUSE_TAIL:
+        case native_roundhouse_tail:
           action_roundhouse_tail(fighter);
           return true;
-        case MK4_NATIVE_ROUNDHOUSE_WIDE_START:
+        case native_roundhouse_wide_start:
           action_roundhouse_wide_start(fighter);
           return true;
-        case MK4_NATIVE_ROUNDHOUSE_WIDE_TAIL:
+        case native_roundhouse_wide_tail:
           action_roundhouse_wide_tail(fighter);
           return true;
-        case MK4_NATIVE_RETURN_TO_PLAYER_OR_CPU_CONTROL:
+        case native_return_to_player_or_cpu_control:
           action_controller_return(fighter);
           return true;
-        case MK4_NATIVE_VICTORY_CONTINUE:
+        case native_victory_continue:
           action_victory_continue(fighter);
           return true;
-        case MK4_NATIVE_KAI_LUNGE_KICK_CONTACT:
+        case native_kai_lunge_kick_contact:
           kai_lunge_kick_contact(fighter);
           return true;
-        case MK4_NATIVE_CAGE_SCRIPT_CPU_KICK_TAIL:
+        case native_cage_script_cpu_kick_tail:
           cage_script_cpu_kick_tail(fighter);
           return true;
-        case MK4_NATIVE_CAGE_SCRIPT_POWERED_PUNCH_TAIL:
+        case native_cage_script_powered_punch_tail:
           cage_script_powered_punch_tail(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_SCRIPT_FLIP_KICK_TAIL:
+        case native_quan_chi_script_flip_kick_tail:
           quan_chi_script_flip_kick_tail(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_DASH_CONTACT:
+        case native_reptile_script_dash_contact:
           reptile_script_dash_contact(fighter);
           return true;
-        case MK4_NATIVE_JAX_DASH_PUNCH_CONTACT:
+        case native_jax_dash_punch_contact:
           jax_dash_punch_contact(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SCRIPT_ROLL_TAIL:
+        case native_reptile_script_roll_tail:
           reptile_script_roll_tail(fighter);
           return true;
-        case MK4_NATIVE_JAREK_QUAKE_TAIL:
+        case native_jarek_quake_tail:
           jarek_quake_tail(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_CARTWHEEL_TAIL:
+        case native_sonya_script_cartwheel_tail:
           sonya_script_cartwheel_tail(fighter);
           return true;
-        case MK4_NATIVE_TANYA_DRILL_KICK_CONTACT:
+        case native_tanya_drill_kick_contact:
           tanya_drill_kick_contact(fighter);
           return true;
-        case MK4_NATIVE_KAI_AERIAL_PUNCH_CONTACT:
+        case native_kai_aerial_punch_contact:
           kai_aerial_punch_contact(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_DIVE_CONTACT:
+        case native_fujin_dive_contact:
           fujin_dive_contact(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_DIVE_LAND:
+        case native_fujin_dive_land:
           fujin_dive_land(fighter);
           return true;
-        case MK4_NATIVE_TELEPORT_VANISH:
+        case native_teleport_vanish:
           action_teleport_vanish(fighter);
           return true;
-        case MK4_NATIVE_TELEPORT_SLAM_FALL:
+        case native_teleport_slam_fall:
           action_teleport_slam_fall(fighter);
           return true;
-        case MK4_NATIVE_TELEPORT_SLAM_DROP:
+        case native_teleport_slam_drop:
           action_teleport_slam_drop(fighter);
           return true;
-        case MK4_NATIVE_KAI_SCRIPT_STAGE_EVENT:
+        case native_kai_script_stage_event:
           kai_script_stage_event(fighter);
           return true;
-        case MK4_NATIVE_KAI_HANDSTAND_SPIN_BEGIN:
+        case native_kai_handstand_spin_begin:
           kai_handstand_spin_begin(fighter);
           return true;
-        case MK4_NATIVE_HANDSTAND_FRONT:
+        case native_handstand_front:
           script_vm_enter(fighter, fn_handstand_front, fighter->execution.script.finish);
           return true;
-        case MK4_NATIVE_KAI_SCRIPT_CONTACT_B10_CONTINUATION:
+        case native_kai_script_contact_b10_continuation:
           kai_script_contact_b10_continuation(fighter);
           return true;
-        case MK4_NATIVE_KAI_HANDSTAND_REAR_CONTACT:
+        case native_kai_handstand_rear_contact:
           kai_handstand_rear_contact(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_TORPEDO_MISS:
+        case native_raiden_script_torpedo_miss:
           raiden_script_torpedo_miss(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_TORPEDO_CONTACT:
+        case native_raiden_script_torpedo_contact:
           raiden_script_torpedo_contact(fighter);
           return true;
-        case MK4_NATIVE_RECOIL_LAND:
+        case native_recoil_land:
           action_recoil_land(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SLIDE_SCRIPT:
+        case native_sub_zero_slide_script:
           sub_zero_slide_script(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_SLIDE_RETURN:
+        case native_sub_zero_script_slide_return:
           sub_zero_script_slide_return(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_LEG_GRAB_TAIL:
+        case native_sonya_script_leg_grab_tail:
           sonya_script_leg_grab_tail(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_SQUARE_WAVE_TAIL:
+        case native_sonya_script_square_wave_tail:
           sonya_script_square_wave_tail(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_BICYCLE_SCRIPT:
+        case native_liu_kang_bicycle_script:
           liu_kang_bicycle_script(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_BICYCLE_LAND:
+        case native_liu_kang_bicycle_land:
           liu_kang_liu_script_land(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_FLYING_KICK_SCRIPT:
+        case native_liu_kang_flying_kick_script:
           liu_kang_flying_kick_script(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_FLYING_KICK_LAND:
+        case native_liu_kang_flying_kick_land:
           liu_kang_liu_script_land(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_TRIPLE_FAST:
+        case native_fujin_triple_fast:
           fujin_triple_fast(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_TRIPLE_CONTACT:
+        case native_fujin_triple_contact:
           fujin_triple_contact(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_TELEPORT_SCRIPT:
+        case native_scorpion_teleport_script:
           scorpion_teleport_script(fighter);
           return true;
-        case MK4_NATIVE_LAND:
+        case native_land:
           mk4_land(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_GRAB_CONTROL_START:
+        case native_fujin_grab_control_start:
           fujin_grab_control_start(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SPIN_SCRIPT:
+        case native_scorpion_spin_script:
           scorpion_spin_script(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_SECOND_MELT:
+        case native_reptile_second_melt:
           reptile_second_melt(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_SECOND_BURST:
+        case native_fujin_second_burst:
           fujin_second_burst(fighter);
           return true;
-        case MK4_NATIVE_SCENE_BODY_FINISH:
+        case native_scene_body_finish:
           action_scene_body_finish(fighter);
           return true;
-        case MK4_NATIVE_REPTILE_WEAPON_STAGGER_TAIL:
+        case native_reptile_weapon_stagger_tail:
           reptile_weapon_stagger_tail(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_UPPERCUT_VICTIM_SLIDE:
+        case native_goro_script_uppercut_victim_slide:
           goro_script_uppercut_victim_slide(fighter);
           return true;
-        case MK4_NATIVE_GORO_VICTIM_GETUP:
+        case native_goro_victim_getup:
           goro_victim_getup(fighter);
           return true;
-        case MK4_NATIVE_REACTION_CLIP_129_STARTUP:
+        case native_reaction_clip_129_startup:
           script_vm_enter(fighter, fn_reaction_clip_129_startup, mk4_script_thrown_ready);
           return true;
-        case MK4_NATIVE_REACTION_CLIP_129_WAIT_LANDING:
+        case native_reaction_clip_129_wait_landing:
           script_vm_enter(fighter, fn_reaction_clip_129_wait_landing, mk4_script_thrown_ready);
           return true;
-        case MK4_NATIVE_REACTION_CLIP_129_GETUP:
+        case native_reaction_clip_129_getup:
           script_vm_enter(fighter, fn_reaction_clip_129_wait_landing_tail_1_operand_1, mk4_script_thrown_ready);
           return true;
-        case MK4_NATIVE_REACTION_GETUP_BACK:
+        case native_reaction_getup_back:
           action_reaction_getup_back(fighter);
           return true;
-        case MK4_NATIVE_REACTION_FALL:
+        case native_reaction_fall:
           action_reaction_fall(fighter);
           return true;
-        case MK4_NATIVE_REACTION_FINISH:
+        case native_reaction_finish:
           action_reaction_finish(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_WEAPON_SWEEP_GETUP:
+        case native_shinnok_weapon_sweep_getup:
           shinnok_weapon_sweep_getup(fighter);
           return true;
-        case MK4_NATIVE_SHINNOK_WEAPON_SWEEP_FINISH:
+        case native_shinnok_weapon_sweep_finish:
           shinnok_weapon_sweep_finish(fighter);
           return true;
-        case MK4_NATIVE_STAGE_IMPALE:
+        case native_stage_impale:
           action_stage_impale(fighter);
           return true;
-        case MK4_NATIVE_STAGE_COMPLETE:
+        case native_stage_complete:
           action_stage_complete(fighter);
           return true;
-        case MK4_NATIVE_STAGGER_TAIL:
+        case native_stagger_tail:
           action_stagger_tail(fighter);
           return true;
-        case MK4_NATIVE_GORO_SCRIPT_STOMP_VICTIM_HOLD:
+        case native_goro_script_stomp_victim_hold:
           goro_script_stomp_victim_hold(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_SCRIPT_STOMP_VICTIM:
+        case native_quan_chi_script_stomp_victim:
           quan_chi_script_stomp_victim(fighter);
           return true;
-        case MK4_NATIVE_AIR_FLIP_GETUP:
+        case native_air_flip_getup:
           action_air_flip_getup(fighter);
           return true;
-        case MK4_NATIVE_AIR_LIFT_GETUP:
+        case native_air_lift_getup:
           action_air_lift_getup(fighter);
           return true;
-        case MK4_NATIVE_MMOVE_AIR_GETUP:
+        case native_mmove_air_getup:
           mk4_mmove_air_getup(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_TELEPORT_VICTIM_TAIL:
+        case native_scorpion_script_teleport_victim_tail:
           scorpion_script_teleport_victim_tail(fighter);
           return true;
-        case MK4_NATIVE_THROW_VICTIM_CONTINUE:
+        case native_throw_victim_continue:
           action_throw_victim_continue(fighter);
           return true;
-        case MK4_NATIVE_THROW_VICTIM_IMPACT:
+        case native_throw_victim_impact:
           action_throw_victim_impact(fighter);
           return true;
-        case MK4_NATIVE_THROW_VICTIM_STOP_AND_RETURN:
+        case native_throw_victim_stop_and_return:
           mk4_mmove_thrown_finish(fighter);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_LEG_VICTIM_END:
+        case native_sonya_script_leg_victim_end:
           sonya_script_leg_victim_end(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_LK_THROWN_TAIL:
+        case native_liu_kang_liu_script_lk_thrown_tail:
           liu_kang_liu_script_lk_thrown_tail(fighter);
           return true;
-        case MK4_NATIVE_LP_SLIDING_IMPACT_FLIP_GETUP:
+        case native_lp_sliding_impact_flip_getup:
           action_getup_flip(fighter);
           return true;
-        case MK4_NATIVE_GETUP_ROLL_FLIP:
+        case native_getup_roll_flip:
           action_getup_roll_flip(fighter);
           return true;
-        case MK4_NATIVE_LP_TWO_SPEED_SLIDE_DOUBLE_FLIP_ROLL_GETUP:
+        case native_lp_two_speed_slide_double_flip_roll_getup:
           /* 490350 twice, through488bd0, leaves the original facing. */
           action_getup_roll(fighter);
           return true;
-        case MK4_NATIVE_THAW_LANDING:
+        case native_thaw_landing:
           action_thaw_land(fighter);
           return true;
-        case MK4_NATIVE_SHAKE_STUN:
+        case native_shake_stun:
           action_shake_stun(fighter);
           return true;
-        case MK4_NATIVE_SUB_ZERO_SCRIPT_LK_VICTIM_RISE:
+        case native_sub_zero_script_lk_victim_rise:
           sub_zero_script_lk_victim_rise(fighter);
           return true;
-        case MK4_NATIVE_VM_RETURN:
+        case native_vm_return:
           script_vm_return(fighter);
           return true;
-        case MK4_NATIVE_PAIR_RELEASE:
+        case native_pair_release:
           action_pair_release(fighter);
           return true;
-        case MK4_NATIVE_BICYCLE_CYCLE:
+        case native_bicycle_cycle:
           action_bicycle_cycle(fighter);
           return true;
-        case MK4_NATIVE_UPPERCUT_RECOVER:
+        case native_uppercut_recover:
           action_uppercut_recover(fighter);
           return true;
-        case MK4_NATIVE_BLOCK_CYCLE:
+        case native_block_cycle:
           action_block_cycle(fighter);
           return true;
-        case MK4_NATIVE_STANDING_BLOCK_HOLD:
+        case native_standing_block_hold:
           action_controller_return(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SPEAR_STUN_SCRIPT:
+        case native_scorpion_spear_stun_script:
           scorpion_spear_stun_script(fighter);
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_STAFF_VICTIM_TAIL:
+        case native_raiden_script_staff_victim_tail:
           raiden_script_staff_victim_tail(fighter);
           return true;
-        case MK4_NATIVE_KAI_HANDSTAND_VICTIM_TAIL:
+        case native_kai_handstand_victim_tail:
           kai_handstand_victim_tail(fighter);
           return true;
-        case MK4_NATIVE_MMOVE_SIDE_GETUP:
+        case native_mmove_side_getup:
           mk4_mmove_side_getup(fighter);
           return true;
-        case MK4_NATIVE_LP_TABLE_VICTIM_STOP_AND_FLIP_GETUP:
-        case MK4_NATIVE_SUB_ZERO_LP_THROW_VICTIM_GETUP:
+        case native_lp_table_victim_stop_and_flip_getup:
+        case native_sub_zero_lp_throw_victim_getup:
           action_getup_flip(fighter);
           return true;
-        case MK4_NATIVE_GETUP_BACK:
+        case native_getup_back:
           action_getup_back(fighter);
           return true;
-        case MK4_NATIVE_JAX_DASH_PUNCH_ROLL_GETUP:
+        case native_jax_dash_punch_roll_getup:
           action_getup_roll(fighter);
           return true;
-        case MK4_NATIVE_GETUP_FRONT:
+        case native_getup_front:
           action_getup_front(fighter);
           return true;
-        case MK4_NATIVE_CAGE_WEAPON_UPPER_CONTACT:
+        case native_cage_weapon_upper_contact:
           action_weapon_contact(fighter, address);
           return true;
-        case MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_CONTACT:
+        case native_kai_weapon_back_strike_contact:
           action_weapon_contact(fighter, address);
           return true;
-        case MK4_NATIVE_REPTILE_WEAPON_FLURRY:
+        case native_reptile_weapon_flurry:
           reptile_weapon_flurry(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_SWORD_BLEND:
+        case native_liu_kang_liu_script_sword_blend:
           liu_kang_liu_script_sword_blend(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT:
+        case native_liu_kang_sword_back_high_punch_contact:
           action_weapon_contact(fighter, address);
           return true;
-        case MK4_NATIVE_CAGE_WEAPON_BACK_LP_CONTACT:
+        case native_cage_weapon_back_lp_contact:
           action_weapon_contact(fighter, address);
           return true;
-        case MK4_NATIVE_TANYA_BOOMERANG_RELEASE:
+        case native_tanya_boomerang_release:
           tanya_boomerang_release(fighter);
           return true;
-        case MK4_NATIVE_FIREBALL_FALL:
+        case native_fireball_fall:
           action_fireball_fall(fighter);
           return true;
-        case MK4_NATIVE_KAI_GROUND_SKULL_SPAWN:
+        case native_kai_ground_skull_spawn:
           kai_ground_skull_spawn(fighter);
           return true;
-        case MK4_NATIVE_KAI_RISING_SKULL_SPAWN:
+        case native_kai_rising_skull_spawn:
           kai_rising_skull_spawn(fighter);
           return true;
-        case MK4_NATIVE_KAI_RISING_SKULL_FINISH:
+        case native_kai_rising_skull_finish:
           kai_rising_skull_finish(fighter);
           return true;
-        case MK4_NATIVE_QUAN_CHI_SCRIPT_SKULL_RELEASE:
+        case native_quan_chi_script_skull_release:
           quan_chi_script_skull_release(fighter);
           return true;
-        case MK4_NATIVE_FUJIN_BOW_FINISH:
+        case native_fujin_bow_finish:
           fujin_bow_finish(fighter);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_SPEAR_RETURN:
+        case native_scorpion_script_spear_return:
           scorpion_script_spear_return(fighter);
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_AIR_RETURN:
+        case native_liu_kang_liu_script_air_return:
           liu_kang_liu_script_air_return(fighter);
           return true;
-        case MK4_NATIVE_TASK_RETIRE:
+        case native_task_retire:
           action_task_retire(fighter);
           return true;
         default:
@@ -1132,205 +1132,205 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
       }
     case MK4_SPAWN:
       switch (address) {
-        case MK4_NATIVE_JAX_FATALITY_2_SPARKS:
+        case native_jax_fatality_2_sparks:
           if (argument != 619u) {
             return false;
           }
           jax_fatality_2_sparks(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_JAX_FATALITY_2_FLASH:
+        case native_jax_fatality_2_flash:
           if (argument != 619u) {
             return false;
           }
           jax_fatality_2_flash(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_CAGE_SECOND_CHARGE:
+        case native_cage_second_charge:
           if (argument != 619u) {
             return false;
           }
           cage_second_charge(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_CAGE_SECOND_FLASH:
+        case native_cage_second_flash:
           if (argument != 619u) {
             return false;
           }
           cage_second_flash(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_BREATH_SHATTER_DECORATION:
+        case native_breath_shatter_decoration:
           if (argument != 0u) {
             return false;
           }
           sub_zero_script_breath_freeze(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_BREATH_SCENE_DECORATION:
+        case native_breath_scene_decoration:
           if (argument != 0u) {
             return false;
           }
           sub_zero_script_breath_object(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_REIKO_SECOND_STARS:
+        case native_reiko_second_stars:
           if (argument != 0u) {
             return false;
           }
           reiko_second_stars(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_JAREK_SECOND_HEAD_FALL:
+        case native_jarek_second_head_fall:
           if (argument != 0u) {
             return false;
           }
           jarek_second_head_fall(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_REPTILE_SECOND_ACID:
+        case native_reptile_second_acid:
           if (argument != 0u) {
             return false;
           }
           reptile_second_acid(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_BEAST_GORE:
+        case native_scorpion_script_beast_gore:
           if (argument != 0u) {
             return false;
           }
           scorpion_script_beast_gore(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_FUJIN_SECOND_BLOOD:
+        case native_fujin_second_blood:
           if (argument != 38u) {
             return false;
           }
           fujin_second_blood(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_KAI_SECOND_SKULL:
+        case native_kai_second_skull:
           if (argument != 38u) {
             return false;
           }
           kai_second_skull(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_LIU_FINISHER_PROJECTILE:
+        case native_liu_finisher_projectile:
           if (argument != 38u) {
             return false;
           }
           liu_kang_liu_script_fatal_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SCORPION_SCRIPT_TRANSFORM_EFFECT:
+        case native_scorpion_script_transform_effect:
           if (argument != 0u) {
             return false;
           }
           scorpion_script_transform_effect(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SCENE_KEEPALIVE_TASK:
+        case native_scene_keepalive_task:
           if (argument != 619u) {
             return false;
           }
           mk4_script_scene_task(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_TANYA_SECOND_OWNER_CUE:
+        case native_tanya_second_owner_cue:
           if (argument != 619u) {
             return false;
           }
           tanya_second_owner_cue(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_TANYA_SECOND_VICTIM_CUE:
+        case native_tanya_second_victim_cue:
           if (argument != 619u) {
             return false;
           }
           tanya_second_victim_cue(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SCENE_HOVER:
+        case native_scene_hover:
           if (argument != 38u) {
             return false;
           }
           action_scene_hover(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_REIKO_STAR_SPAWN:
+        case native_reiko_star_spawn:
           if (argument != 82u) {
             return false;
           }
           reiko_star_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_JAX_MISSILE_SPAWN:
+        case native_jax_missile_spawn:
           if (argument != 80u) {
             return false;
           }
           jax_missile_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_CAGE_ORB_SPAWN:
+        case native_cage_orb_spawn:
           if (argument != 79u) {
             return false;
           }
           cage_orb_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_JAREK_BLADE_SPAWN:
+        case native_jarek_blade_spawn:
           if (argument != 78u) {
             return false;
           }
           jarek_blade_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_REPTILE_ACID_SPAWN:
+        case native_reptile_acid_spawn:
           if (argument != 76u) {
             return false;
           }
           reptile_acid_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_FIREBALL_SPAWN:
+        case native_fireball_spawn:
           if (argument != 75u) {
             return false;
           }
           action_fireball_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_AIR_FIREBALL_SPAWN:
+        case native_air_fireball_spawn:
           if (argument != 75u) {
             return false;
           }
           action_air_fireball_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SPEAR_TASK:
+        case native_spear_task:
           if (argument != 67u) {
             return false;
           }
           scorpion_script_spawn_spear(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SONYA_SCRIPT_RING_FLASH:
+        case native_sonya_script_ring_flash:
           if (argument != 38u) {
             return false;
           }
           sonya_script_ring_flash(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_SONYA_RING_OBJECT:
+        case native_sonya_ring_object:
           if (argument != 68u) {
             return false;
           }
           sonya_script_ring_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_ICE_PROJECTILE_TASK:
+        case native_ice_projectile_task:
           if (argument != 66u) {
             return false;
           }
           sub_zero_script_spawn_ice(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_RAIDEN_LIGHTNING_OBJECT:
+        case native_raiden_lightning_object:
           if (argument != 65u) {
             return false;
           }
           raiden_script_lightning_spawn(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_LIU_AIR_FIREBALL_OBJECT:
+        case native_liu_air_fireball_object:
           if (argument != 64u) {
             return false;
           }
           liu_kang_liu_script_spawn_air(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_LIU_LOW_FIREBALL_OBJECT:
+        case native_liu_low_fireball_object:
           if (argument != 64u) {
             return false;
           }
           liu_kang_liu_script_spawn_low(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_LIU_HIGH_FIREBALL_OBJECT:
+        case native_liu_high_fireball_object:
           if (argument != 64u) {
             return false;
           }
           liu_kang_liu_script_spawn_high(fighter, (int)argument);
           return true;
-        case MK4_NATIVE_GORO_FIREBALL_SPAWN:
+        case native_goro_fireball_spawn:
           if (argument != 83u) {
             return false;
           }
@@ -1341,19 +1341,19 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
       }
     case MK4_HANDLER:
       switch (address) {
-        case MK4_NATIVE_CONTEXT:
+        case native_context:
           mk4_script_context(fighter, (int)(argument & 255u));
           return true;
-        case MK4_NATIVE_SCRIPT_REACTION_DISPATCH:
+        case native_script_reaction_dispatch:
           action_script_reaction_dispatch(fighter, (int)(argument & 255u));
           return true;
-        case MK4_NATIVE_DISPATCH_OPPONENT_REACTION:
+        case native_dispatch_opponent_reaction:
           if (action_reaction_entry(fighter->execution.script.image, argument & 255u) == NULL) {
             return false;
           }
           action_script_release_reaction(fighter, (int)(argument & 255u));
           return true;
-        case MK4_NATIVE_FACE_PEER_AND_RESUME_SCRIPT:
+        case native_face_peer_and_resume_script:
           action_face_peer(fighter);
           return true;
         default:
@@ -1361,13 +1361,13 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
       }
     case MK4_PREDICATE:
       switch (address) {
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_SWORD_GATE:
+        case native_liu_kang_liu_script_sword_gate:
           fighter->execution.script.result = liu_kang_liu_script_sword_gate(fighter);
           return true;
-        case MK4_NATIVE_JAB_REPEAT_PREDICATE:
+        case native_jab_repeat_predicate:
           fighter->execution.script.result = mk4_script_jab_gate(fighter);
           return true;
-        case MK4_NATIVE_CONTACT_QUERY_D:
+        case native_contact_query_d:
           fighter->execution.script.result = raiden_script_torpedo_query(fighter);
           return true;
         default:
@@ -1375,28 +1375,28 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
       }
     case MK4_PHYSICS:
       switch (address) {
-        case MK4_NATIVE_LANDING_MOTION:
+        case native_landing_motion:
           fighter->body.physics = mk4_script_landing_motion;
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_TORPEDO_MOTION:
+        case native_raiden_script_torpedo_motion:
           fighter->body.physics = raiden_script_torpedo_motion;
           return true;
-        case MK4_NATIVE_TELEPORT_GROUP_CALLBACK:
+        case native_teleport_group_callback:
           fighter->body.physics = scorpion_script_teleport_motion;
           return true;
-        case MK4_NATIVE_LIU_KANG_LIU_SCRIPT_BICYCLE_MOTION:
+        case native_liu_kang_liu_script_bicycle_motion:
           fighter->body.physics = liu_kang_liu_script_bicycle_motion;
           return true;
-        case MK4_NATIVE_GORO_STOMP_HOLD_SEPARATION:
+        case native_goro_stomp_hold_separation:
           fighter->body.physics = goro_stomp_hold_separation;
           return true;
-        case MK4_NATIVE_RAIDEN_SCRIPT_TORPEDO_VICTIM_MOTION:
+        case native_raiden_script_torpedo_victim_motion:
           fighter->body.physics = raiden_script_torpedo_victim_motion;
           return true;
-        case MK4_NATIVE_FACE_PEER_ORIENT_GROUP:
+        case native_face_peer_orient_group:
           fighter->body.physics = action_face_peer;
           return true;
-        case MK4_NATIVE_VELOCITY_FRICTION:
+        case native_velocity_friction:
           fighter->body.physics = fighter_friction;
           return true;
         default:

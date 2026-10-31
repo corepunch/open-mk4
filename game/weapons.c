@@ -147,7 +147,7 @@ static void strike_query(Fighter *fighter) {
   ContactResult result = battle_contact(fighter, &fighter->weapon_strike->record);
   if (result != CONTACT_MISS) {
     if (fighter->weapon_strike->parameters == dat_strike_query && result != CONTACT_BLOCK) {
-      const NativeAxeProfile *profile = fighter->native_context;
+      const NativeAxeProfile *profile = fighter->native_profile;
       fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->first_hit);
     }
     strike_recovery(fighter);
@@ -524,7 +524,7 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
       break;
   }
   weapon_start_encoded_strike(fighter, parameters, 0, ACTION_CODE_0111, index < 2);
-  fighter->native_context = profile;
+  fighter->native_profile = profile;
   if (index == 3) {
     fighter->body.physics = axe_strafe;
   }
@@ -534,7 +534,7 @@ static void axe_second_contact(Fighter *fighter) {
   AttackRecord record = script_vm_attack_record(battle_data(), dat_axe_followup_attack_record);
   ContactResult result = battle_contact(fighter, &record);
   if (result != CONTACT_MISS && result != CONTACT_BLOCK) {
-    const NativeAxeProfile *profile = fighter->native_context;
+    const NativeAxeProfile *profile = fighter->native_profile;
     fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->followup_hit);
   }
 }
@@ -589,7 +589,7 @@ static void script_strike_query(Fighter *fighter) {
     return;
   }
   if (result != CONTACT_MISS) {
-    if (fighter->native_variant == MK4_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT) {
+    if (fighter->native_variant == native_liu_kang_sword_back_high_punch_contact) {
       /* Native4968e0 selects the authored contact branch; it is not a C
        * approximation of that branch's waits or reverse playback. */
       weapon_cleanup(fighter);
@@ -624,17 +624,17 @@ void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, in
 void action_weapon_contact(Fighter *fighter, uint32_t address) {
   unsigned selector, queries;
   switch (address) {
-    case MK4_NATIVE_CAGE_WEAPON_UPPER_CONTACT:
-    case MK4_NATIVE_KAI_WEAPON_BACK_STRIKE_CONTACT:
+    case native_cage_weapon_upper_contact:
+    case native_kai_weapon_back_strike_contact:
       selector = 33;
       queries = 2;
       break;
-    case MK4_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT:
+    case native_liu_kang_sword_back_high_punch_contact:
       selector = 10;
       queries = 7;
       break;
     default:
-      require(address == MK4_NATIVE_CAGE_WEAPON_BACK_LP_CONTACT, "Invalid native weapon contact entry");
+      require(address == native_cage_weapon_back_lp_contact, "Invalid native weapon contact entry");
       selector = 11;
       queries = 2;
       break;

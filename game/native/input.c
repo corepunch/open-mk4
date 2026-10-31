@@ -38,21 +38,21 @@ const Controls action_stances = {.stances = {
 static bool press_air_controller(Fighter *fighter, uint32_t target) {
   unsigned action;
   switch (target) {
-    case MK4_NATIVE_PRESS_STRAIGHT_AIR_HIGH_PUNCH:
-    case MK4_NATIVE_PRESS_DIAGONAL_AIR_HIGH_PUNCH:
+    case native_press_straight_air_high_punch:
+    case native_press_diagonal_air_high_punch:
       action = 0;
       break;
-    case MK4_NATIVE_PRESS_STRAIGHT_AIR_LOW_PUNCH:
-    case MK4_NATIVE_PRESS_DIAGONAL_AIR_LOW_PUNCH:
+    case native_press_straight_air_low_punch:
+    case native_press_diagonal_air_low_punch:
       action = 1;
       break;
-    case MK4_NATIVE_PRESS_DIAGONAL_AIR_HIGH_KICK:
+    case native_press_diagonal_air_high_kick:
       action = 2;
       break;
-    case MK4_NATIVE_PRESS_DIAGONAL_AIR_LOW_KICK:
+    case native_press_diagonal_air_low_kick:
       action = 3;
       break;
-    case MK4_NATIVE_PRESS_STRAIGHT_AIR_KICK:
+    case native_press_straight_air_kick:
       action = 4;
       break;
     default:
@@ -104,7 +104,7 @@ uint32_t action_button_target(const Mk4Image *image, uint32_t table, Button butt
       fatal("Invalid retail button");
   }
   uint32_t target = mk4_image_u32(image, table + slot * 4);
-  require(target == 0 || (target >= MK4_NATIVE_ID_BEGIN && target < MK4_NATIVE_ID_END), "Invalid retail button target");
+  require(target == 0 || (target >= native_id_begin && target < native_id_end), "Invalid retail button target");
   return target;
 }
 
@@ -113,13 +113,13 @@ void action_combo_high_punch(Fighter *fighter) {
   uint32_t entry = mk4_image_u32(battle_data(), dat_combo_high_punch + slot * 4);
   uint32_t script;
   switch (entry) {
-    case MK4_NATIVE_JAX_COMBO_HP_ENTRY:
+    case native_jax_combo_hp_entry:
       script = fn_jax_combo_hp_attacker;
       break;
-    case MK4_NATIVE_COMBO_HP_ENTRY:
+    case native_combo_hp_entry:
       script = fn_sub_zero_combo_hp_attacker;
       break;
-    case MK4_NATIVE_KITANA_COMBO_HP_ENTRY:
+    case native_kitana_combo_hp_entry:
       script = fn_kitana_combo_high_punch_attacker;
       break;
     default:
@@ -179,12 +179,11 @@ void action_press_native_button(Fighter *fighter, uint32_t target) {
   if (target == 0 || press_air_controller(fighter, target)) {
     return;
   }
-  if (target == MK4_NATIVE_TELEPORT_SLAM) {
+  if (target == native_teleport_slam) {
     fighter_interrupt(fighter, script_native_entry(target));
     return;
   }
-  if (target == MK4_NATIVE_HANDSTAND_SPIN || target == MK4_NATIVE_HANDSTAND_EXIT || target == MK4_NATIVE_HANDSTAND_FRONT ||
-      target == MK4_NATIVE_HANDSTAND_REAR) {
+  if (target == native_handstand_spin || target == native_handstand_exit || target == native_handstand_front || target == native_handstand_rear) {
     fighter_interrupt(fighter, script_native_entry(target));
     return;
   }
@@ -192,59 +191,59 @@ void action_press_native_button(Fighter *fighter, uint32_t target) {
   bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
   FighterFn entry = NULL;
   switch (target) {
-    case MK4_NATIVE_PRESS_STANDING_HIGH_PUNCH:
+    case native_press_standing_high_punch:
       entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch) : normal_hp;
       break;
-    case MK4_NATIVE_PRESS_STANDING_LOW_PUNCH:
+    case native_press_standing_low_punch:
       entry =
           fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch) : action_entry(8);
       break;
-    case MK4_NATIVE_PRESS_STANDING_LOW_KICK:
+    case native_press_standing_low_kick:
       entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
-    case MK4_NATIVE_PRESS_STANDING_HIGH_KICK:
+    case native_press_standing_high_kick:
       entry = normal_hk_entry(fighter);
       break;
-    case MK4_NATIVE_PRESS_CROUCHING_HIGH_PUNCH:
+    case native_press_crouching_high_punch:
       /* The engine command matcher owns finish command gates before fallback. */
       {
         uint32_t target = mk4_action_target(battle_data(), 1, 1);
-        entry = target == MK4_NATIVE_UPPERCUT_ENTRY ? action_uppercut : script_native_entry(target);
+        entry = target == native_uppercut_entry ? action_uppercut : script_native_entry(target);
       }
       break;
-    case MK4_NATIVE_PRESS_CROUCHING_LOW_PUNCH:
+    case native_press_crouching_low_punch:
       if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
         entry = action_sword_spin;
       } else {
         entry = crouch_entry(8);
       }
       break;
-    case MK4_NATIVE_PRESS_CROUCHING_HIGH_KICK:
+    case native_press_crouching_high_kick:
       entry = crouch_entry(7);
       break;
-    case MK4_NATIVE_PRESS_CROUCHING_LOW_KICK:
+    case native_press_crouching_low_kick:
       entry = crouch_entry(6);
       break;
-    case MK4_NATIVE_PRESS_STANDING_BLOCK:
-    case MK4_NATIVE_PRESS_CROUCHING_BLOCK:
+    case native_press_standing_block:
+    case native_press_crouching_block:
       /* Held-block movement/state ownership is handled by the simulation pump. */
       return;
-    case MK4_NATIVE_PRESS_CLOSE_PUNCH_COMBO_HIGH_PUNCH:
-    case MK4_NATIVE_PRESS_AIR_CONTACT_HIGH_PUNCH:
-    case MK4_NATIVE_PRESS_COMBO_PUNCH_HIGH_PUNCH:
-    case MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_PUNCH:
-      if (target == MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_PUNCH && down && (peer->action == ACTION_CODE_4004 || peer->hits > 1)) {
+    case native_press_close_punch_combo_high_punch:
+    case native_press_air_contact_high_punch:
+    case native_press_combo_punch_high_punch:
+    case native_press_close_kick_high_punch:
+      if (target == native_press_close_kick_high_punch && down && (peer->action == ACTION_CODE_4004 || peer->hits > 1)) {
         entry = action_uppercut;
       } else if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch;
       } else {
-        entry = target == MK4_NATIVE_PRESS_CLOSE_PUNCH_COMBO_HIGH_PUNCH ? action_combo_high_punch
-                : target == MK4_NATIVE_PRESS_AIR_CONTACT_HIGH_PUNCH     ? air_ground_hp
-                                                                        : normal_hp;
+        entry = target == native_press_close_punch_combo_high_punch ? action_combo_high_punch
+                : target == native_press_air_contact_high_punch     ? air_ground_hp
+                                                                    : normal_hp;
       }
       break;
-    case MK4_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH:
+    case native_press_followup_low_punch:
       if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch;
@@ -252,18 +251,18 @@ void action_press_native_button(Fighter *fighter, uint32_t target) {
         entry = action_normal_low_punch;
       }
       break;
-    case MK4_NATIVE_PRESS_COMBO_PUNCH_HIGH_KICK:
-    case MK4_NATIVE_PRESS_FOLLOWUP_HIGH_KICK:
-    case MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_KICK:
-      if (target != MK4_NATIVE_PRESS_FOLLOWUP_HIGH_KICK && down && peer->hits > 1) {
+    case native_press_combo_punch_high_kick:
+    case native_press_followup_high_kick:
+    case native_press_close_kick_high_kick:
+      if (target != native_press_followup_high_kick && down && peer->hits > 1) {
         entry = follow_crouch_hk;
-      } else if (target == MK4_NATIVE_PRESS_CLOSE_KICK_HIGH_KICK) {
+      } else if (target == native_press_close_kick_high_kick) {
         entry = fighter_holds_back(fighter) ? action_roundhouse : action_high_kick;
       } else {
         entry = normal_hk_entry(fighter);
       }
       break;
-    case MK4_NATIVE_PRESS_FOLLOWUP_LOW_KICK:
+    case native_press_followup_low_kick:
       entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
     default:

@@ -923,11 +923,11 @@ void action_boomerang_low_punch(Fighter *fighter) {
 /* Reactions 169 (486710 -> 4e9db8) and 170 (4821a0 -> 4e8bb0) both disarm
  * through 494520 before their retail victim streams. */
 void tanya_weapon_reaction(Fighter *fighter) {
-  require(action_reaction_native(fighter) == MK4_NATIVE_TANYA_WEAPON_REACTION_ENTRY ||
-              action_reaction_native(fighter) == MK4_NATIVE_TANYA_WEAPON_REACTION_REACTION_170_ENTRY,
+  require(action_reaction_native(fighter) == native_tanya_weapon_reaction_entry ||
+              action_reaction_native(fighter) == native_tanya_weapon_reaction_reaction_170_entry,
       "Invalid Tanya weapon victim reaction");
   mk4_script_disarm_self(fighter);
-  if (action_reaction_native(fighter) == MK4_NATIVE_TANYA_WEAPON_REACTION_ENTRY) {
+  if (action_reaction_native(fighter) == native_tanya_weapon_reaction_entry) {
     fighter_start_move(fighter, S_HIT, &tanya_weapon_victim_hit);
     fighter->flags |= FF_REACTING;
     script_vm_enter(fighter, fn_tanya_weapon_reaction_reaction_169_victim, mk4_mmove_thrown_finish);

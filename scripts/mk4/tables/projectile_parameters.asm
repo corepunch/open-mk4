@@ -51,11 +51,11 @@ fireball_spawn_y_offset:
   .zero 24
 
 action_table_2:
-  .word MK4_NATIVE_GORO_FIREBALL, MK4_NATIVE_LIU_KANG_HIGH_FIREBALL, MK4_NATIVE_LIU_KANG_LOW_FIREBALL, MK4_NATIVE_RAIDEN_LIGHTNING, MK4_NATIVE_SUB_ZERO_ICE, MK4_NATIVE_SONYA_RING
-  .word MK4_NATIVE_SCORPION_SPEAR, MK4_NATIVE_QUAN_CHI_SKULL, MK4_NATIVE_KAI_RISING_SKULL, MK4_NATIVE_KAI_GROUND_SKULL, MK4_NATIVE_FIREBALL, MK4_NATIVE_AIR_FIREBALL
-  .word MK4_NATIVE_REPTILE_ACID_SPIT, 0x498270, MK4_NATIVE_JAREK_BLADE, 0x49a370, 0x499db0, 0x499c30
-  .word 0x498250, MK4_NATIVE_CAGE_LOW_ORB, MK4_NATIVE_CAGE_HIGH_ORB, MK4_NATIVE_JAX_MISSILE, 0x497ae0, 0x497ad0
-  .word MK4_NATIVE_REIKO_STAR, 0x49a190, MK4_NATIVE_GORO_FIREBALL
+  .word native_goro_fireball, native_liu_kang_high_fireball, native_liu_kang_low_fireball, native_raiden_lightning, native_sub_zero_ice, native_sonya_ring
+  .word native_scorpion_spear, native_quan_chi_skull, native_kai_rising_skull, native_kai_ground_skull, native_fireball, native_air_fireball
+  .word native_reptile_acid_spit, 0x498270, native_jarek_blade, 0x49a370, 0x499db0, 0x499c30
+  .word 0x498250, native_cage_low_orb, native_cage_high_orb, native_jax_missile, 0x497ae0, 0x497ad0
+  .word native_reiko_star, 0x49a190, native_goro_fireball
   .zero 4
   .word 0x81506a64, 0x40d720, 0x81506a80, 0x40d720, 0x81506a9c, 0x40d720
   .word 0x81506ab8, 0x40d720, 0x81506ad4, 0x40d720, 0x81506af0, 0x40d720

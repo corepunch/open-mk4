@@ -50,7 +50,7 @@ spine_pull_camera_orbit:
   .word 0x8150f464, 0x446b30, 0x8150f480, 0x446b50, 0x8150f49c, 0x446b70
   .word 0x8050f49c, 0x405dd0
   .zero 56
-  .word 0x32000000, MK4_NATIVE_TASK_RETIRE
+  .word 0x32000000, native_task_retire
   .zero 416
   .word 0x47000291, clip(446), 0x32000000, 0x449ca0, 0x50000ab, 0x32000000
   .word 0x449cf0
@@ -656,8 +656,8 @@ camera_shake_rows:
   .word 0xa, 0x3, 0x2e14, 0x2, 0x3, 0x2e14
   .word 0x3, 0x3, 0x3333, 0x2, 0x3, 0xf5c
   .word 0x6, 0x3, 0x2e14, 0x2, 0x2, 0x7ae
-  .word 0x1, MK4_NATIVE_TASK_RETIRE, 0x2, MK4_NATIVE_TASK_RETIRE, 0x4, 0x458770
-  .word 0x8, 0x4587e0, 0x100, MK4_NATIVE_TASK_RETIRE, 0x200, MK4_NATIVE_TASK_RETIRE
+  .word 0x1, native_task_retire, 0x2, native_task_retire, 0x4, 0x458770
+  .word 0x8, 0x4587e0, 0x100, native_task_retire, 0x200, native_task_retire
   .word 0x400, 0x458790, 0x800, 0x458800, 0x8c
   .zero 20
   .word 0xb333
@@ -706,116 +706,116 @@ camera_shake_rows:
   .word 0x45a510, 0x45a560, 0x45a800, 0x45a850, 0x45a8b0, 0x45a9c0
   .word 0x45aa50, 0x45aa80, 0x45aab0, 0x4594b0, 0x45baf0, 0x45a3e0
   .word 0x4594b0, 0x459f30, 0x45a070, 0x45a0c0, 0x45a0f0, 0x45a4d0
-  .word MK4_NATIVE_DISPATCH_OPPONENT_REACTION, 0x459570, 0x459530, 0x4594b0, 0x45b1d0, 0x4594b0
+  .word native_dispatch_opponent_reaction, 0x459570, 0x459530, 0x4594b0, 0x45b1d0, 0x4594b0
   .word 0x459800, 0x4596e0, 0x4596a0, 0x459660, 0x45b1b0, 0x45b190
   .word 0x4595a0, 0x459620, 0x4595e0, 0x459760, 0x459780, 0x4597a0
   .word 0x459820
   .zero 4
   .word 0x459890, 0x45b3c0, 0x459830, 0x459960, 0x45b570, 0x4598b0
   .word 0x45b140, 0x45b170, 0x45b3f0, 0x45b420, 0x45b4a0, 0x45b500
-  .word 0x45b530, MK4_NATIVE_JAX_GROUND_POUND_CONTROLLER_RETURN, 0x459990, MK4_NATIVE_SCRIPT_REACTION_DISPATCH, 0x45b5c0, 0x45b5f0
+  .word 0x45b530, native_jax_ground_pound_controller_return, 0x459990, native_script_reaction_dispatch, 0x45b5c0, 0x45b5f0
   .word 0x45b620, 0x45b650, 0x45b800, 0x45b8b0, 0x45b960, 0x45ba00
   .word 0x45ba40, 0x45bb10, 0x45bbc0, 0x45a630, 0x45ac70, 0x45abf0
   .word 0x45ac80, 0x45ab30, 0x45ab70, 0x45aaf0, 0x45acf0, 0x45ad90
-  .word MK4_NATIVE_CONTEXT, 0x4594b0, 0x45aef0, 0x45af60, 0x45afb0, 0x45b010
+  .word native_context, 0x4594b0, 0x45aef0, 0x45af60, 0x45afb0, 0x45b010
   .word 0x45b110, 0x45b0d0, 0x45abb0, 0x45afe0, 0x45b2f0, 0x45b3a0
-  .word 0x45b310, 0x45b350, MK4_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, 0x45ae80, 0x4594b0, 0x4594b0
+  .word 0x45b310, 0x45b350, native_face_peer_and_resume_script, 0x45ae80, 0x4594b0, 0x4594b0
   .word 0x45b750, 0x45b6d0, 0x45a780, 0x459720, 0x45b050, 0x45ae50
   .word 0x45b030, 0x4597d0, 0x45b270, 0x45bc70, 0x45c050, 0x45c070
   .word 0x45c100, 0x45c150, 0x45c1c0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45c9b0, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45c9b0, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ca10, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45ca10, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ca30, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45ca30, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ca50, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45ca50, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ca70, 0x45ca90, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45ca70, 0x45ca90, native_task_retire
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cb40, 0x45caf0, 0x45cb60
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45cb40, 0x45caf0, 0x45cb60
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cbe0, 0x45cb90, 0x45cc00
-  .word 0x45cc20, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45cbe0, 0x45cb90, 0x45cc00
+  .word 0x45cc20, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cc80, 0x45cc40, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45cc80, 0x45cc40, native_task_retire
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cd00, 0x45ccb0, 0x45cd20
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45cd00, 0x45ccb0, 0x45cd20
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cd60, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cda0, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ce40
-  .word 0x45cdf0, MK4_NATIVE_TASK_RETIRE, 0x45ce60, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x458590
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45cd60, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire, native_task_retire, 0x45cda0, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45ce40
+  .word 0x45cdf0, native_task_retire, 0x45ce60, 0x42f690, native_task_retire, 0x462a60
+  .word native_task_retire, native_task_retire, 0x458590
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45ce80, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45ce80, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cee0, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45cee0, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cf00, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45cf00, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cf20, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, 0x45cf20, native_task_retire
+  .word native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45cf90, 0x45cf40, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45cf90, 0x45cf40, native_task_retire
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d010, 0x45cfc0, 0x45d030
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45d010, 0x45cfc0, 0x45d030
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d3b0, 0x45d360, 0x45d3d0
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45d3b0, 0x45d360, 0x45d3d0
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d440, 0x45d400, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45d440, 0x45d400, native_task_retire
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d4c0, 0x45d470, 0x45d4e0
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45d4c0, 0x45d470, 0x45d4e0
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d560, 0x45d510, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42f690, MK4_NATIVE_TASK_RETIRE, 0x462a60, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, native_task_retire, 0x45d560, 0x45d510, native_task_retire
+  .word native_task_retire, 0x42f690, native_task_retire, 0x462a60, native_task_retire, native_task_retire
   .word 0x4585b0
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d7d0, 0x45d7e0, 0x45d5f0, MK4_NATIVE_TASK_RETIRE
-  .word 0x45d800, 0x42ed00, MK4_NATIVE_TASK_RETIRE, 0x462880, MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE
+  .word native_task_retire, native_task_retire, 0x45d7d0, 0x45d7e0, 0x45d5f0, native_task_retire
+  .word 0x45d800, 0x42ed00, native_task_retire, 0x462880, native_task_retire, native_task_retire
+  .word native_task_retire
   .zero 4
-  .word MK4_NATIVE_TASK_RETIRE, MK4_NATIVE_TASK_RETIRE, 0x45d850, 0x45d860, 0x45d5c0, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x42ed40, MK4_NATIVE_TASK_RETIRE, 0x4628d0, 0x45d850, MK4_NATIVE_TASK_RETIRE
-  .word MK4_NATIVE_TASK_RETIRE, 0x430420, 0x60
+  .word native_task_retire, native_task_retire, 0x45d850, 0x45d860, 0x45d5c0, native_task_retire
+  .word native_task_retire, 0x42ed40, native_task_retire, 0x4628d0, 0x45d850, native_task_retire
+  .word native_task_retire, 0x430420, 0x60
   .zero 4
   .word 0x70, 0x7, 0x6000
   .zero 4
