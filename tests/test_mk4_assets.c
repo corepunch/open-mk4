@@ -197,6 +197,36 @@ static void interrupted_blend_history(const Assets *assets) {
   }
 }
 
+static void incompatible_blend_source(const Assets *assets) {
+  battle_init(&assets->image, 15, 0);
+  battle_bind_assets(assets);
+  Fighter *fighter = &g_battle.fighters[0];
+  const Character *model = fighter_model(assets, fighter);
+  const Clip *target = fighter_clip(assets, fighter);
+  fighter->blend_clip = roster_character(assets, 0)->idle;
+  check(
+      assets->clips.data[fighter->blend_clip].frames.data[0].angles.count != target->frames.data[0].angles.count, "Blend fixture must cross incompatible rigs");
+  fighter->blend_duration = 1;
+  fighter->blend_sample = 17;
+  fighter->blend_weight = Q16_ONE / 2;
+  fighter->sample_override = 0;
+  Pose expected[MK4_MAX_BONES], live[MK4_MAX_BONES], captured[MK4_MAX_BONES];
+  pose(model, target, 0, expected);
+  fighter_pose(assets, fighter, live);
+  FighterAnimationFrame frame;
+  fighter_capture_animation_frame(assets, fighter, &frame);
+  pose_frame(model, &frame.pose, captured);
+  for (size_t i = 0; i < model->bones.count; ++i) {
+    Vec3 a = vec_sub(live[i].position, expected[i].position), b = vec_sub(captured[i].position, expected[i].position);
+    check(fabsf(a.x) + fabsf(a.y) + fabsf(a.z) < .0001f && fabsf(b.x) + fabsf(b.y) + fabsf(b.z) < .0001f,
+        "Incompatible blend sources must use the model's idle fallback at sample zero");
+    for (size_t k = 0; k < 9; ++k) {
+      check(fabsf(live[i].rotation.m[k] - expected[i].rotation.m[k]) < .0001f && fabsf(captured[i].rotation.m[k] - expected[i].rotation.m[k]) < .0001f,
+          "Live and captured blend fallbacks must use compatible joint channels");
+    }
+  }
+}
+
 static void sound_samples(void) {
   Package archive;
   package_load(&archive, "MK4/FILESYS.DAT");
@@ -335,6 +365,7 @@ int main(void) {
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
   interrupted_blend_history(&assets);
+  incompatible_blend_source(&assets);
   independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

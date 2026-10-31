@@ -26,9 +26,7 @@ const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
   return roster_character(assets, fighter->roster);
 }
 
-const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {
-  const Character *ch = fighter_model(assets, fighter);
-  int id = fighter->action == 0x1003 ? fighter->frozen_clip : fighter_move(fighter)->clip;
+static const Clip *model_clip(const Assets *assets, const Character *ch, int id) {
   if (id < 0) {
     id = ch->idle;
   }
@@ -39,6 +37,11 @@ const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {
     channels = maxi(channels, ch->bones.data[i].channel + 1);
   }
   return (int)clip->frames.data[0].angles.count == channels ? clip : &assets->clips.data[ch->idle];
+}
+
+const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {
+  int id = fighter->action == 0x1003 ? fighter->frozen_clip : fighter_move(fighter)->clip;
+  return model_clip(assets, fighter_model(assets, fighter), id);
 }
 
 double fighter_pose_frame(const Fighter *fighter) {
@@ -122,7 +125,9 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   if (fighter->blend_duration > 0) {
     int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
-    pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, fighter_pose_sample(fighter), fraction, output);
+    const Clip *source = model_clip(assets, ch, id);
+    int sample = source == &assets->clips.data[id] ? fighter->blend_sample : 0;
+    pose_blend(ch, source, sample, clip, fighter_pose_sample(fighter), fraction, output);
   } else {
     pose(ch, clip, fighter_pose_frame(fighter), output);
   }
@@ -138,9 +143,11 @@ void fighter_capture_animation_frame(const Assets *assets, const Fighter *fighte
     int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
     PoseFrame source;
-    pose_frame_sample(&assets->clips.data[id], fighter->blend_sample, &source);
+    const Clip *source_clip = model_clip(assets, ch, id);
+    int sample = source_clip == &assets->clips.data[id] ? fighter->blend_sample : 0;
+    pose_frame_sample(source_clip, sample, &source);
     pose_frame_blend(&source, &frame->pose, fraction, &frame->pose);
-    float front = clip_front_yaw(ch, &assets->clips.data[id]);
+    float front = clip_front_yaw(ch, source_clip);
     frame->front_yaw = front + remainderf(frame->front_yaw - front, 6.283185307179586f) * clampf(fraction, 0.f, 1.f);
   }
 }
