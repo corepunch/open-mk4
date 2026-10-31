@@ -1,7 +1,7 @@
 # Fighter bytecode
 
 Each `<fighter>.asm` contains generated, named retail script words, that
-fighter's native ABI ID declarations, embedded-entry aliases and C exports.
+fighter's native ABI ID declarations and embedded-entry aliases.
 `shared.asm` defines shared or unclassified streams once. Files are assembled
 into one immutable program and executed by the same C VM; file ownership does
 not introduce a fighter-specific dispatcher or duplicate native services.
@@ -21,9 +21,11 @@ shared. Kitana and Noob keep their established retail sharing/remaps instead
 of receiving invented script copies.
 
 For example, `sonya_fatality_2_second_cycle` and
-`MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END` are both in `sonya.asm`. C callers
-see only exported identifiers through the generated header. Other bytecode
-can branch to the same definition by label. Native C implementations remain
+`MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END` are both in `sonya.asm`. The linker
+automatically exposes each script label to C as `scr_<label>`: for example,
+`quan_chi_lk_throw_startup` becomes `scr_quan_chi_lk_throw_startup`. There is
+no separate script export declaration or JSON name mapping. Other bytecode
+branches to the bare label. Native C implementations remain
 in shared capability modules under `game/native/`.
 
 Native constants use one build-time declaration, such as

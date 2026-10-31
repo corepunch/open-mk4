@@ -127,7 +127,7 @@ static void victory_finished(Fighter *fighter) {
 }
 
 void action_victory_continue(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_VICTORY, fighter->execution.script.active ? fighter->execution.script.finish : victory_finished);
+  script_vm_enter(fighter, scr_raiden_victory, fighter->execution.script.active ? fighter->execution.script.finish : victory_finished);
 }
 
 void action_victory(Fighter *fighter) {

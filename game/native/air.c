@@ -17,8 +17,8 @@ void action_air_bind_row(Fighter *fighter, uint32_t row) {
 
 void action_air_attack(Fighter *fighter, unsigned kind) {
   static const int actions[] = {0x603, 0x604, 0x600, 0x602, 0x601};
-  static const uint32_t scripts[] = {MK4_SCRIPT_AIR_HIGH_PUNCH_STARTUP, MK4_SCRIPT_AIR_LOW_PUNCH_STARTUP, MK4_SCRIPT_AIR_STRAIGHT_KICK_STARTUP,
-      MK4_SCRIPT_AIR_DIAGONAL_HIGH_KICK_STARTUP, MK4_SCRIPT_AIR_DIAGONAL_LOW_KICK_STARTUP};
+  static const uint32_t scripts[] = {scr_air_high_punch_startup, scr_air_low_punch_startup, scr_air_straight_kick_startup, scr_air_diagonal_high_kick_startup,
+      scr_air_diagonal_low_kick_startup};
   require(kind < sizeof scripts / sizeof *scripts, "Invalid native air attack");
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
   action_begin(fighter, S_JUMP, actions[kind], true);
@@ -30,7 +30,7 @@ void action_air_attack(Fighter *fighter, unsigned kind) {
   action_face_peer(fighter);
   uint32_t script = scripts[kind];
   if (fighter->armed && kind < 2) {
-    script = kind == 0 ? MK4_SCRIPT_JAX_DRAW_WEAPON_AIR_HP : MK4_SCRIPT_JAX_DRAW_WEAPON_AIR_LP;
+    script = kind == 0 ? scr_jax_draw_weapon_air_hp : scr_jax_draw_weapon_air_lp;
   }
   script_vm_enter(fighter, script, fighter_ready);
 }
@@ -102,7 +102,7 @@ static void air_low_contact_end(Fighter *fighter) {
 
 static void air_high_contact_end(Fighter *fighter) {
   fighter->buttons = NULL;
-  air_script(fighter, MK4_SCRIPT_AIR_HIGH_CONTACT_END, false);
+  air_script(fighter, scr_air_high_contact_end, false);
 }
 
 static void air_punch_contact(Fighter *fighter, bool high) {
@@ -111,7 +111,7 @@ static void air_punch_contact(Fighter *fighter, bool high) {
   fighter->action = ACTION_CODE_1006;
   if (air_followup) {
     if (!high) {
-      air_script(fighter, MK4_SCRIPT_AIR_PUNCH_CONTACT, false);
+      air_script(fighter, scr_air_punch_contact, false);
       return;
     }
     fighter->buttons = &action_air_buttons[2];
@@ -218,43 +218,43 @@ static void air_continue(Fighter *fighter, uint32_t target) {
       air_punch_contact(fighter, false);
       return;
     case MK4_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK:
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_PUNCH_CONTACT_HOLD, false);
+      air_script(fighter, scr_air_low_punch_contact_hold, false);
       return;
     case MK4_NATIVE_AIR_LOW_KICK_CONTACT_HOLD:
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_KICK_CONTACT_HOLD, false);
+      air_script(fighter, scr_air_low_kick_contact_hold, false);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD:
-      air_script(fighter, MK4_SCRIPT_AIR_DIAGONAL_KICK_CONTACT_HOLD, false);
+      air_script(fighter, scr_air_diagonal_kick_contact_hold, false);
       return;
     case MK4_NATIVE_AIR_HIGH_PUNCH_MISS_REVERSE:
-      air_script(fighter, MK4_SCRIPT_AIR_HIGH_PUNCH_MISS_REVERSE, true);
+      air_script(fighter, scr_air_high_punch_miss_reverse, true);
       return;
     case MK4_NATIVE_AIR_LOW_PUNCH_MISS_REVERSE:
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_PUNCH_MISS_REVERSE, true);
+      air_script(fighter, scr_air_low_punch_miss_reverse, true);
       return;
     case MK4_NATIVE_AIR_LOW_KICK_CLIP_58_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_KICK_CLIP_58_REVERSE, true);
+      air_script(fighter, scr_air_low_kick_clip_58_reverse, true);
       return;
     case MK4_NATIVE_AIR_LOW_KICK_CLIP_59_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_KICK_CLIP_59_REVERSE, true);
+      air_script(fighter, scr_air_low_kick_clip_59_reverse, true);
       return;
     case MK4_NATIVE_AIR_LOW_KICK_CLIP_60_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_SCRIPT_AIR_LOW_KICK_CLIP_60_REVERSE, true);
+      air_script(fighter, scr_air_low_kick_clip_60_reverse, true);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_55_REVERSE:
-      air_script(fighter, MK4_SCRIPT_AIR_DIAGONAL_KICK_CLIP_55_REVERSE, true);
+      air_script(fighter, scr_air_diagonal_kick_clip_55_reverse, true);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_56_REVERSE:
-      air_script(fighter, MK4_SCRIPT_AIR_DIAGONAL_KICK_CLIP_56_REVERSE, true);
+      air_script(fighter, scr_air_diagonal_kick_clip_56_reverse, true);
       return;
     case MK4_NATIVE_AIR_DIAGONAL_KICK_CLIP_57_REVERSE:
-      air_script(fighter, MK4_SCRIPT_AIR_DIAGONAL_KICK_CLIP_57_REVERSE, true);
+      air_script(fighter, scr_air_diagonal_kick_clip_57_reverse, true);
       return;
     case MK4_NATIVE_AIR_STRAIGHT_KICK_MISS_REVERSE:
-      air_script(fighter, MK4_SCRIPT_CAGE_AIR_KICK_NARROW_MISS_REVERSAL, false);
+      air_script(fighter, scr_cage_air_kick_narrow_miss_reversal, false);
       return;
     case MK4_NATIVE_AIR_ATTACK_LAND_OR_FINISH:
     case MK4_NATIVE_AIR_STRAIGHT_KICK_LAND:

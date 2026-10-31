@@ -153,10 +153,10 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           action_task_pause(fighter);
           return true;
         case MK4_NATIVE_CAGE_LK_THROW_PAIRED_CONTINUATION:
-          script_vm_enter(fighter, MK4_SCRIPT_CAGE_LK_THROW_DAMAGE, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_cage_lk_throw_damage, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_CAGE_LK_THROW_RELEASE:
-          script_vm_enter(fighter, MK4_SCRIPT_CAGE_LK_THROW_RELEASE, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_cage_lk_throw_release, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_CAGE_LK_THROW_OWNER_RETURN:
         case MK4_NATIVE_JAREK_LK_THROW_OWNER_RETURN:
@@ -202,7 +202,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           liu_kang_liu_script_lk_damage(fighter);
           return true;
         case MK4_NATIVE_LIU_KANG_LK_THROW_RETREAT:
-          script_vm_enter(fighter, MK4_SCRIPT_LIU_KANG_LK_THROW_RETREAT, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_liu_kang_lk_throw_retreat, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_SUB_ZERO_SCRIPT_LK_REBASE:
           sub_zero_script_lk_rebase(fighter);
@@ -214,13 +214,13 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           sub_zero_script_lk_owner_return(fighter);
           return true;
         case MK4_NATIVE_GORO_LP_THROW_FIVE_PHASE_SEQUENCE:
-          script_vm_enter(fighter, MK4_SCRIPT_GORO_LP_THROW_REPEATED_DAMAGE, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_goro_lp_throw_repeated_damage, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT:
           goro_script_lp_phase_repeat(fighter);
           return true;
         case MK4_NATIVE_JAX_LP_THROW_THROW_CONTINUATION:
-          script_vm_enter(fighter, MK4_SCRIPT_JAX_LP_THROW_FIRST_SLAM, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_jax_lp_throw_first_slam, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_JAX_LP_SLAM_FIRST:
           jax_lp_slam_first(fighter);
@@ -457,7 +457,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           quan_chi_fatality_hit_241(fighter);
           return true;
         case MK4_NATIVE_QUAN_CHI_FATALITY_1_OWNER_BEAT:
-          script_vm_enter(fighter, MK4_SCRIPT_QUAN_CHI_FATALITY_1_OWNER_BEAT, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_quan_chi_fatality_1_owner_beat, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_QUAN_CHI_FATALITY_BEAT:
           quan_chi_fatality_beat(fighter);
@@ -604,7 +604,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           raiden_script_second_effect(fighter);
           return true;
         case MK4_NATIVE_RAIDEN_FATALITY_2_HELD_POSE:
-          script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_FATALITY_2_HELD_POSE, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_raiden_fatality_2_held_pose, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_RAIDEN_SCRIPT_SECOND_RELEASE:
           raiden_script_second_release(fighter);
@@ -622,7 +622,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           tanya_second_finish(fighter);
           return true;
         case MK4_NATIVE_TANYA_FATALITY_2_VICTIM_COLLAPSE:
-          script_vm_enter(fighter, MK4_SCRIPT_TANYA_FATALITY_2_VICTIM_COLLAPSE, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_tanya_fatality_2_victim_collapse, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_CAGE_SCRIPT_FATALITY_2_CONTINUE:
           cage_script_fatality_2_continue(fighter);
@@ -712,7 +712,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           action_air_slam_fall(fighter);
           return true;
         case MK4_NATIVE_NOOB_SAIBOT_AIR_THROW_LANDING_LINK:
-          script_vm_enter(fighter, MK4_SCRIPT_QUAN_CHI_AIR_THROW_LANDING, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_quan_chi_air_throw_landing, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_AIR_SLAM_END:
           action_air_slam_end(fighter);
@@ -757,13 +757,13 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           action_weapon_draw_equip(fighter);
           return true;
         case MK4_NATIVE_CAGE_JAB_SECOND_PUNCH:
-          script_vm_enter(fighter, MK4_SCRIPT_CAGE_JAB_SECOND_PUNCH, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_cage_jab_second_punch, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_CAGE_JAB_REPEAT:
-          script_vm_enter(fighter, MK4_SCRIPT_CAGE_JAB_REPEAT, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_cage_jab_repeat, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_CAGE_JAB_RECOVERY:
-          script_vm_enter(fighter, MK4_SCRIPT_CAGE_JAB_RECOVERY, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_cage_jab_recovery, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_AIR_LK_TAIL:
           action_air_lk_tail(fighter);
@@ -874,7 +874,7 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           kai_handstand_spin_begin(fighter);
           return true;
         case MK4_NATIVE_HANDSTAND_FRONT:
-          script_vm_enter(fighter, MK4_SCRIPT_HANDSTAND_FRONT, fighter->execution.script.finish);
+          script_vm_enter(fighter, scr_handstand_front, fighter->execution.script.finish);
           return true;
         case MK4_NATIVE_KAI_SCRIPT_CONTACT_B10_CONTINUATION:
           kai_script_contact_b10_continuation(fighter);
@@ -952,13 +952,13 @@ bool script_native_dispatch(Fighter *fighter, uint32_t address, ScriptNativeKind
           goro_victim_getup(fighter);
           return true;
         case MK4_NATIVE_REACTION_CLIP_129_STARTUP:
-          script_vm_enter(fighter, MK4_SCRIPT_REACTION_CLIP_129_STARTUP, mk4_script_thrown_ready);
+          script_vm_enter(fighter, scr_reaction_clip_129_startup, mk4_script_thrown_ready);
           return true;
         case MK4_NATIVE_REACTION_CLIP_129_WAIT_LANDING:
-          script_vm_enter(fighter, MK4_SCRIPT_REACTION_CLIP_129_WAIT_LANDING, mk4_script_thrown_ready);
+          script_vm_enter(fighter, scr_reaction_clip_129_wait_landing, mk4_script_thrown_ready);
           return true;
         case MK4_NATIVE_REACTION_CLIP_129_GETUP:
-          script_vm_enter(fighter, MK4_SCRIPT_REACTION_CLIP_129_GETUP, mk4_script_thrown_ready);
+          script_vm_enter(fighter, scr_reaction_clip_129_wait_landing_tail_1_operand_1, mk4_script_thrown_ready);
           return true;
         case MK4_NATIVE_REACTION_GETUP_BACK:
           action_reaction_getup_back(fighter);

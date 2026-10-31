@@ -44,7 +44,7 @@ def decode_scripts(image, roots):
 def export_scripts(image, destination, check=False):
     """Generate named wordcode by fighter, with one shared runtime/native ABI.
 
-    Names and exports come from the established import metadata. Ownership is
+    Names come from the established import metadata. Ownership is
     derived from those names and the existing per-roster script catalogs, never
     a handwritten fighter definition. Explicit jumps preserve fall-through when
     blocks move between files; embedded entries retain their operand offsets.
@@ -154,10 +154,6 @@ def export_scripts(image, destination, check=False):
             if block == start:
                 # The owner may be an instruction inside this named block.
                 out.append(f'.alias {name} {entries[start][0]} + {owner - start + offset}')
-    for export, name in layout['exports'].items():
-        address = names[name]
-        block = starts[bisect_right(starts, owners[address]) - 1]
-        files[block_owners[block]].append(f'.export {export} {name}')
     rendered = {f'fighters/{fighter}.asm': '\n'.join(files[fighter]) + '\n' for fighter in CHARACTERS}
     rendered['fighters/shared.asm'] = '\n'.join(files['shared']) + '\n'
     program = ['; Generated script link order. Do not edit; run make scripts-export.', '.section script']

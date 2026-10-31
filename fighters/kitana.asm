@@ -9,4 +9,3 @@ kitana_combo_high_punch_attacker:
   forward_to 0xb
   tail 0x0, MK4_NATIVE_COMBO_HIGH_PUNCH_TAIL
   .zero 4 ; non-executable guard
-.export MK4_LINK_MK4_ADDRESSES_MK4_SCRIPT_KITANA_COMBO_HIGH_PUNCH_ATTACKER kitana_combo_high_punch_attacker

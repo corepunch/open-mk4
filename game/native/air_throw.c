@@ -6,36 +6,36 @@
 #include "math_util.h"
 
 void action_air_victim_default(Fighter *victim) {
-  script_vm_enter(victim, MK4_SCRIPT_AIR_VICTIM_DEFAULT, mk4_mmove_thrown_finish);
+  script_vm_enter(victim, scr_air_victim_default, mk4_mmove_thrown_finish);
 }
 
 void action_air_victim_flip(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
-  script_vm_enter(victim, MK4_SCRIPT_AIR_VICTIM_FLIP, mk4_mmove_thrown_finish);
+  script_vm_enter(victim, scr_air_victim_flip, mk4_mmove_thrown_finish);
 }
 
 /* Original native entry operands; the scripts bind both participants. */
 void action_air_throw(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, MK4_DATA_AIR_THROW, action_air_victim_default);
+  mk4_air_throw_frames(fighter, scr_air_throw, action_air_victim_default);
 }
 
 void action_air_throw_lift(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, MK4_DATA_AIR_THROW_LIFT, action_air_victim_lift);
+  mk4_air_throw_frames(fighter, scr_air_throw_lift, action_air_victim_lift);
 }
 
 void action_air_throw_slam(Fighter *fighter) {
   action_face_peer(fighter);
-  mk4_air_throw_frames(fighter, MK4_DATA_AIR_THROW_SLAM, action_slam_released_fall);
+  mk4_air_throw_frames(fighter, scr_air_throw_slam, action_slam_released_fall);
 }
 
 void action_air_throw_flip(Fighter *fighter) {
   action_face_peer(fighter);
-  mk4_air_throw_frames(fighter, MK4_DATA_AIR_THROW_FLIP, action_air_victim_flip);
+  mk4_air_throw_frames(fighter, scr_air_throw_flip, action_air_victim_flip);
 }
 
 void action_air_throw_release(Fighter *fighter) {
   mk4_mmove_air_throw_release(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_AIR_THROW_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_air_throw_release, fighter_ready);
 }
 
 void action_air_throw_land(Fighter *fighter) {
@@ -49,7 +49,7 @@ static const MoveDef s_slam_victim = {.clip = -1, .last = MOVE_END, .flags = SF_
 static void slam_victim(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &s_slam_victim);
   victim->flags |= FF_REACTING;
-  script_vm_enter(victim, MK4_SCRIPT_SLAM_VICTIM, mk4_mmove_thrown_finish);
+  script_vm_enter(victim, scr_slam_victim, mk4_mmove_thrown_finish);
 }
 
 /* 480f50[105] -> 484760: disarm (494520), snap to the floor and stop
@@ -126,7 +126,7 @@ void action_air_victim_lift(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->flags |= FF_REACTING;
   victim->reaction = 166;
-  script_vm_enter(victim, MK4_SCRIPT_AIR_VICTIM_LIFT, mk4_mmove_thrown_finish);
+  script_vm_enter(victim, scr_air_victim_lift, mk4_mmove_thrown_finish);
 }
 
 /* 46a9f0 stores gravity 0x3d7 on both paired actors and enters 4e5df8. */
@@ -134,7 +134,7 @@ void action_air_lift_fall(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->body.gravity = 0x3d7;
   victim->body.gravity = 0x3d7;
-  script_vm_enter(fighter, MK4_SCRIPT_AIR_LIFT_FALL, fighter_ready);
+  script_vm_enter(fighter, scr_air_lift_fall, fighter_ready);
 }
 
 /* 46aa40 dispatches reaction 166 to the victim, subtracts 0x2147 and enters
@@ -145,7 +145,7 @@ void action_air_lift_release(Fighter *fighter) {
   fighter->flags |= FF_PAIR_RELEASE;
   action_air_victim_lift(victim);
   battle_damage(victim, 0x2147);
-  script_vm_enter(fighter, MK4_SCRIPT_AIR_LIFT_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_air_lift_release, fighter_ready);
 }
 
 /* 484a30 first reschedules once. Each later visit lets a living victim's
@@ -214,7 +214,7 @@ void action_air_slam_fall(Fighter *fighter) {
   victim->body.gravity = 0x147a;
   fighter->body.vel[AXIS_Y] = -0x1999;
   victim->body.vel[AXIS_Y] = -0x1999;
-  script_vm_enter(fighter, MK4_SCRIPT_AIR_SLAM_FALL, fighter_ready);
+  script_vm_enter(fighter, scr_air_slam_fall, fighter_ready);
 }
 
 void action_air_slam_end(Fighter *fighter) {

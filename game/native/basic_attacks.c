@@ -18,10 +18,10 @@ static void kick_row(Fighter *fighter) {
     if (next == MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY || next == MK4_NATIVE_FUJIN_HIGH_KICK_CONTACT_RECOVERY) {
       /* 470e80 marks the recovery action before these two continuations. */
       fighter->action = ACTION_CODE_1006;
-      script = next == MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY ? MK4_SCRIPT_JAX_HIGH_KICK_RECOVERY : MK4_SCRIPT_FUJIN_HIGH_KICK_RECOVERY;
+      script = next == MK4_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY ? scr_jax_high_kick_recovery : scr_fujin_high_kick_recovery;
     } else {
       require(next == MK4_NATIVE_HIGH_KICK_NARROW_CONTACT_RECOVERY, "Unimplemented native contact-row continuation");
-      script = MK4_SCRIPT_KAI_HIGH_KICK_RECOVERY;
+      script = scr_kai_high_kick_recovery;
     }
     script_vm_enter(fighter, script, vm->finish);
     return;
@@ -73,17 +73,17 @@ static void kick_enter(Fighter *fighter, int action, uint32_t script) {
 }
 
 void action_high_kick(Fighter *fighter) {
-  kick_enter(fighter, ACTION_CODE_0100, MK4_DATA_HIGH_KICK);
+  kick_enter(fighter, ACTION_CODE_0100, scr_high_kick);
 }
 
 void action_low_kick(Fighter *fighter) {
-  kick_enter(fighter, ACTION_CODE_0102, MK4_DATA_LOW_KICK);
+  kick_enter(fighter, ACTION_CODE_0102, scr_low_kick);
 }
 
 /* Playback after the original controller's LP throw gates (46dcbc). */
 void action_jab(Fighter *fighter) {
   action_begin(fighter, S_PUNCH, ACTION_CODE_010B, true);
-  script_vm_enter(fighter, MK4_SCRIPT_JAB, fighter_ready);
+  script_vm_enter(fighter, scr_jab, fighter_ready);
 }
 
 static bool sweep_sound(BattleEvent *event, Fighter *owner, Fighter *victim) {
@@ -101,7 +101,7 @@ void action_sweep(Fighter *fighter) {
   if (event != NULL) {
     battle_event_delay(event, 14);
   }
-  script_vm_enter(fighter, MK4_SCRIPT_SWEEP, fighter_ready);
+  script_vm_enter(fighter, scr_sweep, fighter_ready);
 }
 
 static void sweep_recover(Fighter *fighter) {
@@ -153,17 +153,15 @@ void action_roundhouse(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   action_begin(fighter, S_KICK, ACTION_CODE_010D, false);
   fighter->native_followup = fast;
-  script_vm_enter(fighter, MK4_SCRIPT_ROUNDHOUSE, fighter_ready);
+  script_vm_enter(fighter, scr_roundhouse, fighter_ready);
 }
 
 void action_roundhouse_start(Fighter *fighter) {
-  script_vm_enter(
-      fighter, fighter->native_followup ? MK4_SCRIPT_CAGE_ROUNDHOUSE_FAST_START : MK4_SCRIPT_CAGE_ROUNDHOUSE_NORMAL_START, fighter->execution.script.finish);
+  script_vm_enter(fighter, fighter->native_followup ? scr_cage_roundhouse_fast_start : scr_cage_roundhouse_normal_start, fighter->execution.script.finish);
 }
 
 void action_roundhouse_wide_start(Fighter *fighter) {
-  script_vm_enter(
-      fighter, fighter->native_followup ? MK4_SCRIPT_JAX_ROUNDHOUSE_FAST_START : MK4_SCRIPT_JAX_ROUNDHOUSE_NORMAL_START, fighter->execution.script.finish);
+  script_vm_enter(fighter, fighter->native_followup ? scr_jax_roundhouse_fast_start : scr_jax_roundhouse_normal_start, fighter->execution.script.finish);
 }
 
 static void roundhouse_return(Fighter *fighter) {
@@ -228,7 +226,7 @@ void action_roundhouse_wide_tail(Fighter *fighter) {
 /* 46cdb4 playback after the finish-window controller gates. */
 void action_uppercut(Fighter *fighter) {
   action_begin(fighter, S_UPPERCUT, ACTION_CODE_0109, false);
-  script_vm_enter(fighter, MK4_SCRIPT_UPPERCUT, fighter_ready);
+  script_vm_enter(fighter, scr_uppercut, fighter_ready);
 }
 
 /* Native42d1b0's pair-range/camera-side branch uses the engine fighter axis
@@ -241,17 +239,17 @@ static void lp_select(Fighter *fighter, uint32_t alternate) {
     along += q16_mul(delta, fighter_axis(fighter, axis));
     distance2 += ((int64_t)delta * delta) >> 16;
   }
-  uint32_t target = along >= 0 && distance2 < 0x280000 ? MK4_DATA_LP_SELECT : alternate;
+  uint32_t target = along >= 0 && distance2 < 0x280000 ? scr_lp_select : alternate;
   FighterFn finish = fighter->execution.script.active ? fighter->execution.script.finish : fighter_ready;
   script_vm_enter(fighter, target, finish);
 }
 
 void action_lp_select_short(Fighter *fighter) {
-  lp_select(fighter, MK4_DATA_LP_SELECT_SHORT);
+  lp_select(fighter, scr_lp_select_short);
 }
 
 void action_lp_select_long(Fighter *fighter) {
-  lp_select(fighter, MK4_DATA_LP_SELECT_LONG);
+  lp_select(fighter, scr_lp_select_long);
 }
 
 /* 45b380 invokes 490bd0; pair heading is maintained by the world pump. */
@@ -264,11 +262,11 @@ void action_crouch_low_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   action_begin(fighter, S_KICK, ACTION_CODE_0106, false);
-  script_vm_enter(fighter, MK4_SCRIPT_CROUCH_LOW_KICK, fighter_ready);
+  script_vm_enter(fighter, scr_crouch_low_kick, fighter_ready);
 }
 
 static void crouch_low_kick_recover(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_CROUCH_LOW_KICK_RECOVER, fighter->execution.script.finish);
+  script_vm_enter(fighter, scr_crouch_low_kick_recover, fighter->execution.script.finish);
 }
 
 void action_crouch_low_kick_tail(Fighter *fighter) {
@@ -293,7 +291,7 @@ void action_crouch_high_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   action_begin(fighter, S_KICK, ACTION_CODE_0104, false);
-  script_vm_enter(fighter, MK4_SCRIPT_CROUCH_HIGH_KICK, fighter_ready);
+  script_vm_enter(fighter, scr_crouch_high_kick, fighter_ready);
 }
 
 static void crouch_punch_reverse(Fighter *fighter) {
@@ -350,7 +348,7 @@ void action_close_high_punch(Fighter *fighter) {
   uint32_t packed = mk4_image_u32(image, MK4_DATA_CLOSE_HIGH_PUNCH + slot * 4);
   bool reacting = (fighter_opponent(fighter)->action & 0xf000) == 0x4000;
   script_vm_bind_animation(fighter, packed * 4, reacting ? 0 : 4);
-  script_vm_enter(fighter, MK4_SCRIPT_CLOSE_HIGH_PUNCH, fighter_ready);
+  script_vm_enter(fighter, scr_close_high_punch_2, fighter_ready);
 }
 
 /* Native490460 uses the captured peer's facing and relative order before

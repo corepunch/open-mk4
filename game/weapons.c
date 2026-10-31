@@ -604,8 +604,8 @@ static void script_strike_query(Fighter *fighter) {
       if (result == CONTACT_BLOCK) {
         fighter->action = ACTION_CODE_1006;
       }
-      script_vm_enter(fighter, result == CONTACT_BLOCK ? MK4_SCRIPT_SWORD_BACK_HIGH_PUNCH_BLOCK_RECOVERY : MK4_SCRIPT_SWORD_BACK_HIGH_PUNCH_HIT_RECOVERY,
-          mk4_mmove_thrown_finish);
+      script_vm_enter(
+          fighter, result == CONTACT_BLOCK ? scr_sword_back_high_punch_block_recovery : scr_sword_back_high_punch_hit_recovery, mk4_mmove_thrown_finish);
     } else {
       script_strike_recover(fighter);
     }

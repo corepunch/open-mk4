@@ -151,8 +151,8 @@ is restored from the pre-Lua implementation; no new instruction dialect or
 per-fighter interpreter exists. `game/script/opcodes.h` is generated from the
 existing decoder schema so C dispatch uses names such as `MK4_OP_WAIT`.
 
-`fighters/<name>.asm` groups named bytecode, embedded entry aliases, native ABI
-ID declarations and the required C exports. `fighters/shared.asm` defines
+`fighters/<name>.asm` groups named bytecode, embedded entry aliases and native
+ABI ID declarations. `fighters/shared.asm` defines
 shared/ambiguous streams once. Tooling assigns ownership from established names
 and catalog usage; owning a file never changes the actor/model or native
 implementation selected at runtime. Cross-file branches use symbolic labels.
@@ -164,6 +164,10 @@ animation metadata, rigs, sound selectors and scene data. The generated
 `scripts/mk4/program.asm` includes fighter files. `make scripts` links tables
 and wordcode into one package, with executable-word membership and layout
 identity checks, and emits the C export header and compiled diagnostic names.
+Each executable script label or embedded alias becomes `scr_<label>` in C
+automatically. Bare assembly names are the single source of naming; there are
+no script export alias maps or intermediate C enums. The prefix keeps script
+addresses distinct from native C functions with the same bare name.
 The host explicitly owns the loaded package; neither the VM nor simulation
 opens an EXE. Normal builds and startup need no EXE. `make scripts-export`
 regenerates bytecode from the hash-checked EXE; `make scripts-source-check` and

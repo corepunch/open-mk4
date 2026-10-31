@@ -155,11 +155,13 @@ services under `game/native/`, implemented once.
 
 `make scripts-export` (`tools/import_mk4_data.py --scripts --output .`) derives
 fighter bytecode from the hash-checked EXE. `tools/mk4_script_layout.json` keeps
-established entry names/addresses, C export names and native ABI identifiers;
+established entry names/addresses and native ABI identifiers;
 behavior is decoded by the existing tooling. Ownership follows established
-names and catalog usage, with ambiguous streams shared. Preserve private labels
-and export only the existing C entry interface; cross-file branches use linked
-names. Explicit jumps preserve original fall-through after regrouping.
+names and catalog usage, with ambiguous streams shared. Keep bare labels in
+assembly; cross-file branches use those same names. The linker exposes
+script labels and executable embedded aliases to C
+as `scr_<label>` automatically; do not add script export mappings or wrapper
+enums. Explicit jumps preserve original fall-through after regrouping.
 `make scripts-source-check` compares without writing and is part of
 `make scripts-check`. Normal builds use checked-in wordcode and need no EXE.
 

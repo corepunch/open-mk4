@@ -117,7 +117,7 @@ static void react_jab_air(Fighter *fighter) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_SCRIPT_REACT_JAB_AIR, action_controller_return);
+  hit_script(fighter, scr_react_jab_air, action_controller_return);
 }
 
 static void react_kick_air(Fighter *fighter) {
@@ -125,13 +125,13 @@ static void react_kick_air(Fighter *fighter) {
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   action_native_sound_list(MK4_SOUND_KNOCKDOWN_VOICE_LIST);
-  hit_script(fighter, MK4_SCRIPT_REACT_KICK_AIR, action_getup_roll);
+  hit_script(fighter, scr_react_kick_air, action_getup_roll);
 }
 
 static void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_SCRIPT_JAX_DASH_PUNCH_AIRBORNE_VICTIM_168, action_getup_roll);
+  hit_script(fighter, scr_jax_dash_punch_airborne_victim_168, action_getup_roll);
 }
 
 static void react_kick_hit(Fighter *fighter) {
@@ -140,10 +140,10 @@ static void react_kick_hit(Fighter *fighter) {
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
     fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
-    hit_script(fighter, MK4_SCRIPT_KICK_HIT_CROUCHING_STAGGER, action_controller_return);
+    hit_script(fighter, scr_kick_hit_crouching_stagger, action_controller_return);
     fighter->action = ACTION_CODE_4005;
   } else {
-    hit_script(fighter, MK4_SCRIPT_KICK_HIT_STANDING_STAGGER, action_controller_return);
+    hit_script(fighter, scr_kick_hit_standing_stagger, action_controller_return);
   }
 }
 
@@ -153,7 +153,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (crouch) {
     uint32_t physics = mk4_image_u32(battle_data(), MK4_CROUCH_REACTION_PHYSICS_WORD);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction callback");
-    hit_script(fighter, MK4_CROUCH_REACTION_SCRIPT, action_controller_return);
+    hit_script(fighter, scr_crouch_reaction_script, action_controller_return);
     return;
   }
   fighter->hits = maxi(0, fighter->hits - 1);
@@ -162,7 +162,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (staggers) {
     battle_wall_recoil(fighter);
   }
-  hit_script(fighter, staggers ? MK4_SCRIPT_JAB_HIT_DAMAGE_STAGGER : MK4_SCRIPT_JAB_HIT_SHORT_RECOVERY, action_controller_return);
+  hit_script(fighter, staggers ? scr_jab_hit_damage_stagger : scr_jab_hit_short_recovery, action_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
@@ -194,7 +194,7 @@ void action_block_cycle(Fighter *fighter) {
     fighter->native_variant--;
   }
   if (fighter->native_variant > 0) {
-    script_vm_enter(fighter, MK4_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, action_controller_return);
+    script_vm_enter(fighter, scr_block_unarmed_pose_cycle, action_controller_return);
   } else {
     mk4_script_stop_body(fighter);
     action_controller_return(fighter);
@@ -316,16 +316,13 @@ static void react_block(Fighter *fighter) {
     script_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
-    script_vm_enter(fighter, fighter->armed ? MK4_SCRIPT_BLOCK_ARMED_RECOVERY : MK4_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, action_controller_return);
+    script_vm_enter(fighter, fighter->armed ? scr_block_armed_recovery : scr_block_unarmed_pose_cycle, action_controller_return);
   }
 }
 
 /* 486230/486310/486340/4863b0: six 6-tick shakes, 88-tick hold,
  * three 6-tick shakes. Pose and body stay fixed; cosmetic shake is omitted.
  * Air thaw: 4e9d38 sets gravity 0x147 and waits for landing, then 486530. */
-enum {
-  AIRBORNE_THAW_SCRIPT = MK4_LINK_REACTIONS_AIRBORNE_THAW_SCRIPT
-};
 
 static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = ACTION_CODE_1003};
 static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = ACTION_CODE_1005};
@@ -339,7 +336,7 @@ void action_thaw_land(Fighter *fighter) {
 static void frozen_thaw(Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   if (fighter_airborne(fighter)) {
-    script_vm_enter(fighter, AIRBORNE_THAW_SCRIPT, action_controller_return);
+    script_vm_enter(fighter, scr_airborne_thaw_script, action_controller_return);
   } else {
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
     neutral(fighter);

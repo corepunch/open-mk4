@@ -13,8 +13,8 @@ still supplies meshes, textures, animation payloads and sampled audio.
 
 ## Sources and regeneration
 
-- `../fighters/<name>.asm`: named bytecode, native ABI IDs, embedded aliases
-  and existing C exports for one fighter; shared streams are defined once in
+- `../fighters/<name>.asm`: named bytecode, native ABI IDs and embedded aliases
+  for one fighter; shared streams are defined once in
   `../fighters/shared.asm`.
 - `mk4/program.asm`: generated include order for fighter bytecode.
 - `mk4/tables.asm`: include order for data records in `mk4/tables/`.
@@ -31,7 +31,7 @@ make scripts-check         # source/word verification, strict audits, native nam
 ```
 
 `tools/mk4_script_layout.json` preserves established entry names, original
-addresses, native IDs and C export names. Names and catalog usage determine
+addresses and native IDs. Names and catalog usage determine
 file ownership through tooling. All authored operations and operands come
 from the hash-checked EXE. No per-fighter C implementation or handwritten
 configuration is generated. Regrouping inserts explicit jumps for original
@@ -106,6 +106,13 @@ one line, for example `.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`.
 It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
 private constants and `.export C_NAME label` when the C interface name differs
 from its source label. These are build-time directives, not retail VM opcodes.
+
+Script labels and executable embedded aliases automatically become C constants
+with the `scr_` prefix. Assembly uses `quan_chi_lk_throw_startup` directly;
+C uses `scr_quan_chi_lk_throw_startup` from `mk4_linked.h`. No script `.export`
+line, intermediate C enum or redundant JSON export mapping is needed. Native
+function names remain distinct from script addresses, even when the bare names
+match. Data exports retain their existing interface.
 
 The host loads one package; `--data PATH` selects a compatible one. The loader
 checks package shape, compiled layout identity and executable-word membership.

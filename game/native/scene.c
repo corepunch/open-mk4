@@ -13,16 +13,16 @@ static void fan_cycle_enter(Fighter *fighter) {
   int roster = fighter_opponent(fighter)->roster;
   roster = roster == 16 ? 2 : roster == 17 ? 7 : roster;
   if (roster == 2 || roster == 9) {
-    script_vm_enter(fighter, MK4_SCRIPT_JAX_FAN_FATALITY_OWNER_CYCLE, fighter_ready);
+    script_vm_enter(fighter, scr_jax_fan_fatality_owner_cycle, fighter_ready);
   } else {
     script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_414, 0);
-    script_vm_enter(fighter, MK4_SCRIPT_JAREK_FAN_FATALITY_MALE_VICTIM_OWNER_CYCLE, fighter_ready);
+    script_vm_enter(fighter, scr_jarek_fan_fatality_male_victim_owner_cycle, fighter_ready);
   }
 }
 
 void action_fan_start(Fighter *fighter) {
-  script_vm_enter((Fighter *)fighter_opponent(fighter), MK4_SCRIPT_JAX_FAN_FATALITY_VICTIM, fighter_ready);
-  script_vm_enter(fighter, MK4_SCRIPT_JAX_FAN_FATALITY_PERFORMER, fighter_ready);
+  script_vm_enter((Fighter *)fighter_opponent(fighter), scr_jax_fan_fatality_victim, fighter_ready);
+  script_vm_enter(fighter, scr_jax_fan_fatality_performer, fighter_ready);
 }
 
 void action_fan_finish(Fighter *fighter) {
@@ -45,15 +45,15 @@ void action_fan_cycle(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_execution_cancel(victim);
   victim->sample_override = 69;
-  script_vm_enter(victim, MK4_SCRIPT_JAX_FAN_FATALITY_VICTIM_RELEASE, fighter_ready);
+  script_vm_enter(victim, scr_jax_fan_fatality_victim_release, fighter_ready);
   mk4_native_fan_rise(fighter);
   /* CountdownStoreCallChain rebinds the release descriptor at sample 69. */
   script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_415, 69);
-  script_vm_enter(fighter, MK4_SCRIPT_JAX_FAN_FATALITY_OWNER_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_jax_fan_fatality_owner_release, fighter_ready);
 }
 
 void action_fan_victory(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_FAN_VICTORY, fighter_ready);
+  script_vm_enter(fighter, scr_fan_victory, fighter_ready);
 }
 
 void action_fan_victim_end(Fighter *fighter) {
@@ -62,7 +62,7 @@ void action_fan_victim_end(Fighter *fighter) {
 }
 
 static void spike_script_enter(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_SPIKE_ENTER, fighter_ready);
+  script_vm_enter(fighter, scr_spike_enter, fighter_ready);
 }
 
 static void action_spike_delay(Fighter *fighter) {
@@ -190,7 +190,7 @@ static bool scene_victory_join(BattleEvent *event, Fighter *owner, Fighter *peer
     return false;
   }
   if (event->phase == 0) {
-    if (owner->execution.script.active && owner->execution.script.entry == MK4_SCRIPT_RAIDEN_VICTORY) {
+    if (owner->execution.script.active && owner->execution.script.entry == scr_raiden_victory) {
       event->phase = 1;
       battle_event_delay(event, 50);
     }
@@ -221,13 +221,13 @@ void action_scene_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case MK4_NATIVE_RAIDEN_FATALITY_2_SCENE_VICTIM:
-      script = MK4_SCRIPT_RAIDEN_FATALITY_2_VICTIM;
+      script = scr_raiden_fatality_2_victim;
       break;
     case MK4_NATIVE_TANYA_FATALITY_2_VICTIM_REACTION_186:
-      script = MK4_SCRIPT_TANYA_FATALITY_2_VICTIM_SCENE;
+      script = scr_tanya_fatality_2_victim_scene;
       break;
     case MK4_NATIVE_SONYA_FATALITY_2_SCENE_VICTIM:
-      script = MK4_SCRIPT_SONYA_FATALITY_2_VICTIM;
+      script = scr_sonya_fatality_2_victim;
       break;
     default:
       require(false, "Unexpected native scene reaction");
@@ -271,7 +271,7 @@ void action_stage_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  script_vm_enter(fighter, MK4_SCRIPT_STAGE_VICTIM, action_task_pause);
+  script_vm_enter(fighter, scr_stage_victim, action_task_pause);
 }
 
 static bool stage_ceiling_reached(const Fighter *fighter) {
@@ -279,7 +279,7 @@ static bool stage_ceiling_reached(const Fighter *fighter) {
 }
 
 static void stage_impaled(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_STAGE_IMPALED, action_task_pause);
+  script_vm_enter(fighter, scr_stage_impaled, action_task_pause);
 }
 
 /*483720/48f5f0 waits for the original absolute ceiling height. */

@@ -105,6 +105,34 @@ return 0
             with self.subTest(text=text), self.assertRaises(ValueError):
                 link(self.source('.section data\n' + text + '\n'))
 
+    def test_script_labels_have_a_c_namespace_without_export_aliases(self):
+        source = '''.equ LOOKALIKE 0x1000004
+.section data
+table:
+.word 0
+.section script
+entry:
+call 0, 0x496f80
+ready 0
+.alias embedded entry + 4
+.alias data_alias table
+guard:
+.zero 4
+'''
+        _, header, symbols = link(self.source(source))
+        for name in ('entry', 'embedded'):
+            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
+        for name in ('table', 'data_alias', 'guard', 'LOOKALIKE'):
+            self.assertNotIn('#define scr_' + name + ' ', header)
+        self.assertNotIn('#define entry ', header)
+        self.assertNotIn('MK4_LINK_', header)
+        moved = source.replace('entry:\n', '.zero 12\nentry:\n')
+        _, moved_header, moved_symbols = link(self.source(moved))
+        self.assertNotEqual(header, moved_header)
+        self.assertIn(f'#define scr_entry 0x{moved_symbols["entry"]:x}u', moved_header)
+        with self.assertRaisesRegex(ValueError, 'Duplicate script export'):
+            link(self.source(source + '.export scr_entry entry\n'))
+
     def test_imported_data_and_wordcode_evidence(self):
         self.assertEqual({op:count for op,count in OPS.values()}, {op:row[1] for op,row in SCRIPT_OPS.items()})
         with TemporaryDirectory() as temp:
@@ -114,11 +142,13 @@ return 0
             export(RetailImage(ROOT/'MK4/MK-4.EXE'), destination)
             package, header, _ = link(destination/'project.asm')
             self.assertEqual(package[:4], b'MK4D')
-        _, _, symbols = link(ROOT/'scripts/mk4/project.asm')
+        _, header, symbols = link(ROOT/'scripts/mk4/project.asm')
         layout = json.loads(SCRIPT_LAYOUT.read_text())
         names = [name for module in layout['modules'].values() for name in module['entries']]
         self.assertEqual(len(names), len(set(names)))
         self.assertTrue(all(name in symbols for name in names))
+        for name in names:
+            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
         for name, value in layout['natives'].items():
             self.assertEqual(symbols[name], int(value, 16))
         self.assertGreater(verify_scripts(RetailImage(ROOT / 'MK4/MK-4.EXE'), ROOT / 'scripts/mk4/project.asm'), 0)
@@ -136,6 +166,7 @@ return 0
             for path in generated:
                 self.assertEqual(path.read_bytes(), (ROOT / path.relative_to(destination)).read_bytes(), str(path))
                 self.assertNotRegex(path.read_text(), r'(?m)^\.export (\w+) \1$')
+                self.assertNotRegex(path.read_text(), r'(?m)^\.export ')
             self.assertGreater(verify_scripts(image, destination / 'scripts/mk4/project.asm'), 0)
             self.assertEqual(export_scripts(image, destination, check=True)[1], [])
             # A selector's embedded operand entry must continue into its
@@ -152,7 +183,6 @@ return 0
             original = module.read_text()
             self.assertIn('sonya_fatality_2_second_cycle:', original)
             self.assertIn('.export_equ MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END ', original)
-            self.assertIn('.export MK4_LINK_MK4_ADDRESSES_MK4_SCRIPT_SONYA_FATALITY_2_SECOND_CYCLE ', original)
             modified = original.replace('  wait 0xf', '  wait 0xe', 1)
             self.assertNotEqual(modified, original)
             module.write_text(modified)

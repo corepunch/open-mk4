@@ -6,7 +6,6 @@ import hashlib
 import json
 import re
 from pathlib import Path
-import re
 import struct
 from mk4_asm import OPS, lines
 
@@ -38,6 +37,7 @@ def evaluate(text, symbols):
 
 def link(path):
     symbols, aliases, exports, rows = {}, {}, {}, []
+    script_labels, alias_names = set(), set()
     pc, section, script_begin = BASE, None, None
     for location, line in lines(Path(path)):
         try:
@@ -61,11 +61,14 @@ def link(path):
                         symbols[name] = evaluate(value, symbols)
                     else:
                         aliases[name] = value
+                        alias_names.add(name)
             elif line.endswith(':'):
                 name = line[:-1]
                 if section is None or not re.fullmatch(r'[A-Za-z_]\w*', name) or name in symbols or name in aliases:
                     raise ValueError('Invalid/duplicate label ' + name)
                 symbols[name] = pc
+                if section == 'script':
+                    script_labels.add(name)
             else:
                 if section is None:
                     raise ValueError('Missing section')
@@ -154,6 +157,19 @@ def link(path):
             if not (script_begin <= target < pc and target % 4 == 0 and mask[offset // 32] & (1 << (offset // 4 % 8))):
                 raise ValueError(f'{location}: branch does not name a linked script word')
     constants = {name: evaluate(value, symbols) for name, value in exports.items()}
+    # Script labels already identify their entries. Expose the same names to C
+    # in one short namespace, including typed aliases into operand words.
+    for name in script_labels | alias_names:
+        address = symbols[name]
+        if not script_begin <= address < pc or address % 4 != 0:
+            continue
+        offset = address - BASE
+        if not mask[offset // 32] & (1 << (offset // 4 % 8)):
+            continue
+        c_name = 'scr_' + name
+        if c_name in constants:
+            raise ValueError('Duplicate script export ' + c_name)
+        constants[c_name] = address
     constants.update(MK4_DATA_IMAGE_BASE=BASE, MK4_DATA_IMAGE_END=pc,
                      SCRIPT_ADDRESS_BEGIN=script_begin, SCRIPT_ADDRESS_END=pc,
                      MK4_SCRIPT_BEGIN=script_begin, MK4_SCRIPT_END=pc)

@@ -87,7 +87,7 @@ static void cage_projectile_cast_orb(Fighter *fighter, int action) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = action;
-  script_vm_enter(fighter, MK4_SCRIPT_CAST_ORB, fighter_ready);
+  script_vm_enter(fighter, scr_cast_orb, fighter_ready);
 }
 
 void cage_high_orb(Fighter *fighter) {
@@ -204,7 +204,7 @@ static void fujin_wind_vortex_lift(Fighter *fighter) {
 static void fujin_wind_vortex_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   if (fighter->health > 0) {
-    script_vm_enter(fighter, MK4_SCRIPT_VORTEX_LANDED, fighter_ready);
+    script_vm_enter(fighter, scr_vortex_landed, fighter_ready);
   } else {
     fighter_execution_finish(fighter, NULL);
   }
@@ -254,7 +254,7 @@ void fujin_wind_victim(Fighter *fighter) {
 static void fujin_wind_slam_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   fighter->hits++;
-  script_vm_enter(fighter, MK4_SCRIPT_SLAM_LANDED, fighter_ready);
+  script_vm_enter(fighter, scr_slam_landed, fighter_ready);
 }
 
 static void fujin_wind_slam_drop(Fighter *fighter) {
@@ -276,13 +276,13 @@ void fujin_wind_slam_victim(Fighter *fighter) {
 
 void fujin_wind_recovery(Fighter *fighter) {
   fighter->action = 0x1015;
-  script_vm_enter(fighter, MK4_SCRIPT_FUJIN_WIND_RECOVERY, fighter_ready);
+  script_vm_enter(fighter, scr_fujin_wind_recovery, fighter_ready);
 }
 
 void fujin_wind(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &fujin_wind_caster);
-  script_vm_enter(fighter, MK4_SCRIPT_FUJIN_WIND, fighter_ready);
+  script_vm_enter(fighter, scr_fujin_wind, fighter_ready);
 }
 
 void fujin_wind_slam(Fighter *fighter) {
@@ -292,7 +292,7 @@ void fujin_wind_slam(Fighter *fighter) {
   }
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &fujin_wind_slam_move);
-  script_vm_enter(fighter, MK4_SCRIPT_FUJIN_WIND_SLAM, fighter_ready);
+  script_vm_enter(fighter, scr_fujin_wind_slam, fighter_ready);
 }
 
 /* Native service cluster: 49ca90. */
@@ -344,7 +344,7 @@ void goro_fireball(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &goro_projectile_s_fireball);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  script_vm_enter(fighter, MK4_SCRIPT_GORO_FIREBALL, fighter_ready);
+  script_vm_enter(fighter, scr_goro_fireball, fighter_ready);
 }
 
 /* Native service cluster: 43b8c0. */
@@ -370,7 +370,7 @@ static void goro_quake_quake_cleanup(Fighter *fighter) {
 
 static void goro_quake_quake_jump(Fighter *fighter) {
   goro_quake_quake_cleanup(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_QUAKE_JUMP, fighter_ready);
+  script_vm_enter(fighter, scr_quake_jump, fighter_ready);
 }
 
 /* 43b7e0 (HK B,F,D,D): voice 0x604, then 48fde0 blends from the current
@@ -403,7 +403,7 @@ void goro_script_quake_land(Fighter *fighter) {
     battle_react(victim, GORO_QUAKE_QUAKE_REACTION);
   }
   action_disturb_resting_weapons();
-  script_vm_enter(fighter, MK4_SCRIPT_GORO_QUAKE_LAND, fighter_ready);
+  script_vm_enter(fighter, scr_goro_quake_land, fighter_ready);
 }
 
 /* Native service cluster: 497580. */
@@ -516,7 +516,7 @@ void jarek_blade(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = 0x310;
-  script_vm_enter(fighter, MK4_SCRIPT_JAREK_BLADE, fighter_ready);
+  script_vm_enter(fighter, scr_jarek_blade, fighter_ready);
 }
 
 /* Native service cluster: 47b600. */
@@ -527,7 +527,7 @@ static const MoveDef jarek_quake_quake_move = {.clip = 107, .last = MOVE_END, .f
 void jarek_quake(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &jarek_quake_quake_move);
   fighter->sample_override = 0;
-  script_vm_enter(fighter, MK4_SCRIPT_JAREK_QUAKE, fighter_ready);
+  script_vm_enter(fighter, scr_jarek_quake, fighter_ready);
 }
 
 /* 47b600: action 0x200f, 415180 ground-shock decoration, then 48ee60/48ef40
@@ -542,7 +542,7 @@ void jarek_quake_tail(Fighter *fighter) {
      * runs Goro's port of it (disarm, 4ea8f8 voice, victim script 4e95c8). */
     battle_react(victim, 136);
   }
-  script_vm_enter(fighter, MK4_SCRIPT_JAREK_QUAKE_TAIL, fighter_ready);
+  script_vm_enter(fighter, scr_jarek_quake_tail, fighter_ready);
 }
 
 /* Native service cluster: native_ground_pound. */
@@ -664,7 +664,7 @@ void jax_missile(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &jax_projectile_s_missile);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  script_vm_enter(fighter, MK4_SCRIPT_JAX_MISSILE, fighter_ready);
+  script_vm_enter(fighter, scr_jax_missile, fighter_ready);
 }
 
 /* Native service cluster: 499000, 499450, 499470. */
@@ -817,13 +817,13 @@ static void kai_skull_skull_cast(Fighter *fighter, const MoveDef *move, uint32_t
 }
 
 void kai_rising_skull(Fighter *fighter) {
-  kai_skull_skull_cast(fighter, &kai_skull_rising_cast, MK4_DATA_KAI_RISING_SKULL);
+  kai_skull_skull_cast(fighter, &kai_skull_rising_cast, scr_kai_rising_skull);
 }
 
 void kai_rising_skull_spawn(Fighter *fighter) {
   /* 499450: task 499490 type 48 from 4ed390 (back .4, Y -.01), rising .2. */
   kai_skull_skull_spawn_from(fighter, kai_skull_rising_step, -0x6666, -0x28f, -KAI_SKULL_SKULL_SPEED, KAI_SKULL_SKULL_UP);
-  script_vm_enter(fighter, MK4_SCRIPT_KAI_RISING_SKULL_SPAWN, fighter_ready);
+  script_vm_enter(fighter, scr_kai_rising_skull_spawn, fighter_ready);
 }
 
 void kai_rising_skull_finish(Fighter *fighter) {
@@ -833,7 +833,7 @@ void kai_rising_skull_finish(Fighter *fighter) {
 }
 
 void kai_ground_skull(Fighter *fighter) {
-  kai_skull_skull_cast(fighter, &kai_skull_ground_cast, MK4_DATA_KAI_GROUND_SKULL);
+  kai_skull_skull_cast(fighter, &kai_skull_ground_cast, scr_kai_ground_skull);
 }
 
 static void kai_skull_ground_fall_landed(Fighter *fighter) {
@@ -953,9 +953,9 @@ static void liu_kang_projectile_fireball(Fighter *fighter, bool low) {
   fighter_upright(fighter);
   fighter->script_phase = air ? 2 : low ? 1 : 0;
   fighter->sample_override = 0;
-  ScriptContinuation script = air   ? (ScriptContinuation){MK4_SCRIPT_LIU_KANG_AIR_FIREBALL_AIR, fighter_ready}
-                              : low ? (ScriptContinuation){MK4_DATA_LIU_KANG_LOW_FIREBALL_LOW, fighter_ready}
-                                    : (ScriptContinuation){MK4_DATA_LIU_KANG_HIGH_FIREBALL_HIGH, fighter_ready};
+  ScriptContinuation script = air   ? (ScriptContinuation){scr_liu_kang_air_fireball_air, fighter_ready}
+                              : low ? (ScriptContinuation){scr_liu_kang_low_fireball_low, fighter_ready}
+                                    : (ScriptContinuation){scr_liu_kang_high_fireball_high, fighter_ready};
   script_vm_enter(fighter, script.entry, script.finish);
 }
 
@@ -1076,14 +1076,14 @@ void quan_chi_script_skull_release(Fighter *fighter) {
       skull->vel[axis] = q16_mul(fighter->saved_motion[axis == AXIS_X ? 0 : 1], 0x3333);
     }
   }
-  script_vm_enter(fighter, MK4_SCRIPT_QUAN_CHI_SKULL_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_quan_chi_skull_release, fighter_ready);
 }
 
 void quan_chi_skull(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &quan_chi_skull_s_skull);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  script_vm_enter(fighter, MK4_SCRIPT_QUAN_CHI_SKULL, fighter_ready);
+  script_vm_enter(fighter, scr_quan_chi_skull, fighter_ready);
 }
 
 /* Reaction 128 (485f90): 494520 drops a weapon, then 4e9cd8 knocks the
@@ -1093,7 +1093,7 @@ void quan_chi_skull_reaction(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &quan_chi_skull_s_bitten);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
-  script_vm_enter(victim, MK4_SCRIPT_QUAN_CHI_SKULL_REACTION, fighter_ready);
+  script_vm_enter(victim, scr_quan_chi_skull_reaction, fighter_ready);
 }
 
 /* Native service cluster: 49be10. */
@@ -1118,7 +1118,7 @@ void raiden_lightning(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &raiden_projectile_s_projectile);
-  script_vm_enter(fighter, MK4_SCRIPT_RAIDEN_LIGHTNING, fighter_ready);
+  script_vm_enter(fighter, scr_raiden_lightning, fighter_ready);
 }
 
 /* Native service cluster: 483df0, 496e00. */
@@ -1189,7 +1189,7 @@ void reiko_star(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reiko_star_s_star_throw);
   fighter->saved_motion[AXIS_X] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[AXIS_Z] = fighter_axis(fighter, AXIS_Z);
-  script_vm_enter(fighter, MK4_SCRIPT_REIKO_STAR, fighter_ready);
+  script_vm_enter(fighter, scr_reiko_star, fighter_ready);
 }
 
 /* Native service cluster: 40eb80, 40ec40, 40ed20, 40ee00, 483df0, 498920. */
@@ -1340,13 +1340,12 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->execution.cleanup = reptile_projectile_spit_cleanup;
-  script_vm_enter(fighter, MK4_SCRIPT_REPTILE_ACID_SPIT, fighter_ready);
+  script_vm_enter(fighter, scr_reptile_acid_spit, fighter_ready);
 }
 
 /* Native service cluster: 416ae0, 416d40, 468640. */
 enum {
-  FIRE_SCRIPT_STARTUP = MK4_LINK_PROJECTILES_FIRE_SCRIPT_STARTUP,
-  FIRE_SCRIPT_RECOVERY = MK4_LINK_PROJECTILES_FIRE_SCRIPT_RECOVERY,
+
   FIRE_NATIVE_NORMAL_END = 47,
   FIRE_NATIVE_FAST_END = 31,
   FIRE_NATIVE_NORMAL_CONTACT = 27,
@@ -1366,7 +1365,7 @@ static void scorpion_fire_fire_contact(Fighter *fighter) {
 
 /*468640 finishes its native contact phase at sample28, then enters words. */
 static void fire_recovery_script(Fighter *fighter) {
-  script_vm_enter(fighter, FIRE_SCRIPT_RECOVERY, fighter_ready);
+  script_vm_enter(fighter, scr_fire_script_recovery, fighter_ready);
 }
 
 /*4688e0 uses428cf0 to finish the inherited descriptor, then46f650. */
@@ -1390,7 +1389,7 @@ void scorpion_fire(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &scorpion_fire_s_fire);
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;
-  script_vm_enter(fighter, FIRE_SCRIPT_STARTUP, fighter_ready);
+  script_vm_enter(fighter, scr_fire_script_startup, fighter_ready);
 }
 
 void scorpion_script_fire_decor(Fighter *fighter) {
@@ -1423,7 +1422,7 @@ void sonya_ring(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &sonya_projectile_s_projectile);
-  script_vm_enter(fighter, MK4_SCRIPT_SONYA_RING, fighter_ready);
+  script_vm_enter(fighter, scr_sonya_ring, fighter_ready);
 }
 
 void sonya_script_ring_flash(Fighter *fighter, int task_type) {

@@ -137,7 +137,7 @@ static void behavior(void) {
         Fighter *owner = setup(slot, scenario);
         press(slot, crouch != 0, scenario);
         check(owner->execution.script.active, "real button entry must select the runtime interpreter");
-        check(owner->execution.script.entry == (crouch ? MK4_FIXTURE_REF_98336 : MK4_FIXTURE_REF_97680), "button entry selected the wrong retail root");
+        check(owner->execution.script.entry == (crouch ? scr_crouch_high_kick : scr_low_kick), "button entry selected the wrong retail root");
         recovery[scenario] = recover(owner, slot, crouch != 0, scenario);
       }
       if (!crouch) {
@@ -151,13 +151,13 @@ static void runtime_words(void) {
   Fighter *owner = setup(0, 2);
   press(0, true, 2);
   int original = recover(owner, 0, true, 2);
-  uint32_t loop = mk4_image_u32(&image, MK4_FIXTURE_REF_98520);
+  uint32_t loop = mk4_image_u32(&image, scr_crouch_high_kick_clip_54_loop_1);
   check(loop == 0x3a000002, "retail crouch kick loop evidence changed");
-  put_word(MK4_FIXTURE_REF_98520, 0x3a000003);
+  put_word(scr_crouch_high_kick_clip_54_loop_1, 0x3a000003);
   owner = setup(0, 2);
   press(0, true, 2);
   int extended = recover(owner, 0, true, 2);
-  put_word(MK4_FIXTURE_REF_98520, loop);
+  put_word(scr_crouch_high_kick_clip_54_loop_1, loop);
   check(extended == original + 8, "one extra source loop must add its four two-tick waits without regenerating C");
 }
 
@@ -182,7 +182,7 @@ static void lifetimes(void) {
       tick();
     }
     check(g_battle.fighters[1 - slot].health == 0 &&
-              (!owner->execution.script.active || (owner->state == S_VICTORY && owner->execution.script.entry == MK4_FIXTURE_REF_100928)),
+              (!owner->execution.script.active || (owner->state == S_VICTORY && owner->execution.script.entry == scr_raiden_victory)),
         "KO must retire attack ownership before entering the original victory program");
     owner = setup(slot, 2);
     press(slot, true, 2);
@@ -318,8 +318,8 @@ static void native_row_data(void) {
   check(script_native_dispatch(owner, 0x46a760, MK4_TAIL, 0), "native rows must use the shared address binding");
   check(fighter_sample(owner) == 2 && owner->execution.frames == NULL, "native rows must load live poses without copying frame arrays");
   tick();
-  check(
-      owner->execution.script.entry == MK4_FIXTURE_REF_97392 && owner->action == ACTION_CODE_1006, "native row terminator must select its retail continuation");
+  check(owner->execution.script.entry == scr_jax_high_kick_recovery && owner->action == ACTION_CODE_1006,
+      "native row terminator must select its retail continuation");
   fighter_interrupt(owner, fighter_ready);
   check(!owner->execution.script.active && owner->execution.script.native_resume == NULL, "interruption must retire native row continuation state");
   for (unsigned i = 0; i < 8; ++i) {
@@ -537,7 +537,7 @@ static void reaction_native_table(void) {
   /* Native4854e0 inherits the descriptor installed by the paired script. */
   script_vm_bind_animation(actor, MK4_FIXTURE_REF_183676 + 149 * 12, 0);
   entry(actor);
-  check(actor->execution.script.active && actor->execution.script.entry == MK4_FIXTURE_REF_113088, "native reaction must execute its original script");
+  check(actor->execution.script.active && actor->execution.script.entry == scr_victim_disarm_fall, "native reaction must execute its original script");
   for (int visit = 0; visit < 128 && actor->execution.script.active; ++visit) {
     tick();
   }
@@ -756,7 +756,7 @@ static void native_callback_table(void) {
     put_word(descriptor + 4, count);
     check(actor->execution.native_frames.native_end.address == 0x42ce80 && actor->execution.native_frames.script_end.entry == 0,
         "native animation table must own its callback separately from VM script completion");
-    put_word(table + 4, MK4_FIXTURE_REF_101640);
+    put_word(table + 4, scr_low_kick_clip_67);
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
     }
@@ -769,7 +769,7 @@ static void native_callback_table(void) {
   Fighter *actor = setup(0, 2);
   native_hold(actor, 2, NULL);
   native_address_end(actor, 0x42ce80);
-  native_script_end(actor, MK4_FIXTURE_REF_101640, fighter_ready);
+  native_script_end(actor, scr_low_kick_clip_67, fighter_ready);
   check(actor->execution.native_frames.native_end.address == 0, "script completion must replace an earlier native callback");
   native_address_end(actor, 0x42ce80);
   check(actor->execution.native_frames.script_end.entry == 0, "native callback must replace an earlier script completion");
@@ -824,7 +824,8 @@ static void native_stagger_boundary(void) {
     check(script_native_dispatch(owner, 0x45b1f0, MK4_HANDLER, 100) && owner->execution.generation == generation && actor->pending != NULL,
         "script reaction dispatch must use the loaded peer native independently of owner context without interrupting the caller");
     tick();
-    check(actor->execution.script.active && actor->execution.script.entry == (crouch ? MK4_FIXTURE_REF_111456 : MK4_FIXTURE_REF_111368) &&
+    check(actor->execution.script.active &&
+              actor->execution.script.entry == (crouch ? scr_crouch_reaction_script : scr_kai_handstand_reaction_standing_stagger) &&
               actor->execution.frames == NULL,
         "loaded stagger native must preserve the incoming action branch and transfer playback to original script words");
     if (crouch) {
@@ -842,15 +843,15 @@ static void native_stagger_boundary(void) {
   actor->hits = 4;
   battle_react(actor, 151);
   tick();
-  check(actor->execution.script.active && actor->execution.script.entry == MK4_FIXTURE_REF_112352,
+  check(actor->execution.script.active && actor->execution.script.entry == scr_reaction_fall,
       "native freeze interruption must transfer to the shared fall script rather than a retired C reaction row");
   fighter_interrupt(actor, fighter_ready);
 }
 
 /* A script-owned landing wait hands off to the shared native controller. */
 static void script_landing_handoff(void) {
-  uint32_t gravity = mk4_image_u32(&image, MK4_FIXTURE_REF_113980);
-  put_word(MK4_FIXTURE_REF_113980, 0x200);
+  uint32_t gravity = mk4_image_u32(&image, scr_airborne_thaw_script_operand_1);
+  put_word(scr_airborne_thaw_script_operand_1, 0x200);
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     Fighter *actor = setup(0, 2);
     static const MoveDef locked = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
@@ -858,7 +859,7 @@ static void script_landing_handoff(void) {
     actor->body.pos[AXIS_Y] = actor->body.ground - Q16_ONE;
     actor->flags |= FF_NO_GUARD;
     actor->action = 0x1003;
-    script_vm_enter(actor, MK4_FIXTURE_REF_113976, action_controller_return);
+    script_vm_enter(actor, scr_airborne_thaw_script, action_controller_return);
     check(actor->execution.script.active && actor->execution.frames == NULL && actor->body.gravity == 0x200,
         "landing motion and wait must come from loaded script words");
     if (interrupted) {
@@ -871,7 +872,7 @@ static void script_landing_handoff(void) {
     check(!actor->execution.script.active && actor->execution.frames == NULL && !(actor->flags & FF_NO_GUARD),
         "landing completion or interruption must retire script/native playback and guard ownership");
   }
-  put_word(MK4_FIXTURE_REF_113980, gravity);
+  put_word(scr_airborne_thaw_script_operand_1, gravity);
 }
 
 static uint32_t returned_word;
@@ -1082,7 +1083,7 @@ static void native_task_completion(void) {
   g_battle.winner = 0;
   battle_react(actor, 175);
   tick();
-  check(actor->execution.script.active && actor->execution.script.entry == MK4_FIXTURE_REF_115456,
+  check(actor->execution.script.active && actor->execution.script.entry == scr_stage_victim,
       "loaded stage native must transfer victim motion and playback to original words");
   for (int visit = 0; visit < 512 && g_battle.phase == PHASE_FATALITY; ++visit) {
     tick();
@@ -1109,7 +1110,7 @@ static void native_script_recovery_handoff(void) {
     bool script_seen = false;
     for (int visit = 0; visit < 128 && actor->state != S_IDLE; ++visit) {
       tick();
-      script_seen |= actor->execution.script.active && actor->execution.script.entry == MK4_FIXTURE_REF_97176;
+      script_seen |= actor->execution.script.active && actor->execution.script.entry == scr_fire_script_recovery;
     }
     check(script_seen && !actor->execution.script.active && actor->execution.frames == NULL && actor->state == S_IDLE,
         "native contact recovery must run original words and retire its descriptor continuation");
@@ -1126,7 +1127,7 @@ static void native_scene_script_handoff(void) {
   bool script_seen = false;
   for (int visit = 0; visit < 1024 && g_battle.phase != PHASE_MATCH_OVER; ++visit) {
     tick();
-    script_seen |= peer->execution.script.active && peer->execution.script.entry == MK4_FIXTURE_REF_81832;
+    script_seen |= peer->execution.script.active && peer->execution.script.entry == scr_dragon_victim_script;
   }
   check(script_seen && !peer->execution.script.active && peer->execution.frames == NULL && peer->scene.clips == NULL,
       "native scene blends must transfer to original script playback and consume its retirement continuation");
@@ -1140,7 +1141,7 @@ static void native_throw_selection(void) {
   uint32_t original = mk4_image_u32(&image, MK4_FIXTURE_REF_65464);
   put_word(MK4_FIXTURE_REF_65464, 0x42bda0);
   action_lk_throw(owner);
-  check(owner->execution.script.active && owner->execution.script.entry == MK4_FIXTURE_REF_66208,
+  check(owner->execution.script.active && owner->execution.script.entry == scr_fujin_lk_throw_startup,
       "native throw selection must follow the loaded table independently of model");
   for (int visit = 0; visit < 256 && (owner->execution.script.active || peer->state != S_IDLE); ++visit) {
     tick();
@@ -1158,7 +1159,7 @@ static void native_inherited_descriptor(void) {
   put_word(MK4_FIXTURE_REF_101392, replacement);
   script_native_entry(0x46be40)(owner);
   int clip = (int)((replacement * 4 - MK4_FIXTURE_REF_183676) / 12);
-  check(owner->execution.script.active && owner->execution.script.entry == MK4_FIXTURE_REF_98784 && fighter_move(owner)->clip == clip,
+  check(owner->execution.script.active && owner->execution.script.entry == scr_close_high_punch_2 && fighter_move(owner)->clip == clip,
       "native inherited animation must come from the loaded descriptor table");
   check(mk4_native_character_slot(16) == 2 && mk4_native_character_slot(17) == 4, "native hidden-roster aliases must remain distinct from script aliases");
   fighter_execution_cancel(owner);
@@ -1195,7 +1196,7 @@ static void native_button_table(void) {
   fighter_press(owner, BUTTON_HIGH_PUNCH);
   check(owner->pending != NULL, "loaded button controller must schedule the native entry");
   tick();
-  check(owner->execution.script.active && owner->execution.script.entry == MK4_FIXTURE_REF_97680,
+  check(owner->execution.script.active && owner->execution.script.entry == scr_low_kick,
       "button dispatch must read the changed native target rather than a C button row");
   fighter_execution_cancel(owner);
   put_word(MK4_FIXTURE_REF_102520, original);
@@ -1209,7 +1210,7 @@ static void native_button_table(void) {
   fighter_press(owner, BUTTON_HIGH_PUNCH);
   check(owner->pending != NULL && fighter_airborne(owner), "loaded air controller must preserve airborne state");
   tick();
-  check(owner->execution.script.entry == MK4_FIXTURE_REF_98808, "air dispatch must consume the loaded action target");
+  check(owner->execution.script.entry == scr_air_straight_kick_startup, "air dispatch must consume the loaded action target");
   fighter_execution_cancel(owner);
   put_word(MK4_FIXTURE_REF_102408, original);
 }
@@ -1218,7 +1219,7 @@ static void native_script_continuation(void) {
   for (unsigned interrupted = 0; interrupted < 2; ++interrupted) {
     Fighter *owner = setup(0, 2);
     native_hold(owner, 2, NULL);
-    native_script_end(owner, MK4_FIXTURE_REF_101640, fighter_ready);
+    native_script_end(owner, scr_low_kick_clip_67, fighter_ready);
     if (interrupted) {
       fighter_interrupt(owner, fighter_ready);
     }
@@ -1229,35 +1230,34 @@ static void native_script_continuation(void) {
     if (interrupted) {
       check(!owner->execution.script.active && owner->execution.frames == NULL, "canceled native completion must not resume a retail script");
     } else {
-      check(owner->execution.script.active && owner->execution.script.entry == MK4_FIXTURE_REF_101640,
+      check(owner->execution.script.active && owner->execution.script.entry == scr_low_kick_clip_67,
           "native completion must enter its stored original script with the typed integration context");
     }
   }
 
   Fighter *owner = setup(0, 2);
-  uint32_t saved[2] = {mk4_image_u32(&image, MK4_FIXTURE_REF_101640), mk4_image_u32(&image, MK4_FIXTURE_REF_101644)};
-  put_word(MK4_FIXTURE_REF_101640, 0x34000002);
-  put_word(MK4_FIXTURE_REF_101644, 0x30000000);
+  uint32_t saved[2] = {mk4_image_u32(&image, scr_low_kick_clip_67), mk4_image_u32(&image, scr_low_kick_clip_67_operand_1)};
+  put_word(scr_low_kick_clip_67, 0x34000002);
+  put_word(scr_low_kick_clip_67_operand_1, 0x30000000);
   action_begin(owner, S_KICK, 0x101, false);
-  script_vm_enter_then(owner, MK4_FIXTURE_REF_101640, MK4_FIXTURE_REF_97680, fighter_ready);
+  script_vm_enter_then(owner, scr_low_kick_clip_67, scr_low_kick, fighter_ready);
   native_begin(owner, 0, 0, NULL);
-  native_script_end(owner, MK4_FIXTURE_REF_99056, fighter_ready);
-  for (int visit = 0; visit < 5 && owner->execution.script.entry != MK4_FIXTURE_REF_97680; ++visit) {
+  native_script_end(owner, scr_jab, fighter_ready);
+  for (int visit = 0; visit < 5 && owner->execution.script.entry != scr_low_kick; ++visit) {
     tick();
   }
-  check(
-      owner->execution.script.entry == MK4_FIXTURE_REF_97680 && owner->execution.script.then.entry == 0 && owner->execution.native_frames.script_end.entry == 0,
+  check(owner->execution.script.entry == scr_low_kick && owner->execution.script.then.entry == 0 && owner->execution.native_frames.script_end.entry == 0,
       "VM return continuation must stay independent of native completion data and consume once");
 
   static const MoveDef actor_view = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK};
-  Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, MK4_FIXTURE_REF_101640, fighter_ready);
+  Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, scr_low_kick_clip_67, fighter_ready);
   check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->execution.script.active,
       "raw scene script entry must preserve model identity independently of native integration context");
   battle_reset_match();
   check(!owner->execution.script.active && owner->execution.script.then.entry == 0 && !actor->execution.script.active,
       "reset must cancel both raw scene script and VM return continuations");
-  put_word(MK4_FIXTURE_REF_101640, saved[0]);
-  put_word(MK4_FIXTURE_REF_101644, saved[1]);
+  put_word(scr_low_kick_clip_67, saved[0]);
+  put_word(scr_low_kick_clip_67_operand_1, saved[1]);
 }
 
 static void native_close_lifetimes(void) {
@@ -1298,10 +1298,10 @@ static void native_air_loaded_recovery(void) {
   owner->body.gravity = 0x28f;
   action_air_high_punch(owner);
   unsigned visits = 0;
-  while (owner->execution.script.entry != MK4_FIXTURE_REF_99552 && visits++ < 32) {
+  while (owner->execution.script.entry != scr_air_low_kick_contact_hold && visits++ < 32) {
     tick();
   }
-  check(owner->execution.script.active && owner->execution.script.entry == MK4_FIXTURE_REF_99552,
+  check(owner->execution.script.active && owner->execution.script.entry == scr_air_low_kick_contact_hold,
       "native contact miss must consume its loaded callback and enter the original recovery script");
   fighter_interrupt(owner, fighter_ready);
   tick();
@@ -1318,7 +1318,7 @@ static void native_air_capture_lifetimes(void) {
   capture_owner->flags |= FF_PAIRED;
   battle_react(capture_peer, 84);
   tick();
-  check(capture_peer->execution.script.active && capture_peer->execution.script.entry == MK4_FIXTURE_REF_114936,
+  check(capture_peer->execution.script.active && capture_peer->execution.script.entry == scr_bicycle_capture,
       "capture native must transfer victim playback to its loaded script");
   for (int visit = 0; visit < 64 && capture_peer->execution.script.active; ++visit) {
     tick();
@@ -1363,18 +1363,18 @@ int main(int argc, char **argv) {
   }
   if (argc == 2) {
     if (strcmp(argv[1], "opcode") == 0) {
-      put_word(MK4_FIXTURE_REF_101640, 0xff000000);
+      put_word(scr_low_kick_clip_67, 0xff000000);
     } else if (strcmp(argv[1], "native") == 0) {
-      put_word(MK4_FIXTURE_REF_101644, 0x12345678);
+      put_word(scr_low_kick_clip_67_operand_1, 0x12345678);
     } else if (strcmp(argv[1], "sample") == 0) {
-      put_word(MK4_FIXTURE_REF_101668, 0x490000ff);
+      put_word(scr_low_kick_clip_67_prefixed_sample_1, 0x490000ff);
     } else if (strcmp(argv[1], "budget") == 0) {
-      put_word(MK4_FIXTURE_REF_101640, 0x3a0000ff);
-      put_word(MK4_FIXTURE_REF_101644, 0x3b000000);
+      put_word(scr_low_kick_clip_67, 0x3a0000ff);
+      put_word(scr_low_kick_clip_67_operand_1, 0x3b000000);
     } else if (strcmp(argv[1], "callback") == 0) {
       Fighter *actor = setup(0, 2);
       native_hold(actor, 1, NULL);
-      native_address_end(actor, MK4_FIXTURE_REF_101640);
+      native_address_end(actor, scr_low_kick_clip_67);
     } else if (strcmp(argv[1], "range") == 0) {
       Fighter *owner = setup(0, 2);
       put_word(MK4_FIXTURE_REF_663552, 0x1f000000);

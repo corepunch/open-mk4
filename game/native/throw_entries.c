@@ -24,7 +24,7 @@ static void victim_ground_turn(Fighter *fighter) {
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->facing = -fighter->facing;
-  script_vm_enter(fighter, MK4_SCRIPT_VICTIM_GROUND_TURN, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_victim_ground_turn, mk4_mmove_thrown_finish);
 }
 
 void action_native_sound_list(uint32_t address) {
@@ -48,27 +48,27 @@ static void victim_friction_impact(Fighter *fighter) {
   script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_168, 0);
   fighter->body.physics = fighter_friction;
   action_impact_voice(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_VICTIM_FRICTION_IMPACT, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_victim_friction_impact, mk4_mmove_thrown_finish);
 }
 
 static void victim_saved_motion(Fighter *fighter) {
   victim_begin(fighter);
   script_vm_bind_animation(fighter, MK4_ANIMATION_DESCRIPTOR_CLIP_177, 0);
   mk4_script_save_motion(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_VICTIM_SAVED_MOTION, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_victim_saved_motion, mk4_mmove_thrown_finish);
 }
 
 static void victim_disarm_fall(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_VICTIM_DISARM_FALL, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_victim_disarm_fall, mk4_mmove_thrown_finish);
 }
 
 static void victim_disarm_raise(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] -= 0x4ccc;
-  script_vm_enter(fighter, MK4_SCRIPT_VICTIM_DISARM_RAISE, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_victim_disarm_raise, mk4_mmove_thrown_finish);
 }
 
 static void flip_getup(Fighter *fighter) {
@@ -169,16 +169,16 @@ void action_lp_victim(Fighter *fighter) {
       native_animation_table(fighter, MK4_ANIMATION_ROWS_LP_VICTIM_WEAPON_SCATTER_RELEASE);
       break;
     case MK4_NATIVE_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE:
-      script_vm_enter(fighter, MK4_SCRIPT_LP_VICTIM_TWO_SPEED_SLIDE_RELEASE, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_lp_victim_two_speed_slide_release, mk4_mmove_thrown_finish);
       break;
     case MK4_NATIVE_LP_VICTIM_IMPACT_RELEASE:
-      script_vm_enter(fighter, MK4_SCRIPT_LP_VICTIM_IMPACT_RELEASE, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_lp_victim_impact_release, mk4_mmove_thrown_finish);
       break;
     case MK4_NATIVE_LP_VICTIM_SLIDING_IMPACT_RELEASE:
-      script_vm_enter(fighter, MK4_SCRIPT_LP_VICTIM_SLIDING_IMPACT_RELEASE, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_lp_victim_sliding_impact_release, mk4_mmove_thrown_finish);
       break;
     case MK4_NATIVE_LP_VICTIM_SLIDE_RELEASE:
-      script_vm_enter(fighter, MK4_SCRIPT_LP_VICTIM_SLIDE_RELEASE, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_lp_victim_slide_release, mk4_mmove_thrown_finish);
       break;
     default:
       require(false, "Unexpected native LP victim entry");
@@ -216,10 +216,10 @@ void action_lk_victim(Fighter *fighter) {
       native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
       break;
     case MK4_NATIVE_LIU_KANG_LK_THROW_VICTIM_REACTION_80:
-      script_vm_enter(fighter, MK4_SCRIPT_LIU_KANG_LK_THROW_VICTIM, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_liu_kang_lk_throw_victim, mk4_mmove_thrown_finish);
       break;
     case MK4_NATIVE_SONYA_LEG_GRAB_VICTIM_RECOVERY:
-      script_vm_enter(fighter, MK4_SCRIPT_SONYA_LEG_GRAB_VICTIM_RECOVERY, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, scr_sonya_leg_grab_victim_recovery, mk4_mmove_thrown_finish);
       break;
     case MK4_NATIVE_LK_VICTIM_EFFECT_SLIDE:
       mk4_script_effect(fighter, 0);
@@ -283,11 +283,11 @@ FighterFn action_throw_reaction(const Mk4Image *image, unsigned reaction) {
 }
 
 void action_throw_victim_continue(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_THROW_VICTIM_CONTINUE, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_throw_victim_continue, mk4_mmove_thrown_finish);
 }
 
 void action_throw_victim_impact(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_THROW_VICTIM_IMPACT, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, scr_throw_victim_impact, mk4_mmove_thrown_finish);
 }
 
 /* 42b930 is an independent ten-visit native task. The portable arena uses
@@ -329,35 +329,35 @@ static void pair_edge_task(Fighter *fighter) {
 static uint32_t lk_script(uint32_t native) {
   switch (native) {
     case MK4_NATIVE_CAGE_LK_THROW_ENTRY:
-      return MK4_SCRIPT_CAGE_LK_THROW_STARTUP;
+      return scr_cage_lk_throw_startup;
     case MK4_NATIVE_JAREK_LK_THROW_ENTRY:
-      return MK4_SCRIPT_JAREK_LK_THROW_STARTUP;
+      return scr_jarek_lk_throw_startup;
     case MK4_NATIVE_TANYA_LK_THROW_ENTRY:
-      return MK4_SCRIPT_TANYA_LK_THROW_STARTUP;
+      return scr_tanya_lk_throw_startup;
     case MK4_NATIVE_SHINNOK_LK_THROW_ENTRY:
-      return MK4_SCRIPT_SHINNOK_LK_THROW_STARTUP;
+      return scr_shinnok_lk_throw_startup;
     case MK4_NATIVE_REPTILE_LK_THROW_ENTRY:
-      return MK4_SCRIPT_REPTILE_LK_THROW_STARTUP;
+      return scr_reptile_lk_throw_startup;
     case MK4_NATIVE_REIKO_LK_THROW_ENTRY:
-      return MK4_SCRIPT_REIKO_LK_THROW_STARTUP;
+      return scr_reiko_lk_throw_startup;
     case MK4_NATIVE_QUAN_CHI_LK_THROW_ENTRY:
-      return MK4_SCRIPT_QUAN_CHI_LK_THROW_STARTUP;
+      return scr_quan_chi_lk_throw_startup;
     case MK4_NATIVE_RAIDEN_LK_THROW_ENTRY:
-      return MK4_SCRIPT_RAIDEN_LK_THROW_STARTUP;
+      return scr_raiden_lk_throw_startup;
     case MK4_NATIVE_KAI_LK_THROW_ENTRY:
-      return MK4_SCRIPT_KAI_LK_THROW_STARTUP;
+      return scr_kai_lk_throw_startup;
     case MK4_NATIVE_FUJIN_LK_THROW_ENTRY:
-      return MK4_SCRIPT_FUJIN_LK_THROW_STARTUP;
+      return scr_fujin_lk_throw_startup;
     case MK4_NATIVE_SCORPION_LK_THROW_ENTRY:
-      return MK4_SCRIPT_SCORPION_LK_THROW_STARTUP;
+      return scr_scorpion_lk_throw_startup;
     case MK4_NATIVE_SONYA_LK_THROW_ENTRY:
-      return MK4_SCRIPT_SONYA_LK_THROW_STARTUP;
+      return scr_sonya_lk_throw_startup;
     case MK4_NATIVE_LIU_KANG_LK_THROW_ENTRY:
-      return MK4_SCRIPT_LIU_KANG_LK_THROW_STARTUP;
+      return scr_liu_kang_lk_throw_startup;
     case MK4_NATIVE_SUB_ZERO_LK_THROW_ENTRY:
-      return MK4_SCRIPT_SUB_ZERO_LK_THROW_STARTUP;
+      return scr_sub_zero_lk_throw_startup;
     case MK4_NATIVE_GORO_LK_THROW_ENTRY:
-      return MK4_SCRIPT_GORO_LK_THROW_STARTUP;
+      return scr_goro_lk_throw_startup;
     default:
       require(false, "Unimplemented native LK entry");
       return 0;
@@ -427,7 +427,7 @@ void action_lk_recoil(Fighter *fighter) {
 
 void action_lk_branch_continue(Fighter *fighter) {
   pair_edge_task(fighter);
-  script_vm_enter(fighter, MK4_SCRIPT_LK_BRANCH_CONTINUE, fighter_ready);
+  script_vm_enter(fighter, scr_lk_branch_continue, fighter_ready);
 }
 
 void action_lk_victim_return(Fighter *fighter) {
@@ -437,20 +437,20 @@ void action_lk_victim_return(Fighter *fighter) {
 }
 
 void action_lk_rock_repeat_one(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_LK_THROW_ROCK_REPEAT_ONE, fighter_ready);
+  script_vm_enter(fighter, scr_lk_throw_rock_repeat_one, fighter_ready);
 }
 
 void action_lk_rock_repeat_two(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_LK_THROW_ROCK_REPEAT_TWO, fighter_ready);
+  script_vm_enter(fighter, scr_lk_throw_rock_repeat_two, fighter_ready);
 }
 
 void action_lk_rock_release(Fighter *fighter) {
-  script_vm_enter(fighter, MK4_SCRIPT_LK_THROW_ROCK_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_lk_throw_rock_release, fighter_ready);
 }
 
 void action_lp_align_and_release(Fighter *fighter) {
   require(script_native_dispatch(fighter, MK4_NATIVE_LIU_KANG_LIU_SCRIPT_FATAL_ALIGN, MK4_CALL, 0), "Missing shared pair alignment native");
-  script_vm_enter(fighter, MK4_SCRIPT_LP_SHARED_RELEASE, fighter_ready);
+  script_vm_enter(fighter, scr_lp_shared_release, fighter_ready);
 }
 
 /* Native42cbc0/42ce60/42ce80 return through the engine controller boundary.
@@ -467,7 +467,7 @@ void action_throw_ready(Fighter *fighter) {
 /* 42cc40 runs the peer callback cell4de664, then the original owner words. */
 void action_lp_end(Fighter *fighter) {
   action_throw_turn(fighter_peer(fighter));
-  script_vm_enter(fighter, MK4_SCRIPT_LP_END, fighter_ready);
+  script_vm_enter(fighter, scr_lp_end, fighter_ready);
 }
 
 /* 470420/48e080 releases native callbacks and restores ordinary control.

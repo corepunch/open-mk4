@@ -9,10 +9,12 @@ Native C services live once under `game/native/`.
 
 `make scripts-export` regenerates wordcode from the supported EXE through the
 existing decoder. `tools/mk4_script_layout.json` preserves established entry
-names/addresses, native IDs and C exports. Tooling groups streams by existing
+names/addresses and native IDs. Tooling groups streams by existing
 names and catalog usage; ambiguous/shared streams remain single definitions.
 Each fighter file carries its bytecode and relevant native ABI declarations,
-with symbolic cross-file references and the existing exported C interface.
+with symbolic cross-file references. Bare labels and executable embedded
+aliases become C constants named `scr_<label>` directly, without separate
+script export mappings or intermediate enums.
 Explicit jumps preserve original fall-through when blocks move.
 
 Data tables stay in `scripts/mk4/tables/`. Normal builds link the checked-in
