@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "data/layout.h"
 #include "native/actions.h"
@@ -20,7 +21,7 @@ static void victim_begin(Fighter *fighter) {
   mk4_script_touchable(fighter);
 }
 
-static void victim_ground_turn(Fighter *fighter) {
+void victim_ground_turn(Fighter *fighter) {
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->facing = -fighter->facing;
@@ -43,7 +44,7 @@ void action_throw_grunt(void) {
   action_native_sound_list(dat_sound_throw_grunt_list);
 }
 
-static void victim_friction_impact(Fighter *fighter) {
+void victim_friction_impact(Fighter *fighter) {
   victim_begin(fighter);
   script_vm_bind_animation(fighter, dat_animation_clip_168, 0);
   fighter->body.physics = fighter_friction;
@@ -51,20 +52,20 @@ static void victim_friction_impact(Fighter *fighter) {
   script_vm_enter(fighter, fn_victim_friction_impact, mk4_mmove_thrown_finish);
 }
 
-static void victim_saved_motion(Fighter *fighter) {
+void victim_saved_motion(Fighter *fighter) {
   victim_begin(fighter);
   script_vm_bind_animation(fighter, dat_animation_clip_177, 0);
   mk4_script_save_motion(fighter);
   script_vm_enter(fighter, fn_victim_saved_motion, mk4_mmove_thrown_finish);
 }
 
-static void victim_disarm_fall(Fighter *fighter) {
+void victim_disarm_fall(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   script_vm_enter(fighter, fn_victim_disarm_fall, mk4_mmove_thrown_finish);
 }
 
-static void victim_disarm_raise(Fighter *fighter) {
+void victim_disarm_raise(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] -= 0x4ccc;
@@ -80,7 +81,7 @@ static void victim_pause_getup(Fighter *fighter) {
   native_hold(fighter, 10, flip_getup);
 }
 
-static void victim_finish_flip_getup(Fighter *fighter) {
+void victim_finish_flip_getup(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   const Mk4Image *image = battle_data();
@@ -101,7 +102,7 @@ static void victim_impact_finish(Fighter *fighter) {
   native_finish_clip(fighter, victim_pause_roll);
 }
 
-static void victim_impact_roll_getup(Fighter *fighter) {
+void victim_impact_roll_getup(Fighter *fighter) {
   victim_begin(fighter);
   const Mk4Image *image = battle_data();
   script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_victim_impact_roll_getup) * 4, 0);
@@ -114,7 +115,7 @@ static void victim_slide(Fighter *fighter) {
   native_finish_clip(fighter, mk4_mmove_thrown_finish);
 }
 
-static void victim_pause_slide(Fighter *fighter) {
+void victim_pause_slide(Fighter *fighter) {
   victim_begin(fighter);
   native_hold(fighter, 2, victim_slide);
 }
@@ -133,7 +134,7 @@ static void victim_slide_blend(Fighter *fighter) {
   native_finish_clip(fighter, victim_stance_blend);
 }
 
-static void victim_slide_to_stance(Fighter *fighter) {
+void victim_slide_to_stance(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   native_hold(fighter, 1, victim_slide_blend);
@@ -189,7 +190,7 @@ void action_script_release_reaction(Fighter *fighter, int reaction) {
   battle_react(mk4_script_release_pair(fighter), reaction);
 }
 
-static void victim_finish_captured_clip(Fighter *fighter) {
+void victim_finish_captured_clip(Fighter *fighter) {
   victim_begin(fighter);
   mk4_script_stop_body(fighter);
   script_vm_bind_animation(fighter, dat_animation_clip_586, 65);
@@ -234,60 +235,7 @@ void action_lk_victim(Fighter *fighter) {
 }
 
 FighterFn action_throw_reaction(const Mk4Image *image, unsigned reaction) {
-  switch (mk4_reaction_target(image, reaction)) {
-    case native_liu_kang_lk_throw_victim_reaction_80:
-    case native_lk_victim_clip_203_recovery:
-    case native_sonya_leg_grab_victim_recovery:
-    case native_lk_victim_effect_slide:
-      return action_lk_victim;
-    case native_lp_victim_table_release:
-    case native_lp_victim_rebased_table_release:
-    case native_lp_victim_weapon_scatter_release:
-    case native_lp_victim_two_speed_slide_release:
-    case native_lp_victim_impact_release:
-    case native_lp_victim_sliding_impact_release:
-    case native_lp_victim_slide_release:
-      return action_lp_victim;
-    case native_victim_finish_captured_clip:
-      return victim_finish_captured_clip;
-    case native_slam_reaction:
-      return action_slam_reaction;
-    case native_air_victim_flip:
-      return action_air_victim_flip;
-    case native_air_victim_default:
-      return action_air_victim_default;
-    case native_air_victim_lift:
-      return action_air_victim_lift;
-
-    case native_victim_finish_flip_getup:
-      return victim_finish_flip_getup;
-    case native_victim_impact_roll_getup:
-      return victim_impact_roll_getup;
-    case native_victim_pause_slide:
-      return victim_pause_slide;
-    case native_victim_slide_to_stance:
-      return victim_slide_to_stance;
-    case native_victim_ground_turn:
-      return victim_ground_turn;
-    case native_victim_friction_impact:
-      return victim_friction_impact;
-    case native_victim_saved_motion:
-      return victim_saved_motion;
-    case native_victim_disarm_fall:
-      return victim_disarm_fall;
-    case native_victim_disarm_raise:
-      return victim_disarm_raise;
-    default:
-      return NULL;
-  }
-}
-
-void action_throw_victim_continue(Fighter *fighter) {
-  script_vm_enter(fighter, fn_throw_victim_continue, mk4_mmove_thrown_finish);
-}
-
-void action_throw_victim_impact(Fighter *fighter) {
-  script_vm_enter(fighter, fn_throw_victim_impact, mk4_mmove_thrown_finish);
+  return script_native_throw_reaction(mk4_reaction_target(image, reaction));
 }
 
 /* 42b930 is an independent ten-visit native task. The portable arena uses
@@ -434,18 +382,6 @@ void action_lk_victim_return(Fighter *fighter) {
   const Mk4Image *image = fighter->execution.script.image;
   script_vm_bind_animation(fighter, mk4_image_u32(image, dat_animation_descriptor_lk_victim_return) * 4, 0);
   script_vm_forward_return(fighter);
-}
-
-void action_lk_rock_repeat_one(Fighter *fighter) {
-  script_vm_enter(fighter, fn_lk_throw_rock_repeat_one, fighter_ready);
-}
-
-void action_lk_rock_repeat_two(Fighter *fighter) {
-  script_vm_enter(fighter, fn_lk_throw_rock_repeat_two, fighter_ready);
-}
-
-void action_lk_rock_release(Fighter *fighter) {
-  script_vm_enter(fighter, fn_lk_throw_rock_release, fighter_ready);
 }
 
 void action_lp_align_and_release(Fighter *fighter) {

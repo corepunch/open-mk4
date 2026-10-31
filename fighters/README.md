@@ -1,47 +1,33 @@
 # Fighter bytecode
 
-Each `<fighter>.asm` contains generated, named retail script words, that
-fighter's native ABI ID declarations and embedded-entry aliases.
-`shared.asm` defines shared or unclassified streams once. Files are assembled
-into one immutable program and executed by the same C VM; file ownership does
-not introduce a fighter-specific dispatcher or duplicate native services.
+Each fighter file contains named retail wordcode. `shared.asm` defines shared
+or unclassified streams once. All files execute through the same C VM.
 
 ```sh
-make scripts-export       # regenerate from the hash-checked MK4/MK-4.EXE
+make scripts-export       # decode the hash-checked retail EXE
 make scripts-source-check # compare without writing
-make                      # assemble checked-in wordcode and build the game
-make bytecode-test        # run all existing scenario families twice
+make scripts              # link checked-in source; no EXE needed
+make bytecode-test         # deterministic shared-runtime scenarios
 ```
 
-Names and native IDs come from the existing research/import metadata in
-`tools/mk4_script_layout.json`. The exporter reads behavior through the existing
-retail decoder. It places explicitly named streams with their fighter, then
-uses catalog ownership for otherwise generic labels; ambiguous streams remain
-shared. Kitana and Noob keep their established retail sharing/remaps instead
-of receiving invented script copies.
+Native operands are symbolic references, for example
+`tail 0, native_quan_chi_script_skull_release`. The declaration in
+`scripts/mk4/native.inc` names its typed C implementation:
 
-For example, `sonya_fatality_2_second_cycle` and
-`native_sonya_script_second_cycle_end` are both in `sonya.asm`. The linker
-automatically exposes each script label to C as `fn_<label>`: for example,
-`quan_chi_lk_throw_startup` becomes `fn_quan_chi_lk_throw_startup`. There is
-no separate script export declaration or JSON name mapping. Other bytecode
-branches to the bare label. Native C implementations remain
-in shared capability modules under `game/native/`.
+```asm
+.native native_quan_chi_script_skull_release, tail=quan_chi_script_skull_release
+```
 
-Native constants use one build-time declaration, such as
-`.export_equ native_jax_missile 0x496f80`, to define the value and expose
-the same `native_<name>` identifier to assembly and C. These are stable
-integer ABI IDs; C implementations use separate function names. No separate
-self-export line is needed.
+The linker assigns compact references and emits typed host function pointers.
+No retail code address is compiled into native dispatch. The importer/research
+metadata retains original addresses for verification. Different call roles
+remain distinct; unsupported roles fail explicitly when invoked. Some retained
+unreachable streams reference natives whose implementation is still unavailable.
 
-The instruction set and packing are the original MK4 word format. A mnemonic
-such as `wait 5` assembles to the original opcode/argument word. The interpreter
-keeps a cursor, wake tick, loop counter and native/playback state per actor;
-no Lua or stackful coroutine runtime is involved. Explicit jumps preserve
-fall-through when source blocks are grouped into different files. The exporter
-verification compares all original instruction words and typed references
-after relocation, including entries inside operand words.
+Script-only native tails link directly to a script and its completion policy;
+they require no C trampoline. Native services live once under `game/native/`.
+Script labels and embedded aliases become `fn_<label>` in C automatically.
+Cross-file branches use bare script names. Regrouping inserts explicit jumps
+where needed to preserve original fall-through and operand entries.
 
-See [script/data format](../scripts/README.md) and
-[architecture](../ARCHITECTURE.md). Do not hand-write fighter move behavior
-or duplicate native services when updating the export.
+See [source format](../scripts/README.md) and [architecture](../ARCHITECTURE.md).

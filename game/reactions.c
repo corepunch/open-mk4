@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "data/layout.h"
 #include "game.h"
@@ -111,7 +112,7 @@ static void hit_script(Fighter *fighter, uint32_t script, FighterFn finish) {
   script_vm_enter(fighter, script, finish);
 }
 
-static void react_jab_air(Fighter *fighter) {
+void react_jab_air(Fighter *fighter) {
   fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
   if (fighter->hits >= 2) {
     battle_wall_recoil(fighter);
@@ -120,7 +121,7 @@ static void react_jab_air(Fighter *fighter) {
   hit_script(fighter, fn_react_jab_air, action_controller_return);
 }
 
-static void react_kick_air(Fighter *fighter) {
+void react_kick_air(Fighter *fighter) {
   fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
@@ -128,13 +129,13 @@ static void react_kick_air(Fighter *fighter) {
   hit_script(fighter, fn_react_kick_air, action_getup_roll);
 }
 
-static void react_kick_air_impact(Fighter *fighter) {
+void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
   hit_script(fighter, fn_jax_dash_punch_airborne_victim_168, action_getup_roll);
 }
 
-static void react_kick_hit(Fighter *fighter) {
+void react_kick_hit(Fighter *fighter) {
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   if (fighter->crouching) {
@@ -147,7 +148,7 @@ static void react_kick_hit(Fighter *fighter) {
   }
 }
 
-static void react_jab_hit(Fighter *fighter) {
+void react_jab_hit(Fighter *fighter) {
   action_native_sound_list(dat_sound_random_grunt_list);
   bool crouch = fighter->action == ACTION_CODE_2001 || fighter->action == ACTION_CODE_2002;
   if (crouch) {
@@ -201,7 +202,7 @@ void action_block_cycle(Fighter *fighter) {
   }
 }
 
-static void react_block(Fighter *fighter) {
+void react_block(Fighter *fighter) {
   uint32_t entry = action_reaction_native(fighter);
   q16 speed = 0;
   unsigned repeat = 2, variant = 0;
@@ -377,7 +378,7 @@ static void thaw_hop_play(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static void react_freeze(Fighter *fighter) {
+void react_freeze(Fighter *fighter) {
   if (fighter->action == ACTION_CODE_1003) {
     /* 486430 calls 480f80, which switches to the opponent: double freeze
      * backfires. It does not recursively refresh this victim's timer. */
@@ -406,7 +407,7 @@ static void react_freeze(Fighter *fighter) {
   fighter_visual_offset(fighter, 0xccc, 0xccc);
 }
 
-static void react_scepter_freeze(Fighter *fighter) {
+void react_scepter_freeze(Fighter *fighter) {
   if (fighter->hits > 3) {
     /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
     action_reaction_fall(fighter);
@@ -430,7 +431,7 @@ static void weapon_followup_play(Fighter *fighter) {
   reaction_play(fighter, 1, last, last + 1, neutral);
 }
 
-static void react_weapon_followup(Fighter *fighter) {
+void react_weapon_followup(Fighter *fighter) {
   int selected = 4, clip = fighter_move(fighter)->clip;
   unsigned no_guard = fighter->flags & FF_NO_GUARD;
   int action = fighter->action;
@@ -448,118 +449,7 @@ static void react_weapon_followup(Fighter *fighter) {
 
 /* Native entry registry. Reaction IDs and roster dispatch stay in retail data. */
 FighterFn action_engine_reaction(uint32_t entry) {
-  switch (entry) {
-    case native_cage_second_victim_hit:
-      return cage_second_victim_hit;
-    case native_jax_fatality_2_head:
-      return jax_fatality_2_head;
-    case native_kai_second_victim:
-      return kai_second_victim;
-    case native_shinnok_second_victim:
-      return shinnok_second_victim;
-    case native_reptile_second_victim:
-      return reptile_second_victim;
-    case native_fujin_second_victim:
-      return fujin_second_victim;
-    case native_react_kick_air_impact:
-      return react_kick_air_impact;
-    case native_react_kick_air:
-      return react_kick_air;
-    case native_quan_chi_flip_reaction:
-      return quan_chi_flip_reaction;
-    case native_react_jab_air:
-      return react_jab_air;
-    case native_tanya_weapon_reaction_reaction_170_entry:
-      return tanya_weapon_reaction;
-    case native_react_kick_hit:
-      return react_kick_hit;
-    case native_react_weapon_followup:
-      return react_weapon_followup;
-    case native_kai_handstand_reaction_entry:
-      return kai_handstand_reaction;
-    case native_goro_quake_victim:
-      return goro_quake_victim;
-    case native_reptile_reaction_40:
-      return reptile_reaction_40;
-    case native_goro_kick_victim:
-      return goro_kick_victim;
-    case native_jarek_ball_victim:
-      return jarek_ball_victim;
-    case native_cage_shadow_victim:
-      return cage_shadow_victim;
-    case native_react_jab_hit:
-      return react_jab_hit;
-    case native_quan_chi_steal_reaction:
-      return quan_chi_steal_reaction;
-    case native_goro_stomp_victim:
-      return goro_stomp_victim;
-    case native_quan_chi_stomp_reaction:
-      return quan_chi_stomp_reaction;
-    case native_quan_chi_skull_reaction:
-      return quan_chi_skull_reaction;
-    case native_react_scepter_freeze:
-      return react_scepter_freeze;
-    case native_react_freeze:
-      return react_freeze;
-    case native_tanya_weapon_reaction_entry:
-      return tanya_weapon_reaction;
-    case native_fujin_bolt_victim:
-      return fujin_bolt_victim;
-    case native_jax_dash_victim_throw:
-      return jax_dash_victim_throw;
-    case native_block_standing_push_0_06_no_wall_recoil:
-      return react_block;
-    case native_block_weapon_single_no_push:
-      return react_block;
-    case native_block_weapon_push_0_18:
-      return react_block;
-    case native_block_weapon_standing_push_0_20:
-      return react_block;
-    case native_block_weapon_standing_push_0_25_triple:
-      return react_block;
-    case native_block_standing_push_0_25_triple:
-      return react_block;
-    case native_block_standing_push_0_20:
-      return react_block;
-    case native_block_standing_push_0_20_no_wall_recoil:
-      return react_block;
-    case native_block_push_0_18:
-      return react_block;
-    case native_block_push_0_15:
-      return react_block;
-    case native_block_standing_push_0_06:
-      return react_block;
-    case native_block_single_push_0_24:
-      return react_block;
-    case native_block_single_no_push_no_wall_recoil:
-      return react_block;
-    case native_block_push_0_13_no_wall_recoil:
-      return react_block;
-    case native_block_single_no_push:
-      return react_block;
-    case native_block_standing_no_physics:
-      return react_block;
-    case native_fujin_grab_victim:
-      return fujin_grab_victim;
-    case native_fujin_wind_victim:
-      return fujin_wind_victim;
-    case native_fujin_wind_slam_victim:
-      return fujin_wind_slam_victim;
-    case native_jax_dash_victim_hit:
-      return jax_dash_victim_hit;
-    case native_cage_power_victim:
-      return cage_power_victim;
-    case native_fujin_triple_first_victim:
-      return fujin_triple_victim;
-    case native_fujin_triple_middle_victim:
-      return fujin_triple_victim;
-    case native_handstand_victim_knockdown:
-      return kai_handstand_reaction;
-    case native_handstand_victim_rear_stagger:
-      return kai_handstand_reaction;
-    default:
-      return NULL;
-  }
+  return script_native_engine_reaction(entry);
 }
 
 /* 0x48f880: the victim's move is replaced at once; velocities, gravity and

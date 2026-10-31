@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from mk4_link import BASE, HEADER, link
 from mk4_asm import OPS
+from mk4_native import declaration, c_registry
 from scorpion_moves import SCRIPT_OPS
 from import_mk4_data import export, export_scripts, verify_scripts, SCRIPT_LAYOUT
 from retail_moves import RetailImage
@@ -24,6 +25,41 @@ class LinkTests(unittest.TestCase):
         path = Path(temp.name) / 'project.asm'
         path.write_text(text)
         return path
+
+    def test_native_relocations_and_binding_identity(self):
+        source = '''.native native_action, call=perform_action
+.section data
+table:
+.word native_action
+.section script
+entry:
+call 0, native_action
+ready 0
+'''
+        for text in (source, '.native native_other\n' + source):
+            package, _, symbols = link(self.source(text))
+            payload = package[HEADER.size:]
+            self.assertEqual(struct.unpack_from('<I', payload)[0], symbols['native_action'])
+            self.assertEqual(struct.unpack_from('<I', payload, symbols['entry'] - BASE + 4)[0], symbols['native_action'])
+        first, _, _ = link(self.source(source))
+        changed, _, _ = link(self.source(source.replace('call=perform_action', 'call=another_action')))
+        self.assertNotEqual(first[20:52], changed[20:52])
+        self.assertEqual(first[HEADER.size:], changed[HEADER.size:])
+        for operand in ('0x44bcd0', 'missing', 'entry'):
+            with self.subTest(operand=operand), self.assertRaisesRegex(ValueError, 'declared symbol|missing'):
+                link(self.source(source.replace('call 0, native_action', 'call 0, ' + operand)))
+
+    def test_native_imports_check_signatures_and_script_completions(self):
+        for source in ('.native native_action, spawn=spawn_action',
+                       '.native native_action, tail_script=entry',
+                       '.native native_action, call=first, call=second',
+                       '.native native_action, call=first, call_global=second'):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                declaration(source)
+        with self.assertRaisesRegex(ValueError, 'Incompatible native signatures'):
+            c_registry({'native_a': {'call': 'function'}, 'native_b': {'gate': 'function'}}, {})
+        with self.assertRaisesRegex(ValueError, 'non-script symbol'):
+            c_registry({'native_a': {'tail_script': 'data', 'tail_finish': 'inherit'}}, {'dat_data': BASE})
 
     def test_table_and_script_references_follow_insertions(self):
         text = '''.section data
@@ -69,7 +105,6 @@ table:
 .word NATIVE, DERIVED
 .section script
 entry:
-call 0, NATIVE
 ready 0
 '''
         expanded = re.sub(r'^\.export_equ (\w+) (.+)$', r'.equ \1 \2\n.export \1 \1', source, flags=re.M)
@@ -106,13 +141,14 @@ return 0
                 link(self.source('.section data\n' + text + '\n'))
 
     def test_script_labels_have_a_c_namespace_without_export_aliases(self):
-        source = '''.equ LOOKALIKE 0x1000004
+        source = '''.native native_example, call=example
+.equ LOOKALIKE 0x1000004
 .section data
 table:
 .word 0
 .section script
 entry:
-call 0, 0x496f80
+call 0, native_example
 ready 0
 .alias embedded entry + 4
 .alias data_alias table
@@ -180,7 +216,8 @@ ready 0
         for name in names:
             self.assertIn(f'#define fn_{name} 0x{symbols[name]:x}u', header)
         for name, value in layout['natives'].items():
-            self.assertEqual(symbols[name], int(value, 16))
+            self.assertTrue(0 < symbols[name] <= len(layout["natives"]))
+            self.assertNotEqual(symbols[name], int(value, 16))
         self.assertGreater(verify_scripts(RetailImage(ROOT / 'MK4/MK-4.EXE'), ROOT / 'scripts/mk4/project.asm'), 0)
 
     def test_fighter_export_preserves_words_names_and_checks_without_writing(self):
@@ -212,7 +249,8 @@ ready 0
             module = destination / 'fighters/sonya.asm'
             original = module.read_text()
             self.assertIn('sonya_fatality_2_second_cycle:', original)
-            self.assertIn('.export_equ native_sonya_script_second_cycle_end ', original)
+            self.assertIn('native_sonya_script_second_cycle_end', original)
+            self.assertNotIn('.export_equ', original)
             modified = original.replace('  wait 0xf', '  wait 0xe', 1)
             self.assertNotEqual(modified, original)
             module.write_text(modified)

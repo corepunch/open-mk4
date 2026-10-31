@@ -114,22 +114,23 @@ def check_reference(reference, errors, label):
         errors.append('%s: %s' % (label, exc))
 
 
-def native_entries():
-    source = masked_c((ROOT / 'game/script/entries.inc').read_text())
-    table = source.split('static const NativeAction entries[] = {', 1)[1].split('};', 1)[0]
+def native_imports():
+    from mk4_asm import lines
+    from mk4_native import declaration
     layout = json.loads((ROOT / 'tools/mk4_script_layout.json').read_text())
-    constants = {name: int(value, 16) for name, value in layout['natives'].items()}
-    result = {}
-    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|native_\w+),\s*(\w+)\}', table):
-        value = int(address, 16) if address.startswith('0x') else constants[address]
-        result[value] = symbol
-    return result
+    natives = dict(declaration(line) for _, line in lines(ROOT / 'scripts/mk4/project.asm') if line.startswith('.native '))
+    return {int(value, 16): natives[name] for name, value in layout['natives'].items()}
+
+
+def native_entries():
+    return {address: fields['entry'] for address, fields in native_imports().items() if 'entry' in fields}
 
 
 def audit(image, character):
     observed = inventory(image, character)
     errors = unreachable_references({'character': CHARACTERS[character]})
     bindings = bindings_for(character)
+    imports = native_imports()
     root_names = {}
     for name, move in moves_for(character).items():
         for role, entry in move['scripts']:
@@ -152,6 +153,11 @@ def audit(image, character):
                     errors.append('%s: runtime native %08x has no registration' % (row['va'], boundary[0]))
                 elif boundary[1] not in binding.roles:
                     errors.append('%s: runtime native %08x does not implement role %s' % (row['va'], boundary[0], boundary[1]))
+                fields = imports.get(boundary[0], {})
+                # Opcode handlers are implemented by the VM itself. Only
+                # explicit native operands must resolve through the registry.
+                if boundary[1] != 'handler' and not any(key == boundary[1] or key.startswith(boundary[1] + '_') for key in fields):
+                    errors.append('%s: native %08x has no linked %s implementation' % (row['va'], boundary[0], boundary[1]))
         scripts.append(dict(entry=hex(entry), moves=names, status='interpreted', implementation='runtime', diagnostics=[]))
     event_names = {table['button'] for table in observed['inputs']}
     for event in sorted(INPUT_EVENTS - event_names):

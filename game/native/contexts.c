@@ -133,10 +133,6 @@ void goro_victim_getup(Fighter *victim) {
 /* Original script words own VM control flow; the remaining native adapters
  * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */
 
-void liu_kang_liu_script_lk_continue(Fighter *fighter) {
-  script_vm_enter(fighter, fn_liu_kang_lk_continue, fighter_ready);
-}
-
 void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {

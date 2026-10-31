@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "data/layout.h"
 #include "native/capabilities.h"
@@ -557,7 +558,7 @@ void action_bicycle_release(Fighter *fighter) {
 }
 
 /*481dd0/481fa0: original fall stream returns through tagged481fb0. */
-static void reaction_fall_return(Fighter *fighter) {
+void reaction_fall_return(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   script_vm_enter(fighter, fn_reaction_fall_return, mk4_mmove_thrown_finish);
@@ -576,7 +577,7 @@ static bool spear_arrived(const Fighter *fighter) {
   return (int64_t)fighter->body.vel[AXIS_X] + fighter->body.vel[AXIS_Z] == 0 || g_battle.distance <= 0xcccc;
 }
 
-static void spear_wait(Fighter *fighter) {
+void spear_wait(Fighter *fighter) {
   native_await(fighter, spear_arrived, action_spear_arrival);
 }
 
@@ -598,7 +599,7 @@ static bool pair_owner_released(const Fighter *fighter) {
   return fighter->capture_action == 0 || owner->action != fighter->capture_action || owner->pending != NULL || !(fighter->flags & FF_PAIRED);
 }
 
-static void pair_wait(Fighter *fighter) {
+void pair_wait(Fighter *fighter) {
   fighter->capture_action = fighter_peer(fighter)->action;
   fighter->paired_release = action_pair_release;
   fighter->flags |= FF_PAIRED;
@@ -809,130 +810,5 @@ void action_guard_fall(Fighter *fighter) {
 }
 
 FighterFn action_reaction_entry(const Mk4Image *image, unsigned reaction) {
-  switch (mk4_reaction_target(image, reaction)) {
-    case native_reaction_fall_return:
-      return reaction_fall_return;
-    case native_spear_wait:
-      return spear_wait;
-    case native_pair_wait:
-      return pair_wait;
-    case native_bicycle_capture:
-      return action_bicycle_capture;
-    case native_scene_explode:
-      return action_scene_explode;
-    case native_scene_park:
-      return action_scene_park;
-    case native_guard_fall:
-      return action_guard_fall;
-    case native_hit_clip_325_with_damage_stagger:
-      return action_impact_reaction;
-    case native_cartwheel_victim_impact:
-    case native_cartwheel_victim_recoil:
-      return action_record_reaction;
-    case native_weapon_clip_189_launch_back_getup:
-    case native_rear_hit_turn_and_launch:
-    case native_goro_kick_victim_disarm:
-    case native_launch_clip_131_shake_impact:
-    case native_reaction_park_task:
-    case native_launch_clip_131_no_impact:
-    case native_spear_hit_victim_60_percent_damage:
-    case native_cage_groin_punch_victim_reaction:
-      return action_aux_reaction;
-    case native_task_park_40_tick_loop:
-      return action_task_pause;
-    case native_battle_react:
-    case native_staff_high_punch_weapon_victim:
-    case native_lightning_victim_friction:
-    case native_torpedo_victim_face_peer:
-    case native_torpedo_victim_release_sound_and_shake:
-    case native_sonya_crouch_high_kick_victim_keep_weapon:
-    case native_sonya_weapon_high_punch_victim_position:
-    case native_sonya_weapon_low_punch_victim_impact_sound:
-    case native_ring_projectile_victim:
-    case native_bicycle_victim_front_getup:
-    case native_square_wave_victim_face_peer:
-    case native_cartwheel_victim_scaled_impact:
-      return action_record_reaction;
-    case native_bicycle_release:
-      return action_bicycle_release;
-    case native_torpedo_return:
-      return action_torpedo_return;
-    case native_snare_reaction:
-      return action_snare_reaction;
-    case native_scene_victim_hold:
-      return action_scene_victim_hold;
-    case native_stage_victim:
-      return action_stage_victim;
-    case native_raiden_fatality_2_scene_victim:
-    case native_tanya_fatality_2_victim_reaction_186:
-    case native_sonya_fatality_2_scene_victim:
-      return action_scene_reaction;
-    case native_reaction_fall:
-      return action_reaction_fall;
-    case native_hit_stagger_with_particles:
-    case native_reiko_star_reaction_45:
-    case native_hit_stagger_action_1013:
-      return action_stagger_entry;
-    case native_impact_wall_counter_60_percent_damage:
-    case native_uppercut_delayed_voice_40_percent_damage:
-    case native_hit_clip_324_with_boss_stagger:
-      return action_impact_reaction;
-    case native_kai_weapon_high_punch_victim_context_sound:
-    case native_kai_weapon_high_punch_victim_impact_sound:
-    case native_reptile_weapon_reaction_entry:
-    case native_jarek_weapon_reaction_entry:
-    case native_reptile_weapon_victim_keep_weapon:
-    case native_cage_weapon_reaction_entry:
-    case native_shinnok_weapon_reaction_entry:
-    case native_weapon_low_punch_victim_roll_getup:
-    case native_sonya_weapon_low_punch_victim_context_sound:
-    case native_weapon_sweep_grounded_victim:
-      return action_weapon_reaction;
-    case native_forward_fall_context_sound_alias:
-    case native_forward_fall_context_sound:
-    case native_hit_clip_132_or_air_forward_fall:
-    case native_launch_clip_179_action_100a:
-    case native_teleport_punch_ground_or_air_victim:
-      return action_branch_reaction;
-    case native_goro_special_uppercut_192_entry:
-    case native_uppercut_40_percent_damage:
-    case native_weapon_clip_189_launch_half_damage:
-    case native_reptile_dash_victim_scaled:
-    case native_weapon_clip_132_directional_fall:
-      return action_scaled_reaction;
-    case native_sweep_knockdown_victim:
-    case native_reaction_clip_127_friction:
-    case native_liu_kang_fireball_reaction_entry:
-    case native_reaction_clip_311_short_slide:
-    case native_reaction_clip_326_short_slide:
-    case native_goro_special_punch_189_entry:
-    case native_reaction_clip_180_slide_hold:
-    case native_reaction_clip_132_native_finish:
-      return action_script_reaction;
-    case native_tumble_camera_side_positive:
-    case native_tumble_camera_side_negative:
-    case native_tumble_native_finish_back_getup:
-    case native_grounded_tumble_hold_return:
-    case native_weapon_tumble_back_getup:
-      return action_tumble_reaction;
-    case native_disarm_wall_recoil_fall:
-    case native_fall_without_disarm:
-    case native_launch_clip_131_back_getup:
-    case native_launch_clip_131_native_finish_back_getup:
-    case native_fall_reaction_with_effects:
-      return action_launch_reaction;
-    case native_stagger_stance_select_disarm:
-    case native_stagger_clip_311_keep_weapon:
-    case native_stagger_clip_134:
-    case native_stagger_clip_134_impact:
-    case native_stagger_shake_60_percent_damage:
-    case native_knockdown_stagger_half_damage_alias:
-    case native_knockdown_stagger_half_damage:
-    case native_kick_stagger_60_percent_damage:
-      return action_stagger_reaction;
-    default: {
-      FighterFn entry = action_throw_reaction(image, reaction);
-      return entry != NULL ? entry : action_engine_reaction(mk4_reaction_target(image, reaction));
-    }
-  }
+  return script_native_reaction(mk4_reaction_target(image, reaction));
 }

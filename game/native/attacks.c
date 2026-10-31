@@ -506,10 +506,6 @@ void fujin_triple_contact(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void fujin_triple_fast(Fighter *fighter) {
-  script_vm_enter(fighter, fn_fujin_triple_fast, fighter_ready);
-}
-
 void fujin_triple_victim(Fighter *fighter) {
   if (action_reaction_native(fighter) == native_fujin_triple_middle_victim) {
     fighter_start_move(fighter, S_HIT, &fujin_triple_kick_middle_victim);

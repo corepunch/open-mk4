@@ -911,10 +911,6 @@ static void quan_chi_fatality_first_beat_cue(Fighter *fighter, int shake) {
   mk4_script_shake(fighter, shake);
 }
 
-void quan_chi_fatality_cue_40(Fighter *fighter) {
-  script_vm_enter(fighter, fn_quan_chi_fatality_cue_40, fighter_ready);
-}
-
 void quan_chi_fatality_hit_179(Fighter *fighter) {
   quan_chi_fatality_first_beat_cue(fighter, 5);
   script_vm_enter(fighter, fn_quan_chi_fatality_hit_179, fighter_ready);
@@ -1931,9 +1927,6 @@ void tanya_first_owner_53(Fighter *fighter) {
 
 /* 44d4e0 -> 44dd20 scales the 44dca0 scene vector by -0x439. That vector
  * comes from an unresolved camera object; the owner keeps its place. */
-void tanya_first_owner_drift(Fighter *fighter) {
-  script_vm_enter(fighter, fn_tanya_first_owner_drift, fighter_ready);
-}
 
 /* 44d510 arms nine more 4e15d0 replays of clip 396. */
 void tanya_first_owner_replays(Fighter *fighter) {

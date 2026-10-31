@@ -52,10 +52,6 @@ void action_fan_cycle(Fighter *fighter) {
   script_vm_enter(fighter, fn_jax_fan_fatality_owner_release, fighter_ready);
 }
 
-void action_fan_victory(Fighter *fighter) {
-  script_vm_enter(fighter, fn_fan_victory, fighter_ready);
-}
-
 void action_fan_victim_end(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
   fighter_execution_finish(fighter, NULL);

@@ -151,8 +151,9 @@ is restored from the pre-Lua implementation; no new instruction dialect or
 per-fighter interpreter exists. `game/script/opcodes.h` is generated from the
 existing decoder schema so C dispatch uses names such as `MK4_OP_WAIT`.
 
-`fighters/<name>.asm` groups named bytecode, embedded entry aliases and native
-ABI ID declarations. `fighters/shared.asm` defines
+`fighters/<name>.asm` groups named bytecode, embedded entry aliases. Native imports in `scripts/mk4/native.inc` name
+typed C implementations; the linker assigns compact references and emits the
+host pointer registry. Original native addresses stay in importer/research metadata. `fighters/shared.asm` defines
 shared/ambiguous streams once. Tooling assigns ownership from established names
 and catalog usage; owning a file never changes the actor/model or native
 implementation selected at runtime. Cross-file branches use symbolic labels.
@@ -209,11 +210,11 @@ snapshots are interpolation history, not a detached full-scene snapshot for
 concurrent rendering. `game/game.h` depends on shared asset/pose types, not
 rasterizer or SDL interfaces.
 
-`game/script/entries.c` resolves input/native entry addresses and predicates;
-`game/script/bindings.c` resolves typed script-native calls, tails, handlers,
-physics callbacks and independent tasks. Each address selects one shared
-implementation. Neither lookup uses roster masks or originating-fighter
-context. The actor retains its own model, assets, controls and peer identity.
+`game/script/bindings.c` resolves linked native references through one generated
+typed pointer registry for actions, predicates, reactions, script calls, tails,
+handlers, physics callbacks and independent tasks. Script-only native tails
+carry a script reference and explicit completion policy. No original executable
+address or fighter registration mask participates in resolution. The actor retains its own model, assets, controls and peer identity.
 
 ## Native engine services
 

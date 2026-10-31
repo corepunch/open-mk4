@@ -1253,9 +1253,6 @@ static void reiko_fatality_second_victim_stagger(Fighter *victim) {
 }
 
 /* 41c4b0: a floor pool at joint 4, then 4d2d90. */
-void reiko_second_victim_fall(Fighter *victim) {
-  script_vm_enter(victim, fn_reiko_second_victim_fall, fighter_ready);
-}
 
 static void reiko_fatality_second_end(Fighter *victim) {
   fighter_execution_stop(victim);
@@ -1673,10 +1670,6 @@ void scorpion_script_burn_victory(Fighter *fighter) {
 void scorpion_script_burn_victim_cue(Fighter *victim) {
   battle_sound(SOUND_B, 16);
   script_vm_enter(victim, fn_scorpion_burn_victim_cue, fighter_ready);
-}
-
-void scorpion_script_burn_victim_repeat(Fighter *victim) {
-  script_vm_enter(victim, fn_scorpion_burn_victim_repeat, fighter_ready);
 }
 
 void scorpion_script_burn_victim_blend(Fighter *victim) {
@@ -2139,10 +2132,6 @@ void sub_zero_script_breath_freeze(Fighter *fighter, int type) {
   require(type == 0, "Unexpected freeze task");
   fighter_peer(fighter)->appearance = APPEARANCE_FROZEN;
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 120, sub_zero_fatality_breath_freeze_object);
-}
-
-void sub_zero_script_breath_approach(Fighter *fighter) {
-  script_vm_enter(fighter, fn_sub_zero_breath_approach, fighter_ready);
 }
 
 static void sub_zero_fatality_breath_resume(Fighter *fighter) {

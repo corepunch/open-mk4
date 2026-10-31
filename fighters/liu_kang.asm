@@ -1,35 +1,8 @@
-; Generated liu_kang bytecode and native IDs. Do not edit; run make scripts-export.
-; The shared C VM executes these words; native IDs select shared C services.
+; Generated liu_kang bytecode. Do not edit; run make scripts-export.
+; Native symbols are linked to typed C services.
 
-.export_equ native_liu_kang_lk_throw_entry 0x42c040
-.export_equ native_liu_kang_liu_script_lk_continue 0x42c0b0
-.export_equ native_liu_kang_liu_script_lk_damage 0x42c0d0
-.export_equ native_liu_kang_lk_throw_retreat 0x42c170
-.export_equ native_liu_kang_second_fatality 0x43c3d0
-.export_equ native_liu_kang_liu_script_fatal_setup 0x43c500
-.export_equ native_liu_kang_first_fatality 0x450930
-.export_equ native_liu_kang_can_first_fatality 0x45e410
-.export_equ native_liu_kang_can_bicycle 0x45eab0
-.export_equ native_liu_kang_liu_script_sword_gate 0x46db00
-.export_equ native_liu_kang_bicycle_kick 0x47eaf0
-.export_equ native_liu_kang_bicycle_script 0x47eb30
-.export_equ native_liu_kang_bicycle_land 0x47ed40
-.export_equ native_liu_kang_flying_kick 0x47edc0
-.export_equ native_liu_kang_flying_kick_script 0x47ee00
-.export_equ native_liu_kang_flying_kick_land 0x47ef10
-.export_equ native_liu_kang_liu_script_bicycle_motion 0x480e90
-.export_equ native_liu_kang_lk_throw_victim_reaction_80 0x485910
-.export_equ native_liu_kang_liu_script_lk_thrown_tail 0x485930
-.export_equ native_liu_kang_fireball_reaction_entry 0x486730
-.export_equ native_liu_kang_liu_script_fatal_align 0x48f9f0
-.export_equ native_liu_kang_liu_script_sword_blend 0x496430
-.export_equ native_liu_kang_sword_back_hp_entry 0x496670
-.export_equ native_liu_kang_sword_back_high_punch_contact 0x496770
-.export_equ native_liu_kang_low_fireball 0x49bf50
-.export_equ native_liu_kang_high_fireball 0x49bf90
-.export_equ native_liu_kang_liu_script_air_return 0x49c010
 
-; Retail source 0x004de3b0; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_throw_startup:
   open_peer_clip 0x0, clip(133)
   open_clip 0x0, clip(35)
@@ -37,7 +10,7 @@ liu_kang_lk_throw_startup:
   tail 0x0, native_liu_kang_liu_script_lk_continue
   .zero 4 ; non-executable guard
 
-; Retail source 0x004de410; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_continue:
   native_release 0x1
   play_pair 0x14
@@ -45,7 +18,7 @@ liu_kang_lk_continue:
   tail 0x0, native_liu_kang_liu_script_lk_damage
   .zero 4 ; non-executable guard
 
-; Retail source 0x004de428; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_throw_damage_release:
   disarm_peer 0x0
   sound_a 0x24
@@ -64,12 +37,12 @@ liu_kang_lk_throw_damage_release:
   ready 0x0
   .zero 4 ; non-executable guard
 
-; Retail source 0x004de468; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_throw_retreat_entry:
   speed_negative 0x0, 0x11eb
   tail 0x0, native_liu_kang_lk_throw_retreat
 
-; Retail source 0x004de478; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_throw_retreat:
   open_clip 0x0, clip(182)
   double_to 0x1c
@@ -78,7 +51,7 @@ liu_kang_lk_throw_retreat:
   ready 0x0
   .zero 4 ; non-executable guard
 
-; Retail source 0x004dfff8; branches use linked names.
+; Branches use linked names.
 liu_kang_start_fatality:
   scene_event 0x2a
   wait 0xf
@@ -89,7 +62,7 @@ liu_kang_start_fatality:
   tail 0x0, native_liu_kang_liu_script_fatal_setup
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e0020; branches use linked names.
+; Branches use linked names.
 liu_kang_fireball_fatality_paired_opening:
   call 0x0, native_liu_kang_liu_script_fatal_align
   sound_b 0xa
@@ -108,7 +81,7 @@ liu_kang_fireball_fatality_paired_opening:
   park 0x0
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e8610; branches use linked names.
+; Branches use linked names.
 liu_kang_bicycle_kick:
   motion 0x0, 0x2147, 0xfffff5c3, 0x0
   call 0x0, native_save_motion
@@ -120,20 +93,20 @@ liu_kang_bicycle_kick:
   tail 0x0, native_liu_kang_bicycle_script
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e8678; branches use linked names.
+; Branches use linked names.
 bicycle_land:
   clear_handler 0x0
   clip_alt 0x6, clip(68)
   ready 0x0
 
-; Retail source 0x004e8688; branches use linked names.
+; Branches use linked names.
 bicycle_contact_end:
   motion 0x0, 0x0, 0xffffeb86, 0xe5
   native_context 0x0
   clear_handler 0x0
   tail 0x0, native_liu_kang_bicycle_land
 
-; Retail source 0x004e86a8; branches use linked names.
+; Branches use linked names.
 liu_kang_flying_kick:
   sound_indexed 0x0
   open_clip 0x0, clip(92)
@@ -141,14 +114,14 @@ liu_kang_flying_kick:
   tail 0x0, native_liu_kang_flying_kick_script
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e86d0; branches use linked names.
+; Branches use linked names.
 liu_kang_flying_kick_miss:
   clip_operation 0x0, clip(92)
   bind_submit 0x0, clip(92)
   ready 0x0
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e86e8; branches use linked names.
+; Branches use linked names.
 liu_kang_flying_kick_hit:
   landing 0x0
   speed_negative 0x0, 0xfffffae2
@@ -159,7 +132,7 @@ liu_kang_flying_kick_hit:
   native_context 0x0
   ready 0x0
 
-; Retail source 0x004e8718; branches use linked names.
+; Branches use linked names.
 liu_kang_flying_kick_block:
   landing 0x0
   wait 0xc
@@ -170,7 +143,7 @@ liu_kang_flying_kick_block:
   tail 0x0, native_liu_kang_flying_kick_land
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e9a90; branches use linked names.
+; Branches use linked names.
 liu_kang_lk_throw_victim:
   sound_a 0x25
   forward_to 0x23
@@ -181,7 +154,7 @@ liu_kang_lk_throw_victim:
   tail 0x0, native_liu_kang_liu_script_lk_thrown_tail
   .zero 4 ; non-executable guard
 
-; Retail source 0x004e9b68; branches use linked names.
+; Branches use linked names.
 lp_victim_impact_release:
   prefixed_to 0x211, clip(174)
   sound_special 0x0
@@ -190,7 +163,7 @@ lp_victim_impact_release:
   tail 0x0, native_getup_roll_flip
   .zero 4 ; non-executable guard
 
-; Retail source 0x004ec680; branches use linked names.
+; Branches use linked names.
 liu_kang_sword_hp_repeat_program:
   attack_selector 0x0, 0x30f
   schedule_motion 0x6006, 0x11eb
@@ -199,7 +172,7 @@ liu_kang_sword_hp_repeat_program:
   sound_c 0x1d
   double_to 0x12
 
-; Retail source 0x004ec6a4; branches use linked names.
+; Branches use linked names.
 liu_kang_sword_hp_repeat_program_prefixed_sample_1:
   prefixed_sample 0x200, clip(216)
   weapon_query 0xf
@@ -214,21 +187,21 @@ liu_kang_sword_hp_repeat_program_prefixed_sample_1:
   forward_to 0x15
   jump 0x0, word(liu_kang_sword_hp_repeat_program_prefixed_sample_1)
 
-; Retail source 0x004ec6f4; branches use linked names.
+; Branches use linked names.
 liu_kang_sword_hp_repeat_program_action_recovery_1:
   action_recovery 0x0
   forward_count 0x5
   tail 0x0, native_liu_kang_liu_script_sword_blend
   .zero 4 ; non-executable guard
 
-; Retail source 0x004ecba8; branches use linked names.
+; Branches use linked names.
 shared_action_recovery_entry:
   action_recovery 0x0
   forward 0x0
   ready 0x0
   .zero 4 ; non-executable guard
 
-; Retail source 0x004ed678; branches use linked names.
+; Branches use linked names.
 liu_kang_low_fireball_low:
   open_clip 0x0, clip(19)
   double_to 0x14
@@ -246,7 +219,7 @@ liu_kang_low_fireball_low:
   playback_pair 0x0
   ready 0x0
 
-; Retail source 0x004ed6c0; branches use linked names.
+; Branches use linked names.
 liu_kang_high_fireball_high:
   open_clip 0x0, clip(18)
   double_to 0x14
@@ -260,7 +233,7 @@ liu_kang_high_fireball_high:
   playback_pair 0x0
   ready 0x0
 
-; Retail source 0x004ed6f8; branches use linked names.
+; Branches use linked names.
 liu_kang_air_fireball_air:
   clip 0x0, clip(20)
   sound_a 0x21

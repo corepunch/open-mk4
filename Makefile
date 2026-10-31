@@ -11,7 +11,7 @@ FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.in
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_program.c common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
-HEADERS = $(wildcard common/*.h) build/mk4_linked.h
+HEADERS = $(wildcard common/*.h) build/mk4_linked.h build/mk4_natives.inc
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools"); from character_catalog import CHARACTERS; print(" ".join(CHARACTERS))')
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
@@ -20,13 +20,15 @@ SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 .PHONY: bytecode-test scripts-source-check scripts-export input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts: build/mk4.data build/mk4_linked.h build/mk4_script_names.inc
+scripts: build/mk4.data build/mk4_linked.h build/mk4_script_names.inc build/mk4_natives.inc
 
 SCRIPT_SOURCES = $(shell find scripts/mk4 fighters -type f \( -name '*.asm' -o -name '*.inc' \))
-build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(SCRIPT_SOURCES)
-	python3 tools/mk4_link.py scripts/mk4/project.asm $@ build/mk4_linked.h --names build/mk4_script_names.inc
+build/mk4.data: tools/mk4_link.py tools/mk4_asm.py tools/mk4_native.py $(SCRIPT_SOURCES)
+	python3 tools/mk4_link.py scripts/mk4/project.asm $@ build/mk4_linked.h --names build/mk4_script_names.inc --natives build/mk4_natives.inc
 build/mk4_script_names.inc: build/mk4.data
 	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data build/mk4_linked.h --names $@
+build/mk4_natives.inc: build/mk4.data
+	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data build/mk4_linked.h --natives $@
 build/mk4_linked.h: build/mk4.data
 	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data $@
 
@@ -74,7 +76,7 @@ test: fsys build/test-package
 	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game build/mk4.data build/mk4_linked.h build/mk4.scripts $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-script-runtime build/test-bytecode build/mk4_script_names.inc
+	rm -f fsys mk4-viewer mk4-game build/mk4.data build/mk4_linked.h build/mk4.scripts $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-script-runtime build/test-bytecode build/mk4_script_names.inc build/mk4_natives.inc
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)

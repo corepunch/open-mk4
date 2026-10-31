@@ -1,9 +1,8 @@
-; Generated kitana bytecode and native IDs. Do not edit; run make scripts-export.
-; The shared C VM executes these words; native IDs select shared C services.
+; Generated kitana bytecode. Do not edit; run make scripts-export.
+; Native symbols are linked to typed C services.
 
-.export_equ native_kitana_combo_hp_entry 0x46c2b0
 
-; Retail source 0x004e6a28; branches use linked names.
+; Branches use linked names.
 kitana_combo_high_punch_attacker:
   open_clip 0x2, clip(533)
   forward_to 0xb

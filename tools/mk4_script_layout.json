@@ -1572,6 +1572,14 @@
     "native_task_retire": "0x49cb60",
     "native_fire_contact": "0x468640",
     "native_fire_recovery": "0x4688e0",
-    "native_thaw_landing": "0x486530"
+    "native_thaw_landing": "0x486530",
+    "native_unresolved_air_low_kick_clip_59_reverse": "0x46e0d0",
+    "native_unresolved_air_low_kick_clip_60_reverse": "0x46e1b0",
+    "native_unresolved_air_diagonal_kick_clip_55_reverse": "0x46e450",
+    "native_unresolved_air_diagonal_kick_clip_56_reverse": "0x46e540",
+    "native_unresolved_air_diagonal_kick_clip_57_reverse": "0x46e630",
+    "native_unresolved_reaction_clip_326_short_slide": "0x433c00",
+    "native_unresolved_weapon_clip_132_directional_fall_task_callback_1": "0x482f90",
+    "native_unresolved_lp_victim_slide_release": "0x485a70"
   }
 }

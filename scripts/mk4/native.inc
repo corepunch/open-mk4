@@ -1,1 +1,903 @@
-; Native IDs are declared/exported beside bytecode in fighters/*.asm.
+; Symbolic native imports. Functions are linked by the C compiler; no retail code addresses.
+; Fields describe typed call roles. A declaration without a role is retained data only.
+.native native_air_attack_land_or_finish, tail=action_air_land
+.native native_air_contact_begin
+.native native_air_diagonal_alt_tail, tail=action_air_diagonal_alt_tail
+.native native_air_diagonal_high_kick, entry=action_air_diagonal_high_kick
+.native native_air_diagonal_kick_clip_55_reverse
+.native native_air_diagonal_kick_clip_56_reverse
+.native native_air_diagonal_kick_clip_57_reverse
+.native native_air_diagonal_kick_contact_hold
+.native native_air_diagonal_kick_query_30
+.native native_air_diagonal_kick_query_31
+.native native_air_diagonal_kick_query_32
+.native native_air_diagonal_low_kick, entry=action_air_diagonal_low_kick
+.native native_air_diagonal_tail, tail=action_air_diagonal_tail
+.native native_air_diagonal_wide_tail, tail=action_air_diagonal_wide_tail
+.native native_air_fireball, entry=action_air_fireball
+.native native_air_fireball_spawn, spawn=action_air_fireball_spawn, task=75
+.native native_air_flip_getup, tail=action_air_flip_getup
+.native native_air_flip_release, tail=action_air_flip_release
+.native native_air_high_punch, entry=action_air_high_punch
+.native native_air_high_punch_contact_window
+.native native_air_high_punch_miss_reverse
+.native native_air_hp_tail, tail=action_air_hp_tail
+.native native_air_kick, entry=action_air_kick
+.native native_air_lift_fall, tail=action_air_lift_fall
+.native native_air_lift_getup, tail=action_air_lift_getup
+.native native_air_lift_release, tail=action_air_lift_release
+.native native_air_lk_alt_tail, tail=action_air_lk_alt_tail
+.native native_air_lk_tail, tail=action_air_lk_tail
+.native native_air_lk_wide_tail, tail=action_air_lk_wide_tail
+.native native_air_low_kick_clip_58_reverse
+.native native_air_low_kick_clip_59_reverse
+.native native_air_low_kick_clip_60_reverse
+.native native_air_low_kick_contact_hold
+.native native_air_low_kick_land, tail=action_air_land
+.native native_air_low_punch, entry=action_air_low_punch
+.native native_air_low_punch_miss_reverse
+.native native_air_lp_tail, tail=action_air_lp_tail
+.native native_air_slam_end, tail=action_air_slam_end
+.native native_air_slam_fall, tail=action_air_slam_fall
+.native native_air_straight_kick_land, tail=action_air_land
+.native native_air_straight_kick_miss_reverse
+.native native_air_straight_land, tail=action_air_straight_land
+.native native_air_straight_tail, tail=action_air_straight_tail
+.native native_air_straight_wide_tail, tail=action_air_straight_wide_tail
+.native native_air_throw, entry=action_air_throw
+.native native_air_throw_flip, entry=action_air_throw_flip
+.native native_air_throw_land, tail=action_air_throw_land
+.native native_air_throw_lift, entry=action_air_throw_lift
+.native native_air_throw_release, tail=action_air_throw_release
+.native native_air_throw_slam, entry=action_air_throw_slam
+.native native_air_victim_default, throw_reaction=action_air_victim_default
+.native native_air_victim_flip, throw_reaction=action_air_victim_flip
+.native native_air_victim_lift, throw_reaction=action_air_victim_lift
+.native native_avoid_clear, call=mk4_script_avoid_clear
+.native native_avoid_set, call=mk4_script_avoid_set
+.native native_battle_react, reaction=action_record_reaction
+.native native_bicycle_capture, reaction=action_bicycle_capture
+.native native_bicycle_cycle, tail=action_bicycle_cycle
+.native native_bicycle_release, reaction=action_bicycle_release
+.native native_bicycle_victim_front_getup, reaction=action_record_reaction
+.native native_block_cycle, tail=action_block_cycle
+.native native_block_push_0_13_no_wall_recoil, engine_reaction=react_block
+.native native_block_push_0_15, engine_reaction=react_block
+.native native_block_push_0_18, engine_reaction=react_block
+.native native_block_single_no_push, engine_reaction=react_block
+.native native_block_single_no_push_no_wall_recoil, engine_reaction=react_block
+.native native_block_single_push_0_24, engine_reaction=react_block
+.native native_block_standing_no_physics, engine_reaction=react_block
+.native native_block_standing_push_0_06, engine_reaction=react_block
+.native native_block_standing_push_0_06_no_wall_recoil, engine_reaction=react_block
+.native native_block_standing_push_0_20, engine_reaction=react_block
+.native native_block_standing_push_0_20_no_wall_recoil, engine_reaction=react_block
+.native native_block_standing_push_0_25_triple, engine_reaction=react_block
+.native native_block_weapon_push_0_18, engine_reaction=react_block
+.native native_block_weapon_single_no_push, engine_reaction=react_block
+.native native_block_weapon_standing_push_0_20, engine_reaction=react_block
+.native native_block_weapon_standing_push_0_25_triple, engine_reaction=react_block
+.native native_breath_scene_decoration, spawn=sub_zero_script_breath_object, task=0
+.native native_breath_shatter_decoration, spawn=sub_zero_script_breath_freeze, task=0
+.native native_cage_can_groin_punch, gate=cage_can_groin_punch
+.native native_cage_cpu_kick, entry=cage_cpu_kick
+.native native_cage_fatality_1, entry=cage_fatality_1
+.native native_cage_fatality_2, entry=cage_fatality_2
+.native native_cage_first_sever, tail=cage_first_sever
+.native native_cage_first_torso_123, tail=cage_first_torso_123
+.native native_cage_first_torso_finish, tail=cage_first_torso_finish
+.native native_cage_first_torso_half, tail=cage_first_torso_half
+.native native_cage_first_victim_131, tail=cage_first_victim_131
+.native native_cage_first_victim_148, tail=cage_first_victim_148
+.native native_cage_first_victim_166, tail=cage_first_victim_166
+.native native_cage_first_victim_185, tail=cage_first_victim_185
+.native native_cage_first_victim_206, tail=cage_first_victim_206
+.native native_cage_first_victim_59, tail=cage_first_victim_59
+.native native_cage_groin_punch, entry=cage_groin_punch
+.native native_cage_groin_punch_victim_reaction, reaction=action_aux_reaction
+.native native_cage_high_orb, entry=cage_high_orb
+.native native_cage_jab_recovery, tail_script=cage_jab_recovery, tail_finish=inherit
+.native native_cage_jab_repeat, tail_script=cage_jab_repeat, tail_finish=inherit
+.native native_cage_jab_second_punch, tail_script=cage_jab_second_punch, tail_finish=inherit
+.native native_cage_lk_throw_entry
+.native native_cage_lk_throw_owner_return, tail=action_lk_return
+.native native_cage_lk_throw_paired_continuation, tail_script=cage_lk_throw_damage, tail_finish=inherit
+.native native_cage_lk_throw_release, tail_script=cage_lk_throw_release, tail_finish=inherit
+.native native_cage_low_orb, entry=cage_low_orb
+.native native_cage_orb_spawn, spawn=cage_orb_spawn, task=79
+.native native_cage_power_victim, engine_reaction=cage_power_victim
+.native native_cage_powered_punch, entry=cage_powered_punch
+.native native_cage_script_cpu_kick_tail, tail=cage_script_cpu_kick_tail
+.native native_cage_script_fatality_1_signal, tail=cage_script_fatality_1_signal
+.native native_cage_script_fatality_2_continue, tail=cage_script_fatality_2_continue
+.native native_cage_script_powered_punch_tail, tail=cage_script_powered_punch_tail
+.native native_cage_second_charge, spawn=cage_second_charge, task=619
+.native native_cage_second_flash, spawn=cage_second_flash, task=619
+.native native_cage_second_repeated_uppercuts, tail=cage_second_repeated_uppercuts
+.native native_cage_second_victim_finish, tail=cage_second_victim_finish
+.native native_cage_second_victim_hit, engine_reaction=cage_second_victim_hit
+.native native_cage_shadow_victim, engine_reaction=cage_shadow_victim
+.native native_cage_weapon_back_hp_entry
+.native native_cage_weapon_back_lp_contact, tail_reference=action_weapon_contact
+.native native_cage_weapon_back_lp_entry
+.native native_cage_weapon_lp_entry
+.native native_cage_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_cage_weapon_upper_contact, tail_reference=action_weapon_contact
+.native native_cage_weapon_upper_entry
+.native native_can_fan_finish, gate=mk4_can_fan_finish
+.native native_can_finish_close, gate=action_can_finish_close
+.native native_can_finish_range, gate=action_can_finish_range
+.native native_can_player_pair_air_throw, gate=mk4_can_air_throw
+.native native_can_sidestep, gate=mk4_can_sidestep
+.native native_can_spike_finish, gate=mk4_can_spike_finish
+.native native_cartwheel_victim_impact, reaction=action_record_reaction
+.native native_cartwheel_victim_recoil, reaction=action_record_reaction
+.native native_cartwheel_victim_scaled_impact, reaction=action_record_reaction
+.native native_close_high_kick, entry=action_close_high_kick
+.native native_close_high_kick_tail, tail=action_close_high_kick_tail
+.native native_close_high_punch, entry=action_close_high_punch
+.native native_close_high_punch_tail, tail=action_close_high_punch_tail
+.native native_combo_high_punch_tail, tail=action_combo_high_punch_tail
+.native native_combo_hp_entry
+.native native_contact_query_a
+.native native_contact_query_b
+.native native_contact_query_d, predicate_result=raiden_script_torpedo_query
+.native native_context, handler_arg=mk4_script_context
+.native native_crouch_high_kick, entry=action_crouch_high_kick
+.native native_crouch_low_kick, entry=action_crouch_low_kick
+.native native_crouch_low_kick_tail, tail=action_crouch_low_kick_tail
+.native native_crouch_low_punch, entry=action_crouch_low_punch
+.native native_crouch_return, tail=action_crouch_return
+.native native_disarm_self, call=mk4_script_disarm_self
+.native native_disarm_wall_recoil_fall, reaction=action_launch_reaction
+.native native_dispatch_opponent_reaction, handler_checked=action_script_release_reaction
+.native native_disturb_resting_weapons, call_global=action_disturb_resting_weapons
+.native native_face_peer_and_resume_script, handler=action_face_peer
+.native native_face_peer_orient_group, physics=action_face_peer
+.native native_fall_reaction_with_effects, reaction=action_launch_reaction
+.native native_fall_without_disarm, reaction=action_launch_reaction
+.native native_fan_female_victim_owner_cycle, tail=action_fan_cycle
+.native native_fan_finish, entry=action_fan_finish
+.native native_fan_male_victim_owner_cycle, tail=action_fan_cycle
+.native native_fan_tail, tail=action_fan_tail
+.native native_fan_victim_end, tail=action_fan_victim_end
+.native native_fan_victory, tail_script=fan_victory, tail_finish=fighter_ready
+.native native_finish_first, entry=action_finish_first
+.native native_finish_second, entry=action_finish_second
+.native native_fire_contact, tail=scorpion_fire_script
+.native native_fire_recovery, tail=action_fire_recovery_finish
+.native native_fireball, entry=action_fireball
+.native native_fireball_fall, tail=action_fireball_fall
+.native native_fireball_spawn, spawn=action_fireball_spawn, task=75
+.native native_flip_facing, call=action_flip_facing
+.native native_forward_fall_context_sound, reaction=action_branch_reaction
+.native native_forward_fall_context_sound_alias, reaction=action_branch_reaction
+.native native_fujin_bolt_victim, engine_reaction=fujin_bolt_victim
+.native native_fujin_bow_finish, tail=fujin_bow_finish
+.native native_fujin_can_dive, gate=fujin_can_dive
+.native native_fujin_can_first_fatality, gate=fujin_can_first_fatality
+.native native_fujin_can_wind, gate=fujin_can_wind
+.native native_fujin_can_wind_grab, gate=fujin_can_wind_grab
+.native native_fujin_can_wind_slam, gate=fujin_can_wind_slam
+.native native_fujin_crossbow_followup_entry
+.native native_fujin_crossbow_hp_entry
+.native native_fujin_crossbow_lp_entry
+.native native_fujin_dive, entry=fujin_dive
+.native native_fujin_dive_contact, tail=fujin_dive_contact
+.native native_fujin_dive_land, tail=fujin_dive_land
+.native native_fujin_first_cycle, tail=fujin_first_cycle
+.native native_fujin_first_fatality, entry=fujin_first_fatality
+.native native_fujin_first_loop_start, tail=fujin_first_loop_start
+.native native_fujin_first_shoot, tail=fujin_first_shoot
+.native native_fujin_grab_control_start, tail=fujin_grab_control_start
+.native native_fujin_grab_victim, engine_reaction=fujin_grab_victim
+.native native_fujin_high_kick_contact_recovery
+.native native_fujin_lk_throw_entry
+.native native_fujin_second_blood, spawn=fujin_second_blood, task=38
+.native native_fujin_second_burst, tail=fujin_second_burst
+.native native_fujin_second_fatality, entry=fujin_second_fatality
+.native native_fujin_second_victim, engine_reaction=fujin_second_victim
+.native native_fujin_triple_contact, tail=fujin_triple_contact
+.native native_fujin_triple_fast, tail_script=fujin_triple_fast, tail_finish=fighter_ready
+.native native_fujin_triple_first_victim, engine_reaction=fujin_triple_victim
+.native native_fujin_triple_kick, entry=fujin_triple_kick
+.native native_fujin_triple_middle_victim, engine_reaction=fujin_triple_victim
+.native native_fujin_wind, entry=fujin_wind
+.native native_fujin_wind_grab, entry=fujin_wind_grab
+.native native_fujin_wind_recovery, tail=fujin_wind_recovery
+.native native_fujin_wind_slam, entry=fujin_wind_slam
+.native native_fujin_wind_slam_victim, engine_reaction=fujin_wind_slam_victim
+.native native_fujin_wind_victim, engine_reaction=fujin_wind_victim
+.native native_getup_back, tail=action_getup_back
+.native native_getup_front, tail=action_getup_front
+.native native_getup_roll_flip, tail=action_getup_roll_flip
+.native native_goro_air_hp_recovery_callback
+.native native_goro_air_kick_recovery_callback
+.native native_goro_air_lp_recovery_callback
+.native native_goro_fireball, entry=goro_fireball
+.native native_goro_fireball_spawn, spawn=goro_fireball_spawn, task=83
+.native native_goro_kick_victim, engine_reaction=goro_kick_victim
+.native native_goro_kick_victim_disarm, reaction=action_aux_reaction
+.native native_goro_leap_stomp, entry=goro_leap_stomp
+.native native_goro_lk_throw_entry
+.native native_goro_lp_throw_five_phase_sequence, tail_script=goro_lp_throw_repeated_damage, tail_finish=inherit
+.native native_goro_quake_stomp, entry=goro_quake_stomp
+.native native_goro_quake_victim, engine_reaction=goro_quake_victim
+.native native_goro_script_kick_tail, tail=goro_script_kick_tail
+.native native_goro_script_leap_continue, tail=goro_script_leap_continue
+.native native_goro_script_lp_phase_repeat, tail=goro_script_lp_phase_repeat
+.native native_goro_script_punch_tail, tail=goro_script_punch_tail
+.native native_goro_script_quake_land, tail=goro_script_quake_land
+.native native_goro_script_stomp_return, tail=goro_script_stomp_return
+.native native_goro_script_stomp_victim_hold, tail=goro_script_stomp_victim_hold
+.native native_goro_script_uppercut_victim_slide, tail=goro_script_uppercut_victim_slide
+.native native_goro_special_kick, entry=goro_special_kick
+.native native_goro_special_punch, entry=goro_special_punch
+.native native_goro_special_punch_189_entry, reaction=action_script_reaction
+.native native_goro_special_uppercut, entry=goro_special_uppercut
+.native native_goro_special_uppercut_192_entry, reaction=action_scaled_reaction
+.native native_goro_stomp_hold_separation, physics=goro_stomp_hold_separation
+.native native_goro_stomp_victim, engine_reaction=goro_stomp_victim
+.native native_goro_victim_getup, tail=goro_victim_getup
+.native native_grounded_tumble_hold_return, reaction=action_tumble_reaction
+.native native_guard_fall, reaction=action_guard_fall
+.native native_handstand_exit, entry=action_handstand_exit
+.native native_handstand_front, tail_script=handstand_front, tail_finish=inherit, entry=action_handstand_front
+.native native_handstand_rear, entry=action_handstand_rear
+.native native_handstand_spin, entry=action_handstand_spin
+.native native_handstand_victim_knockdown, engine_reaction=kai_handstand_reaction
+.native native_handstand_victim_rear_stagger, engine_reaction=kai_handstand_reaction
+.native native_has_gravity, gate=action_has_gravity
+.native native_high_kick, entry=action_high_kick
+.native native_high_kick_narrow_contact_recovery
+.native native_high_kick_reverse_return, tail=script_vm_reverse_return
+.native native_high_punch, entry=action_high_punch
+.native native_hit_clip_132_or_air_forward_fall, reaction=action_branch_reaction
+.native native_hit_clip_324_with_boss_stagger, reaction=action_impact_reaction
+.native native_hit_clip_325_with_damage_stagger, reaction=action_impact_reaction
+.native native_hit_stagger_action_1013, reaction=action_stagger_entry
+.native native_hit_stagger_with_particles, reaction=action_stagger_entry
+.native native_ice_projectile_task, spawn=sub_zero_script_spawn_ice, task=66
+.native native_impact_voice, call=action_impact_voice
+.native native_impact_wall_counter_60_percent_damage, reaction=action_impact_reaction
+.native native_jab_contact, call=mk4_script_jab_contact
+.native native_jab_repeat_predicate, call_result=mk4_script_jab_gate, predicate_result=mk4_script_jab_gate
+.native native_jarek_ball_victim, engine_reaction=jarek_ball_victim
+.native native_jarek_blade, entry=jarek_blade
+.native native_jarek_blade_spawn, spawn=jarek_blade_spawn, task=78
+.native native_jarek_cannonball, entry=jarek_cannonball
+.native native_jarek_fatality_1, entry=jarek_fatality_1
+.native native_jarek_fatality_2, entry=jarek_fatality_2
+.native native_jarek_first_heart, tail=jarek_first_heart
+.native native_jarek_first_victim_end, tail=jarek_first_victim_end
+.native native_jarek_first_victim_impact, tail=jarek_first_victim_impact
+.native native_jarek_first_victim_rip, tail=jarek_first_victim_rip
+.native native_jarek_lk_throw_entry
+.native native_jarek_lk_throw_owner_return, tail=action_lk_return
+.native native_jarek_quake, entry=jarek_quake
+.native native_jarek_quake_tail, tail=jarek_quake_tail
+.native native_jarek_second_glow, call=jarek_second_glow
+.native native_jarek_second_handoff, tail=jarek_second_handoff
+.native native_jarek_second_head_fall, spawn=jarek_second_head_fall, task=0
+.native native_jarek_second_victim_hold, tail=jarek_second_victim_hold
+.native native_jarek_upward_ball, entry=jarek_upward_ball
+.native native_jarek_weapon_back_lp_entry
+.native native_jarek_weapon_hp_entry
+.native native_jarek_weapon_lp_entry
+.native native_jarek_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_jax_air_throw_command_gate, gate=mk4_can_air_throw
+.native native_jax_axe_back_hp_entry
+.native native_jax_axe_back_lp_entry
+.native native_jax_axe_hp_entry
+.native native_jax_axe_lp_entry
+.native native_jax_can_dash_punch, gate=jax_can_dash_punch
+.native native_jax_can_fatality_1, gate=jax_can_fatality_1
+.native native_jax_can_missile, gate=jax_can_missile
+.native native_jax_combo_hp_entry
+.native native_jax_dash_punch, entry=jax_dash_punch
+.native native_jax_dash_punch_contact, tail=jax_dash_punch_contact
+.native native_jax_dash_punch_roll_getup, tail=action_getup_roll
+.native native_jax_dash_victim_hit, engine_reaction=jax_dash_victim_hit
+.native native_jax_dash_victim_throw, engine_reaction=jax_dash_victim_throw
+.native native_jax_fatality_1, entry=jax_fatality_1
+.native native_jax_fatality_1_first_arm, tail=jax_fatality_1_first_arm
+.native native_jax_fatality_1_grab, tail=jax_fatality_1_grab
+.native native_jax_fatality_1_second_arm, tail=jax_fatality_1_second_arm
+.native native_jax_fatality_1_victory, tail=jax_fatality_1_victory
+.native native_jax_fatality_2, entry=jax_fatality_2
+.native native_jax_fatality_2_approach, tail=jax_fatality_2_approach
+.native native_jax_fatality_2_finish, tail=jax_fatality_2_finish
+.native native_jax_fatality_2_flash, spawn=jax_fatality_2_flash, task=619
+.native native_jax_fatality_2_head, engine_reaction=jax_fatality_2_head
+.native native_jax_fatality_2_sparks, spawn=jax_fatality_2_sparks, task=619
+.native native_jax_fatality_2_victim_pause, tail=action_task_pause
+.native native_jax_ground_pound, entry=jax_ground_pound
+.native native_jax_ground_pound_controller_return, tail=mk4_mmove_thrown_finish
+.native native_jax_high_kick_contact_recovery
+.native native_jax_lp_slam_first, tail=jax_lp_slam_first
+.native native_jax_lp_slam_second, tail=jax_lp_slam_second
+.native native_jax_lp_slam_third, tail=jax_lp_slam_third
+.native native_jax_lp_throw_return, tail=jax_lp_throw_return
+.native native_jax_lp_throw_throw_continuation, tail_script=jax_lp_throw_first_slam, tail_finish=inherit
+.native native_jax_missile, entry=jax_missile
+.native native_jax_missile_spawn, spawn=jax_missile_spawn, task=80
+.native native_kai_aerial_punch_contact, tail=kai_aerial_punch_contact
+.native native_kai_aerial_punch_entry, entry=kai_aerial_punch
+.native native_kai_can_first_fatality, gate=kai_can_first_fatality
+.native native_kai_can_ground_skull, gate=kai_can_ground_skull
+.native native_kai_can_handstand, gate=kai_can_handstand
+.native native_kai_can_rising_skull, gate=kai_can_rising_skull
+.native native_kai_fatality_1, entry=kai_fatality_1
+.native native_kai_fatality_2, entry=kai_fatality_2
+.native native_kai_first_owner_grab, tail=kai_first_owner_grab
+.native native_kai_first_owner_spin, tail=kai_first_owner_spin
+.native native_kai_first_owner_tear, tail=kai_first_owner_tear
+.native native_kai_first_torso_203, tail=kai_first_torso_203
+.native native_kai_first_torso_impact, tail=kai_first_torso_impact
+.native native_kai_first_victim_71, tail=kai_first_victim_71
+.native native_kai_first_victim_sever, tail=kai_first_victim_sever
+.native native_kai_first_victim_turn, tail=kai_first_victim_turn
+.native native_kai_ground_skull, entry=kai_ground_skull
+.native native_kai_ground_skull_spawn, tail=kai_ground_skull_spawn
+.native native_kai_handstand_entry, entry=kai_handstand_enter
+.native native_kai_handstand_reaction_entry, engine_reaction=kai_handstand_reaction
+.native native_kai_handstand_rear_contact, tail=kai_handstand_rear_contact
+.native native_kai_handstand_spin_begin, tail=kai_handstand_spin_begin
+.native native_kai_handstand_victim_tail, tail=kai_handstand_victim_tail
+.native native_kai_lk_throw_entry
+.native native_kai_lunge_kick_contact, tail=kai_lunge_kick_contact
+.native native_kai_lunge_kick_entry, entry=kai_lunge_kick
+.native native_kai_rising_skull, entry=kai_rising_skull
+.native native_kai_rising_skull_finish, tail=kai_rising_skull_finish
+.native native_kai_rising_skull_spawn, tail=kai_rising_skull_spawn
+.native native_kai_script_contact_b10_continuation, tail=kai_script_contact_b10_continuation
+.native native_kai_script_stage_event, tail=kai_script_stage_event
+.native native_kai_second_child_walk, call=kai_second_child_walk
+.native native_kai_second_skull, spawn=kai_second_skull, task=38
+.native native_kai_second_victim, engine_reaction=kai_second_victim
+.native native_kai_second_victim_fall, tail=kai_second_victim_fall
+.native native_kai_weapon_back_strike_contact, tail_reference=action_weapon_contact
+.native native_kai_weapon_back_strike_frontend
+.native native_kai_weapon_followup_entry
+.native native_kai_weapon_high_punch_frontend
+.native native_kai_weapon_high_punch_victim_context_sound, reaction=action_weapon_reaction
+.native native_kai_weapon_high_punch_victim_impact_sound, reaction=action_weapon_reaction
+.native native_kai_weapon_low_punch_frontend
+.native native_kick_contact_default, tail=action_kick_contact_default
+.native native_kick_contact_narrow, tail=action_kick_contact_narrow
+.native native_kick_contact_wide, tail=action_kick_contact_wide
+.native native_kick_stagger_60_percent_damage, reaction=action_stagger_reaction
+.native native_kitana_combo_hp_entry
+.native native_knockdown_stagger_half_damage, reaction=action_stagger_reaction
+.native native_knockdown_stagger_half_damage_alias, reaction=action_stagger_reaction
+.native native_land, tail=mk4_land
+.native native_landing_motion, physics=mk4_script_landing_motion
+.native native_launch_clip_131_back_getup, reaction=action_launch_reaction
+.native native_launch_clip_131_native_finish_back_getup, reaction=action_launch_reaction
+.native native_launch_clip_131_no_impact, reaction=action_aux_reaction
+.native native_launch_clip_131_shake_impact, reaction=action_aux_reaction
+.native native_launch_clip_179_action_100a, reaction=action_branch_reaction
+.native native_lightning_victim_friction, reaction=action_record_reaction
+.native native_liu_air_fireball_object, spawn=liu_kang_liu_script_spawn_air, task=64
+.native native_liu_finisher_projectile, spawn=liu_kang_liu_script_fatal_spawn, task=38
+.native native_liu_high_fireball_object, spawn=liu_kang_liu_script_spawn_high, task=64
+.native native_liu_kang_bicycle_kick, entry=liu_kang_bicycle_kick
+.native native_liu_kang_bicycle_land, tail=liu_kang_liu_script_land
+.native native_liu_kang_bicycle_script, tail=liu_kang_bicycle_script
+.native native_liu_kang_can_bicycle, gate=liu_kang_can_bicycle
+.native native_liu_kang_can_first_fatality, gate=liu_kang_can_first_fatality
+.native native_liu_kang_fireball_reaction_entry, reaction=action_script_reaction
+.native native_liu_kang_first_fatality, entry=liu_kang_first_fatality
+.native native_liu_kang_flying_kick, entry=liu_kang_flying_kick
+.native native_liu_kang_flying_kick_land, tail=liu_kang_liu_script_land
+.native native_liu_kang_flying_kick_script, tail=liu_kang_flying_kick_script
+.native native_liu_kang_high_fireball, entry=liu_kang_high_fireball
+.native native_liu_kang_liu_script_air_return, tail=liu_kang_liu_script_air_return
+.native native_liu_kang_liu_script_bicycle_motion, physics=liu_kang_liu_script_bicycle_motion
+.native native_liu_kang_liu_script_fatal_align, call=liu_kang_liu_script_fatal_align
+.native native_liu_kang_liu_script_fatal_setup, tail=liu_kang_liu_script_fatal_setup
+.native native_liu_kang_liu_script_lk_continue, tail_script=liu_kang_lk_continue, tail_finish=fighter_ready
+.native native_liu_kang_liu_script_lk_damage, tail=liu_kang_liu_script_lk_damage
+.native native_liu_kang_liu_script_lk_thrown_tail, tail=liu_kang_liu_script_lk_thrown_tail
+.native native_liu_kang_liu_script_sword_blend, tail=liu_kang_liu_script_sword_blend
+.native native_liu_kang_liu_script_sword_gate, predicate_result=liu_kang_liu_script_sword_gate
+.native native_liu_kang_lk_throw_entry
+.native native_liu_kang_lk_throw_retreat, tail_script=liu_kang_lk_throw_retreat, tail_finish=inherit
+.native native_liu_kang_lk_throw_victim_reaction_80, throw_reaction=action_lk_victim
+.native native_liu_kang_low_fireball, entry=liu_kang_low_fireball
+.native native_liu_kang_second_fatality, entry=liu_kang_second_fatality
+.native native_liu_kang_sword_back_high_punch_contact, tail_reference=action_weapon_contact
+.native native_liu_kang_sword_back_hp_entry
+.native native_liu_low_fireball_object, spawn=liu_kang_liu_script_spawn_low, task=64
+.native native_liu_weapon_high_punch
+.native native_liu_weapon_low_punch
+.native native_lk_branch_continue, tail=action_lk_branch_continue
+.native native_lk_jump_back, tail=action_lk_jump_back
+.native native_lk_pause_long, tail=action_lk_pause_long
+.native native_lk_pause_short, tail=action_lk_pause_short
+.native native_lk_recoil, tail=action_lk_recoil
+.native native_lk_throw, entry=action_lk_throw
+.native native_lk_throw_rock_release, tail_script=lk_throw_rock_release, tail_finish=fighter_ready
+.native native_lk_throw_rock_repeat_one, tail_script=lk_throw_rock_repeat_one, tail_finish=fighter_ready
+.native native_lk_throw_rock_repeat_two, tail_script=lk_throw_rock_repeat_two, tail_finish=fighter_ready
+.native native_lk_victim_clip_203_recovery, throw_reaction=action_lk_victim
+.native native_lk_victim_effect_slide, throw_reaction=action_lk_victim
+.native native_lk_victim_return, tail=action_lk_victim_return
+.native native_low_kick_narrow_reverse_return, tail=script_vm_reverse_return
+.native native_low_kick_reverse_return, tail=script_vm_reverse_return
+.native native_lp_align_and_release, tail=action_lp_align_and_release
+.native native_lp_end, tail=action_lp_end
+.native native_lp_select_long, tail=action_lp_select_long
+.native native_lp_select_short, tail=action_lp_select_short
+.native native_lp_sliding_impact_flip_getup, tail=action_getup_flip
+.native native_lp_table_victim_stop_and_flip_getup, tail=action_getup_flip
+.native native_lp_throw, entry=action_lp_throw
+.native native_lp_throw_owner_ready, tail=action_throw_ready
+.native native_lp_throw_victim_adjust_return, tail=action_throw_ready
+.native native_lp_two_speed_slide_double_flip_roll_getup, tail=action_getup_roll
+.native native_lp_victim_impact_release, throw_reaction=action_lp_victim
+.native native_lp_victim_rebased_table_release, throw_reaction=action_lp_victim
+.native native_lp_victim_slide_release, throw_reaction=action_lp_victim
+.native native_lp_victim_sliding_impact_release, throw_reaction=action_lp_victim
+.native native_lp_victim_table_release, throw_reaction=action_lp_victim
+.native native_lp_victim_two_speed_slide_release, throw_reaction=action_lp_victim
+.native native_lp_victim_weapon_scatter_release, throw_reaction=action_lp_victim
+.native native_mmove_air_getup, tail=mk4_mmove_air_getup
+.native native_mmove_lk_blend_return, tail=mk4_mmove_lk_blend_return
+.native native_mmove_lk_owner_ready, tail=mk4_mmove_lk_owner_ready
+.native native_mmove_side_getup, tail=mk4_mmove_side_getup
+.native native_noob_saibot_air_throw_landing_link, tail_script=quan_chi_air_throw_landing, tail_finish=inherit
+.native native_normal_low_kick, entry=action_normal_low_kick
+.native native_normal_low_punch, entry=action_normal_low_punch
+.native native_pair_release, tail=action_pair_release
+.native native_pair_wait, reaction=pair_wait
+.native native_press_air_contact_high_punch
+.native native_press_close_kick_high_kick
+.native native_press_close_kick_high_punch
+.native native_press_close_punch_combo_high_punch
+.native native_press_combo_punch_high_kick
+.native native_press_combo_punch_high_punch
+.native native_press_crouching_block
+.native native_press_crouching_high_kick
+.native native_press_crouching_high_punch
+.native native_press_crouching_low_kick
+.native native_press_crouching_low_punch
+.native native_press_diagonal_air_high_kick
+.native native_press_diagonal_air_high_punch
+.native native_press_diagonal_air_low_kick
+.native native_press_diagonal_air_low_punch
+.native native_press_followup_high_kick
+.native native_press_followup_low_kick
+.native native_press_followup_low_punch
+.native native_press_standing_block
+.native native_press_standing_high_kick
+.native native_press_standing_high_punch
+.native native_press_standing_low_kick
+.native native_press_standing_low_punch
+.native native_press_straight_air_high_punch
+.native native_press_straight_air_kick
+.native native_press_straight_air_low_punch
+.native native_quan_chi_can_first_fatality, gate=quan_chi_can_first_fatality
+.native native_quan_chi_fatality_1_owner_beat, tail_script=quan_chi_fatality_1_owner_beat, tail_finish=inherit
+.native native_quan_chi_fatality_beat, tail=quan_chi_fatality_beat
+.native native_quan_chi_fatality_cue_40, tail_script=quan_chi_fatality_cue_40, tail_finish=fighter_ready
+.native native_quan_chi_fatality_hit_179, tail=quan_chi_fatality_hit_179
+.native native_quan_chi_fatality_hit_241, tail=quan_chi_fatality_hit_241
+.native native_quan_chi_fatality_leg, tail=quan_chi_fatality_leg
+.native native_quan_chi_first_fatality, entry=quan_chi_first_fatality
+.native native_quan_chi_flip_kick, entry=quan_chi_flip_kick
+.native native_quan_chi_flip_reaction, engine_reaction=quan_chi_flip_reaction
+.native native_quan_chi_lk_throw_entry
+.native native_quan_chi_script_flip_kick_tail, tail=quan_chi_script_flip_kick_tail
+.native native_quan_chi_script_skull_release, tail=quan_chi_script_skull_release
+.native native_quan_chi_script_stomp_victim, tail=quan_chi_script_stomp_victim
+.native native_quan_chi_second_fatality, entry=quan_chi_second_fatality
+.native native_quan_chi_skull, entry=quan_chi_skull
+.native native_quan_chi_skull_reaction, engine_reaction=quan_chi_skull_reaction
+.native native_quan_chi_steal_reaction, engine_reaction=quan_chi_steal_reaction
+.native native_quan_chi_stomp_reaction, engine_reaction=quan_chi_stomp_reaction
+.native native_quan_chi_teleport_stomp, entry=quan_chi_teleport_stomp
+.native native_quan_chi_weapon_back_hp_entry
+.native native_quan_chi_weapon_hp_entry
+.native native_quan_chi_weapon_steal, entry=quan_chi_weapon_steal
+.native native_raiden_can_teleport, gate=raiden_can_teleport
+.native native_raiden_fatality_2_held_pose, tail_script=raiden_fatality_2_held_pose, tail_finish=inherit
+.native native_raiden_fatality_2_scene_victim, reaction=action_scene_reaction
+.native native_raiden_first_fatality, entry=raiden_first_fatality
+.native native_raiden_lightning, entry=raiden_lightning
+.native native_raiden_lightning_object, spawn=raiden_script_lightning_spawn, task=65
+.native native_raiden_lk_throw_entry
+.native native_raiden_script_first_end, tail=raiden_script_first_end
+.native native_raiden_script_first_release, tail=raiden_script_first_release
+.native native_raiden_script_second_blend, tail=raiden_script_second_blend
+.native native_raiden_script_second_effect, tail=raiden_script_second_effect
+.native native_raiden_script_second_end, tail=raiden_script_second_end
+.native native_raiden_script_second_particles, call=raiden_script_second_particles
+.native native_raiden_script_second_release, tail=raiden_script_second_release
+.native native_raiden_script_second_victim_end, tail=raiden_script_second_victim_end
+.native native_raiden_script_staff_victim_tail, tail=raiden_script_staff_victim_tail
+.native native_raiden_script_torpedo_contact, tail=raiden_script_torpedo_contact
+.native native_raiden_script_torpedo_miss, tail=raiden_script_torpedo_miss
+.native native_raiden_script_torpedo_motion, physics=raiden_script_torpedo_motion
+.native native_raiden_script_torpedo_step, call=raiden_script_torpedo_step
+.native native_raiden_script_torpedo_victim_motion, physics=raiden_script_torpedo_victim_motion
+.native native_raiden_script_victory_effect, call=raiden_script_victory_effect
+.native native_raiden_second_fatality, entry=raiden_second_fatality
+.native native_raiden_staff_back_lp_entry
+.native native_raiden_staff_hp_entry
+.native native_raiden_staff_lp_entry
+.native native_raiden_teleport, entry=raiden_teleport
+.native native_raiden_torpedo, entry=raiden_torpedo
+.native native_react_freeze, engine_reaction=react_freeze
+.native native_react_jab_air, engine_reaction=react_jab_air
+.native native_react_jab_hit, engine_reaction=react_jab_hit
+.native native_react_kick_air, engine_reaction=react_kick_air
+.native native_react_kick_air_impact, engine_reaction=react_kick_air_impact
+.native native_react_kick_hit, engine_reaction=react_kick_hit
+.native native_react_scepter_freeze, engine_reaction=react_scepter_freeze
+.native native_react_weapon_followup, engine_reaction=react_weapon_followup
+.native native_reaction_clip_127_friction, reaction=action_script_reaction
+.native native_reaction_clip_129_getup, tail_script=reaction_clip_129_wait_landing_tail_1_operand_1, tail_finish=mk4_script_thrown_ready
+.native native_reaction_clip_129_startup, tail_script=reaction_clip_129_startup, tail_finish=mk4_script_thrown_ready
+.native native_reaction_clip_129_wait_landing, tail_script=reaction_clip_129_wait_landing, tail_finish=mk4_script_thrown_ready
+.native native_reaction_clip_132_native_finish, reaction=action_script_reaction
+.native native_reaction_clip_180_slide_hold, reaction=action_script_reaction
+.native native_reaction_clip_311_short_slide, reaction=action_script_reaction
+.native native_reaction_clip_326_short_slide, reaction=action_script_reaction
+.native native_reaction_fall, tail=action_reaction_fall, reaction=action_reaction_fall
+.native native_reaction_fall_return, reaction=reaction_fall_return
+.native native_reaction_finish, tail=action_reaction_finish
+.native native_reaction_getup_back, tail=action_reaction_getup_back
+.native native_reaction_park_task, reaction=action_aux_reaction
+.native native_rear_hit_turn_and_launch, reaction=action_aux_reaction
+.native native_recoil_land, tail=action_recoil_land
+.native native_reiko_can_first_fatality, gate=reiko_can_first_fatality
+.native native_reiko_can_flip_kick, gate=reiko_can_flip_kick
+.native native_reiko_can_orbit, gate=reiko_can_orbit
+.native native_reiko_can_star, gate=reiko_can_star
+.native native_reiko_first_fatality, entry=reiko_first_fatality
+.native native_reiko_first_head_59, tail=reiko_first_head_59
+.native native_reiko_first_head_83, tail=reiko_first_head_83
+.native native_reiko_first_left_arm_56, tail=reiko_first_left_arm_56
+.native native_reiko_first_left_arm_land, tail=reiko_first_left_arm_land
+.native native_reiko_first_right_arm_44, tail=reiko_first_right_arm_44
+.native native_reiko_first_right_arm_land, tail=reiko_first_right_arm_land
+.native native_reiko_first_tear, tail=reiko_first_tear
+.native native_reiko_first_torso_29, tail=reiko_first_torso_29
+.native native_reiko_first_torso_end, tail=reiko_first_torso_end
+.native native_reiko_first_victim_118, tail=reiko_first_victim_118
+.native native_reiko_first_victim_165, tail=reiko_first_victim_165
+.native native_reiko_first_victory, tail=reiko_first_victory
+.native native_reiko_flip_kick, entry=reiko_flip_kick
+.native native_reiko_leg_tear_head_finish, tail=reiko_first_piece_end
+.native native_reiko_leg_tear_left_arm_finish, tail=reiko_first_piece_end
+.native native_reiko_leg_tear_right_arm_finish, tail=reiko_first_piece_end
+.native native_reiko_leg_tear_victim_finish, tail=reiko_first_piece_end
+.native native_reiko_lk_throw_entry
+.native native_reiko_orbit, entry=reiko_orbit
+.native native_reiko_second_fatality, entry=reiko_second_fatality
+.native native_reiko_second_stars, spawn=reiko_second_stars, task=0
+.native native_reiko_second_victim_end, tail=reiko_second_victim_end
+.native native_reiko_second_victim_fall, tail_script=reiko_second_victim_fall, tail_finish=fighter_ready
+.native native_reiko_star, entry=reiko_star
+.native native_reiko_star_reaction_45, reaction=action_stagger_entry
+.native native_reiko_star_spawn, spawn=reiko_star_spawn, task=82
+.native native_reptile_acid_spawn, spawn=reptile_acid_spawn, task=76
+.native native_reptile_acid_spit, entry=reptile_acid_spit
+.native native_reptile_can_dash, gate=reptile_can_dash
+.native native_reptile_can_first_fatality, gate=reptile_can_first_fatality
+.native native_reptile_can_invisibility, gate=reptile_can_invisibility
+.native native_reptile_can_spit, gate=reptile_can_spit
+.native native_reptile_dash_entry, entry=reptile_dash
+.native native_reptile_dash_victim_scaled, reaction=action_scaled_reaction
+.native native_reptile_fatality_1, entry=reptile_fatality_1
+.native native_reptile_fatality_2, entry=reptile_fatality_2
+.native native_reptile_first_owner_bite, tail=reptile_first_owner_bite
+.native native_reptile_first_owner_cycle, tail=reptile_first_owner_cycle
+.native native_reptile_first_owner_loop, tail=reptile_first_owner_loop
+.native native_reptile_first_victim_bite, tail=reptile_first_victim_bite
+.native native_reptile_first_victim_collapse, tail=reptile_first_victim_collapse
+.native native_reptile_first_victim_shake, tail=reptile_first_victim_shake
+.native native_reptile_invisibility, entry=reptile_invisibility
+.native native_reptile_lk_throw_entry
+.native native_reptile_reaction_40, engine_reaction=reptile_reaction_40
+.native native_reptile_roll_entry, entry=reptile_roll
+.native native_reptile_script_acid_drool, call=reptile_script_acid_drool
+.native native_reptile_script_dash_contact, tail=reptile_script_dash_contact
+.native native_reptile_script_head_close, call=reptile_script_head_close
+.native native_reptile_script_head_open, call=reptile_script_head_open
+.native native_reptile_script_head_wide, call=reptile_script_head_wide
+.native native_reptile_script_invisibility, tail=reptile_script_invisibility
+.native native_reptile_script_roll_tail, tail=reptile_script_roll_tail
+.native native_reptile_second_acid, spawn=reptile_second_acid, task=0
+.native native_reptile_second_melt, tail=reptile_second_melt
+.native native_reptile_second_victim, engine_reaction=reptile_second_victim
+.native native_reptile_weapon_alternate_high_punch
+.native native_reptile_weapon_back_hp_entry
+.native native_reptile_weapon_back_lp_entry
+.native native_reptile_weapon_flurry, tail=reptile_weapon_flurry
+.native native_reptile_weapon_hp_entry
+.native native_reptile_weapon_lp_entry
+.native native_reptile_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_reptile_weapon_stagger_tail, tail=reptile_weapon_stagger_tail
+.native native_reptile_weapon_victim_keep_weapon, reaction=action_weapon_reaction
+.native native_restore_motion, call=mk4_script_restore_motion
+.native native_return_to_player_or_cpu_control, tail=action_controller_return
+.native native_ring_projectile_victim, reaction=action_record_reaction
+.native native_roundhouse, entry=action_roundhouse
+.native native_roundhouse_start, tail=action_roundhouse_start
+.native native_roundhouse_tail, tail=action_roundhouse_tail
+.native native_roundhouse_wide_start, tail=action_roundhouse_wide_start
+.native native_roundhouse_wide_tail, tail=action_roundhouse_wide_tail
+.native native_save_motion, call=mk4_script_save_motion
+.native native_scene_body_finish, tail=action_scene_body_finish
+.native native_scene_explode, reaction=action_scene_explode
+.native native_scene_hover, spawn=action_scene_hover, task=38
+.native native_scene_keepalive_task, spawn=mk4_script_scene_task, task=619
+.native native_scene_park, reaction=action_scene_park
+.native native_scene_victim_hold, reaction=action_scene_victim_hold
+.native native_scorpion_beast_fatality, entry=scorpion_beast_fatality
+.native native_scorpion_burn_fatality, entry=scorpion_burn_fatality
+.native native_scorpion_can_spear, gate=scorpion_can_spear
+.native native_scorpion_can_teleport, gate=scorpion_can_teleport
+.native native_scorpion_fire, entry=scorpion_fire
+.native native_scorpion_lk_throw_entry
+.native native_scorpion_script_beast_attack, tail=scorpion_script_beast_attack
+.native native_scorpion_script_beast_begin, tail=scorpion_script_beast_begin
+.native native_scorpion_script_beast_gore, spawn=scorpion_script_beast_gore, task=0
+.native native_scorpion_script_beast_victim_pieces, tail=scorpion_script_beast_victim_pieces
+.native native_scorpion_script_beast_voice, call=scorpion_script_beast_voice
+.native native_scorpion_script_burn_begin, tail=scorpion_script_burn_begin
+.native native_scorpion_script_burn_repeat1, tail=scorpion_script_burn_repeat1
+.native native_scorpion_script_burn_repeat2, tail=scorpion_script_burn_repeat2
+.native native_scorpion_script_burn_victim_blend, tail=scorpion_script_burn_victim_blend
+.native native_scorpion_script_burn_victim_cue, tail=scorpion_script_burn_victim_cue
+.native native_scorpion_script_burn_victim_end, tail=scorpion_script_burn_victim_end
+.native native_scorpion_script_burn_victim_impact, tail=scorpion_script_burn_victim_impact
+.native native_scorpion_script_burn_victim_repeat, tail_script=scorpion_burn_victim_repeat, tail_finish=fighter_ready
+.native native_scorpion_script_burn_victim_settle, tail=scorpion_script_burn_victim_settle
+.native native_scorpion_script_burn_victim_start, tail=scorpion_script_burn_victim_start
+.native native_scorpion_script_burn_victory, tail=scorpion_script_burn_victory
+.native native_scorpion_script_fire_decor, call=scorpion_script_fire_decor
+.native native_scorpion_script_fire_flame, call=scorpion_script_fire_flame
+.native native_scorpion_script_spear_return, tail=scorpion_script_spear_return
+.native native_scorpion_script_teleport_victim_tail, tail_script=scorpion_teleport_victim_tail, tail_finish=mk4_script_thrown_ready
+.native native_scorpion_script_transform_effect, spawn=scorpion_script_transform_effect, task=0
+.native native_scorpion_spear, entry=scorpion_spear
+.native native_scorpion_spear_stun_script, tail=scorpion_spear_stun_script
+.native native_scorpion_spin_script, tail=scorpion_spin_script
+.native native_scorpion_teleport, entry=scorpion_teleport
+.native native_scorpion_teleport_script, tail=scorpion_teleport_script
+.native native_script_reaction_dispatch, handler_arg=action_script_reaction_dispatch
+.native native_shake_stun, tail=action_shake_stun
+.native native_shinnok_can_morph, gate=shinnok_can_morph
+.native native_shinnok_fatality_1, entry=shinnok_fatality_1
+.native native_shinnok_fatality_2, entry=shinnok_fatality_2
+.native native_shinnok_fatality_reappear, tail=shinnok_fatality_reappear
+.native native_shinnok_fatality_victory, tail=shinnok_fatality_victory
+.native native_shinnok_first_hand_squeeze, tail=shinnok_first_hand_squeeze
+.native native_shinnok_first_hidden, tail=shinnok_first_hidden
+.native native_shinnok_first_vanished, tail=shinnok_first_vanished
+.native native_shinnok_first_victim_crush, tail=shinnok_first_victim_crush
+.native native_shinnok_first_victim_held, tail=shinnok_first_victim_held
+.native native_shinnok_first_victim_squeeze, tail=shinnok_first_victim_squeeze
+.native native_shinnok_hand_squeeze_cycle, tail=shinnok_first_squeeze_cycle
+.native native_shinnok_lk_throw_entry
+.native native_shinnok_morph_cage, entry=shinnok_morph_cage
+.native native_shinnok_morph_fujin, entry=shinnok_morph_fujin
+.native native_shinnok_morph_jarek, entry=shinnok_morph_jarek
+.native native_shinnok_morph_jax, entry=shinnok_morph_jax
+.native native_shinnok_morph_kai, entry=shinnok_morph_kai
+.native native_shinnok_morph_liu_kang, entry=shinnok_morph_liu_kang
+.native native_shinnok_morph_quan_chi, entry=shinnok_morph_quan_chi
+.native native_shinnok_morph_raiden, entry=shinnok_morph_raiden
+.native native_shinnok_morph_reiko, entry=shinnok_morph_reiko
+.native native_shinnok_morph_reptile, entry=shinnok_morph_reptile
+.native native_shinnok_morph_scorpion, entry=shinnok_morph_scorpion
+.native native_shinnok_morph_sonya, entry=shinnok_morph_sonya
+.native native_shinnok_morph_sub_zero, entry=shinnok_morph_sub_zero
+.native native_shinnok_morph_tanya, entry=shinnok_morph_tanya
+.native native_shinnok_second_clap, tail=shinnok_second_clap
+.native native_shinnok_second_gore_19_pieces, call=shinnok_second_gore
+.native native_shinnok_second_gore_7_pieces, call=shinnok_second_gore
+.native native_shinnok_second_gore_8_pieces, call=shinnok_second_gore
+.native native_shinnok_second_hands, tail=shinnok_second_hands
+.native native_shinnok_second_vanish, tail=shinnok_second_vanish
+.native native_shinnok_second_vanished, tail=shinnok_second_vanished
+.native native_shinnok_second_victim, engine_reaction=shinnok_second_victim
+.native native_shinnok_victim_squeeze_cycle, tail=shinnok_first_squeeze_cycle
+.native native_shinnok_weapon_back_lp_entry
+.native native_shinnok_weapon_hp_entry
+.native native_shinnok_weapon_lp_entry
+.native native_shinnok_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_shinnok_weapon_sweep_finish, tail=shinnok_weapon_sweep_finish
+.native native_shinnok_weapon_sweep_getup, tail=shinnok_weapon_sweep_getup
+.native native_sidestep, entry=mk4_sidestep
+.native native_slam_reaction, throw_reaction=action_slam_reaction
+.native native_snare_reaction, reaction=action_snare_reaction
+.native native_sonya_bicycle, entry=sonya_bicycle
+.native native_sonya_can_cartwheel, gate=sonya_can_cartwheel
+.native native_sonya_can_first_fatality, gate=sonya_can_first_fatality
+.native native_sonya_can_leg_grab, gate=sonya_can_leg_grab
+.native native_sonya_cartwheel, entry=sonya_cartwheel
+.native native_sonya_crouch_high_kick_victim_keep_weapon, reaction=action_record_reaction
+.native native_sonya_draw_weapon_hp_slash
+.native native_sonya_draw_weapon_lp_slash
+.native native_sonya_fatality_2_scene_victim, reaction=action_scene_reaction
+.native native_sonya_first_fatality, entry=sonya_first_fatality
+.native native_sonya_leg_grab, entry=sonya_leg_grab
+.native native_sonya_leg_grab_victim_recovery, throw_reaction=action_lk_victim
+.native native_sonya_lk_throw_entry
+.native native_sonya_ring, entry=sonya_ring
+.native native_sonya_ring_object, spawn=sonya_script_ring_spawn, task=68
+.native native_sonya_script_cartwheel_tail, tail=sonya_script_cartwheel_tail
+.native native_sonya_script_first_release, tail=sonya_script_first_release
+.native native_sonya_script_leg_grab_tail, tail=sonya_script_leg_grab_tail
+.native native_sonya_script_leg_victim_end, tail=sonya_script_leg_victim_end
+.native native_sonya_script_ring_flash, spawn=sonya_script_ring_flash, task=38
+.native native_sonya_script_second_branch, tail=sonya_script_second_branch
+.native native_sonya_script_second_cycle_end, tail=sonya_script_second_cycle_end
+.native native_sonya_script_second_open, tail=sonya_script_second_open
+.native native_sonya_script_second_pause, tail=sonya_script_second_pause
+.native native_sonya_script_second_repeat, tail=sonya_script_second_repeat
+.native native_sonya_script_second_victim_end, tail=sonya_script_second_victim_end
+.native native_sonya_script_square_wave_tail, tail=sonya_script_square_wave_tail
+.native native_sonya_second_fatality, entry=sonya_second_fatality
+.native native_sonya_square_wave, entry=sonya_square_wave
+.native native_sonya_weapon_back_hp_entry
+.native native_sonya_weapon_high_punch_victim_position, reaction=action_record_reaction
+.native native_sonya_weapon_hp_entry
+.native native_sonya_weapon_low_punch_victim_context_sound, reaction=action_weapon_reaction
+.native native_sonya_weapon_low_punch_victim_impact_sound, reaction=action_record_reaction
+.native native_sonya_weapon_lp_entry
+.native native_spear_hit_victim_60_percent_damage, reaction=action_aux_reaction
+.native native_spear_task, spawn=scorpion_script_spawn_spear, task=67
+.native native_spear_wait, reaction=spear_wait
+.native native_spike_finish, entry=action_spike_finish
+.native native_square_wave_victim_face_peer, reaction=action_record_reaction
+.native native_staff_high_punch_weapon_victim, reaction=action_record_reaction
+.native native_stage_complete, tail=action_stage_complete
+.native native_stage_impale, tail=action_stage_impale
+.native native_stage_owner, tail=action_stage_owner
+.native native_stage_victim, reaction=action_stage_victim
+.native native_stagger_clip_134, reaction=action_stagger_reaction
+.native native_stagger_clip_134_impact, reaction=action_stagger_reaction
+.native native_stagger_clip_311_keep_weapon, reaction=action_stagger_reaction
+.native native_stagger_shake_60_percent_damage, reaction=action_stagger_reaction
+.native native_stagger_stance_select_disarm, reaction=action_stagger_reaction
+.native native_stagger_tail, tail=action_stagger_tail
+.native native_standing_block_hold, tail=action_controller_return
+.native native_sub_zero_can_clone, gate=sub_zero_can_clone
+.native native_sub_zero_can_first_fatality, gate=sub_zero_can_first_fatality
+.native native_sub_zero_can_ice, gate=sub_zero_can_ice
+.native native_sub_zero_can_slide, gate=sub_zero_can_slide
+.native native_sub_zero_clone, entry=sub_zero_clone
+.native native_sub_zero_draw_weapon_scepter_follow_up
+.native native_sub_zero_first_fatality, entry=sub_zero_first_fatality
+.native native_sub_zero_ice, entry=sub_zero_ice
+.native native_sub_zero_lk_throw_entry
+.native native_sub_zero_lp_throw_owner_return, tail=action_throw_ready
+.native native_sub_zero_lp_throw_victim_getup, tail=action_getup_flip
+.native native_sub_zero_scepter_back_hp_entry
+.native native_sub_zero_scepter_back_lp_entry
+.native native_sub_zero_scepter_hp_entry
+.native native_sub_zero_scepter_lp_entry
+.native native_sub_zero_script_breath_approach, tail_script=sub_zero_breath_approach, tail_finish=fighter_ready
+.native native_sub_zero_script_breath_shatter, tail=sub_zero_script_breath_shatter
+.native native_sub_zero_script_breath_slide, tail=sub_zero_script_breath_slide
+.native native_sub_zero_script_breath_victim_end, tail=sub_zero_script_breath_victim_end
+.native native_sub_zero_script_first_begin, tail=sub_zero_script_first_begin
+.native native_sub_zero_script_first_cues1, tail=sub_zero_script_first_cues1
+.native native_sub_zero_script_first_cues2, tail=sub_zero_script_first_cues2
+.native native_sub_zero_script_first_cues3, tail=sub_zero_script_first_cues3
+.native native_sub_zero_script_first_cues4, tail=sub_zero_script_first_cues4
+.native native_sub_zero_script_first_head, tail=sub_zero_script_first_head
+.native native_sub_zero_script_first_pull, tail=sub_zero_script_first_pull
+.native native_sub_zero_script_first_victim_blends, tail=sub_zero_script_first_victim_blends
+.native native_sub_zero_script_first_victim_collapse, tail=sub_zero_script_first_victim_collapse
+.native native_sub_zero_script_first_victim_end, tail=sub_zero_script_first_victim_end
+.native native_sub_zero_script_lk_damage, tail=sub_zero_script_lk_damage
+.native native_sub_zero_script_lk_owner_return, tail=sub_zero_script_lk_owner_return
+.native native_sub_zero_script_lk_rebase, tail=sub_zero_script_lk_rebase
+.native native_sub_zero_script_lk_victim_rise, tail=sub_zero_script_lk_victim_rise
+.native native_sub_zero_script_slide_return, tail=sub_zero_script_slide_return
+.native native_sub_zero_second_fatality, entry=sub_zero_second_fatality
+.native native_sub_zero_slide, entry=sub_zero_slide
+.native native_sub_zero_slide_script, tail=sub_zero_slide_script
+.native native_sweep, entry=action_sweep
+.native native_sweep_advancing_tail, tail=action_sweep_advancing_tail
+.native native_sweep_knockdown_victim, reaction=action_script_reaction
+.native native_sweep_standard_tail, tail=action_sweep_standard_tail
+.native native_sword_back_hp
+.native native_sword_back_lp
+.native native_tanya_boomerang_release, tail=tanya_boomerang_release
+.native native_tanya_can_first_fatality, gate=tanya_can_first_fatality
+.native native_tanya_can_spin_kick, gate=tanya_can_spin_kick
+.native native_tanya_drill_kick, entry=tanya_drill_kick
+.native native_tanya_drill_kick_contact, tail=tanya_drill_kick_contact
+.native native_tanya_fatality_1, entry=tanya_fatality_1
+.native native_tanya_fatality_2, entry=tanya_fatality_2
+.native native_tanya_fatality_2_victim_collapse, tail_script=tanya_fatality_2_victim_collapse, tail_finish=inherit
+.native native_tanya_fatality_2_victim_reaction_186, reaction=action_scene_reaction
+.native native_tanya_first_owner_53, tail=tanya_first_owner_53
+.native native_tanya_first_owner_drift, tail_script=tanya_first_owner_drift, tail_finish=fighter_ready
+.native native_tanya_first_owner_loop, tail=tanya_first_owner_loop
+.native native_tanya_first_owner_replays, tail=tanya_first_owner_replays
+.native native_tanya_first_victim_burst, tail=tanya_first_victim_burst
+.native native_tanya_first_victim_repeat, tail=tanya_first_victim_repeat
+.native native_tanya_first_victim_swell, tail=tanya_first_victim_swell
+.native native_tanya_lk_throw_entry
+.native native_tanya_second_finish, tail=tanya_second_finish
+.native native_tanya_second_height, tail=tanya_second_height
+.native native_tanya_second_owner_cue, spawn=tanya_second_owner_cue, task=619
+.native native_tanya_second_victim_cue, spawn=tanya_second_victim_cue, task=619
+.native native_tanya_spin_kick, entry=tanya_spin_kick
+.native native_tanya_weapon_back_hp_entry
+.native native_tanya_weapon_hp_entry
+.native native_tanya_weapon_lp_entry
+.native native_tanya_weapon_reaction_entry, engine_reaction=tanya_weapon_reaction
+.native native_tanya_weapon_reaction_reaction_170_entry, engine_reaction=tanya_weapon_reaction
+.native native_task_park_40_tick_loop, reaction=action_task_pause
+.native native_task_park_60_tick_loop, tail=action_task_pause
+.native native_task_retire, tail=action_task_retire
+.native native_teleport, entry=action_teleport
+.native native_teleport_group_callback, physics=scorpion_script_teleport_motion
+.native native_teleport_punch_ground_or_air_victim, reaction=action_branch_reaction
+.native native_teleport_slam, entry=action_teleport_slam
+.native native_teleport_slam_drop, tail=action_teleport_slam_drop
+.native native_teleport_slam_fall, tail=action_teleport_slam_fall
+.native native_teleport_vanish, tail=action_teleport_vanish
+.native native_thaw_landing, tail=action_thaw_land
+.native native_throw_grunt, call_global=action_throw_grunt
+.native native_throw_pair_start, call=action_throw_pair_start
+.native native_throw_victim_continue, tail_script=throw_victim_continue, tail_finish=mk4_mmove_thrown_finish
+.native native_throw_victim_impact, tail_script=throw_victim_impact, tail_finish=mk4_mmove_thrown_finish
+.native native_throw_victim_stop_and_return, tail=mk4_mmove_thrown_finish
+.native native_torpedo_return, reaction=action_torpedo_return
+.native native_torpedo_victim_face_peer, reaction=action_record_reaction
+.native native_torpedo_victim_release_sound_and_shake, reaction=action_record_reaction
+.native native_touchable, call=mk4_script_touchable
+.native native_tumble_camera_side_negative, reaction=action_tumble_reaction
+.native native_tumble_camera_side_positive, reaction=action_tumble_reaction
+.native native_tumble_native_finish_back_getup, reaction=action_tumble_reaction
+.native native_uppercut_40_percent_damage, reaction=action_scaled_reaction
+.native native_uppercut_default, tail=action_uppercut_default
+.native native_uppercut_delayed_voice_40_percent_damage, reaction=action_impact_reaction
+.native native_uppercut_entry
+.native native_uppercut_recover, tail=action_uppercut_recover
+.native native_velocity_friction, physics=fighter_friction
+.native native_victim_disarm_fall, throw_reaction=victim_disarm_fall
+.native native_victim_disarm_raise, throw_reaction=victim_disarm_raise
+.native native_victim_finish_captured_clip, throw_reaction=victim_finish_captured_clip
+.native native_victim_finish_flip_getup, throw_reaction=victim_finish_flip_getup
+.native native_victim_friction_impact, throw_reaction=victim_friction_impact
+.native native_victim_ground_turn, throw_reaction=victim_ground_turn
+.native native_victim_impact_roll_getup, throw_reaction=victim_impact_roll_getup
+.native native_victim_pause_slide, throw_reaction=victim_pause_slide
+.native native_victim_saved_motion, throw_reaction=victim_saved_motion
+.native native_victim_slide_to_stance, throw_reaction=victim_slide_to_stance
+.native native_victory_continue, tail=action_victory_continue
+.native native_vm_return, tail=script_vm_return
+.native native_weapon_air_high_punch_open, tail_selector=weapon_air_frames_native
+.native native_weapon_air_low_punch_open, tail_selector=weapon_air_frames_native
+.native native_weapon_can_draw, gate=weapon_can_draw
+.native native_weapon_can_pickup, gate=weapon_can_pickup
+.native native_weapon_clip_132_directional_fall, reaction=action_scaled_reaction
+.native native_weapon_clip_189_launch_back_getup, reaction=action_aux_reaction
+.native native_weapon_clip_189_launch_half_damage, reaction=action_scaled_reaction
+.native native_weapon_draw, entry=action_weapon_draw
+.native native_weapon_draw_equip, tail=action_weapon_draw_equip
+.native native_weapon_low_punch_victim_roll_getup, reaction=action_weapon_reaction
+.native native_weapon_pickup, entry=weapon_pickup
+.native native_weapon_sweep_grounded_victim, reaction=action_weapon_reaction
+.native native_weapon_tumble_back_getup, reaction=action_tumble_reaction
+
+; Retained, previously unsupported native boundaries; invocation fails explicitly.
+.native native_unresolved_air_low_kick_clip_59_reverse
+.native native_unresolved_air_low_kick_clip_60_reverse
+.native native_unresolved_air_diagonal_kick_clip_55_reverse
+.native native_unresolved_air_diagonal_kick_clip_56_reverse
+.native native_unresolved_air_diagonal_kick_clip_57_reverse
+.native native_unresolved_reaction_clip_326_short_slide
+.native native_unresolved_weapon_clip_132_directional_fall_task_callback_1
+.native native_unresolved_lp_victim_slide_release

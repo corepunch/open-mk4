@@ -1242,10 +1242,6 @@ void scorpion_script_teleport_motion(Fighter *fighter) {
   }
 }
 
-void scorpion_script_teleport_victim_tail(Fighter *victim) {
-  script_vm_enter(victim, fn_scorpion_teleport_victim_tail, mk4_script_thrown_ready);
-}
-
 /* Native service cluster: native_morph. */
 /* 469a00..469ad0 store a roster index in 53c42c and enter 469ae0.
  * State 0 writes it to task +0x34, then 4aa7e0 parks the actor for four

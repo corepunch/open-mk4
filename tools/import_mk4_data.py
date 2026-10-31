@@ -116,12 +116,9 @@ def export_scripts(image, destination, check=False):
             return natives.get(value, hex(value))
         return hex(value)
 
-    files = {fighter: [f'; Generated {fighter} bytecode and native IDs. Do not edit; run make scripts-export.',
-                       '; The shared C VM executes these words; native IDs select shared C services.', '']
+    files = {fighter: [f'; Generated {fighter} bytecode. Do not edit; run make scripts-export.',
+                       '; Native symbols are linked to typed C services.', '']
              for fighter in (*CHARACTERS, 'shared')}
-    for name, value in native_ids.items():
-        owner = named_owner([name]) or 'shared'
-        files[owner].append(f'.export_equ {name} {value:#x}')
     aliases = {}
     for address, labels in entries.items():
         owner = owners[address]
@@ -132,7 +129,7 @@ def export_scripts(image, destination, check=False):
     bridges = 0
     for start, instructions in blocks.items():
         out = files[block_owners[start]]
-        out.extend(['', f'; Retail source {start:#010x}; branches use linked names.'])
+        out.extend(['', '; Branches use linked names.'])
         for name in entries[start]:
             out.append(name + ':')
         for address in instructions:
@@ -154,13 +151,11 @@ def export_scripts(image, destination, check=False):
             if block == start:
                 # The owner may be an instruction inside this named block.
                 out.append(f'.alias {name} {entries[start][0]} + {owner - start + offset}')
-    rendered = {f'fighters/{fighter}.asm': '\n'.join(files[fighter]) + '\n' for fighter in CHARACTERS}
-    rendered['fighters/shared.asm'] = '\n'.join(files['shared']) + '\n'
+    rendered = {f'fighters/{fighter}.asm': '\n'.join(files[fighter]).rstrip() + '\n' for fighter in CHARACTERS}
+    rendered['fighters/shared.asm'] = '\n'.join(files['shared']).rstrip() + '\n'
     program = ['; Generated script link order. Do not edit; run make scripts-export.', '.section script']
     program += [f'.include "../../fighters/{fighter}.asm"' for fighter in (*CHARACTERS, 'shared')]
     rendered['scripts/mk4/program.asm'] = '\n'.join(program) + '\n'
-    # This include is kept as the shared ABI entry point for the project.
-    rendered['scripts/mk4/native.inc'] = '; Native IDs are declared/exported beside bytecode in fighters/*.asm.\n'
     opcodes = ['/* Generated from tools/mk4_asm.py. Do not edit; run make scripts-export. */',
                '#ifndef MK4_SCRIPT_OPCODES_H', '#define MK4_SCRIPT_OPCODES_H', '', 'typedef enum ScriptOpcode {']
     opcodes += [f'  MK4_OP_{name.upper()} = 0x{value:02x},' for value, name in enumerate(NAMES)]
@@ -195,6 +190,7 @@ def verify_scripts(image, project):
     starts = sorted(address for address in entries if owners[address] == address)
     package, _, symbols = link(project)
     payload = package[HEADER.size:]
+    native_symbols = {int(value, 16): name for name, value in layout['natives'].items()}
     for address, expected in code.items():
         owner = owners[address]
         start = starts[bisect_right(starts, owner) - 1]
@@ -207,6 +203,8 @@ def verify_scripts(image, project):
                 expected = (symbols['animation_table'] + 12 * row['clip']) // 4
             elif op in (0x2f, 0x33, 0x3c, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f) or (op in (0x36, 0x43, 0x55) and index == 1):
                 expected = symbols[entries[expected * 4][0]] // 4
+            elif ((op in (0x32, 0x35, 0x36, 0x38, 0x43, 0x55) and index == 0) or (op == 0x40 and index == 1)):
+                expected = symbols[native_symbols[expected]]
         actual = struct.unpack_from('<I', payload, linked - BASE)[0]
         if actual != expected:
             raise ValueError(f'Retail word mismatch at {address:#x} ({entries[start][0]}): {actual:#x} != {expected:#x}')
@@ -343,7 +341,7 @@ def export(image, destination):
         program.append('  '+NAMES[int(row['opcode'],16)]+' '+', '.join([hex(row['inline'])]+[value(a+4*(i+1)) for i in range(len(row['operands']))]))
         previous=a+4*(1+len(row['operands']))
     destination.mkdir(parents=True)
-    (destination/'native.inc').write_text('; Stable native ABI identifiers; these are never host pointers.\n'+''.join(f'.equ {name} {v:#x}\n' for v,name in sorted(native.items())))
+    (destination/'native.inc').write_text('; Symbolic native imports.\n'+''.join(f'.native {name}\n' for name in sorted(native.values())))
     (destination/'tables.asm').write_text('\n'.join(data + aliases)+'\n')
     (destination/'program.asm').write_text('\n'.join(program)+'\n')
     (destination/'project.asm').write_text('.include "native.inc"\n.include "tables.asm"\n.include "program.asm"\n')
@@ -352,13 +350,14 @@ def export(image, destination):
     payload=package[HEADER.size:HEADER.size+struct.unpack_from('<I',package,8)[0]]
     for a,v in code.items():
         owner=owners[a];linked=symbols[names[owner]]+a-owner
-        expected=v
+        expected=symbols[native[v]] if v in native else v
         if a in refs:
             kind,target=refs[a];expected=symbols[names[target]]//(4 if kind=='word' else 1)
         assert struct.unpack_from('<I',payload,linked-BASE)[0]==expected,hex(a)
     for a in range(LO,HI,4):
         if a in code or 0x4d3e80<=a<0x4d9d60:continue
         expected=image.word(a)
+        if expected in native:expected=symbols[native[expected]]
         if a in refs:
             kind,target=refs[a];expected=symbols[names[target]]//(4 if kind=='word' else 1)
         assert struct.unpack_from('<I',payload,a-LO)[0]==expected,hex(a)

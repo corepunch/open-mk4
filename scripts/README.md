@@ -13,14 +13,13 @@ still supplies meshes, textures, animation payloads and sampled audio.
 
 ## Sources and regeneration
 
-- `../fighters/<name>.asm`: named bytecode, native ABI IDs and embedded aliases
+- `../fighters/<name>.asm`: named bytecode, embedded aliases
   for one fighter; shared streams are defined once in
   `../fighters/shared.asm`.
 - `mk4/program.asm`: generated include order for fighter bytecode.
 - `mk4/tables.asm`: include order for data records in `mk4/tables/`.
 - `mk4/constants.inc`: named encoding fields.
-- `mk4/native.inc`: shared ABI include entry point; native declarations live
-  beside bytecode and are exported by the linker.
+- `mk4/native.inc`: symbolic native imports and typed C implementation bindings.
 
 ```sh
 make scripts-export        # decode MK4/MK-4.EXE and regenerate named bytecode
@@ -100,10 +99,18 @@ start comments outside strings; a trailing backslash continues operands.
 Changing an instruction containing an embedded entry also requires checking
 that alias's offset and no-op operand interpretation.
 
-`.export_equ NAME value` defines a constant and exposes the same name to C in
-one line, for example `.export_equ native_jax_missile 0x496f80`.
-It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
-private constants. These are build-time directives, not retail VM opcodes.
+`.native native_name, tail=c_function` imports a named C implementation.
+Other typed roles include `entry`, `gate`, `call`, `physics`, and `spawn` (with
+an explicit `task` type). Script-only tails use `tail_script=label` and
+`tail_finish=inherit` or a named completion function. The linker emits compact
+references plus `build/mk4_natives.inc`, containing type-checked C pointers.
+Original native addresses exist only in importer/research metadata. The package
+layout identity includes binding signatures and implementation names, so a
+package cannot silently resolve through a differently linked native registry.
+Unsupported roles return a VM diagnostic; no integer is cast to a host pointer.
+
+`.equ` defines private build-time constants; `.export_equ` additionally exposes
+a numeric constant to C. Neither is used to declare native implementations.
 
 Script labels and executable embedded aliases automatically become C constants
 with the `fn_` prefix. Assembly uses `quan_chi_lk_throw_startup` directly;

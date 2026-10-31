@@ -57,6 +57,15 @@ def translation_source(path, seen=None):
     seen.add(path)
     source = path.read_text()
     def include(match):
+        if match[1] == 'mk4_natives.inc':
+            from mk4_asm import lines
+            from mk4_native import declaration, c_registry
+            from mk4_link import link
+            project = ROOT / 'scripts/mk4/project.asm'
+            _, header, _ = link(project)
+            constants = {name: int(value, 16) for name, value in re.findall(r'#define (\w+) 0x([0-9a-f]+)u', header)}
+            natives = dict(declaration(line) for _, line in lines(project) if line.startswith('.native '))
+            return c_registry(natives, constants)
         child = path.parent / match[1]
         return translation_source(child.resolve(), seen) if child.is_file() else ''
     source = re.sub(r'^\s*#include\s+"([^"\n]+\.inc)"', include, source, flags=re.M)
