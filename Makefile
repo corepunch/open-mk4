@@ -95,6 +95,9 @@ run: mk4-viewer
 NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c)
 ROSTER_SOURCES = $(wildcard game/data/*.c game/script/*.c game/runtime/*.c game/lua/*.c) game/roster.c game/moves.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
 GAME_HEADERS = $(wildcard game/*.h game/*/*.h game/*/*.inc)
+# Every match host needs the data package and its Lua address map at runtime.
+# Order-only prerequisites restore missing artifacts without relinking for Lua edits.
+mk4-game build/test-mk4-assets build/test-battle build/test-frames build/test-script-runtime build/test-lua-vm build/test-menu: | build/mk4.data build/mk4_symbols.lua
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS) $(LUA_LIB)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(LUA_LIB) -o $@ $(LDLIBS)
