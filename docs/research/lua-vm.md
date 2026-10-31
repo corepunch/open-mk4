@@ -1,3 +1,8 @@
+> Historical: the Lua runtime and translator were removed when the shared C
+> wordcode interpreter was restored. Current code and workflow are documented
+> in [ARCHITECTURE.md](../../ARCHITECTURE.md) and [scripts/README.md](../../scripts/README.md).
+> The comparison results below record the earlier migration, not current coverage.
+
 # Lua as the MK4 script VM
 
 Status: Lua is the script runtime. The game and every

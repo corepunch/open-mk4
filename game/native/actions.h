@@ -2,13 +2,7 @@
 #define MK4_NATIVE_ACTIONS_H
 #include "game.h"
 #include "script/bindings.h"
-
-/* Verified local EXE entry points for shared script/native phase boundaries. */
-enum {
-  MK4_NATIVE_FIRE_CONTACT = 0x468640,
-  MK4_NATIVE_FIRE_RECOVERY = 0x4688e0,
-  MK4_NATIVE_THAW_LANDING = 0x486530
-};
+#include "script/native_ids.h"
 
 /* Retail Q16 damage multipliers, retaining the original truncated values. */
 enum {

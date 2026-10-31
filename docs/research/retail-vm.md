@@ -1,7 +1,6 @@
-> Historical: these notes document the wordcode interpreter that ran the
-> original script words. It was replaced by Lua scripts translated from those
-> words; see [lua-vm.md](lua-vm.md). The native evidence and addresses below
-> remain valid for the shared services.
+> Historical development notes for the original EXE-backed interpreter.
+> The current shared C interpreter executes a linked package of named wordcode
+> generated from that EXE; see [source workflow](../../scripts/README.md).
 
 # Direct retail script prototype
 

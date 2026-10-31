@@ -30,6 +30,10 @@ def category(address):
 
 def main():
     named = {'Native': set(), 'Script/data': set()}
+    # Native ABI constants live beside fighter bytecode and are exported to C.
+    for path in (ROOT / 'fighters').glob('*.asm'):
+        named['Native'].update(int(value, 16) for value in re.findall(
+            r'^\.equ MK4_NATIVE_\w+ (0x[0-9a-f]+)$', path.read_text(), re.M))
     literals = []
     vague = []
     paths = [path for directory in ('game', 'common') for path in (ROOT / directory).rglob('*')]

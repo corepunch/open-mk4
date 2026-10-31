@@ -49,7 +49,7 @@ continuing; give the user a concise explanation of any unavoidable scope growth.
 ## Implementation language
 
 Game, engine, viewer and native regression tests use C11. Fighter scripts are
-Lua 5.4 (`scripts/lua/`, vendored interpreter in `third_party/`). Follow the
+retail wordcode in `fighters/*.asm`, executed by the shared C VM. Follow the
 procedural state/context boundaries and evidence rules in `ARCHITECTURE.md`.
 Keep SDL out of combat simulation. The standalone `fsys.cpp` development tool may remain
 C++17; it must use the shared C archive validator and filename hash.
@@ -142,34 +142,32 @@ end-to-end research, shared-runtime implementation, validation and commit proced
 The target is one shared runtime for every fighter, with retail-loaded roster,
 input, action, stance and CPU tables. Do not add per-character C architecture
 or hand-authored fighter configuration. Retail native routines must have one
-shared implementation rather than copied fighter variants. Do not add fighter
-directories or coverage manifests; native services live in shared capability
-modules. See `docs/research/shared-retail-runtime.md`.
+shared implementation rather than copied fighter variants. Fighter bytecode
+and its native ID declarations belong in `fighters/`; shared streams are defined
+once in `fighters/shared.asm`. Native C services stay in shared capability
+modules; do not add per-fighter C dispatch architecture or coverage manifests. See `docs/research/shared-retail-runtime.md`.
 
-All 18 fighters run Lua scripts from `scripts/lua/` through the embedded Lua
-5.4 runtime in `game/lua/script_lua.c`; `game/script/vm.c` owns playback,
-waits, contact results, pairing and native continuations. The scripts were
-translated mechanically from the original retail words and proved identical
-to them tick for tick before the wordcode interpreter was removed
-(`docs/research/lua-vm.md`). Keep script behaviour in the Lua scripts: do not
-translate waits, loops, branches or animation commands into C, frame rows or
-handwritten move logic, and do not add per-script C paths. A new engine need
-is a new shared operation in `script_lua.c` (documented in
-`scripts/lua/README.md`), implemented once. Native services live once in
-shared capability modules under `game/native/`. Generated per-fighter C,
-header or include modules are forbidden.
+All 18 fighters use the shared C wordcode interpreter in `game/script/vm.c`.
+Keep the retail opcode numbers, packed arguments, branches, loop state and
+cooperative waits. Do not lower script waits, loops or animation commands to
+handwritten C move logic. Engine needs are shared VM operations or typed native
+services under `game/native/`, implemented once.
 
-Fighter Lua is generated from the hash-checked retail EXE with
-`make scripts-export` (`tools/import_mk4_data.py --lua`); do not hand-write it.
-`tools/mk4_lua_layout.json` holds entry names/addresses and module boundaries,
-not behavior. `make lua-scripts-check` compares without writing and is part
-of `make scripts-check`. Normal builds use checked-in Lua and need no EXE.
-Shared Lua API helpers in `scripts/lua/mk4.lua` remain authored runtime code.
+`make scripts-export` (`tools/import_mk4_data.py --scripts --output .`) derives
+fighter bytecode from the hash-checked EXE. `tools/mk4_script_layout.json` keeps
+established entry names/addresses, C export names and native ABI identifiers;
+behavior is decoded by the existing tooling. Ownership follows established
+names and catalog usage, with ambiguous streams shared. Preserve private labels
+and export only the existing C entry interface; cross-file branches use linked
+names. Explicit jumps preserve original fall-through after regrouping.
+`make scripts-source-check` compares without writing and is part of
+`make scripts-check`. Normal builds use checked-in wordcode and need no EXE.
 
-Data tables stay in `scripts/mk4/tables/`. Every Lua script function keeps a
-linked label (`scripts/mk4/program.asm` is generated from the Lua modules), so
-tables, command lists, reaction tables and natives refer to scripts by linked
-address; `build/mk4_symbols.lua` maps those addresses back to the functions.
+Data tables stay in `scripts/mk4/tables/`. `scripts/mk4/program.asm` lists the
+fighter files. The linker emits `build/mk4.data`, `build/mk4_linked.h` and
+compiled diagnostic names, with executable-word membership and layout checks.
+Names such as `jax_fatality_2` remain visible in sources and runtime errors;
+linked offsets and stable native IDs are checked integers, never host pointers.
 
 Start research with `tools/compile_retail.py --character NAME --inventory` and
 `--audit --summary`. Use bounded `tools/disassemble_retail.py --character NAME
@@ -188,7 +186,7 @@ control flow and data. Heavily rely on mk4decomp interpreter/handler sources and
 matching assembly, checking local EXE addresses rather than copying upstream VAs.
 Test only the shared runtime we implement, including operation and
 native/lifetime contracts; reuse existing integration coverage instead of adding
-per-move timing/damage matrices. `make lua-test` runs every scenario family
+per-move timing/damage matrices. `make bytecode-test` runs every scenario family
 twice and requires identical simulation state each tick; run it at meaningful
 shared runtime boundaries, not repeatedly for each move.
 

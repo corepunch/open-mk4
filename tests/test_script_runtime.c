@@ -1,5 +1,5 @@
 #include "game.h"
-#include "lua/script_lua.h"
+#include "mk4_program.h"
 #include "script/vm.h"
 #include "native/helpers.h"
 #include "data/tables.h"
@@ -13,7 +13,7 @@ static Mk4Image image;
 
 static void check(bool condition, const char *message) {
   if (!condition) {
-    fprintf(stderr, "FAIL script runtime: %s\n", message);
+    fprintf(stderr, "FAIL retail VM: %s\n", message);
     exit(1);
   }
 }
@@ -73,8 +73,9 @@ static int recover(Fighter *owner, int slot, bool crouch, int scenario) {
   return ticks;
 }
 
-/* Mutate a loaded data word; the tests then expect the runtime to read it. */
 static void put_word(uint32_t address, uint32_t word) {
+  size_t offset = address - MK4_DATA_IMAGE_BASE;
+  image.program_words.data[offset / 32] |= (uint8_t)(1u << (offset / 4 % 8));
   for (int byte = 0; byte < 4; ++byte) {
     image.bytes.data[address - MK4_DATA_IMAGE_BASE + (unsigned)byte] = (uint8_t)(word >> (byte * 8));
   }
@@ -135,7 +136,7 @@ static void behavior(void) {
       for (int scenario = 0; scenario < 3; ++scenario) {
         Fighter *owner = setup(slot, scenario);
         press(slot, crouch != 0, scenario);
-        check(owner->execution.script.active, "real button entry must start a script");
+        check(owner->execution.script.active, "real button entry must select the runtime interpreter");
         check(owner->execution.script.entry == (crouch ? MK4_FIXTURE_REF_98336 : MK4_FIXTURE_REF_97680), "button entry selected the wrong retail root");
         recovery[scenario] = recover(owner, slot, crouch != 0, scenario);
       }
@@ -144,6 +145,20 @@ static void behavior(void) {
       }
     }
   }
+}
+
+static void runtime_words(void) {
+  Fighter *owner = setup(0, 2);
+  press(0, true, 2);
+  int original = recover(owner, 0, true, 2);
+  uint32_t loop = mk4_image_u32(&image, MK4_FIXTURE_REF_98520);
+  check(loop == 0x3a000002, "retail crouch kick loop evidence changed");
+  put_word(MK4_FIXTURE_REF_98520, 0x3a000003);
+  owner = setup(0, 2);
+  press(0, true, 2);
+  int extended = recover(owner, 0, true, 2);
+  put_word(MK4_FIXTURE_REF_98520, loop);
+  check(extended == original + 8, "one extra source loop must add its four two-tick waits without regenerating C");
 }
 
 static void lifetimes(void) {
@@ -186,6 +201,149 @@ static int control_finished;
 static void control_end(Fighter *fighter) {
   control_finished++;
   fighter_execution_cancel(fighter);
+}
+
+static bool reject_native(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument) {
+  (void)fighter;
+  (void)address;
+  (void)kind;
+  (void)argument;
+  return false;
+}
+
+static void control_flow(void) {
+  /* One shared-runtime fixture: counted playback, absolute jump and packed
+   * character selection. It tests our cursor implementation, not a fighter. */
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t base = MK4_FIXTURE_REF_663552;
+  const uint32_t words[] = {
+      0x0f000000, (MK4_FIXTURE_REF_183676 + 54 * 12) / 4, 0x3a000002, 0x04000001, 0x3b000000, 0x33000000, (base + 32) / 4, 0xff000000, 0x3c000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  for (unsigned i = 0; i < 16; ++i) {
+    put_word(base + 36 + i * 4, (base + 100) / 4);
+  }
+  put_word(base + 100, 0x06000001);
+  put_word(base + 104, 0x07000000);
+  put_word(base + 108, 0x30000000);
+  control_finished = 0;
+  script_vm_start(owner, &image, base, base + 112, control_end, reject_native);
+  for (int n = 0; n < 10 && owner->execution.script.active; ++n) {
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
+}
+
+static void playback_modes(void) {
+  /* Shared cursor/clock contract, independent of any authored fighter move. */
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t base = MK4_FIXTURE_REF_663552;
+  const uint32_t descriptor = (MK4_FIXTURE_REF_183676 + 54 * 12) / 4;
+  uint32_t words[] = {0x49000202, descriptor, 0x46000002, 0x0d000000, 0x4a000001, 0x71000000, descriptor, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  control_finished = 0;
+  script_vm_start(owner, &image, base, base + sizeof words, control_end, reject_native);
+  check(fighter_sample(owner) == 2, "optional sample descriptor must consume its operand before half-speed playback");
+  tick();
+  check(fighter_sample(owner) == 2, "half-speed playback must hold the first visit");
+  for (int i = 0; i < 50 && owner->execution.script.active; ++i) {
+    check(owner->execution.frames == NULL, "playback and blend must not create generated frame programs");
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 1 && owner->blend_duration == 0 && owner->blend_weight == -1,
+      "reverse-to and blend must resume the script at sample one and retire blending");
+  put_word(base, 0x71000000);
+  put_word(base + 4, descriptor);
+  put_word(base + 8, 0x30000000);
+  script_vm_start(owner, &image, base, base + 12, control_end, reject_native);
+  fighter_interrupt(owner, fighter_ready);
+  check(!owner->execution.script.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
+}
+
+static bool repeat_native(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument) {
+  (void)argument;
+  if (kind != MK4_TAIL || (address != 1 && address != 2)) {
+    return false;
+  }
+  if (address == 1) {
+    script_vm_repeat(fighter, MK4_FIXTURE_REF_663560, 3, MK4_FIXTURE_REF_663572);
+  } else {
+    script_vm_repeat_next(fighter);
+  }
+  return true;
+}
+
+static void native_repetition(void) {
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t words[] = {0x32000000, 1, 0x04000001, 0x32000000, 2, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(MK4_FIXTURE_REF_663552 + i * 4, words[i]);
+  }
+  control_finished = 0;
+  script_vm_start(owner, &image, MK4_FIXTURE_REF_663552, MK4_FIXTURE_REF_663552 + sizeof words, control_end, repeat_native);
+  for (int i = 0; i < 10 && owner->execution.script.active; ++i) {
+    check(owner->execution.frames == NULL, "native repetition must re-enter retail words without copying frame rows");
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 3, "native counter must repeat the source stream and resume its successor once");
+  script_vm_start(owner, &image, MK4_FIXTURE_REF_663552, MK4_FIXTURE_REF_663552 + sizeof words, control_end, repeat_native);
+  fighter_interrupt(owner, fighter_ready);
+  check(owner->execution.script.repeat_count == 0 && !owner->execution.script.active, "interruption must retire the native repetition contract");
+}
+
+static void native_row_data(void) {
+  /* Mutate the native parameter source, not an authored move expectation. */
+  const uint32_t table = MK4_FIXTURE_REF_97584;
+  uint32_t saved[8];
+  for (unsigned i = 0; i < 8; ++i) {
+    saved[i] = mk4_image_u32(&image, table + i * 4);
+  }
+  put_word(table + 8, 2);
+  put_word(table + 12, 0xffffffffu);
+  put_word(table + 16, 0x46a770);
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  put_word(MK4_FIXTURE_REF_663552, 0x3e000000);
+  script_vm_start(owner, &image, MK4_FIXTURE_REF_663552, MK4_FIXTURE_REF_663556, control_end, reject_native);
+  check(script_native_dispatch(owner, 0x46a760, MK4_TAIL, 0), "native rows must use the shared address binding");
+  check(fighter_sample(owner) == 2 && owner->execution.frames == NULL, "native rows must load live poses without copying frame arrays");
+  tick();
+  check(
+      owner->execution.script.entry == MK4_FIXTURE_REF_97392 && owner->action == ACTION_CODE_1006, "native row terminator must select its retail continuation");
+  fighter_interrupt(owner, fighter_ready);
+  check(!owner->execution.script.active && owner->execution.script.native_resume == NULL, "interruption must retire native row continuation state");
+  for (unsigned i = 0; i < 8; ++i) {
+    put_word(table + i * 4, saved[i]);
+  }
+}
+
+/* The native query advances the bound cursor; it does not own fighter poses. */
+static void native_cursor_return(void) {
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_SWEEP, &locked);
+  owner->sample_override = 4;
+  put_word(MK4_FIXTURE_REF_663552, 0x3e000000);
+  control_finished = 0;
+  script_vm_start(owner, &image, MK4_FIXTURE_REF_663552, MK4_FIXTURE_REF_663556, control_end, reject_native);
+  check(script_native_dispatch(owner, 0x46f080, MK4_TAIL, 0), "native cursor query must use the shared binding");
+  check(fighter_sample(owner) == 5 && owner->execution.frames == NULL, "native query must advance the bound cursor");
+  tick();
+  check(fighter_sample(owner) == 6 && owner->action == ACTION_CODE_1006, "second miss must advance once and start recovery");
+  for (unsigned i = 0; i < 20 && !control_finished; ++i) {
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 12, "native recovery must finish the loaded clip and return once");
 }
 
 static void native_shared_record(void) {
@@ -298,6 +456,22 @@ static void data_tables(void) {
   }
 }
 
+static int cleanup_calls;
+
+static void cleanup_once(Fighter *fighter) {
+  (void)fighter;
+  cleanup_calls++;
+}
+
+static unsigned predicate_argument;
+
+static bool predicate_native(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument) {
+  predicate_argument = argument;
+  check(address == 0x12345678 && kind == MK4_PREDICATE, "predicate must use its typed native boundary");
+  fighter->execution.script.result = 4;
+  return true;
+}
+
 static void native_address_identity(void) {
   Fighter *owner = setup(0, 2);
   owner->body.vel[AXIS_X] = 0x1234;
@@ -306,6 +480,30 @@ static void native_address_identity(void) {
   check(owner->saved_motion[AXIS_X] == 0x1234 && owner->body.vel[AXIS_X] == 0, "native momentum save must use the calling actor");
   check(script_native_dispatch(owner, 0x48f750, MK4_CALL, 0), "shared native restore must use the same typed address boundary");
   check(owner->body.vel[AXIS_X] == 0x1234 && owner->body.vel[AXIS_Z] == -0x2345, "native restore must preserve both horizontal components");
+}
+
+static void native_handoff(void) {
+  /* Shared contracts: predicate flags select a packed branch, and cleanup
+   * survives VM/native playback transitions until the action is cancelled. */
+  Fighter *owner = setup(0, 2);
+  const uint32_t base = MK4_FIXTURE_REF_663552;
+  const uint32_t words[] = {0x36000000, 0x12345678, (base + 16) / 4, 0xff000000, 0x3e000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  script_vm_start(owner, &image, base, base + sizeof words, control_end, predicate_native);
+  check(owner->execution.script.parked, "predicate branch must skip invalid data and reach the parked continuation");
+  cleanup_calls = 0;
+  owner->execution.cleanup = cleanup_once;
+  static const mframe_t frames[] = {{0}};
+  static const mmove_t phase = {.frame = frames};
+  fighter_mmove_phase(owner, &phase);
+  check(!owner->execution.script.active && cleanup_calls == 0, "native takeover must retain action cleanup");
+  script_vm_start_at(owner, &image, base + 16, base, base + sizeof words, control_end, predicate_native);
+  check(owner->execution.frames == NULL && cleanup_calls == 0, "retail continuation must inherit native action cleanup");
+  fighter_execution_cancel(owner);
+  fighter_execution_cancel(owner);
+  check(cleanup_calls == 1, "interruption must release inherited cleanup exactly once");
 }
 
 static void assets_bound(void) {
@@ -651,6 +849,8 @@ static void native_stagger_boundary(void) {
 
 /* A script-owned landing wait hands off to the shared native controller. */
 static void script_landing_handoff(void) {
+  uint32_t gravity = mk4_image_u32(&image, MK4_FIXTURE_REF_113980);
+  put_word(MK4_FIXTURE_REF_113980, 0x200);
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     Fighter *actor = setup(0, 2);
     static const MoveDef locked = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
@@ -659,8 +859,8 @@ static void script_landing_handoff(void) {
     actor->flags |= FF_NO_GUARD;
     actor->action = 0x1003;
     script_vm_enter(actor, MK4_FIXTURE_REF_113976, action_controller_return);
-    check(
-        actor->execution.script.active && actor->execution.frames == NULL && actor->body.gravity == 0x147, "landing motion and wait must come from the script");
+    check(actor->execution.script.active && actor->execution.frames == NULL && actor->body.gravity == 0x200,
+        "landing motion and wait must come from loaded script words");
     if (interrupted) {
       fighter_interrupt(actor, fighter_ready);
       check(!actor->execution.script.active, "interruption must cancel the script-owned landing wait");
@@ -671,6 +871,121 @@ static void script_landing_handoff(void) {
     check(!actor->execution.script.active && actor->execution.frames == NULL && !(actor->flags & FF_NO_GUARD),
         "landing completion or interruption must retire script/native playback and guard ownership");
   }
+  put_word(MK4_FIXTURE_REF_113980, gravity);
+}
+
+static uint32_t returned_word;
+static unsigned returned_limit;
+
+static void counted_operand_end(Fighter *fighter) {
+  returned_word = fighter->execution.script.returned_word;
+  returned_limit = fighter->execution.script.playback_limit;
+  control_end(fighter);
+}
+
+static void animation_controller_opcodes(void) {
+  const uint32_t base = MK4_FIXTURE_REF_663936, descriptor = MK4_FIXTURE_REF_183676;
+  uint32_t count = mk4_image_u32(&image, descriptor + 4);
+  put_word(descriptor + 4, 9);
+  static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+  Fighter *actor = setup(0, 2);
+  fighter_start_move(actor, S_PUNCH, &locked);
+  put_word(base, 0x1a000000);
+  put_word(base + 4, descriptor / 4);
+  put_word(base + 8, 0x30000000);
+  script_vm_start(actor, &image, base, base + 12, control_end, reject_native);
+  tick();
+  check(actor->execution.script.interpolated_play && actor->blend_duration == 1 && actor->blend_sample == 1 && actor->blend_weight == 0x8000,
+      "interleaved playback must submit adjacent source poses at the original half weight");
+  fighter_interrupt(actor, fighter_ready);
+  check(!actor->execution.script.active && actor->blend_duration == 0 && actor->blend_weight == -1,
+      "interruption must release interpolated pose ownership with the VM");
+  for (int limited = 0; limited < 2; ++limited) {
+    actor = setup(0, 2);
+    fighter_start_move(actor, S_PUNCH, &locked);
+    script_vm_bind_animation(actor, descriptor, 0);
+    put_word(base, limited ? 0x1cffff03 : 0x17000000);
+    put_word(base + 4, limited ? 0x30000000 : descriptor / 4);
+    put_word(base + 8, 0x30000000);
+    control_finished = 0;
+    script_vm_start(actor, &image, base, base + 12, control_end, reject_native);
+    for (int visit = 0; visit < 32 && actor->execution.script.active; ++visit) {
+      tick();
+    }
+    check(control_finished == 1 && fighter_sample(actor) == (limited ? 2 : 8) && actor->execution.frames == NULL,
+        "native animation controllers must honor the inline source budget and loaded clip length without generated frame programs");
+  }
+  actor = setup(0, 2);
+  put_word(base, 0x1bffff03);
+  put_word(base + 4, 0xdeadbeef);
+  returned_word = returned_limit = 0;
+  control_finished = 0;
+  script_vm_start(actor, &image, base, base + 8, counted_operand_end, reject_native);
+  check(control_finished == 1 && returned_word == 0xdeadbeef && returned_limit == 3 && !actor->execution.script.active,
+      "counted operand return must deliver data to its typed caller rather than execute the operand");
+  put_word(descriptor + 4, count);
+}
+
+static bool distance_reaction_probe(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument) {
+  check(address == 0x45b1f0 && kind == MK4_HANDLER && argument == 25, "distance reaction opcode must use its typed low-byte handler argument");
+  fighter->native_variant++;
+  return true;
+}
+
+static void motion_distance_opcodes(void) {
+  const uint32_t base = MK4_FIXTURE_REF_663936;
+  const uint32_t words[] = {0x65000000, 0x1000, 0xffffe000, 0x100, 0x7000ff19, Q16_ONE, 0x3e000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  for (int reverse = 0; reverse < 2; ++reverse) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+    fighter_start_move(actor, S_PUNCH, &locked);
+    fighter_peer(actor)->facing = reverse ? 1 : -1;
+    g_battle.distance = reverse ? 2 * Q16_ONE : Q16_ONE;
+    actor->execution.script.result = 4;
+    actor->native_variant = 0;
+    script_vm_start(actor, &image, base, base + sizeof words, control_end, distance_reaction_probe);
+    check(actor->body.vel[AXIS_X] == (reverse ? -0x1000 : 0x1000) && actor->body.vel[AXIS_Y] == -0x2000 && actor->body.gravity == 0x100,
+        "directional motion must follow peer-facing order and consume all three signed motion words");
+    check(actor->native_variant == (reverse ? 0 : 1) && actor->execution.script.result == (reverse ? 4u : 5u),
+        "distance reaction must use the world distance, preserve other flags and update bit zero");
+    fighter_interrupt(actor, fighter_ready);
+  }
+}
+
+static void edge_task_lifetime(void) {
+  const uint32_t base = MK4_FIXTURE_REF_663936;
+  put_word(base, 0x6f000000);
+  put_word(base + 4, (base + 16) / 4);
+  put_word(base + 8, 0x72000000);
+  put_word(base + 12, 0x3e000000);
+  put_word(base + 16, 0xff000000);
+  Fighter *actor = setup(0, 2), *peer = fighter_peer(actor);
+  static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(actor, S_PUNCH, &locked);
+  fighter_start_move(peer, S_PUNCH, &locked);
+  g_battle.arena_radius = Q16_ONE;
+  actor->body.pos[AXIS_X] = 2 * Q16_ONE;
+  peer->body.pos[AXIS_X] = 3 * Q16_ONE;
+  script_vm_start(actor, &image, base, base + 20, control_end, reject_native);
+  BattleEvent *event = NULL;
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    if (g_battle.events[i].active) {
+      event = &g_battle.events[i];
+      break;
+    }
+  }
+  check(event != NULL && actor->body.vel[AXIS_X] < 0 && actor->body.vel[AXIS_X] == peer->body.vel[AXIS_X],
+      "outer-peer edge task must apply one shared world recoil without taking fighter script ownership");
+  for (int visit = 0; visit < 32 && event->active; ++visit) {
+    tick();
+  }
+  check(
+      !event->active && actor->body.vel[AXIS_X] == 0 && peer->body.vel[AXIS_X] == 0, "independent native edge task must retire and clean both motion contexts");
+  battle_init(&image, 0, 4);
+  check(!event->active, "round reset must leave the native event resource retired");
 }
 
 static void scene_task_lifetime(void) {
@@ -694,7 +1009,73 @@ static void scene_task_lifetime(void) {
   check(!event->active, "round reset must release the scene task resource");
 }
 
+static void conditional_primitive_opcodes(void) {
+  const uint32_t base = MK4_FIXTURE_REF_663936;
+  const uint32_t words[] = {0x43000000, 0x12345678, (base + 68) / 4, 0x55ffff07, 0x12345678, (base + 68) / 4, 0x3d000000, (base + 40) / 4, 0x12000002,
+      0x30000000, 0x5d000000, 0x1000, 0xffffe000, 0x74000000, 0x54003002, 0x12000003, 0x30000000, 0xff000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  for (int blocked = 0; blocked < 2; ++blocked) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+    fighter_start_move(actor, S_PUNCH, &locked);
+    q16 x = actor->body.pos[AXIS_X], y = actor->body.pos[AXIS_Y];
+    actor->contact = blocked ? CONTACT_BLOCK : CONTACT_HIT;
+    control_finished = 0;
+    g_battle.sound_count = 0;
+    script_vm_start(actor, &image, base, base + sizeof words, control_end, predicate_native);
+    check(predicate_argument == 7, "inline native predicate arguments must be masked and forwarded through the typed boundary");
+    if (blocked) {
+      check(actor->execution.script.active && actor->execution.script.wake == g_battle.ticks + 2 && actor->body.pos[AXIS_X] == x + 0x1000 &&
+                actor->body.pos[AXIS_Y] == y - 0x2000 && g_battle.sound_count == 1 && g_battle.sounds[0].selector == 0x627,
+          "block-value branch must consume signed position operands, native token and flag-selected packed wait");
+      for (int visit = 0; visit < 4 && actor->execution.script.active; ++visit) {
+        tick();
+      }
+    }
+    check(control_finished == 1 && fighter_sample(actor) == (blocked ? 3 : 2),
+        "predicate bit-zero branch and numeric block-result branch must remain distinct and continue at their selected targets");
+  }
+}
+
+static void cursor_alias_opcodes(void) {
+  Fighter *actor = setup(0, 2);
+  const uint32_t base = MK4_FIXTURE_REF_663936, descriptor = MK4_FIXTURE_REF_183676;
+  const uint32_t words[] = {0x0f000000, descriptor / 4, 0x0bffffff, 0x15000000, 0x18000000, 0x21000000, 0x23000000, 0x57000000, 0x66000000, 0x67000000,
+      0x0affff02, 0x34000001, 0x13000000, 0x34000001, 0x14000000, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  uint32_t count = mk4_image_u32(&image, descriptor + 4);
+  put_word(descriptor + 4, 9);
+  control_finished = 0;
+  script_vm_start(actor, &image, base, base + sizeof words, control_end, reject_native);
+  put_word(descriptor + 4, count);
+  check(fighter_sample(actor) == 2, "cursor-add must mask to its low byte and dispatcher aliases must consume no operands");
+  tick();
+  check(fighter_sample(actor) == 8, "final-cursor opcode must use the bound descriptor length");
+  tick();
+  check(control_finished == 1 && fighter_sample(actor) == 8, "final-pose submission must preserve the descriptor sample and continue dispatch");
+}
+
 static void native_task_completion(void) {
+  const uint32_t base = MK4_FIXTURE_REF_663936;
+  put_word(base, 0x34000001);
+  put_word(base + 4, 0x32000000);
+  put_word(base + 8, 0x49cb60);
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    Fighter *actor = setup(0, 2);
+    control_finished = cleanup_calls = 0;
+    script_vm_start(actor, &image, base, base + 12, control_end, script_native_dispatch);
+    actor->execution.cleanup = cleanup_once;
+    if (interrupted) {
+      fighter_interrupt(actor, fighter_ready);
+    }
+    tick();
+    check(control_finished == (interrupted ? 0 : 1) && cleanup_calls == 1 && !actor->execution.script.active,
+        "native task retirement must consume the caller completion and cleanup once, while interruption suppresses completion");
+  }
   Fighter *actor = setup(0, 2);
   g_battle.phase = PHASE_FATALITY;
   g_battle.finisher = FINISH_SPIKE;
@@ -853,11 +1234,12 @@ static void native_script_continuation(void) {
     }
   }
 
-  /* The high-kick recovery returns through ready() within a few ticks. */
   Fighter *owner = setup(0, 2);
-  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
-  fighter_start_move(owner, S_KICK, &locked);
-  script_vm_enter_then(owner, MK4_FIXTURE_REF_97392, MK4_FIXTURE_REF_97680, fighter_ready);
+  uint32_t saved[2] = {mk4_image_u32(&image, MK4_FIXTURE_REF_101640), mk4_image_u32(&image, MK4_FIXTURE_REF_101644)};
+  put_word(MK4_FIXTURE_REF_101640, 0x34000002);
+  put_word(MK4_FIXTURE_REF_101644, 0x30000000);
+  action_begin(owner, S_KICK, 0x101, false);
+  script_vm_enter_then(owner, MK4_FIXTURE_REF_101640, MK4_FIXTURE_REF_97680, fighter_ready);
   native_begin(owner, 0, 0, NULL);
   native_script_end(owner, MK4_FIXTURE_REF_99056, fighter_ready);
   for (int visit = 0; visit < 5 && owner->execution.script.entry != MK4_FIXTURE_REF_97680; ++visit) {
@@ -873,7 +1255,9 @@ static void native_script_continuation(void) {
       "raw scene script entry must preserve model identity independently of native integration context");
   battle_reset_match();
   check(!owner->execution.script.active && owner->execution.script.then.entry == 0 && !actor->execution.script.active,
-      "reset must cancel both raw scene script and script return continuations");
+      "reset must cancel both raw scene script and VM return continuations");
+  put_word(MK4_FIXTURE_REF_101640, saved[0]);
+  put_word(MK4_FIXTURE_REF_101644, saved[1]);
 }
 
 static void native_close_lifetimes(void) {
@@ -977,29 +1361,41 @@ int main(int argc, char **argv) {
     mk4_image_free(&image);
     return 0;
   }
-  if (argc == 2 && strcmp(argv[1], "closed") == 0) {
-    /* A match without the Lua runtime must stop at the first script start. */
-    setup(0, 2);
-    press(0, false, 2);
-    check(false, "a script started without the Lua runtime");
-  }
-  script_lua_open("build/mk4_symbols.lua", "scripts/lua/program.lua");
   if (argc == 2) {
-    if (strcmp(argv[1], "callback") == 0) {
+    if (strcmp(argv[1], "opcode") == 0) {
+      put_word(MK4_FIXTURE_REF_101640, 0xff000000);
+    } else if (strcmp(argv[1], "native") == 0) {
+      put_word(MK4_FIXTURE_REF_101644, 0x12345678);
+    } else if (strcmp(argv[1], "sample") == 0) {
+      put_word(MK4_FIXTURE_REF_101668, 0x490000ff);
+    } else if (strcmp(argv[1], "budget") == 0) {
+      put_word(MK4_FIXTURE_REF_101640, 0x3a0000ff);
+      put_word(MK4_FIXTURE_REF_101644, 0x3b000000);
+    } else if (strcmp(argv[1], "callback") == 0) {
       Fighter *actor = setup(0, 2);
       native_hold(actor, 1, NULL);
       native_address_end(actor, MK4_FIXTURE_REF_101640);
     } else if (strcmp(argv[1], "range") == 0) {
       Fighter *owner = setup(0, 2);
-      script_vm_enter(owner, MK4_DATA_IMAGE_BASE, control_end);
+      put_word(MK4_FIXTURE_REF_663552, 0x1f000000);
+      script_vm_start(owner, &image, MK4_FIXTURE_REF_663552, MK4_FIXTURE_REF_663556, control_end, reject_native);
     } else {
       check(false, "unknown rejection test");
     }
-    check(false, "malformed script start was accepted");
+    setup(0, 2);
+    press(0, false, 2);
+    check(false, "malformed script was accepted");
   }
   behavior();
+  runtime_words();
+  control_flow();
+  playback_modes();
+  native_handoff();
   native_address_identity();
   native_contracts();
+  native_repetition();
+  native_row_data();
+  native_cursor_return();
   native_shared_record();
   data_tables();
   reaction_native_table();
@@ -1019,6 +1415,11 @@ int main(int argc, char **argv) {
   native_task_completion();
   native_scene_script_handoff();
   native_script_recovery_handoff();
+  cursor_alias_opcodes();
+  conditional_primitive_opcodes();
+  motion_distance_opcodes();
+  animation_controller_opcodes();
+  edge_task_lifetime();
   scene_task_lifetime();
   native_throw_selection();
   native_inherited_descriptor();
@@ -1031,8 +1432,7 @@ int main(int argc, char **argv) {
   lifetimes();
   assets_bound();
   battle_init(&image, 0, 4);
-  script_lua_close();
   mk4_image_free(&image);
-  puts("PASS: script runtime, native boundaries, loaded data, interruption, KO and reset");
+  puts("PASS: shared retail VM, native boundaries, loaded data, interruption, KO and reset");
   return 0;
 }

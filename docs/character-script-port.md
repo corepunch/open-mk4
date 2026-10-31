@@ -1,28 +1,28 @@
 # Shared runtime workflow
 
-All catalogued fighter programs run as Lua scripts from
-[`scripts/lua/`](../scripts/lua/README.md) on the embedded Lua 5.4 runtime
-(`game/lua/script_lua.c`); `game/script/vm.c` owns playback, waits, contact
-results, pairing and native continuations. The scripts were translated
-mechanically from the original retail words and proved identical to them tick
-for tick before the word interpreter was removed
-([lua-vm.md](research/lua-vm.md)). Native services and controllers live in
-shared capability modules under `game/native/`. Evidence belongs beside shared
-implementations or in typed research bindings; there are no per-fighter
-coverage manifests.
+All catalogued fighter programs run as named wordcode from
+[`fighters/`](../fighters/README.md) through the shared C interpreter in
+`game/script/vm.c`. It preserves retail opcode numbers, packed arguments,
+branches, loop state and cooperative waits. Actor-owned playback, contact,
+pairing, native continuations and cleanup stay in the existing engine.
+Native C services live once under `game/native/`.
 
-Data tables stay in `scripts/mk4/tables/`; `scripts/mk4/program.asm` is
-generated from the Lua modules so every script keeps a linked address for
-tables, command lists, reaction tables and natives. `make game` rebuilds the
-package, the symbol map and native label consumers. The EXE is needed for
-research/import evidence only. See [source format](../scripts/README.md).
+`make scripts-export` regenerates wordcode from the supported EXE through the
+existing decoder. `tools/mk4_script_layout.json` preserves established entry
+names/addresses, native IDs and C exports. Tooling groups streams by existing
+names and catalog usage; ambiguous/shared streams remain single definitions.
+Each fighter file carries its bytecode and relevant native ABI declarations,
+with symbolic cross-file references and the existing exported C interface.
+Explicit jumps preserve original fall-through when blocks move.
+
+Data tables stay in `scripts/mk4/tables/`. Normal builds link the checked-in
+sources into one validated package and compile exported addresses and diagnostic
+names into C consumers. Build/startup needs no EXE or Lua. See
+[source format](../scripts/README.md) and [architecture](../ARCHITECTURE.md).
 
 ## Workflow
 
-1. Regenerate fighter Lua with `make scripts-export` when decoder or entry
-   metadata changes. Build checked-in scripts and tables with `make scripts`;
-   normal builds do the linking automatically without the EXE. Inspect the
-   existing inventory and unresolved boundary:
+1. Inspect the existing inventory and unresolved boundary:
 
    ```sh
    python3 tools/compile_retail.py --character NAME --inventory
@@ -30,53 +30,40 @@ research/import evidence only. See [source format](../scripts/README.md).
    python3 tools/disassemble_retail.py --character NAME --move MOVE
    ```
 
-   Consult existing research before querying a bounded `--script`, `--native`
-   or `--attack` listing. Do not generate bulk bundles for routine work.
+   Consult existing research before bounded script/native/attack queries.
+   Do not regenerate bulk bundles for routine work.
 
-2. Start native research with `reference/mk4decomp` handler sources and
-   matching assembly. Verify the supplied EXE address and data; upstream
-   addresses belong to a different revision. Respect upstream licenses.
+2. Use `reference/mk4decomp` interpreter/handler sources and matching assembly.
+   Verify local EXE addresses and data; upstream addresses belong to a different
+   revision. Preserve established semantic names and respect upstream licenses.
 
-3. Implement a retail native routine once at its typed native address, or add
-   a shared script operation once in `game/lua/script_lua.c` and document it
-   in `scripts/lua/README.md`. Load roster, input, action, stance, CPU,
-   animation and contact data from the linked tables. Native table selection
-   can have different hidden-roster remaps from script selection; check its
-   own source path. Keep actor/model identity separate from native
-   implementation identity.
+3. Implement missing runtime/native behavior once at the shared boundary.
+   Generate opcode names from the existing schema; implement shared operations
+   in `game/script/vm.c`, and native services in the relevant capability module.
+   Load roster, input, action, stance, CPU, animation and contact records from
+   the package. Selection remaps follow each original table's own path.
 
-4. Generate script behaviour from retail words with `tools/import_mk4_data.py --lua`.
-   `tools/mk4_lua_layout.json` owns only entry names, addresses and module boundaries.
-   Do not hand-write fighter Lua or translate authored waits,
-   loops, branches, animation commands or balance into C rows or handwritten
-   move logic. Native routines may contain their own original control flow;
-   keep their engine adaptation shared and within existing state/context
-   boundaries. Do not add per-fighter C folders, configuration or copied
-   native variants. Name new decoded entries in the metadata and include their
-   roots in the import layout, then regenerate; tables and exports refer to
-   generated functions by name after `make scripts`.
+4. Keep authored waits, loops, branches, animation commands and balance in
+   wordcode. Do not lower scripts to C frame rows or handwritten move logic.
+   Name new decoded entries in the metadata and add roots to the import layout,
+   then run `make scripts-export`. Do not add per-fighter C dispatchers,
+   duplicated native implementations, handwritten fighter definitions or
+   coverage manifests. File ownership is organization, not runtime identity.
 
-5. Remove obsolete C adapters, copied data and private modules when their last
-   callers migrate. Do not add per-fighter coverage declarations or fighter
-   definitions. Generated fighter C/include outputs are forbidden.
+5. Remove superseded interpreters, configuration and generators at the same
+   shared migration boundary. Keep source exports and typed continuations
+   consistent; a native callback is never executable script data.
 
 6. Run `make format`, focused shared-runtime checks and `make scripts-check`.
-   Test only runtime/native features we implement: operations, typed native
-   roles, loaded data, interruption, actor ownership and cleanup. Trust the
-   retail-derived scripts. Reuse existing integration coverage; do not add
-   fighter timing, damage or balance matrices or execution trace harnesses.
-   `make lua-test` runs every scenario family twice and requires identical
-   simulation state each tick; run it at meaningful shared boundaries, and
-   the game self-test when asset/animation integration changes. Record
-   failures honestly.
+   Import/link tests compare every retained instruction and typed relocation.
+   Test operation/native contracts, data loading, interruption and cleanup;
+   trust retail fighter logic rather than adding timing/damage matrices.
+   At shared boundaries, `make bytecode-test` runs all existing scenario families
+   twice and compares the complete simulation each tick. Run `make check` at
+   completion and record failures honestly.
 
-7. Commit each coherent verified step directly to `main` before the next step.
-   Explain the problem, implementation, retail/reference evidence, validation
-   and remaining limitations. Preserve unrelated work.
+7. Commit each coherent verified change to `main`, preserving unrelated work.
+   Record the request, shared implementation, evidence, validation and limits.
 
-See [shared-retail-runtime.md](research/shared-retail-runtime.md) for migration
-status and checked native boundaries, [lua-vm.md](research/lua-vm.md) for the
-runtime design and the equivalence evidence, [retail-vm.md](research/retail-vm.md)
-for the retired interpreter's research notes, [script-decoder.md](script-decoder.md)
-for formats and bounded queries, and [ARCHITECTURE.md](../ARCHITECTURE.md) for
-engine boundaries.
+The earlier Lua experiment and its comparison evidence remain in the historical
+[Lua notes](research/lua-vm.md); current execution uses the C interpreter.

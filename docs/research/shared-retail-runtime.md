@@ -5,7 +5,7 @@ retail words through one C11 interpreter, with retail-loaded roster, input,
 action, stance, CPU and inventory tables. All 1,133 catalogued roots are
 interpreted. No generated script/frame C, fighter C/header modules or
 fighter-origin native dispatch context remains. Native implementations live
-once in shared capability modules. The unused frame generator is retired. Script words now assemble from
+once in shared capability modules. The unused frame generator is retired. Named fighter words in `fighters/` now assemble from
 [checked-in sources](../../scripts/README.md); the host explicitly binds the
 assembled package and MK4 data before creating the match.
 
@@ -2050,7 +2050,7 @@ preserved at archive/pre-retail-vm-d7b69ba; all verified steps are committed on
 main. This completes the architecture migration, without claiming exact retail
 scheduler, native presentation or per-tick gameplay parity.
 
-## Lua scripts replace the wordcode interpreter
+## Historical Lua experiment (superseded by the current C wordcode runtime)
 
 The 11 script modules were translated mechanically into Lua (`scripts/lua/`),
 the runtime in `game/lua/script_lua.c` registers an operation for every

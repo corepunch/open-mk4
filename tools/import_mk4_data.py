@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export MK4 tables/wordcode for research, or regenerate the actor Lua modules.
+"""Export MK4 tables/wordcode for research, or regenerate named fighter bytecode.
 
 The original fixup records identify packed references. Raw asset references
 are decoded through the rig/slot/descriptor/name layouts used by our loader.
@@ -10,7 +10,6 @@ import json
 from pathlib import Path
 import re
 import struct
-from tempfile import TemporaryDirectory
 from retail_moves import RetailImage
 from scorpion_moves import script_program
 from mk4_asm import NAMES
@@ -19,7 +18,7 @@ from mk4_link import link, BASE, HEADER
 ROOT = Path(__file__).resolve().parents[1]
 LO, HI = 0x4ce000, 0x580000
 LAYOUT = Path(__file__).with_name('mk4_import_layout.json')
-LUA_LAYOUT = Path(__file__).with_name('mk4_lua_layout.json')
+SCRIPT_LAYOUT = Path(__file__).with_name('mk4_script_layout.json')
 
 
 def decode_scripts(image, roots):
@@ -42,97 +41,198 @@ def decode_scripts(image, roots):
     return rows, code, owners
 
 
-def export_lua(image, destination, check=False):
-    """Feed retail words into the existing Lua translator, with named entry boundaries.
+def export_scripts(image, destination, check=False):
+    """Generate named wordcode by fighter, with one shared runtime/native ABI.
 
-    The metadata owns names/organization only. All operations, operands, loops,
-    branches and fall-through come from the hash-checked executable. Temporary
-    assembly is translator input, never an additional maintained script source.
+    Names and exports come from the established import metadata. Ownership is
+    derived from those names and the existing per-roster script catalogs, never
+    a handwritten fighter definition. Explicit jumps preserve fall-through when
+    blocks move between files; embedded entries retain their operand offsets.
     """
-    from mk4_asm_to_lua import translate
+    from bisect import bisect_right
+    from character_catalog import CHARACTERS, moves_for
     from retail_moves import EXE_SHA256
 
-    layout = json.loads(LUA_LAYOUT.read_text())
+    layout = json.loads(SCRIPT_LAYOUT.read_text())
     if layout['exe_sha256'] != EXE_SHA256:
-        raise ValueError('Lua entry map targets another retail revision')
+        raise ValueError('Script entry map targets another retail revision')
     rows, code, owners = decode_scripts(image, json.loads(LAYOUT.read_text())['roots'])
     entries = {}
+    names = {}
     for module in layout['modules'].values():
         for name, address in module['entries'].items():
             address = int(address, 16)
-            if address not in owners:
-                raise ValueError(f'Lua entry {name} at {address:#x} is not a decoded script word')
+            if address not in owners or name in names:
+                raise ValueError(f'Invalid or duplicate script entry {name} at {address:#x}')
             entries.setdefault(address, []).append(name)
-    native_source = (ROOT / 'scripts/mk4/native.inc').read_text()
+            names[name] = address
+    native_ids = {name: int(value, 16) for name, value in layout['natives'].items()}
     natives = {}
-    for name, value in re.findall(r'^\.equ (MK4_NATIVE_\w+) (0x[0-9a-f]+)$', native_source, re.M):
-        natives.setdefault(int(value, 16), name)
+    for name, value in native_ids.items():
+        natives.setdefault(value, name)
+    addresses = sorted(a for a in rows if owners[a] == a)
+    starts = sorted(a for a in entries if owners[a] == a)
+    blocks = {a: [] for a in starts}
+    for address in addresses:
+        index = bisect_right(starts, address) - 1
+        if index < 0:
+            raise ValueError(f'Instruction {address:#x} has no named block')
+        blocks[starts[index]].append(address)
 
-    def operand(address, row, index):
+    def named_owner(values):
+        found = {fighter for fighter in CHARACTERS for name in values
+                 if re.sub(r'^mk4_native_', '', name.lower()).startswith(fighter + '_')
+                 or name.lower().endswith('_' + fighter)}
+        return next(iter(found)) if len(found) == 1 else None
+
+    # Catalog ownership is a fallback for generic labels, not a dispatch policy.
+    users = {address: set() for address in starts}
+    for character, fighter in enumerate(CHARACTERS):
+        roots = {root for move in moves_for(character).values() for _, root in move['scripts']}
+        for root in sorted(roots):
+            for row in script_program(image, root, character)['instructions']:
+                address = int(row['va'], 16)
+                if address in owners:
+                    block = starts[bisect_right(starts, owners[address]) - 1]
+                    users[block].add(fighter)
+    block_owners = {}
+    for address in starts:
+        block_owners[address] = named_owner(entries[address]) or (next(iter(users[address])) if len(users[address]) == 1 else 'shared')
+
+    def target(value):
+        address = value * 4
+        if address not in entries:
+            raise ValueError(f'Unnamed script target {address:#x}')
+        return f'word({entries[address][0]})'
+
+    def operand(row, index):
         value = int(row['operands'][index], 16)
         op = int(row['opcode'], 16)
         if 'clip' in row and index == 0:
             return f'clip({row["clip"]})'
         if op in (0x2f, 0x33, 0x3c, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f) or (op in (0x36, 0x43, 0x55) and index == 1):
-            if value * 4 not in entries:
-                raise ValueError(f'Unnamed script target at {address:#x}: {value * 4:#x}')
-            return f'word({entries[value * 4][0]})'
+            return target(value)
         if (op in (0x32, 0x35, 0x36, 0x38, 0x43, 0x55) and index == 0) or (op == 0x40 and index == 1):
-            # Unnamed native IDs remain explicit, as in the original translation.
             return natives.get(value, hex(value))
         return hex(value)
 
-    with TemporaryDirectory(prefix='mk4-lua-export-') as temporary:
-        project = Path(temporary)
-        (project / 'code').mkdir()
-        (project / 'native.inc').write_text(native_source)
-        (project / 'tables.asm').write_text('.section data\nMK4_DATA_ANIMATION_TABLE:\n.zero 7344\n')
-        program = ['.section script']
-        aliases = []
-        addresses = sorted(a for a in rows if owners[a] == a)
-        modules = list(layout['modules'].items())
-        assigned = set()
-        previous = None
-        for i, (name, module) in enumerate(modules):
-            start = int(module['start'], 16)
-            end = int(modules[i + 1][1]['start'], 16) if i + 1 < len(modules) else HI
-            lines = [f'; {name.replace("_", " ").capitalize()}.']
-            for address in addresses:
-                if not start <= address < end:
-                    continue
-                assigned.add(address)
-                if previous is not None and address != previous:
-                    lines.append('  .zero 4')
-                for entry in entries.get(address, []):
-                    lines.extend([f'; Retail script {address:#010x} in MK4/MK-4.EXE.', entry + ':'])
-                row = rows[address]
-                args = [hex(row['inline'])] + [operand(address, row, n) for n in range(len(row['operands']))]
-                lines.append('  ' + NAMES[int(row['opcode'], 16)] + ' ' + ', '.join(args))
-                previous = address + 4 * (1 + len(row['operands']))
-            (project / 'code' / (name + '.asm')).write_text('\n'.join(lines) + '\n')
-            program.append(f'.include "code/{name}.asm"')
-        if assigned != set(addresses):
-            raise ValueError('Lua module boundaries do not cover the decoded corpus')
-        for address, names in entries.items():
-            owner = owners[address]
-            if owner != address:
-                if owner not in entries:
-                    raise ValueError(f'Embedded entry at {address:#x} has no named instruction owner')
-                for name in names:
-                    aliases.extend([f'.alias {name} {entries[owner][0]} + {address - owner}', f'.export {name} {name}'])
-        (project / 'program.asm').write_text('\n'.join(program) + '\n')
-        (project / 'exports.inc').write_text('\n'.join(aliases) + '\n')
-        source = project / 'project.asm'
-        source.write_text('.include "native.inc"\n.include "tables.asm"\n.include "program.asm"\n.include "exports.inc"\n')
-        statistics, changed = translate(source, destination, check, provenance='MK4/MK-4.EXE by tools/import_mk4_data.py --lua')
-    # Shared runtime helpers are authored once; fighter behavior is generated.
-    helper = Path(destination) / 'mk4.lua'
-    text = (ROOT / 'scripts/lua/mk4.lua').read_text()
-    if not helper.exists() or helper.read_text() != text:
-        changed.append(str(helper))
-        if not check:
-            helper.write_text(text)
-    return statistics, changed
+    files = {fighter: [f'; Generated {fighter} bytecode and native IDs. Do not edit; run make scripts-export.',
+                       '; The shared C VM executes these words; native IDs select shared C services.', '']
+             for fighter in (*CHARACTERS, 'shared')}
+    for name, value in native_ids.items():
+        owner = named_owner([name]) or 'shared'
+        files[owner].extend([f'.equ {name} {value:#x}', f'.export {name} {name}'])
+    aliases = {}
+    for address, labels in entries.items():
+        owner = owners[address]
+        if owner != address:
+            block = starts[bisect_right(starts, owner) - 1]
+            for name in labels:
+                aliases[name] = (block, owner, address - owner)
+    bridges = 0
+    for start, instructions in blocks.items():
+        out = files[block_owners[start]]
+        out.extend(['', f'; Retail source {start:#010x}; branches use linked names.'])
+        for name in entries[start]:
+            out.append(name + ':')
+        for address in instructions:
+            row = rows[address]
+            args = [hex(row['inline'])] + [operand(row, n) for n in range(len(row['operands']))]
+            out.append('  ' + NAMES[int(row['opcode'], 16)] + ' ' + ', '.join(args))
+        last = instructions[-1]
+        after = last + 4 * (1 + len(rows[last]['operands']))
+        # Preserve contiguous retail words within a file. Only a cross-file
+        # continuation needs a jump, including an entry inside selector operands.
+        embedded = any(last < address < after for address in entries)
+        adjacent = after in blocks and block_owners[after] == block_owners[start]
+        if after in blocks and not adjacent and (embedded or int(rows[last]['opcode'], 16) not in (0x1b, 0x30, 0x33, 0x3c, 0x3f)):
+            out.append('  jump 0, ' + target(after // 4))
+            bridges += 1
+        if not adjacent:
+            out.append('  .zero 4 ; non-executable guard')
+        for name, (block, owner, offset) in aliases.items():
+            if block == start:
+                # The owner may be an instruction inside this named block.
+                out.append(f'.alias {name} {entries[start][0]} + {owner - start + offset}')
+    for export, name in layout['exports'].items():
+        address = names[name]
+        block = starts[bisect_right(starts, owners[address]) - 1]
+        files[block_owners[block]].append(f'.export {export} {name}')
+    rendered = {f'fighters/{fighter}.asm': '\n'.join(files[fighter]) + '\n' for fighter in CHARACTERS}
+    rendered['fighters/shared.asm'] = '\n'.join(files['shared']) + '\n'
+    program = ['; Generated script link order. Do not edit; run make scripts-export.', '.section script']
+    program += [f'.include "../../fighters/{fighter}.asm"' for fighter in (*CHARACTERS, 'shared')]
+    rendered['scripts/mk4/program.asm'] = '\n'.join(program) + '\n'
+    # This include is kept as the shared ABI entry point for the project.
+    rendered['scripts/mk4/native.inc'] = '; Native IDs are declared/exported beside bytecode in fighters/*.asm.\n'
+    opcodes = ['/* Generated from tools/mk4_asm.py. Do not edit; run make scripts-export. */',
+               '#ifndef MK4_SCRIPT_OPCODES_H', '#define MK4_SCRIPT_OPCODES_H', '', 'typedef enum ScriptOpcode {']
+    opcodes += [f'  MK4_OP_{name.upper()} = 0x{value:02x},' for value, name in enumerate(NAMES)]
+    opcodes += ['} ScriptOpcode;', '', '#endif', '']
+    rendered['game/script/opcodes.h'] = '\n'.join(opcodes)
+    destination = Path(destination)
+    changed = []
+    for filename, text in rendered.items():
+        path = destination / filename
+        if not path.exists() or path.read_text() != text:
+            changed.append(str(path))
+            if not check:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text)
+    return {'entries': len(names), 'instructions': len(addresses), 'bridges': bridges}, changed
+
+
+def verify_scripts(image, project):
+    """Compare every original instruction word/typed operand after relocation.
+
+    This checks the linked result against the executable, independently of
+    source formatting and file ownership. Extra cross-block jumps are checked
+    separately; they may only express the original adjacent fall-through.
+    """
+    from bisect import bisect_right
+    layout = json.loads(SCRIPT_LAYOUT.read_text())
+    rows, code, owners = decode_scripts(image, json.loads(LAYOUT.read_text())['roots'])
+    entries = {}
+    for module in layout['modules'].values():
+        for name, value in module['entries'].items():
+            entries.setdefault(int(value, 16), []).append(name)
+    starts = sorted(address for address in entries if owners[address] == address)
+    package, _, symbols = link(project)
+    payload = package[HEADER.size:]
+    for address, expected in code.items():
+        owner = owners[address]
+        start = starts[bisect_right(starts, owner) - 1]
+        linked = symbols[entries[start][0]] + address - start
+        index = (address - owner) // 4 - 1
+        if index >= 0:
+            row = rows[owner]
+            op = int(row['opcode'], 16)
+            if 'clip' in row and index == 0:
+                expected = (symbols['MK4_DATA_ANIMATION_TABLE'] + 12 * row['clip']) // 4
+            elif op in (0x2f, 0x33, 0x3c, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f) or (op in (0x36, 0x43, 0x55) and index == 1):
+                expected = symbols[entries[expected * 4][0]] // 4
+        actual = struct.unpack_from('<I', payload, linked - BASE)[0]
+        if actual != expected:
+            raise ValueError(f'Retail word mismatch at {address:#x} ({entries[start][0]}): {actual:#x} != {expected:#x}')
+    for address, names in entries.items():
+        start = starts[bisect_right(starts, owners[address]) - 1]
+        expected = symbols[entries[start][0]] + address - start
+        if any(symbols[name] != expected for name in names):
+            raise ValueError(f'Embedded entry relocation mismatch at {address:#x}')
+    for i, start in enumerate(starts):
+        following = starts[i + 1] if i + 1 < len(starts) else HI
+        instructions = [address for address in rows if owners[address] == address and start <= address < following]
+        last = max(instructions)
+        after = last + 4 * (1 + len(rows[last]['operands']))
+        embedded = any(last < address < after for address in entries)
+        if after in entries and owners[after] == after and (embedded or int(rows[last]['opcode'], 16) not in (0x1b, 0x30, 0x33, 0x3c, 0x3f)):
+            linked = symbols[entries[start][0]] + after - start
+            if linked == symbols[entries[after][0]]:
+                continue  # The original words remain adjacent in one file.
+            bridge = struct.unpack_from('<II', payload, linked - BASE)
+            if bridge != (0x33000000, symbols[entries[after][0]] // 4):
+                raise ValueError(f'Fall-through changed after {entries[start][0]}')
+    return len(code)
 
 
 def export(image, destination):
@@ -201,11 +301,7 @@ def export(image, destination):
                     (op in (0x36,0x43,0x55) and i==1) or ('clip' in row and i==0))
             if packed and value:refs[at]=('word',value*4)
     # Native identifiers retain their stable ABI values. They are not data addresses.
-    native={}
-    for p in (ROOT/'game/script/native_ids.h', ROOT/'game/native/actions.h'):
-        for name,value in re.findall(r'\b(\w+)\s*=\s*(0x[0-9a-fA-F]+)',p.read_text()):
-            v=int(value,16)
-            if 0x401000<=v<LO:native.setdefault(v,name)
+    native={int(value, 16): name for name, value in json.loads(SCRIPT_LAYOUT.read_text())['natives'].items()}
     for at,(_,target) in refs.items():
         if not LO<=target<HI:raise ValueError(f'Reference out of data: {at:x} -> {target:x}')
         names.setdefault(target,('script_' if target in code else 'data_')+format(target,'06x'))
@@ -284,26 +380,30 @@ def export(image, destination):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--exe',type=Path,default=ROOT/'MK4/MK-4.EXE')
-    p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--lua', action='store_true', help='generate the named Lua modules instead of the flat research import')
-    p.add_argument('--check', action='store_true', help='compare Lua output without writing (requires --lua)')
-    args=p.parse_args()
-    if args.check and not args.lua:
-        p.error('--check requires --lua')
-    if not args.lua and args.output.exists():p.error('Destination exists; import into a new directory and review')
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--exe', type=Path, default=ROOT / 'MK4/MK-4.EXE')
+    p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--scripts', action='store_true', help='generate named bytecode under fighters/ instead of the flat research import')
+    p.add_argument('--check', action='store_true', help='compare generated bytecode without writing (requires --scripts)')
+    args = p.parse_args()
+    if args.check and not args.scripts:
+        p.error('--check requires --scripts')
+    if not args.scripts and args.output.exists():
+        p.error('Destination exists; import into a new directory and review')
     try:
         image = RetailImage(args.exe)
-        if args.lua:
-            statistics, changed = export_lua(image, args.output, args.check)
-            print(f'Exported {statistics["functions"]} streams from {statistics["instructions"]} retail instructions.')
+        if args.scripts:
+            statistics, changed = export_scripts(image, args.output, args.check)
+            print(f'{statistics["entries"]} named entries, {statistics["instructions"]} retail instructions, '
+                  f'{statistics["bridges"]} explicit fall-through jumps.')
             if args.check and changed:
-                p.exit(1, 'Lua modules differ from the retail export:\n  ' + '\n  '.join(changed) + '\n')
-            print('Lua modules match the retail export.' if args.check else f'Lua program written to {args.output}.')
+                p.exit(1, 'Bytecode differs from the retail export:\n  ' + '\n  '.join(changed) + '\n')
+            print('Bytecode matches the retail export.' if args.check else f'Bytecode written under {args.output}.')
         else:
-            export(image,args.output)
+            export(image, args.output)
     except (OSError, ValueError, KeyError) as exc:
         p.exit(1, str(exc) + '\n')
 
-if __name__=='__main__':main()
+
+if __name__ == '__main__':
+    main()
