@@ -59,6 +59,14 @@ Idle selection reads the game's default descriptor table at 0x53d408. Special
 character IDs 16 and 17 remap to 2 and 7. Camera heading is fixed from each idle's
 initial head direction; animation does not rotate the camera to follow it.
 
+Fighter facing is a reflection, separate from arena rotation. In the supplied
+EXE, 0x490350 toggles group +0x34 bit 0; the joint transform path at 0x4b8140
+tests that bit and calls 0x4bd0d0, which negates the first three s16 matrix
+elements. `fighter_turn` reflects the right-facing stance along the fight axis
+before applying arena yaw, shared by meshes, normals, joint attachments and
+joint bounds. Character and arena selection use the same side-on stance with
+the right preview mirrored toward the left preview.
+
 ## Independent checks
 
 `tests/fixtures/original_matrices.*` records Q12 results from the original

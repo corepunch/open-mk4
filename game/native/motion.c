@@ -1066,9 +1066,6 @@ void reptile_reaction_40(Fighter *fighter) {
   script_vm_enter(fighter, fn_reptile_reaction_40, fighter_ready);
 }
 
-/* 488b80: 490350 toggles the model mirror bit, which the pair-axis
- * heading supersedes here, then 4914c0 runs the 4ea210 getup pairs. */
-
 /* Native service cluster: 4698b0. */
 /* BLOCK record 4e45f0 and HK record 4e45b0 both enter 4698a0 -> VM 4e5bb0:
  * clip 12 (58 samples) advances 24 samples, cues C[75]/C[74], then native

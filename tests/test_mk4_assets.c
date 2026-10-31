@@ -33,6 +33,37 @@ static float mesh_sole(const Character *ch, const Clip *clip, double frame) {
   return sole;
 }
 
+static void fighter_facing_reflection(const Assets *assets) {
+  battle_init(&assets->image, 0, 0);
+  battle_bind_assets(assets);
+  Fighter right = g_battle.fighters[0];
+  right.body.angle[0] = Q16_ONE / 3;
+  right.body.angle[2] = -Q16_ONE / 5;
+  Pose nodes[MK4_MAX_BONES];
+  fighter_pose(assets, &right, nodes);
+  const Character *model = fighter_model(assets, &right);
+  const q16 axes[][2] = {{Q16_ONE, 0}, {3 * Q16_ONE / 5, 4 * Q16_ONE / 5}, {0, Q16_ONE}};
+  for (size_t a = 0; a < sizeof axes / sizeof *axes; ++a) {
+    right.heading[0] = axes[a][0];
+    right.heading[1] = axes[a][1];
+    Fighter left = right;
+    left.facing = -1;
+    left.heading[0] = -right.heading[0];
+    left.heading[1] = -right.heading[1];
+    Mat3 rt = fighter_turn(assets, &right), lt = fighter_turn(assets, &left);
+    float x = q16_float(axes[a][0]), z = q16_float(axes[a][1]);
+    float length = sqrtf(x * x + z * z);
+    x /= length;
+    z /= length;
+    for (size_t i = 0; i < model->bones.count; ++i) {
+      Vec3 r = mat3_apply(rt, nodes[i].position), l = mat3_apply(lt, nodes[i].position);
+      check(fabsf(l.x * x + l.z * z + r.x * x + r.z * z) < .0001f, "Facing must reflect joint positions along the fight axis");
+      check(fabsf(-l.x * z + l.z * x + r.x * z - r.z * x) < .0001f, "Facing must preserve stance depth as the arena rotates");
+      check(fabsf(l.y - r.y) < .0001f, "Facing must preserve joint height with body rotation");
+    }
+  }
+}
+
 static void cross_clip_pose_interpolation(const Assets *assets) {
   const Character *scorpion = roster_character(assets, 0);
   const Clip *from = &assets->clips.data[293];
@@ -234,6 +265,7 @@ int main(void) {
   /* 489ff0 selector8: Liu remap1 reads token1275 -> pcmk0255.esf.
    * This catches accidental routing through indexed sounds (opcode25). */
   assets_load_battle(&assets, "MK4/FILESYS.DAT");
+  fighter_facing_reflection(&assets);
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
   independent_scene_poses(&assets);

@@ -291,7 +291,8 @@ static void draw_mode(Canvas *canvas, const Assets *assets, const FrontendMenu *
 
 /* Fit the complete idle envelope and anchor its feet to the platform. Gallery
  * rendering has UI margins; keep those outside the requested model rectangle. */
-static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw, bool mirrored, double seconds) {
+static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, bool mirrored, double seconds) {
+  const float yaw = 1.570796326794897f; /* Match the arena's right-facing stance; P2 reflects it. */
   static Bounds bounds_cache[MK4_ROSTER_COUNT];
   static bool cached[MK4_ROSTER_COUNT];
   const Character *character = roster_character(assets, roster);
@@ -471,7 +472,7 @@ static void draw_select_side(Canvas *canvas, const Assets *assets, const Fronten
     font_draw(font, canvas, cx - font_width(font, caption, .8f) / 2, side.y + 42, caption, .8f);
   } else {
     blit_name(canvas, font, assets->hud.names[roster], cx, side.y + 38, 2.f);
-    draw_preview(canvas, assets, roster, stage, -.4f, player == 1, seconds);
+    draw_preview(canvas, assets, roster, stage, player == 1, seconds);
   }
   Rect list = {side.x + 16, canvas->h * 70 / 100, side.w - 32, side.h - canvas->h * 70 / 100};
   if (roster >= 0 && !cpu && (active || player == 0)) {
@@ -567,7 +568,7 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
     int cx = player == 0 ? 136 : 1144;
     int roster = player == 0 ? menu->p1 : menu->p2;
     draw_platform(canvas, assets, cx, 570, 244, player == 0 ? 0xffee3020 : 0xff408cff);
-    draw_preview(canvas, assets, roster, (Rect){cx - 112, 190, 224, 380}, -.3f, player == 1, seconds);
+    draw_preview(canvas, assets, roster, (Rect){cx - 112, 190, 224, 380}, player == 1, seconds);
     blit_name(canvas, &assets->hud.font, assets->hud.names[roster], cx, 618, 1.8f);
   }
 }
