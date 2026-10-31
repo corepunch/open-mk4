@@ -597,6 +597,26 @@ static void native_getup_entries(void) {
     fighter_execution_cancel(actor);
     check(actor->execution.frames == NULL, "getup interruption must release native playback");
   }
+  const uint32_t finish_entries[] = {native_reaction_getup_back, native_weapon_fall_finish_getup};
+  for (unsigned i = 0; i < sizeof finish_entries / sizeof *finish_entries; ++i) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef fall = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION};
+    fighter_start_move(actor, S_KNOCKDOWN, &fall);
+    actor->held = BUTTON_BIT(BUTTON_DOWN);
+    script_vm_bind_animation(actor, dat_animation_table + 132 * 12, 0);
+    check(script_native_dispatch(actor, finish_entries[i], MK4_TAIL, 0), "reaction recovery aliases must resolve the shared finish/getup service");
+    check(fighter_move(actor)->clip == 132 && actor->execution.frames != NULL, "recovery must retain the inherited fall before starting getup");
+    InputFrame input[2] = {{.held = BUTTON_BIT(BUTTON_DOWN)}, {0}};
+    for (int visit = 0; visit < 256 && fighter_move(actor)->clip == 132; ++visit) {
+      battle_step(input);
+    }
+    uint32_t descriptor = mk4_image_u32(&image, dat_getup_descriptor_flip_getup + 12) * 4;
+    check(fighter_move(actor)->clip == (int)((descriptor - dat_animation_table) / 12), "fall completion must enter the held-down getup descriptor");
+    for (int visit = 0; visit < 256 && actor->execution.frames != NULL; ++visit) {
+      battle_step(input);
+    }
+    check(actor->state == S_CROUCH && actor->execution.frames == NULL, "fall/getup continuation must return control and release playback");
+  }
 }
 
 static void native_weapon_parameters(void) {

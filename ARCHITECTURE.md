@@ -277,6 +277,13 @@ timing, damage or balance matrices. `make check` includes strict audits, shared
 runtime/engine/asset checks, the bytecode determinism harness and the headless
 game demo. Fighter files contain bytecode/IDs, not copied C implementations.
 
+`make pose-test` runs the existing all-roster button, command, finisher, CPU and
+random-input scenarios with loaded rigs and animation assets. It checks rendered
+transition endpoints against live poses and checks finite joint/facing transforms
+at interpolation endpoints and midpoints, including scene actors. This catches
+rig incompatibilities and lost authored blends; it does not establish exhaustive
+visual or native gameplay parity with retail.
+
 Run `make format` before validation. Commit each coherent verified step directly
 to `main`, preserving unrelated work and recording evidence, checks and material
 limitations. See the [runtime workflow](docs/character-script-port.md),

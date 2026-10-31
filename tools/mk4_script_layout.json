@@ -1579,7 +1579,7 @@
     "native_unresolved_air_diagonal_kick_clip_56_reverse": "0x46e540",
     "native_unresolved_air_diagonal_kick_clip_57_reverse": "0x46e630",
     "native_unresolved_reaction_clip_326_short_slide": "0x433c00",
-    "native_unresolved_weapon_clip_132_directional_fall_task_callback_1": "0x482f90",
+    "native_weapon_fall_finish_getup": "0x482f90",
     "native_unresolved_lp_victim_slide_release": "0x485a70"
   }
 }

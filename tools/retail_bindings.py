@@ -417,6 +417,7 @@ BINDINGS = {
     0x4829e0: Binding('script_vm_enter', 'game/script/vm.c', ('tail',), evidence='Exact native only enters this original script; shared VM continuation', script_target=5149120),
     0x4829f0: Binding('script_vm_enter', 'game/script/vm.c', ('tail',), evidence='Exact native only enters this original script; shared VM continuation', script_target=5149136),
     0x482a00: Binding('script_vm_enter', 'game/script/vm.c', ('tail',), evidence='Exact native only enters this original script; shared VM continuation', script_target=5149152),
+    0x482f90: Binding('action_reaction_getup_back', 'game/native/reaction_entries.c', ('tail',), flow='terminal', evidence='Local482f90 is instruction-equivalent to482790 apart from its self-resume address: finish inherited descriptor via428810, then488ba0 back getup; matching mk4decomp TripleBlockInstallSelfMidBody+0x90', mmove=True),
     0x483090: Binding('shinnok_weapon_sweep_getup', 'game/native/weapon_attacks.c', ('tail',), flow='terminal', evidence='483090 selects4e9498 after victim195; independent KO-aware frame recovery', mmove=True),
     0x4830a0: Binding('shinnok_weapon_sweep_finish', 'game/native/weapon_attacks.c', ('tail',), flow='terminal', evidence='4830a0/483160 finishes selected197 before controller return', mmove=True),
     0x4835f0: Binding('action_reaction_fall', 'game/native/reaction_entries.c', ('tail',), flow='terminal', evidence='One checked native descriptor/continuation boundary; original482790/4835f0/483610 and matching mk4decomp assembly', mmove=True),

@@ -1042,7 +1042,7 @@ weapon_clip_132_directional_fall_task_callback_1:
   peer_motion 0x0, 0xffffe667, 0x666, 0x147
   play_clip 0xd, clip(132)
   native_context 0x0
-  tail 0x0, native_unresolved_weapon_clip_132_directional_fall_task_callback_1
+  tail 0x0, native_weapon_fall_finish_getup
   .zero 4 ; non-executable guard
 
 ; Branches use linked names.

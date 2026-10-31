@@ -1,6 +1,7 @@
 #include "game.h"
 #include "script/vm.h"
 #include "data/tables.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,9 +9,21 @@
 
 /* Every scenario family runs twice with identical inputs and data. Hash the
  * complete simulation after each tick, including the wordcode cursor, to
- * verify deterministic playback, commands, native handoffs and lifetimes. */
+ * verify deterministic playback, commands, native handoffs and lifetimes.
+ * Optional poses mode runs each scenario once with assets to check rendering. */
 
 static Mk4Image image;
+static bool pose_audit;
+static Assets pose_assets;
+static unsigned long audited_poses, audited_transitions;
+
+typedef struct PoseAuditState {
+  const Character *model;
+  int clip, sample, blend_clip;
+  bool blended;
+} PoseAuditState;
+
+static PoseAuditState pose_history[2];
 
 static void check(bool condition, const char *message) {
   if (!condition) {
@@ -156,10 +169,73 @@ static bool settled(const Fighter *fighter) {
   return fighter->state == S_IDLE && !fighter->execution.script.active && fighter->execution.frames == NULL && fighter->pending == NULL;
 }
 
+static void check_pose_finite(const Character *model, const Pose *bones) {
+  for (size_t i = 0; i < model->bones.count; ++i) {
+    check(isfinite(bones[i].position.x) && isfinite(bones[i].position.y) && isfinite(bones[i].position.z), "Non-finite rendered joint position");
+    for (size_t j = 0; j < 9; ++j) {
+      check(isfinite(bones[i].rotation.m[j]), "Non-finite rendered joint rotation");
+    }
+  }
+  ++audited_poses;
+}
+
+/* Exercise presentation with the same loaded command/button/finisher scenarios.
+ * Check shared transition contracts, not authored per-move timing or balance. */
+static void audit_pose_transitions(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    const Fighter *fighter = &g_battle.fighters[slot];
+    const Character *model = fighter_model(&pose_assets, fighter);
+    int clip = fighter_clip(&pose_assets, fighter)->id, sample = fighter_pose_sample(fighter);
+    bool blended = fighter->blend_duration > 0;
+    const PoseAuditState *old = &pose_history[slot];
+    bool changed = old->model != model || old->clip != clip || old->blended != blended || (blended && old->blend_clip != fighter->blend_clip) ||
+                   abs(sample - old->sample) > 2;
+    pose_history[slot] = (PoseAuditState){model, clip, sample, fighter->blend_clip, blended};
+    if (!changed && g_battle.ticks % 64 != 0) {
+      continue;
+    }
+    audited_transitions += changed;
+    Pose bones[MK4_MAX_BONES];
+    for (int part = 0; part <= 2; ++part) {
+      fighter_render_pose(&g_battle, &pose_assets, fighter, part * .5, bones);
+      check_pose_finite(model, bones);
+      Mat3 turn = fighter_render_turn(&g_battle, &pose_assets, fighter, part * .5);
+      for (size_t j = 0; j < 9; ++j) {
+        check(isfinite(turn.m[j]), "Non-finite rendered facing transform");
+      }
+    }
+    if (g_battle.current_animation.tick == g_battle.ticks) {
+      Fighter sampled = *fighter;
+      sampled.sample_override = sample;
+      Pose actual[MK4_MAX_BONES];
+      fighter_pose(&pose_assets, &sampled, actual);
+      for (size_t i = 0; i < model->bones.count; ++i) {
+        Vec3 delta = vec_sub(bones[i].position, actual[i].position);
+        check(fabsf(delta.x) + fabsf(delta.y) + fabsf(delta.z) < .001f, "Snapshot endpoint lost the live pose or authored blend");
+        for (size_t j = 0; j < 9; ++j) {
+          check(fabsf(bones[i].rotation.m[j] - actual[i].rotation.m[j]) < .001f, "Snapshot endpoint lost live joint angles");
+        }
+      }
+    }
+  }
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    const SceneActor *scene = &g_battle.scene_actors[i];
+    if (scene->active && g_battle.ticks % 2 == 0) {
+      Pose bones[MK4_MAX_BONES];
+      fighter_render_pose(&g_battle, &pose_assets, &scene->actor, .5, bones);
+      check_pose_finite(fighter_model(&pose_assets, &scene->actor), bones);
+    }
+  }
+}
+
 /* Standing HK within 0xc000 selects the native close knee instead; 0x14000 reaches the roster selector and still lands. */
 static void start(const Scenario *scenario) {
   battle_init(&image, scenario->p1, scenario->p2);
   g_battle.data = &image;
+  if (pose_audit) {
+    memset(pose_history, 0, sizeof pose_history);
+    battle_bind_assets(&pose_assets);
+  }
   if (scenario->kind == KIND_BUTTON || scenario->kind == KIND_COMMAND) {
     g_battle.phase = PHASE_FIGHT;
     q16 distance = distances[scenario->distance];
@@ -362,8 +438,10 @@ static void run_against(Run *out, const Scenario *scenario, const Run *reference
   uint32_t state = scenario->seed | 1u, held[2] = {0, 0};
   InputFrame input[2] = {{0}, {0}};
   int tick = 0;
-  out->hashes[0] = hash_battle();
-  diagnose(&out->diagnostics[0]);
+  if (!pose_audit) {
+    out->hashes[0] = hash_battle();
+    diagnose(&out->diagnostics[0]);
+  }
   while (drive(scenario, tick, input, &state, held)) {
     Phase before_phase = g_battle.phase;
     battle_step(input);
@@ -376,8 +454,12 @@ static void run_against(Run *out, const Scenario *scenario, const Run *reference
             g_battle.fighters[1].health);
       }
     }
-    out->hashes[tick] = hash_battle();
-    diagnose(&out->diagnostics[tick]);
+    if (pose_audit) {
+      audit_pose_transitions();
+    } else {
+      out->hashes[tick] = hash_battle();
+      diagnose(&out->diagnostics[tick]);
+    }
     if (reference != NULL && (tick > reference->ticks || reference->hashes[tick] != out->hashes[tick])) {
       report_divergence(scenario, reference, out, tick);
     }
@@ -413,6 +495,11 @@ static void report_divergence(const Scenario *scenario, const Run *reference, co
 
 static void compare(const Scenario *scenario) {
   run(&first_run, scenario);
+  if (pose_audit) {
+    compared_ticks += (unsigned long)first_run.ticks;
+    ++compared_scenarios;
+    return;
+  }
   run_against(&second_run, scenario, &first_run);
   if (first_run.ticks != second_run.ticks) {
     describe(scenario);
@@ -635,6 +722,12 @@ int main(int argc, char **argv) {
   bool quick = argc > 1 && strcmp(argv[1], "quick") == 0, extended = argc > 1 && strcmp(argv[1], "long") == 0;
   image = mk4_image_load("build/mk4.data");
   atexit(on_exit_report);
+  setvbuf(stdout, NULL, _IOLBF, 0);
+  pose_audit = argc > 1 && strcmp(argv[1], "poses") == 0;
+  if (pose_audit) {
+    assets_load(&pose_assets, "MK4/FILESYS.DAT", "build/mk4.data");
+    assets_load_battle(&pose_assets, "MK4/FILESYS.DAT");
+  }
   if ((argc == 6 || argc == 11) && strcmp(argv[1], "trace") == 0) {
     /* trace <cpu|random|victory|cpufinish> <p1> <p2> <seed>, or trace <command|finish> <p1> <p2>
      * <slot> <button> <released> <pattern hex> <distance> <stance>: print every script entry. */
@@ -679,6 +772,15 @@ int main(int argc, char **argv) {
   equivalence_finishers();
   equivalence_cpu(quick ? 1 : extended ? 9 : 3);
   equivalence_random(quick ? 1 : extended ? 12 : 3);
+  if (pose_audit) {
+    current_scenario = NULL;
+    battle_init(&image, 0, 4);
+    assets_free(&pose_assets);
+    mk4_image_free(&image);
+    printf("PASS: Asset-backed pose audit: %lu scenarios, %lu ticks, %lu transitions, %lu rendered poses\n", compared_scenarios, compared_ticks,
+        audited_transitions, audited_poses);
+    return 0;
+  }
   lifetimes();
   benchmark();
   battle_init(&image, 0, 4);

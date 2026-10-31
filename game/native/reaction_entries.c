@@ -87,8 +87,9 @@ void action_launch_reaction(Fighter *fighter) {
   script_native_continue(fighter, entry, false, mk4_script_thrown_ready);
 }
 
-/* 482790 and483610 both finish the inherited descriptor; their native
- * completion differs. Engine continuations replace the task84 resume flag. */
+/* 482790,482f90 and483610 finish the inherited descriptor; their native
+ * completion differs.482f90 is the same finish/back-getup as482790.
+ * Engine continuations replace the task84 resume flag. */
 void action_reaction_getup_back(Fighter *fighter) {
   mk4_mmove_finish_getup(fighter, dat_getup_descriptor_flip_getup);
 }

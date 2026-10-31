@@ -17,7 +17,7 @@ SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools")
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: bytecode-test scripts-source-check scripts-export input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: pose-test bytecode-test scripts-source-check scripts-export input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: build/mk4.data build/mk4_linked.h build/mk4_script_names.inc build/mk4_natives.inc
@@ -124,6 +124,8 @@ build/test-bytecode: tests/test_bytecode.c game/battle.c $(ROSTER_SOURCES) $(GAM
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_bytecode.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 bytecode-test: build/test-bytecode scripts
 	./build/test-bytecode
+pose-test: build/test-bytecode scripts
+	./build/test-bytecode poses
 build/test-menu: tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_menu.c game/menu.c game/draw.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
