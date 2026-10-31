@@ -15,9 +15,26 @@ int main(void) {
   bool quit = false;
   menu_init(&menu, &assets.image);
   require(!menu_command(&menu, MENU_CONFIRM, &quit) && menu.screen == MENU_SELECT, "Arcade must select a fighter first");
-  require(!menu_command(&menu, MENU_CONFIRM, &quit) && menu.screen == MENU_TOWER, "Arcade must choose a tower instead of an arena");
   Canvas canvas;
   canvas_init(&canvas, 1280, 800);
+  static Battle before;
+  memcpy(&before, &g_battle, sizeof before);
+  menu_draw(&canvas, &assets, &menu, 0);
+  save_bmp(&canvas, "build/fighter-select.bmp");
+  static uint32_t preview_pixels[360 * 430];
+  for (int y = 0; y < 430; ++y) {
+    memcpy(&preview_pixels[y * 360], &canvas.pixels[(y + 80) * canvas.w + 20], 360 * sizeof *preview_pixels);
+  }
+  menu_draw(&canvas, &assets, &menu, .5);
+  size_t changed = 0;
+  for (int y = 0; y < 430; ++y) {
+    for (int x = 0; x < 360; ++x) {
+      changed += preview_pixels[y * 360 + x] != canvas.pixels[(y + 80) * canvas.w + x + 20];
+    }
+  }
+  require(changed > 100, "The selected fighter preview must animate with host time");
+  require(memcmp(&before, &g_battle, sizeof before) == 0, "Fighter previews must not advance or mutate the battle");
+  require(!menu_command(&menu, MENU_CONFIRM, &quit) && menu.screen == MENU_TOWER, "Arcade must choose a tower instead of an arena");
   menu_draw(&canvas, &assets, &menu, 0);
   save_bmp(&canvas, "build/tower.bmp");
   require(!menu_command(&menu, MENU_LEFT, &quit) && menu.tower == MENU_TOWERS - 1, "Tower selection wraps left");
@@ -62,10 +79,17 @@ int main(void) {
   menu_command(&menu, MENU_CONFIRM, &quit);
   menu_command(&menu, MENU_CONFIRM, &quit);
   require(menu.screen == MENU_SELECT && menu.selecting_player == 1, "Local play must select both fighters");
+  menu_draw(&canvas, &assets, &menu, .5);
+  save_bmp(&canvas, "build/fighter-select-player-two.bmp");
+  FrontendMenu large_preview = menu;
+  large_preview.selecting_player = 0;
+  large_preview.cursor = 16;
+  large_preview.p1 = 15;
+  menu_draw(&canvas, &assets, &large_preview, .5);
+  save_bmp(&canvas, "build/fighter-select-large-rig.bmp");
   menu_command(&menu, MENU_CONFIRM, &quit);
   require(menu.screen == MENU_ARENA && menu_command(&menu, MENU_CONFIRM, &quit), "Local play must retain arena selection");
   battle_init(&assets.image, 0, 4);
-  static Battle before;
   memcpy(&before, &g_battle, sizeof before);
   Canvas preview;
   canvas_init(&preview, 736, 316);

@@ -289,18 +289,30 @@ static void draw_mode(Canvas *canvas, const Assets *assets, const FrontendMenu *
   }
 }
 
-static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw, double seconds) {
+/* Fit the complete idle envelope and anchor its feet to the platform. Gallery
+ * rendering has UI margins; keep those outside the requested model rectangle. */
+static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw, bool mirrored, double seconds) {
   static Bounds bounds_cache[MK4_ROSTER_COUNT];
   static bool cached[MK4_ROSTER_COUNT];
-  const Character *character = &assets->characters.data[roster];
+  const Character *character = roster_character(assets, roster);
   const Clip *clip = &assets->clips.data[character->idle];
   if (!cached[roster]) {
     bounds_cache[roster] = character_bounds(character, clip);
     cached[roster] = true;
   }
+  Bounds model = bounds_cache[roster];
+  float height = fmaxf(.1f, model.hi.y - model.lo.y);
+  float width = model.hi.x - model.lo.x;
+  float turned_width = fabsf(cosf(yaw)) * width + fabsf(sinf(yaw)) * (model.hi.z - model.lo.z);
+  width = fmaxf(fmaxf(width, turned_width), height * .57f);
+  int fitted = mini(bounds.h, (int)((float)bounds.w * height / width));
+  Rect gallery = {bounds.x - 19, bounds.y + bounds.h - fitted - 30, bounds.w + 38, fitted + 76};
   double frame = fmod(seconds * 24.0, (double)clip->frames.count);
-  draw_character(canvas, character, clip, frame, bounds, bounds_cache[roster], yaw, false, false);
-  blit_name(canvas, &assets->hud.font, assets->hud.names[roster], bounds.x + bounds.w / 2, bounds.y + bounds.h - 46, 1.5f);
+  if (mirrored) {
+    draw_character_mirrored(canvas, character, clip, frame, gallery, model, yaw);
+  } else {
+    draw_character(canvas, character, clip, frame, gallery, model, yaw, false, false);
+  }
 }
 
 typedef struct SelectTile {
@@ -382,15 +394,18 @@ static void select_floor(Canvas *canvas, int cx, int cy, int rx, int ry) {
   }
 }
 
-static void select_silhouette(Canvas *canvas, Rect area) {
-  for (int y = maxi(0, area.y); y < mini(canvas->h, area.y + area.h); ++y) {
-    for (int x = maxi(0, area.x); x < mini(canvas->w, area.x + area.w); ++x) {
-      size_t at = (size_t)y * (size_t)canvas->w + (size_t)x;
-      if (canvas->depth[at] != -INFINITY) {
-        canvas->pixels[at] = 0xff2b3038;
-      }
-    }
-  }
+/* Reuse the menu's marble artwork for a shallow, bevelled display plinth. */
+static void draw_platform(Canvas *canvas, const Assets *assets, int cx, int floor_y, int width, uint32_t accent) {
+  float left = (float)(cx - width / 2), right = (float)(cx + width / 2);
+  float y = (float)floor_y, bevel = (float)width * .08f, depth = (float)width * .11f;
+  const Texture *marble = &assets->hud.select_scene.textures.data[0];
+  Rect source = {0, 0, 212, 112};
+  float top[4][2] = {{left + bevel, y - depth * .35f}, {right - bevel, y - depth * .35f}, {right, y + depth * .35f}, {left, y + depth * .35f}};
+  float face[4][2] = {{left, y + depth * .35f}, {right, y + depth * .35f}, {right - bevel, y + depth}, {left + bevel, y + depth}};
+  canvas_quad(canvas, marble, source, face, 0xff777c88);
+  canvas_quad(canvas, marble, source, top, 0xffccc7bc);
+  canvas_line(canvas, (int)left, (int)(y + depth * .35f), (int)right, (int)(y + depth * .35f), accent);
+  select_floor(canvas, cx, floor_y, width * 34 / 100, maxi(4, width / 30));
 }
 
 static int select_hovered(const FrontendMenu *menu, int player) {
@@ -432,62 +447,33 @@ static void draw_move_list(Canvas *canvas, const Assets *assets, const Character
   }
 }
 
-static void draw_select_side(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, int player, Rect side, float seconds) {
-  static Bounds bounds_cache[MK4_ROSTER_COUNT];
-  static bool cached[MK4_ROSTER_COUNT];
+static void draw_select_side(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, int player, Rect side, double seconds) {
   const Geometry *font = &assets->hud.font;
-  bool team = menu->mode == MENU_TEAM;
   bool active = menu->selecting_player == player;
-  bool cpu = player == 1 && !team;
-  int roster = -1;
+  bool cpu = player == 1 && menu->mode != MENU_TEAM;
+  int roster = player == 0 ? menu->p1 : menu->p2;
   if (active) {
     roster = select_hovered(menu, player);
-  } else if (player == 0) {
-    roster = menu->p1;
   } else if (cpu) {
-    // Single-player modes face the next roster slot; see menu_command.
     int hovered = select_hovered(menu, 0);
     roster = hovered < 0 ? -1 : (hovered + 1) % roster_count();
-  } else {
-    roster = menu->p2;
   }
-  const char *label = cpu ? "CPU" : player == 0 ? "PLAYER 1" : "PLAYER 2";
-  int label_x = player == 0 ? side.x + 24 : side.x + side.w - 24 - font_width(font, label, .75f);
-  font_draw(font, canvas, label_x, side.y + 6, label, .75f);
-
-  // draw_character centers the idle bounds, leaving the feet 46 pixels
-  // above the bottom of the stage rectangle.
-  Rect stage = {side.x + 10, side.y + 24, side.w - 20, 452};
-  int floor_y = stage.y + stage.h - 46;
-  select_floor(canvas, stage.x + stage.w / 2, floor_y - 4, stage.w * 36 / 100, 20);
+  int cx = side.x + side.w / 2;
+  const char *label = cpu ? "OPPONENT PREVIEW" : player == 0 ? "PLAYER 1" : "PLAYER 2";
+  font_draw(font, canvas, cx - font_width(font, label, .7f) / 2, side.y + 10, label, .7f);
+  int floor_y = canvas->h * 63 / 100;
+  uint32_t accent = active ? (player == 0 ? 0xffee3020 : 0xff408cff) : 0xff9c9b94;
+  draw_platform(canvas, assets, cx, floor_y, side.w * 83 / 100, accent);
+  Rect stage = {side.x + 30, canvas->h * 105 / 1000, side.w - 60, floor_y - canvas->h * 105 / 1000};
   if (roster < 0) {
-    const char *mystery = "?";
     const char *caption = menu->cursor == 15 ? "RANDOM FIGHTER" : "HIDDEN FIGHTER";
-    font_draw(font, canvas, stage.x + (stage.w - font_width(font, mystery, 7.f)) / 2, stage.y + 90, mystery, 7.f);
-    font_draw(font, canvas, stage.x + (stage.w - font_width(font, caption, .9f)) / 2, floor_y + 8, caption, .9f);
+    font_draw(font, canvas, cx - font_width(font, "?", 7.f) / 2, stage.y + stage.h / 3, "?", 7.f);
+    font_draw(font, canvas, cx - font_width(font, caption, .8f) / 2, side.y + 42, caption, .8f);
   } else {
-    const Character *character = roster_character(assets, roster);
-    const Clip *clip = &assets->clips.data[character->idle];
-    if (!cached[roster]) {
-      bounds_cache[roster] = character_bounds(character, clip);
-      cached[roster] = true;
-    }
-    double frame = fmod((double)seconds * 24.0, (double)clip->frames.count);
-    // Both previews share one turn toward the wall; player two is mirrored
-    // the way a fighter facing left is in battle.
-    if (player == 0) {
-      draw_character(canvas, character, clip, frame, stage, bounds_cache[roster], -.55f, false, false);
-    } else {
-      draw_character_mirrored(canvas, character, clip, frame, stage, bounds_cache[roster], -.55f);
-    }
-    if (cpu || (!active && player == 1)) {
-      // Team mode shows player two's previous pick until their turn.
-      select_silhouette(canvas, stage);
-    } else {
-      blit_name(canvas, font, assets->hud.names[roster], stage.x + stage.w / 2, floor_y + 8, 2.f);
-    }
+    blit_name(canvas, font, assets->hud.names[roster], cx, side.y + 38, 2.f);
+    draw_preview(canvas, assets, roster, stage, -.4f, player == 1, seconds);
   }
-  Rect list = {side.x + 16, side.y + 482, side.w - 32, side.h - 482};
+  Rect list = {side.x + 16, canvas->h * 70 / 100, side.w - 32, side.h - canvas->h * 70 / 100};
   if (roster >= 0 && !cpu && (active || player == 0)) {
     draw_move_list(canvas, assets, roster_def(roster), list);
   }
@@ -577,8 +563,13 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
   snprintf(choice, sizeof choice, "ARENA %02d / %02d", menu->arena + 1, MK4_ARENA_COUNT);
   centered(&assets->hud.font, canvas, 603, choice, .7f);
   centered(&assets->hud.font, canvas, 646, "LEFT / RIGHT TO CHOOSE   ENTER TO FIGHT   ESC TO GO BACK", .58f);
-  draw_preview(canvas, assets, menu->p1, (Rect){78, 273, 172, 238}, -.18f, seconds);
-  draw_preview(canvas, assets, menu->p2, (Rect){1030, 273, 172, 238}, .18f, seconds);
+  for (int player = 0; player < 2; ++player) {
+    int cx = player == 0 ? 136 : 1144;
+    int roster = player == 0 ? menu->p1 : menu->p2;
+    draw_platform(canvas, assets, cx, 570, 244, player == 0 ? 0xffee3020 : 0xff408cff);
+    draw_preview(canvas, assets, roster, (Rect){cx - 112, 190, 224, 380}, -.3f, player == 1, seconds);
+    blit_name(canvas, &assets->hud.font, assets->hud.names[roster], cx, 618, 1.8f);
+  }
 }
 
 /* Use the retail portrait meshes' UV rectangles so atlas packing remains
