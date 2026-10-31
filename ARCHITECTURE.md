@@ -203,6 +203,10 @@ new phase or interrupting one invalidates stale callbacks and clears the old
 script cursor and pending execution state. Script tasks require no C stacks or GC.
 The simulation captures animation history after each tick (at the existing
 30 Hz animation sampling cadence), including early phase exits and resets.
+Snapshots own the resolved local animation channels and root translation,
+including active script/native blends, plus the clip's facing alignment.
+Rendering interpolates those captured poses and alignments together; it never
+traverses skipped sample indices or substitutes an unblended transition target.
 `game/draw.h` takes an explicit `const Battle *` and borrowed assets. Drawing
 never captures history or advances combat, scripts or presentation effects.
 The renderer reads the supplied match on the same host thread; animation

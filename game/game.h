@@ -612,6 +612,8 @@ typedef struct FighterAnimationFrame {
   int clip;
   double sample;
   bool valid;
+  PoseFrame pose;
+  float front_yaw;
 } FighterAnimationFrame;
 
 typedef struct AnimationSnapshot {
@@ -873,10 +875,12 @@ void battle_bind_assets(const Assets *assets);
 const Character *fighter_model(const Assets *assets, const Fighter *fighter);
 const Clip *fighter_clip(const Assets *assets, const Fighter *fighter);
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
+Mat3 fighter_render_turn(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
 double fighter_pose_frame(const Fighter *fighter);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
+void fighter_capture_animation_frame(const Assets *assets, const Fighter *fighter, FighterAnimationFrame *frame);
 void fighter_render_pose(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);

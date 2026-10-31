@@ -164,7 +164,7 @@ static Triangles fighter_geometry(const Battle *battle, const Assets *assets, co
   } else {
     fighter_render_pose(battle, assets, fighter, interpolation, bones);
   }
-  Mat3 turn = fighter_turn(assets, fighter);
+  Mat3 turn = subtree >= 0 || model != NULL ? fighter_turn(assets, fighter) : fighter_render_turn(battle, assets, fighter, interpolation);
   /* The pose keeps every root-motion channel, as 0x4b8140 does for joints.
    * Y plants the sole: uppercut 293 opens near +0.41, crouch 259 settles
    * near +0.44 and knockdown 186 near +0.97. X/Z keep planted feet still:

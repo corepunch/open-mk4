@@ -67,6 +67,13 @@ typedef struct Frame {
   Angles angles;
 } Frame;
 
+/* Owned local animation channels, safe to copy into render history. */
+typedef struct PoseFrame {
+  Vec3 translation;
+  Vec3 angles[MK4_MAX_BONES];
+  size_t count;
+} PoseFrame;
+
 ARRAY_TYPE(Frames, Frame);
 
 typedef struct Clip {
@@ -167,6 +174,9 @@ void assets_free(Assets *assets);
 /* Output is caller-owned and holds at least ch->bones.count entries. */
 void pose(const Character *ch, const Clip *clip, double frame, Pose output[MK4_MAX_BONES]);
 void pose_static(const Character *ch, Pose output[MK4_MAX_BONES]);
+void pose_frame_sample(const Clip *clip, double sample, PoseFrame *output);
+void pose_frame_blend(const PoseFrame *from, const PoseFrame *to, float fraction, PoseFrame *output);
+void pose_frame(const Character *ch, const PoseFrame *frame, Pose output[MK4_MAX_BONES]);
 void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose output[MK4_MAX_BONES]);
 void pose_blend_frames(const Character *ch, const Clip *from, double from_frame, const Clip *to, double to_frame, float fraction, Pose output[MK4_MAX_BONES]);
 #endif

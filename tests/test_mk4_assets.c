@@ -1,6 +1,7 @@
 #include "game.h"
 #include "mk4_program.h"
 #include "native/actions.h"
+#include "native/capabilities.h"
 #include "mk4_assets.h"
 #include <math.h>
 #include <stdio.h>
@@ -106,7 +107,9 @@ static void fighter_render_snapshots(const Assets *assets) {
   Fighter *fighter = &g_battle.fighters[0];
   action_uppercut(fighter);
   battle_bind_assets(assets);
+  Mat3 source_turn = fighter_turn(assets, fighter);
   action_high_kick(fighter);
+  Mat3 target_turn = fighter_turn(assets, fighter);
   fighter->sample_override = 12;
   g_battle.ticks = 2;
   battle_capture_render_snapshot();
@@ -125,6 +128,12 @@ static void fighter_render_snapshots(const Assets *assets) {
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(fabsf(rendered[i].position.x - target[i].position.x) < .0001f, "Render snapshot reaches the new clip pose");
   }
+  Mat3 render_source = fighter_render_turn(&g_battle, assets, fighter, 0.0);
+  Mat3 render_target = fighter_render_turn(&g_battle, assets, fighter, 1.0);
+  for (size_t k = 0; k < 9; ++k) {
+    check(fabsf(render_source.m[k] - source_turn.m[k]) < .0001f, "Clip orientation must stay with the source pose at transition start");
+    check(fabsf(render_target.m[k] - target_turn.m[k]) < .0001f, "Clip orientation must reach the target with its pose");
+  }
   fighter_render_pose(&g_battle, assets, fighter, 0.5, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(isfinite(rendered[i].position.x) && isfinite(rendered[i].rotation.m[0]), "Cross-animation render snapshot must remain finite");
@@ -139,6 +148,8 @@ static void fighter_render_snapshots(const Assets *assets) {
   for (size_t pair = 0; pair < sizeof samples / sizeof *samples; ++pair) {
     previous->sample = samples[pair][0];
     current->sample = samples[pair][1];
+    pose_frame_sample(clip, previous->sample, &previous->pose);
+    pose_frame_sample(clip, current->sample, &current->pose);
     pose_blend_frames(model, clip, previous->sample, clip, current->sample, .5f, target);
     fighter_render_pose(&g_battle, assets, fighter, .5, rendered);
     for (size_t i = 0; i < model->bones.count; ++i) {
@@ -147,6 +158,40 @@ static void fighter_render_snapshots(const Assets *assets) {
           "Same-clip loops and branches must blend selected poses without visiting skipped samples");
       for (size_t k = 0; k < 9; ++k) {
         check(fabsf(rendered[i].rotation.m[k] - target[i].rotation.m[k]) < .0001f, "Same-clip transitions must interpolate endpoint joint angles");
+      }
+    }
+  }
+}
+
+static void interrupted_blend_history(const Assets *assets) {
+  for (int walking = 0; walking < 2; ++walking) {
+    battle_init(&assets->image, 0, 0);
+    battle_bind_assets(assets);
+    Fighter *fighter = &g_battle.fighters[0];
+    action_high_kick(fighter);
+    fighter->sample_override = 12;
+    mk4_return_to_stance(fighter);
+    Pose expected[MK4_MAX_BONES], rendered[MK4_MAX_BONES];
+    fighter_pose(assets, fighter, expected);
+    g_battle.ticks = 2;
+    battle_capture_render_snapshot();
+    if (walking) {
+      fighter->held = BUTTON_BIT(BUTTON_RIGHT);
+      mk4_walk(fighter);
+    } else {
+      action_jab(fighter);
+    }
+    check(fighter->blend_duration == 0, "New movement or attack must interrupt stance blending");
+    g_battle.ticks = 4;
+    battle_capture_render_snapshot();
+    fighter_render_pose(&g_battle, assets, fighter, 0., rendered);
+    const Character *model = fighter_model(assets, fighter);
+    for (size_t i = 0; i < model->bones.count; ++i) {
+      check(fabsf(rendered[i].position.x - expected[i].position.x) < .0001f && fabsf(rendered[i].position.y - expected[i].position.y) < .0001f &&
+                fabsf(rendered[i].position.z - expected[i].position.z) < .0001f,
+          "Interrupted blend history must preserve the displayed pose, not flash the unblended idle target");
+      for (size_t k = 0; k < 9; ++k) {
+        check(fabsf(rendered[i].rotation.m[k] - expected[i].rotation.m[k]) < .0001f, "Interrupted blend history must preserve displayed joint angles");
       }
     }
   }
@@ -289,6 +334,7 @@ int main(void) {
   fighter_facing_reflection(&assets);
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
+  interrupted_blend_history(&assets);
   independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

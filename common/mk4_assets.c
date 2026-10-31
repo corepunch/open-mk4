@@ -801,57 +801,47 @@ void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *t
   pose_blend_frames(ch, from, sample, to, target, fraction, out);
 }
 
-void pose_blend_frames(const Character *ch, const Clip *from, double from_frame, const Clip *to, double to_frame, float fraction, Pose out[MK4_MAX_BONES]) {
-  require(from->frames.count > 0 && to->frames.count > 0, "Empty blend clip");
-  double source = fmod(fmax(0., from_frame), (double)from->frames.count);
-  double target = fmod(fmax(0., to_frame), (double)to->frames.count);
-  size_t source_a = (size_t)source, source_b = (source_a + 1) % from->frames.count;
-  size_t target_a = (size_t)target, target_b = (target_a + 1) % to->frames.count;
-  float source_fraction = (float)(source - (double)source_a);
-  float target_fraction = (float)(target - (double)target_a);
-  fraction = fmaxf(0.f, fminf(1.f, fraction));
-  const Frame *sa = &from->frames.data[source_a], *sb = &from->frames.data[source_b];
-  const Frame *ta = &to->frames.data[target_a], *tb = &to->frames.data[target_b];
-  require(sa->angles.count == ta->angles.count && ta->angles.count == tb->angles.count, "Blend clips have different rigs");
-  require(ch->bones.count <= MK4_MAX_BONES, "Too many rig bones");
-  for (size_t i = 0; i < ch->bones.count; ++i) {
-    const Bone *bone = &ch->bones.data[i];
-    Pose p;
-    Vec3 angle = {0};
-    if (bone->channel >= 0 && (size_t)bone->channel < sa->angles.count) {
-      Vec3 s0 = sa->angles.data[bone->channel], s1 = sb->angles.data[bone->channel];
-      Vec3 t0 = ta->angles.data[bone->channel], t1 = tb->angles.data[bone->channel];
-      Vec3 source_angle = {
-          s0.x + remainderf(s1.x - s0.x, 4096.f) * source_fraction,
-          s0.y + remainderf(s1.y - s0.y, 4096.f) * source_fraction,
-          s0.z + remainderf(s1.z - s0.z, 4096.f) * source_fraction,
-      };
-      Vec3 target_angle = {
-          t0.x + remainderf(t1.x - t0.x, 4096.f) * target_fraction,
-          t0.y + remainderf(t1.y - t0.y, 4096.f) * target_fraction,
-          t0.z + remainderf(t1.z - t0.z, 4096.f) * target_fraction,
-      };
-      angle = (Vec3){
-          source_angle.x + remainderf(target_angle.x - source_angle.x, 4096.f) * fraction,
-          source_angle.y + remainderf(target_angle.y - source_angle.y, 4096.f) * fraction,
-          source_angle.z + remainderf(target_angle.z - source_angle.z, 4096.f) * fraction,
-      };
-    }
-    p.rotation = bone->channel >= 0 ? rotation(bone->kind, angle) : mat3_identity();
-    p.position = bone->translation;
-    if (bone->parent < 0) {
-      Vec3 source_root = vec_add(vec_scale(sa->translation, 1.f - source_fraction), vec_scale(sb->translation, source_fraction));
-      Vec3 target_root = vec_add(vec_scale(ta->translation, 1.f - target_fraction), vec_scale(tb->translation, target_fraction));
-      p.position = vec_add(p.position, vec_add(vec_scale(source_root, 1.f - fraction), vec_scale(target_root, fraction)));
-    }
-    if (bone->parent >= 0) {
-      require((size_t)bone->parent < i, "Skeleton is not in parent order");
-      const Pose *parent = &out[bone->parent];
-      p.position = vec_add(parent->position, mat3_apply(parent->rotation, p.position));
-      p.rotation = mat3_mul(parent->rotation, p.rotation);
-    }
-    out[i] = p;
+void pose_frame_sample(const Clip *clip, double sample, PoseFrame *out) {
+  require(clip->frames.count > 0, "Empty animation clip");
+  double f = fmod(fmax(0., sample), (double)clip->frames.count);
+  size_t a = (size_t)f, b = (a + 1) % clip->frames.count;
+  const Frame *from = &clip->frames.data[a], *to = &clip->frames.data[b];
+  float fraction = (float)(f - (double)a);
+  require(from->angles.count == to->angles.count && from->angles.count <= MK4_MAX_BONES, "Invalid animation channels");
+  out->count = from->angles.count;
+  out->translation = vec_add(vec_scale(from->translation, 1.f - fraction), vec_scale(to->translation, fraction));
+  for (size_t i = 0; i < out->count; ++i) {
+    Vec3 a = from->angles.data[i], b = to->angles.data[i];
+    out->angles[i] =
+        (Vec3){a.x + remainderf(b.x - a.x, 4096.f) * fraction, a.y + remainderf(b.y - a.y, 4096.f) * fraction, a.z + remainderf(b.z - a.z, 4096.f) * fraction};
   }
+}
+
+void pose_frame_blend(const PoseFrame *from, const PoseFrame *to, float fraction, PoseFrame *out) {
+  require(from->count == to->count && from->count <= MK4_MAX_BONES, "Blend frames have different rigs");
+  fraction = fmaxf(0.f, fminf(1.f, fraction));
+  out->count = from->count;
+  out->translation = vec_add(vec_scale(from->translation, 1.f - fraction), vec_scale(to->translation, fraction));
+  for (size_t i = 0; i < out->count; ++i) {
+    Vec3 a = from->angles[i], b = to->angles[i];
+    out->angles[i] =
+        (Vec3){a.x + remainderf(b.x - a.x, 4096.f) * fraction, a.y + remainderf(b.y - a.y, 4096.f) * fraction, a.z + remainderf(b.z - a.z, 4096.f) * fraction};
+  }
+}
+
+void pose_frame(const Character *ch, const PoseFrame *sample, Pose out[MK4_MAX_BONES]) {
+  require(sample->count <= MK4_MAX_BONES, "Too many animation channels");
+  /* The existing frame view is read-only during hierarchy construction. */
+  Frame frame = {.translation = sample->translation, .angles = {(Vec3 *)sample->angles, sample->count, sample->count}};
+  pose_frames(ch, &frame, &frame, 0.f, out);
+}
+
+void pose_blend_frames(const Character *ch, const Clip *from, double from_frame, const Clip *to, double to_frame, float fraction, Pose out[MK4_MAX_BONES]) {
+  PoseFrame source, target, blend;
+  pose_frame_sample(from, from_frame, &source);
+  pose_frame_sample(to, to_frame, &target);
+  pose_frame_blend(&source, &target, fraction, &blend);
+  pose_frame(ch, &blend, out);
 }
 
 static void meshes_free(Meshes *meshes) {

@@ -59,9 +59,7 @@ int fighter_pose_sample(const Fighter *fighter) {
   return (int)fighter_pose_frame(fighter);
 }
 
-Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
-  const Character *ch = fighter_model(assets, fighter);
-  const Clip *clip = fighter_clip(assets, fighter);
+static float clip_front_yaw(const Character *ch, const Clip *clip) {
   Pose initial[MK4_MAX_BONES];
   pose(ch, clip, 0, initial);
   float front = ch->front_yaw;
@@ -72,6 +70,10 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
       break;
     }
   }
+  return front;
+}
+
+static Mat3 facing_transform(const Fighter *fighter, float front) {
   /* Retail 490350 toggles group +0x34 bit 0; 4b8140 tests it and calls
    * 4bd0d0 to negate the first matrix row. Use the chest-visible,
    * left-facing pose and reflect it for right-facing fighters. Keep arena yaw
@@ -89,6 +91,31 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
   return mat3_mul(arena, mat3_mul(stance, angular));
 }
 
+Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
+  return facing_transform(fighter, clip_front_yaw(fighter_model(assets, fighter), fighter_clip(assets, fighter)));
+}
+
+static bool render_history(
+    const Battle *battle, const Character *model, const Fighter *fighter, const FighterAnimationFrame **from, const FighterAnimationFrame **to) {
+  int index = fighter == &battle->fighters[0] ? 0 : fighter == &battle->fighters[1] ? 1 : -1;
+  if (index < 0 || !battle->previous_animation.valid || !battle->current_animation.valid) {
+    return false;
+  }
+  *from = &battle->previous_animation.fighters[index];
+  *to = &battle->current_animation.fighters[index];
+  return (*from)->valid && (*to)->valid && (*from)->model == model && (*to)->model == model;
+}
+
+Mat3 fighter_render_turn(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation) {
+  const FighterAnimationFrame *from, *to;
+  if (!render_history(battle, fighter_model(assets, fighter), fighter, &from, &to)) {
+    return fighter_turn(assets, fighter);
+  }
+  float fraction = (float)fmax(0., fmin(1., interpolation));
+  float front = from->front_yaw + remainderf(to->front_yaw - from->front_yaw, 6.283185307179586f) * fraction;
+  return facing_transform(fighter, front);
+}
+
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]) {
   const Character *ch = fighter_model(assets, fighter);
   const Clip *clip = fighter_clip(assets, fighter);
@@ -101,35 +128,37 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   }
 }
 
-void fighter_render_pose(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
+void fighter_capture_animation_frame(const Assets *assets, const Fighter *fighter, FighterAnimationFrame *frame) {
   const Character *ch = fighter_model(assets, fighter);
   const Clip *clip = fighter_clip(assets, fighter);
+  *frame = (FighterAnimationFrame){.model = ch, .clip = (int)(clip - assets->clips.data), .sample = fighter_pose_sample(fighter), .valid = true};
+  frame->front_yaw = clip_front_yaw(ch, clip);
+  pose_frame_sample(clip, frame->sample, &frame->pose);
   if (fighter->blend_duration > 0) {
     int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
-    int sample = fighter_pose_sample(fighter);
-    pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, sample, fraction, output);
+    PoseFrame source;
+    pose_frame_sample(&assets->clips.data[id], fighter->blend_sample, &source);
+    pose_frame_blend(&source, &frame->pose, fraction, &frame->pose);
+    float front = clip_front_yaw(ch, &assets->clips.data[id]);
+    frame->front_yaw = front + remainderf(frame->front_yaw - front, 6.283185307179586f) * clampf(fraction, 0.f, 1.f);
+  }
+}
+
+void fighter_render_pose(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
+  const Character *ch = fighter_model(assets, fighter);
+  const FighterAnimationFrame *from, *to;
+  if (!render_history(battle, ch, fighter, &from, &to)) {
+    fighter_pose(assets, fighter, output);
     return;
   }
-  int fighter_index = fighter == &battle->fighters[0] ? 0 : fighter == &battle->fighters[1] ? 1 : -1;
-  const AnimationSnapshot *previous = &battle->previous_animation;
-  const AnimationSnapshot *current = &battle->current_animation;
-  if (fighter_index < 0 || !previous->valid || !current->valid || !previous->fighters[fighter_index].valid || !current->fighters[fighter_index].valid ||
-      previous->fighters[fighter_index].model != ch || current->fighters[fighter_index].model != ch) {
-    double sample = fighter_pose_sample(fighter);
-    pose(ch, clip, sample, output);
-    return;
-  }
-  const FighterAnimationFrame *from = &previous->fighters[fighter_index];
-  const FighterAnimationFrame *to = &current->fighters[fighter_index];
-  require(from->clip >= 0 && (size_t)from->clip < assets->clips.count, "Invalid previous render clip");
-  require(to->clip >= 0 && (size_t)to->clip < assets->clips.count, "Invalid current render clip");
-  const Clip *from_clip = &assets->clips.data[from->clip];
-  const Clip *to_clip = &assets->clips.data[to->clip];
   float fraction = (float)fmax(0., fmin(1., interpolation));
   /* Sample indices are authored selections, not a continuous timeline.
-   * Loops and branches within one clip must not scrub through skipped poses. */
-  pose_blend_frames(ch, from_clip, from->sample, to_clip, to->sample, fraction, output);
+   * Capture includes authored blends, so interruption cannot revive a raw
+   * source/target pose that was never displayed during that transition. */
+  PoseFrame blend;
+  pose_frame_blend(&from->pose, &to->pose, fraction, &blend);
+  pose_frame(ch, &blend, output);
 }
 
 /* Joint positions include animation root translation, as in 4b8140.
