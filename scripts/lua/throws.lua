@@ -1,11 +1,11 @@
--- Grounded low-kick and low-punch throws, including roster selectors.
--- Translated from scripts/mk4/code/throws.asm by tools/mk4_asm_to_lua.py; edit as Lua.
+-- Throws.
+-- Generated from MK4/MK-4.EXE by tools/import_mk4_data.py --lua. Do not edit; regenerate with make scripts-export.
 -- Operations: scripts/lua/README.md. Natives use their stable IDs (scripts/mk4/native.inc).
 local mk4 = mk4
 local native, labels = mk4.native_ids, mk4.labels
 local S = mk4.module()
 
--- Catalog: jarek.lk_throw (native-selected script); jax.lk_throw (native-selected script).
+-- Retail script 0x004ddff8 in MK4/MK-4.EXE.
 function S.jarek_lk_throw_startup()
   mk4.native_release(32)
   mk4.sound_indexed(7)
@@ -22,7 +22,7 @@ function S.jarek_lk_throw_startup()
   return S.tanya_lk_throw_startup()
 end
 
--- Catalog: tanya.lk_throw (native-selected script).
+-- Retail script 0x004de038 in MK4/MK-4.EXE.
 function S.tanya_lk_throw_startup()
   mk4.native_release(24)
   mk4.sound_indexed(29)
@@ -32,7 +32,7 @@ function S.tanya_lk_throw_startup()
   mk4.tail(native.LK_BRANCH_CONTINUE)
 end
 
--- Catalog: tanya.lk_throw (native continuation).
+-- Retail script 0x004de060 in MK4/MK-4.EXE.
 function S.lk_branch_continue()
   mk4.playback_single(47)
   mk4.spawn_effect(0)
@@ -45,7 +45,7 @@ function S.lk_branch_continue()
   return S.shinnok_lk_throw_startup()
 end
 
--- Catalog: shinnok.lk_throw (native-selected script).
+-- Retail script 0x004de088 in MK4/MK-4.EXE.
 function S.shinnok_lk_throw_startup()
   mk4.sound_indexed(55)
   mk4.native_release(21)
@@ -67,7 +67,7 @@ function S.shinnok_lk_throw_startup()
   mk4.tail(native.LK_JUMP_BACK)
 end
 
--- Catalog: reptile.lk_throw (native-selected script).
+-- Retail script 0x004de0e8 in MK4/MK-4.EXE.
 function S.reptile_lk_throw_startup()
   mk4.native_release(18)
   mk4.sound_indexed(27)
@@ -86,7 +86,7 @@ function S.reptile_lk_throw_startup()
   mk4.tail(native.LK_PAUSE_LONG)
 end
 
--- Catalog: reiko.lk_throw (native-selected script).
+-- Retail script 0x004de138 in MK4/MK-4.EXE.
 function S.reiko_lk_throw_startup()
   mk4.open_peer_clip(148)
   mk4.open_clip(0, 40)
@@ -99,7 +99,7 @@ function S.reiko_lk_throw_startup()
   mk4.tail(native.LK_THROW_ROCK_REPEAT_ONE)
 end
 
--- Catalog: reiko.lk_throw (native continuation).
+-- Retail script 0x004de170 in MK4/MK-4.EXE.
 function S.lk_throw_rock_repeat_one()
   mk4.playback_single(43)
   mk4.playback_pair_reverse(42)
@@ -107,7 +107,7 @@ function S.lk_throw_rock_repeat_one()
   return S.lk_throw_rock_repeat_two()
 end
 
--- Catalog: reiko.lk_throw (native continuation).
+-- Retail script 0x004de180 in MK4/MK-4.EXE.
 function S.lk_throw_rock_repeat_two()
   mk4.playback_single(43)
   mk4.playback_pair_reverse(42)
@@ -115,7 +115,7 @@ function S.lk_throw_rock_repeat_two()
   return S.lk_throw_rock_release()
 end
 
--- Catalog: reiko.lk_throw (native continuation).
+-- Retail script 0x004de190 in MK4/MK-4.EXE.
 function S.lk_throw_rock_release()
   mk4.playback_single(43)
   mk4.playback_pair_reverse(42)
@@ -127,7 +127,7 @@ function S.lk_throw_rock_release()
   return mk4.ready()
 end
 
--- Catalog: quan_chi.lk_throw (native-selected script).
+-- Retail script 0x004de1b0 in MK4/MK-4.EXE.
 function S.quan_chi_lk_throw_startup()
   mk4.native_release(16)
   mk4.open_peer_clip(160)
@@ -146,7 +146,7 @@ function S.quan_chi_lk_throw_startup()
   mk4.tail(native.LK_VICTIM_RETURN)
 end
 
--- Catalog: raiden.lk_throw (native-selected script).
+-- Retail script 0x004de218 in MK4/MK-4.EXE.
 function S.raiden_lk_throw_startup()
   mk4.sound_indexed(25)
   mk4.native_release(14)
@@ -163,7 +163,7 @@ function S.raiden_lk_throw_startup()
   return mk4.ready()
 end
 
--- Catalog: kai.lk_throw (native-selected script).
+-- Retail script 0x004de258 in MK4/MK-4.EXE.
 function S.kai_lk_throw_startup()
   mk4.native_release(13)
   mk4.open_peer_clip(159)
@@ -181,7 +181,7 @@ function S.kai_lk_throw_startup()
   return S.fujin_lk_throw_startup()
 end
 
--- Catalog: fujin.lk_throw (native-selected script).
+-- Retail script 0x004de2a0 in MK4/MK-4.EXE.
 function S.fujin_lk_throw_startup()
   mk4.native_release(7)
   mk4.open_peer_clip(155)
@@ -203,7 +203,7 @@ function S.fujin_lk_throw_startup()
   return mk4.ready()
 end
 
--- Catalog: scorpion.lk_throw (native-selected script).
+-- Retail script 0x004de2f8 in MK4/MK-4.EXE.
 function S.scorpion_lk_throw_startup()
   mk4.native_release(4)
   mk4.open_peer_clip(157)
@@ -213,13 +213,13 @@ function S.scorpion_lk_throw_startup()
   return S.cage_lk_throw_damage()
 end
 
--- Catalog: scorpion.lk_throw (native continuation).
+-- Retail script 0x004de318 in MK4/MK-4.EXE.
 function S.cage_lk_throw_damage()
   mk4.playback_single(42)
   mk4.tail(native.CAGE_LK_THROW_RELEASE)
 end
 
--- Catalog: scorpion.lk_throw (native continuation).
+-- Retail script 0x004de328 in MK4/MK-4.EXE.
 function S.cage_lk_throw_release()
   mk4.damage(0x2e14)
   mk4.disarm_peer()
@@ -232,7 +232,7 @@ function S.cage_lk_throw_release()
   mk4.tail(native.MMOVE_LK_OWNER_READY)
 end
 
--- Catalog: sonya.lk_throw (native-selected script); kitana.lk_throw (native-selected script).
+-- Retail script 0x004de360 in MK4/MK-4.EXE.
 function S.sonya_lk_throw_startup()
   mk4.sound_indexed(19)
   mk4.open_peer_clip(163)
@@ -251,7 +251,7 @@ function S.sonya_lk_throw_startup()
   mk4.tail(native.MMOVE_LK_BLEND_RETURN)
 end
 
--- Catalog: liu_kang.lk_throw (native-selected script).
+-- Retail script 0x004de3b0 in MK4/MK-4.EXE.
 function S.liu_kang_lk_throw_startup()
   mk4.open_peer_clip(133)
   mk4.open_clip(0, 35)
@@ -259,7 +259,7 @@ function S.liu_kang_lk_throw_startup()
   mk4.tail(native.LIU_KANG_LIU_SCRIPT_LK_CONTINUE)
 end
 
--- Catalog: cage.lk_throw (native-selected script).
+-- Retail script 0x004de3d0 in MK4/MK-4.EXE.
 function S.cage_lk_throw_startup()
   mk4.native_release(39)
   mk4.sound_indexed(56)
@@ -274,7 +274,7 @@ function S.cage_lk_throw_startup()
   mk4.tail(native.CAGE_LK_THROW_OWNER_RETURN)
 end
 
--- Catalog: liu_kang.lk_throw (native continuation).
+-- Retail script 0x004de410 in MK4/MK-4.EXE.
 function S.liu_kang_lk_continue()
   mk4.native_release(1)
   mk4.play_pair(20)
@@ -282,7 +282,7 @@ function S.liu_kang_lk_continue()
   mk4.tail(native.LIU_KANG_LIU_SCRIPT_LK_DAMAGE)
 end
 
--- Catalog: liu_kang.lk_throw (native continuation).
+-- Retail script 0x004de428 in MK4/MK-4.EXE.
 function S.liu_kang_lk_throw_damage_release()
   mk4.disarm_peer()
   mk4.sound_a(36)
@@ -301,14 +301,14 @@ function S.liu_kang_lk_throw_damage_release()
   return mk4.ready()
 end
 
--- Catalog: liu_kang.lk_throw (native continuation).
+-- Retail script 0x004de468 in MK4/MK-4.EXE.
 function S.liu_kang_lk_throw_retreat_entry()
   mk4.speed_negative(0x11eb)
   mk4.tail(native.LIU_KANG_LK_THROW_RETREAT)
   return S.liu_kang_lk_throw_retreat()
 end
 
--- Catalog: liu_kang.lk_throw (native continuation).
+-- Retail script 0x004de478 in MK4/MK-4.EXE.
 function S.liu_kang_lk_throw_retreat()
   mk4.open_clip(0, 182)
   mk4.double_to(28)
@@ -317,7 +317,7 @@ function S.liu_kang_lk_throw_retreat()
   return mk4.ready()
 end
 
--- Catalog: sub_zero.lk_throw (native-selected script); noob_saibot.lk_throw (native-selected script).
+-- Retail script 0x004de490 in MK4/MK-4.EXE.
 function S.sub_zero_lk_throw_startup()
   mk4.open_peer_clip(165)
   mk4.open_clip(0, 41)
@@ -327,7 +327,7 @@ function S.sub_zero_lk_throw_startup()
   mk4.tail(native.SUB_ZERO_SCRIPT_LK_REBASE)
 end
 
--- Catalog: sub_zero.lk_throw (native continuation); noob_saibot.lk_throw (native continuation).
+-- Retail script 0x004de4b8 in MK4/MK-4.EXE.
 function S.sub_zero_lk_rebase()
   mk4.play_pair(29)
   mk4.disarm_peer()
@@ -340,13 +340,13 @@ function S.sub_zero_lk_rebase()
   return S.sub_zero_lk_damage()
 end
 
--- Catalog: sub_zero.lk_throw (native continuation); noob_saibot.lk_throw (native continuation).
+-- Retail script 0x004de4e0 in MK4/MK-4.EXE.
 function S.sub_zero_lk_damage()
   mk4.play_pair(5)
   mk4.tail(native.SUB_ZERO_SCRIPT_LK_OWNER_RETURN)
 end
 
--- Catalog: jax.lp_throw (first slam).
+-- Retail script 0x004de4f0 in MK4/MK-4.EXE.
 function S.jax_lp_throw_first_slam()
   mk4.open_peer_clip(145)
   mk4.open_clip(0, 83)
@@ -357,7 +357,7 @@ function S.jax_lp_throw_first_slam()
   return S.slam_first_script()
 end
 
--- Catalog: jax.lp_throw (second slam).
+-- Retail script 0x004de518 in MK4/MK-4.EXE.
 function S.slam_first_script()
   mk4.playback_single(82)
   mk4.damage(0xccc)
@@ -367,7 +367,7 @@ function S.slam_first_script()
   return S.slam_second_script()
 end
 
--- Catalog: jax.lp_throw (third slam).
+-- Retail script 0x004de538 in MK4/MK-4.EXE.
 function S.slam_second_script()
   mk4.playback_single(116)
   mk4.spawn_effect(0)
@@ -377,30 +377,32 @@ function S.slam_second_script()
   return S.slam_second_release_script()
 end
 
--- Catalog: jax.lp_throw (release 125).
+-- Retail script 0x004de558 in MK4/MK-4.EXE.
 function S.slam_second_release_script()
   mk4.native_return(125)
   return S.slam_first_release_script_native_word_1()
 end
 
--- Catalog: jax.lp_throw (release 100).
+-- Retail script 0x004de568 in MK4/MK-4.EXE.
 function S.slam_first_release_script()
   mk4.native_return(100)
   return S.slam_first_release_script_native_word_1()
 end
 
+-- Retail script 0x004de56c in MK4/MK-4.EXE.
 function S.slam_first_release_script_native_word_1()
   mk4.native_word(0xf5c)
   mk4.damage(0xccc)
   mk4.tail(native.JAX_LP_THROW_RETURN)
 end
 
+-- Retail script 0x004de608 in MK4/MK-4.EXE.
 function S.shared_tail_entry()
   mk4.tail(native.LP_SELECT_SHORT)
   return S.lp_select_short()
 end
 
--- Catalog: fujin.lp_throw (extended throw); kai.lp_throw (extended throw).
+-- Retail script 0x004de610 in MK4/MK-4.EXE.
 function S.lp_select_short()
   mk4.native_release(11)
   mk4.open_peer_clip(158)
@@ -413,7 +415,7 @@ function S.lp_select_short()
   return S.lp_select_long()
 end
 
--- Catalog: raiden.lp_throw (extended throw); reiko.lp_throw (extended throw); jarek.lp_throw (extended throw) (also shared by other catalog entries).
+-- Retail script 0x004de640 in MK4/MK-4.EXE.
 function S.lp_select_long()
   mk4.native_release(12)
   mk4.open_peer_clip(154)
@@ -423,13 +425,14 @@ function S.lp_select_long()
   mk4.tail(native.LP_END)
 end
 
--- Catalog: raiden.lp_throw (extended owner recovery); reiko.lp_throw (throw owner continuation); jarek.lp_throw (owner return) (also shared by other catalog entries).
+-- Retail script 0x004de668 in MK4/MK-4.EXE.
 function S.lp_end()
   mk4.damage(0x2e14)
   mk4.forward()
   return mk4.ready()
 end
 
+-- Retail script 0x004de678 in MK4/MK-4.EXE.
 function S.lp_end_native_release_1()
   mk4.native_release(36)
   mk4.open_peer_clip(151)
@@ -442,7 +445,7 @@ function S.lp_end_native_release_1()
   mk4.tail(native.RETURN_TO_PLAYER_OR_CPU_CONTROL)
 end
 
--- Catalog: raiden.lp_throw (short throw); fujin.lp_throw (short throw); reiko.lp_throw (short throw) (also shared by other catalog entries).
+-- Retail script 0x004de6b8 in MK4/MK-4.EXE.
 function S.lp_select()
   mk4.native_release(22)
   mk4.open_peer_clip(153)
@@ -453,7 +456,7 @@ function S.lp_select()
   return S.shared_damage_entry()
 end
 
--- Catalog: goro.lp_throw (final damage).
+-- Retail script 0x004de6e4 in MK4/MK-4.EXE.
 function S.goro_lp_throw_final_damage()
   mk4.native_release(22)
   mk4.open_peer_clip(152)
@@ -466,7 +469,7 @@ function S.goro_lp_throw_final_damage()
   mk4.tail(native.LP_THROW_VICTIM_ADJUST_RETURN)
 end
 
--- Catalog: goro.lk_throw (native-selected script).
+-- Retail script 0x004de720 in MK4/MK-4.EXE.
 function S.goro_lk_throw_startup()
   mk4.call(native.THROW_PAIR_START)
   mk4.native_release(82)
@@ -482,6 +485,7 @@ function S.goro_lk_throw_startup()
   return S.goro_lk_throw_startup_call_1()
 end
 
+-- Retail script 0x004de760 in MK4/MK-4.EXE.
 function S.goro_lk_throw_startup_call_1()
   mk4.call(native.THROW_PAIR_START)
   mk4.native_release(81)
@@ -496,12 +500,13 @@ function S.goro_lk_throw_startup_call_1()
   return S.lp_throw_script()
 end
 
--- Catalog: scorpion.lp_throw (roster-selected attacker/victim); raiden.lp_throw (roster selector); sonya.lp_throw (roster selector) (also shared by other catalog entries).
+-- Retail script 0x004de798 in MK4/MK-4.EXE.
 function S.lp_throw_script()
   mk4.sound_b(7)
   return S.lp_throw_script_select_roster_1()
 end
 
+-- Retail script 0x004de79c in MK4/MK-4.EXE.
 function S.lp_throw_script_select_roster_1()
   return mk4.select_roster {
     scorpion = S.goro_lp_throw_final_damage,
@@ -528,7 +533,7 @@ function S.lp_throw_script_select_roster_1_operand_16()
   return S.goro_lp_throw_repeated_damage()
 end
 
--- Catalog: goro.lp_throw (repeated damage).
+-- Retail script 0x004de7e8 in MK4/MK-4.EXE.
 function S.goro_lp_throw_repeated_damage()
   mk4.open_peer_clip(607)
   mk4.open_clip(0, 605)
@@ -548,16 +553,18 @@ function S.goro_lp_throw_repeated_damage()
   mk4.tail(native.GORO_SCRIPT_LP_PHASE_REPEAT)
 end
 
--- Catalog: goro.lk_throw (native continuation).
+-- Retail script 0x004de840 in MK4/MK-4.EXE.
 function S.lp_shared_release()
   return S.goro_lp_throw_final_damage()
 end
 
+-- Retail script 0x004de858 in MK4/MK-4.EXE.
 function S.shared_tail_entry_2()
   mk4.tail(native.LP_SELECT_LONG)
   return S.shared_tail_entry_2_native_release_1()
 end
 
+-- Retail script 0x004de860 in MK4/MK-4.EXE.
 function S.shared_tail_entry_2_native_release_1()
   mk4.native_release(22)
   mk4.open_peer_clip(156)
@@ -571,6 +578,7 @@ function S.shared_tail_entry_2_native_release_1()
   return mk4.ready()
 end
 
+-- Retail script 0x004de898 in MK4/MK-4.EXE.
 function S.shared_damage_entry()
   mk4.damage(0x2666)
   mk4.forward()

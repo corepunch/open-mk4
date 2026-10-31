@@ -1,11 +1,11 @@
--- Special attack startup, contact branches and recovery.
--- Translated from scripts/mk4/code/special_attacks.asm by tools/mk4_asm_to_lua.py; edit as Lua.
+-- Special attacks.
+-- Generated from MK4/MK-4.EXE by tools/import_mk4_data.py --lua. Do not edit; regenerate with make scripts-export.
 -- Operations: scripts/lua/README.md. Natives use their stable IDs (scripts/mk4/native.inc).
 local mk4 = mk4
 local native, labels = mk4.native_ids, mk4.labels
 local S = mk4.module()
 
--- Catalog: cage.cpu_kick (attack).
+-- Retail script 0x004e80a8 in MK4/MK-4.EXE.
 function S.cage_cpu_kick()
   mk4.speed(0x2666)
   mk4.sound_c(81)
@@ -14,7 +14,7 @@ function S.cage_cpu_kick()
   mk4.tail(native.CAGE_SCRIPT_CPU_KICK_TAIL)
 end
 
--- Catalog: cage.powered_punch (attack).
+-- Retail script 0x004e80d0 in MK4/MK-4.EXE.
 function S.cage_powered_punch()
   mk4.sound_c(81)
   mk4.open_clip(0, 85)
@@ -24,7 +24,7 @@ function S.cage_powered_punch()
   mk4.tail(native.CAGE_SCRIPT_POWERED_PUNCH_TAIL)
 end
 
--- Catalog: quan_chi.flip_kick (startup).
+-- Retail script 0x004e8100 in MK4/MK-4.EXE.
 function S.quan_chi_flip_kick()
   mk4.sound_c(86)
   mk4.open_clip(0, 105)
@@ -34,7 +34,7 @@ function S.quan_chi_flip_kick()
   mk4.tail(native.QUAN_CHI_SCRIPT_FLIP_KICK_TAIL)
 end
 
--- Catalog: reptile.input_47a690 (selected stream).
+-- Retail script 0x004e8128 in MK4/MK-4.EXE.
 function S.reptile_dash()
   mk4.prefixed_finish(302)
   mk4.bind_cursor(0, 303)
@@ -42,7 +42,7 @@ function S.reptile_dash()
   mk4.tail(native.REPTILE_SCRIPT_DASH_CONTACT)
 end
 
--- Catalog: jax.dash_punch (dash).
+-- Retail script 0x004e8150 in MK4/MK-4.EXE.
 function S.jax_dash_punch()
   mk4.sound_indexed(37)
   mk4.sound_c(78)
@@ -52,7 +52,7 @@ function S.jax_dash_punch()
   mk4.tail(native.JAX_DASH_PUNCH_CONTACT)
 end
 
--- Catalog: reptile.input_47afe0 (selected stream).
+-- Retail script 0x004e8178 in MK4/MK-4.EXE.
 function S.reptile_roll()
   mk4.sound_indexed(35)
   mk4.sound_c(70)
@@ -64,7 +64,7 @@ function S.reptile_roll()
   mk4.tail(native.REPTILE_SCRIPT_ROLL_TAIL)
 end
 
--- Catalog: jarek.quake (stomp).
+-- Retail script 0x004e81a8 in MK4/MK-4.EXE.
 function S.jarek_quake()
   mk4.sound_indexed(33)
   mk4.prefixed_to(20, 107)
@@ -73,13 +73,13 @@ function S.jarek_quake()
   mk4.tail(native.JAREK_QUAKE_TAIL)
 end
 
--- Catalog: jarek.quake (recovery).
+-- Retail script 0x004e81c8 in MK4/MK-4.EXE.
 function S.jarek_quake_tail()
   mk4.forward()
   return mk4.ready()
 end
 
--- Catalog: sonya.cartwheel (startup); kitana.cartwheel (startup).
+-- Retail script 0x004e81d0 in MK4/MK-4.EXE.
 function S.sonya_cartwheel()
   mk4.sound_indexed(32)
   mk4.sound_c(6)
@@ -89,7 +89,7 @@ function S.sonya_cartwheel()
   return S.tanya_drill_kick()
 end
 
--- Catalog: tanya.drill_kick (attacker).
+-- Retail script 0x004e81f0 in MK4/MK-4.EXE.
 function S.tanya_drill_kick()
   mk4.sound_indexed(31)
   mk4.speed(0x23d7)
@@ -97,7 +97,7 @@ function S.tanya_drill_kick()
   mk4.tail(native.TANYA_DRILL_KICK_CONTACT)
 end
 
--- Catalog: kai.input_47bd10 (selected continuation).
+-- Retail script 0x004e8210 in MK4/MK-4.EXE.
 function S.kai_aerial_punch()
   mk4.sound_c(60)
   mk4.motion(0x2e14, 0xffffe667, 0x41)
@@ -105,7 +105,7 @@ function S.kai_aerial_punch()
   mk4.tail(native.KAI_AERIAL_PUNCH_CONTACT)
 end
 
--- Catalog: fujin.aerial_dive (startup).
+-- Retail script 0x004e8258 in MK4/MK-4.EXE.
 function S.fujin_dive()
   mk4.sound_c(57)
   mk4.motion(0x1eb8, 0xf5c, 0x41)
@@ -113,7 +113,7 @@ function S.fujin_dive()
   mk4.tail(native.FUJIN_DIVE_CONTACT)
 end
 
--- Catalog: fujin.aerial_dive (recoil).
+-- Retail script 0x004e8298 in MK4/MK-4.EXE.
 function S.dive_recoil()
   mk4.landing()
   mk4.wait(8)
@@ -124,7 +124,7 @@ function S.dive_recoil()
   return S.teleport()
 end
 
--- Catalog: reiko.teleport (rise); noob_saibot.teleport (rise).
+-- Retail script 0x004e82b8 in MK4/MK-4.EXE.
 function S.teleport()
   mk4.sound_c(54)
   mk4.prefixed_to(3, 86)
@@ -134,7 +134,7 @@ function S.teleport()
   return S.teleport_slam()
 end
 
--- Catalog: reiko.teleport (slam opener); noob_saibot.teleport (slam opener).
+-- Retail script 0x004e82e0 in MK4/MK-4.EXE.
 function S.teleport_slam()
   mk4.sound_indexed(24)
   mk4.native_release(23)
@@ -145,34 +145,34 @@ function S.teleport_slam()
   mk4.tail(native.TELEPORT_SLAM_FALL)
 end
 
--- Catalog: reiko.teleport (slam fall); noob_saibot.teleport (slam fall).
+-- Retail script 0x004e8310 in MK4/MK-4.EXE.
 function S.teleport_slam_fall()
   mk4.playback_single(27)
   mk4.tail(native.TELEPORT_SLAM_DROP)
 end
 
--- Catalog: kai.input_47c520 (selected continuation).
+-- Retail script 0x004e8320 in MK4/MK-4.EXE.
 function S.kai_handstand_enter()
   mk4.sound_indexed(23)
   mk4.prefixed_finish(1)
   mk4.tail(native.KAI_SCRIPT_STAGE_EVENT)
 end
 
--- Catalog: kai.handstand_spin (spin startup).
+-- Retail script 0x004e8338 in MK4/MK-4.EXE.
 function S.handstand_spin()
   mk4.prefixed_finish(2)
   mk4.bind_cursor(0, 3)
   mk4.tail(native.KAI_HANDSTAND_SPIN_BEGIN)
 end
 
--- Catalog: kai.input_47cc10 (selected continuation).
+-- Retail script 0x004e8358 in MK4/MK-4.EXE.
 function S.handstand_front()
   mk4.sound_a(1)
   mk4.prefixed_to(9, 0)
   mk4.tail(native.KAI_SCRIPT_CONTACT_B10_CONTINUATION)
 end
 
--- Catalog: kai.input_47cc10 (scheduler continuation).
+-- Retail script 0x004e8390 in MK4/MK-4.EXE.
 function S.kai_contact_b10_continuation()
   mk4.wait(8)
   mk4.playback_pair(0)
@@ -180,40 +180,41 @@ function S.kai_contact_b10_continuation()
   return S.handstand_rear()
 end
 
--- Catalog: kai.handstand_rear (rear startup).
+-- Retail script 0x004e83a0 in MK4/MK-4.EXE.
 function S.handstand_rear()
   mk4.sound_a(1)
   mk4.prefixed_to(9, 6)
   mk4.tail(native.KAI_HANDSTAND_REAR_CONTACT)
 end
 
--- Catalog: kai.handstand_rear (rear recovery).
+-- Retail script 0x004e83d8 in MK4/MK-4.EXE.
 function S.kai_handstand_rear_contact()
   mk4.playback_pair(0)
   mk4.tail(native.KAI_SCRIPT_STAGE_EVENT)
 end
 
--- Catalog: kai.handstand_exit (reverse intro).
+-- Retail script 0x004e83e8 in MK4/MK-4.EXE.
 function S.handstand_exit()
   mk4.sound_indexed(23)
   mk4.clip_operation(1)
   return mk4.ready()
 end
 
--- Catalog: raiden.torpedo (fast startup).
+-- Retail script 0x004e8440 in MK4/MK-4.EXE.
 function S.raiden_torpedo_fast_startup()
   mk4.open_clip(0, 94)
   mk4.playback_tail(14)
   return S.raiden_torpedo_ordinary_startup_call_1()
 end
 
--- Catalog: raiden.torpedo (ordinary startup).
+-- Retail script 0x004e8458 in MK4/MK-4.EXE.
 function S.raiden_torpedo_ordinary_startup()
   mk4.open_clip(0, 94)
   mk4.double_to(14)
   return S.raiden_torpedo_ordinary_startup_call_1()
 end
 
+-- Retail script 0x004e8464 in MK4/MK-4.EXE.
 function S.raiden_torpedo_ordinary_startup_call_1()
   mk4.call(native.RESTORE_MOTION)
   mk4.handler(native.RAIDEN_SCRIPT_TORPEDO_MOTION)
@@ -229,7 +230,7 @@ function S.raiden_torpedo_ordinary_startup_call_1()
   mk4.tail(native.RAIDEN_SCRIPT_TORPEDO_MISS)
 end
 
--- Catalog: tanya.spin_kick (blocked rewind); jarek.cannonball (contact rewind); jarek.upward_ball (contact rewind) (also shared by other catalog entries).
+-- Retail script 0x004e84b8 in MK4/MK-4.EXE.
 function S.power_rewind()
   mk4.clip_operation(301)
   mk4.native_context()
@@ -237,7 +238,7 @@ function S.power_rewind()
   mk4.tail(native.RECOIL_LAND)
 end
 
--- Catalog: sub_zero.slide (entry).
+-- Retail script 0x004e84d8 in MK4/MK-4.EXE.
 function S.sub_zero_slide()
   mk4.speed_negative(0xffffd99a)
   mk4.sound_c(15)
@@ -245,7 +246,7 @@ function S.sub_zero_slide()
   mk4.tail(native.SUB_ZERO_SLIDE_SCRIPT)
 end
 
--- Catalog: sub_zero.slide (hit).
+-- Retail script 0x004e84f8 in MK4/MK-4.EXE.
 function S.sub_zero_slide_hit()
   for _ = 1, 4 do
     mk4.playback_tail(10)
@@ -261,7 +262,7 @@ function S.sub_zero_slide_hit()
   mk4.tail(native.SUB_ZERO_SCRIPT_SLIDE_RETURN)
 end
 
--- Catalog: sub_zero.slide (block).
+-- Retail script 0x004e8530 in MK4/MK-4.EXE.
 function S.sub_zero_slide_block()
   mk4.no_guard()
   mk4.landing()
@@ -278,7 +279,7 @@ function S.sub_zero_slide_block()
   mk4.tail(native.SUB_ZERO_SCRIPT_SLIDE_RETURN)
 end
 
--- Catalog: sonya.leg_grab (paired grab); kitana.leg_grab (paired grab).
+-- Retail script 0x004e8578 in MK4/MK-4.EXE.
 function S.sonya_leg_grab_paired_grab()
   mk4.native_release(37)
   mk4.sound_roster(1)
@@ -293,7 +294,7 @@ function S.sonya_leg_grab_paired_grab()
   return S.sonya_leg_grab_miss_or_block()
 end
 
--- Catalog: sonya.leg_grab (miss or block); kitana.leg_grab (miss or block).
+-- Retail script 0x004e85a8 in MK4/MK-4.EXE.
 function S.sonya_leg_grab_miss_or_block()
   mk4.forward_to(22)
   mk4.playback_pair(19)
@@ -303,7 +304,7 @@ function S.sonya_leg_grab_miss_or_block()
   return mk4.ready()
 end
 
--- Catalog: sonya.square_wave (launch); kitana.square_wave (launch).
+-- Retail script 0x004e85c0 in MK4/MK-4.EXE.
 function S.sonya_square_wave()
   mk4.speed(0x1999)
   mk4.prefixed_finish(72)
@@ -313,7 +314,7 @@ function S.sonya_square_wave()
   mk4.tail(native.SONYA_SCRIPT_SQUARE_WAVE_TAIL)
 end
 
--- Catalog: liu_kang.bicycle_kick (startup).
+-- Retail script 0x004e8610 in MK4/MK-4.EXE.
 function S.liu_kang_bicycle_kick()
   mk4.motion(0x2147, 0xfffff5c3, 0x0)
   mk4.call(native.SAVE_MOTION)
@@ -325,14 +326,14 @@ function S.liu_kang_bicycle_kick()
   mk4.tail(native.LIU_KANG_BICYCLE_SCRIPT)
 end
 
--- Catalog: liu_kang.bicycle_kick (finish).
+-- Retail script 0x004e8678 in MK4/MK-4.EXE.
 function S.bicycle_land()
   mk4.clear_handler()
   mk4.clip_alt(6, 68)
   return mk4.ready()
 end
 
--- Catalog: liu_kang.bicycle_kick (blocked).
+-- Retail script 0x004e8688 in MK4/MK-4.EXE.
 function S.bicycle_contact_end()
   mk4.motion(0x0, 0xffffeb86, 0xe5)
   mk4.native_context()
@@ -341,7 +342,7 @@ function S.bicycle_contact_end()
   return S.liu_kang_flying_kick()
 end
 
--- Catalog: liu_kang.flying_kick (launch).
+-- Retail script 0x004e86a8 in MK4/MK-4.EXE.
 function S.liu_kang_flying_kick()
   mk4.sound_indexed(0)
   mk4.open_clip(0, 92)
@@ -349,14 +350,14 @@ function S.liu_kang_flying_kick()
   mk4.tail(native.LIU_KANG_FLYING_KICK_SCRIPT)
 end
 
--- Catalog: liu_kang.flying_kick (miss).
+-- Retail script 0x004e86d0 in MK4/MK-4.EXE.
 function S.liu_kang_flying_kick_miss()
   mk4.clip_operation(92)
   mk4.bind_submit(0, 92)
   return mk4.ready()
 end
 
--- Catalog: liu_kang.flying_kick (hit).
+-- Retail script 0x004e86e8 in MK4/MK-4.EXE.
 function S.liu_kang_flying_kick_hit()
   mk4.landing()
   mk4.speed_negative(0xfffffae2)
@@ -368,7 +369,7 @@ function S.liu_kang_flying_kick_hit()
   return mk4.ready()
 end
 
--- Catalog: liu_kang.flying_kick (block).
+-- Retail script 0x004e8718 in MK4/MK-4.EXE.
 function S.liu_kang_flying_kick_block()
   mk4.landing()
   mk4.wait(12)
@@ -379,7 +380,7 @@ function S.liu_kang_flying_kick_block()
   mk4.tail(native.LIU_KANG_FLYING_KICK_LAND)
 end
 
--- Catalog: fujin.triple_kick (startup).
+-- Retail script 0x004e8740 in MK4/MK-4.EXE.
 function S.fujin_triple_kick()
   if mk4.fast_start() then
     return S.fujin_triple_kick_tail_1()
@@ -391,11 +392,12 @@ function S.fujin_triple_kick()
   return S.fujin_triple_kick_tail_1()
 end
 
+-- Retail script 0x004e8764 in MK4/MK-4.EXE.
 function S.fujin_triple_kick_tail_1()
   mk4.tail(native.FUJIN_TRIPLE_FAST)
 end
 
--- Catalog: fujin.triple_kick (fast startup).
+-- Retail script 0x004e8770 in MK4/MK-4.EXE.
 function S.fujin_triple_fast()
   mk4.open_clip(0, 100)
   mk4.double_to(6)
@@ -404,7 +406,7 @@ function S.fujin_triple_fast()
   mk4.tail(native.FUJIN_TRIPLE_CONTACT)
 end
 
--- Catalog: scorpion.teleport_punch (attacker).
+-- Retail script 0x004e87b0 in MK4/MK-4.EXE.
 function S.scorpion_teleport()
   mk4.motion(0xffffd99a, 0xffffe8f6, 0x1ca)
   mk4.open_clip(0, 312)
@@ -413,7 +415,7 @@ function S.scorpion_teleport()
   mk4.tail(native.SCORPION_TELEPORT_SCRIPT)
 end
 
--- Catalog: scorpion.teleport_punch (landing); reiko.teleport (blocked landing); quan_chi.teleport_stomp (blocked landing) (also shared by other catalog entries).
+-- Retail script 0x004e8818 in MK4/MK-4.EXE.
 function S.teleport_block_return()
   mk4.clip_operation(301)
   mk4.native_context()
@@ -422,7 +424,7 @@ function S.teleport_block_return()
   return S.fujin_wind_grab()
 end
 
--- Catalog: fujin.wind_grab (opening).
+-- Retail script 0x004e8830 in MK4/MK-4.EXE.
 function S.fujin_wind_grab()
   mk4.sound_indexed(30)
   mk4.sound_c(61)
@@ -432,14 +434,14 @@ function S.fujin_wind_grab()
   return S.sword_spin_script()
 end
 
--- Catalog: scorpion.sword_spin (startup).
+-- Retail script 0x004e8850 in MK4/MK-4.EXE.
 function S.sword_spin_script()
   mk4.prefixed_finish(223)
   mk4.bind_cursor(0, 224)
   mk4.tail(native.SCORPION_SPIN_SCRIPT)
 end
 
--- Catalog: kai.input_478df0 (selected continuation).
+-- Retail script 0x004e8870 in MK4/MK-4.EXE.
 function S.kai_lunge_kick()
   mk4.sound_indexed(59)
   mk4.open_clip(0, 551)
@@ -449,6 +451,7 @@ function S.kai_lunge_kick()
   return S.kai_lunge_kick_double_to_1()
 end
 
+-- Retail script 0x004e8884 in MK4/MK-4.EXE.
 function S.kai_lunge_kick_double_to_1()
   mk4.double_to(26)
   mk4.sound_c(31)
@@ -457,7 +460,7 @@ function S.kai_lunge_kick_double_to_1()
   mk4.tail(native.KAI_LUNGE_KICK_CONTACT)
 end
 
--- Catalog: kai.input_47cbf0 (selected continuation).
+-- Retail script 0x004e88c8 in MK4/MK-4.EXE.
 function S.kai_armed_handstand_enter()
   mk4.sound_indexed(23)
   mk4.open_clip(0, 1)
@@ -466,11 +469,13 @@ function S.kai_armed_handstand_enter()
   return S.kai_armed_handstand_enter_cursor_set_1()
 end
 
+-- Retail script 0x004e88e0 in MK4/MK-4.EXE.
 function S.kai_armed_handstand_enter_cursor_set_1()
   mk4.cursor_set(14)
   return S.kai_lunge_kick_double_to_1()
 end
 
+-- Retail script 0x004e8908 in MK4/MK-4.EXE.
 function S.shared_tail_entry_3()
   mk4.tail(native.RAIDEN_SCRIPT_TORPEDO_CONTACT)
 end

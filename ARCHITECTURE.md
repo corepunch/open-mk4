@@ -9,8 +9,9 @@ C-style engine; it does not prove that every original source file was C, or
 establish the language of the separate arcade release. The reference also uses
 x86 assembly where needed for byte matching. Our portable code does not need
 those compiler-specific matching tricks. Use C11 with a current C compiler.
-Fighter scripts are Lua 5.4 source run by the vendored interpreter; the
-simulation that hosts them stays C.
+Fighter scripts are generated Lua 5.4 source run by the vendored interpreter;
+`make scripts-export` decodes the retail EXE, while normal builds use the
+checked-in modules. The simulation that hosts them stays C.
 
 Evidence in the pinned reference:
 

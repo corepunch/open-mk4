@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-time import of MK4 tables and scripts into relocatable source.
+"""Export MK4 tables/wordcode for research, or regenerate the actor Lua modules.
 
 The original fixup records identify packed references. Raw asset references
 are decoded through the rig/slot/descriptor/name layouts used by our loader.
@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import re
 import struct
+from tempfile import TemporaryDirectory
 from retail_moves import RetailImage
 from scorpion_moves import script_program
 from mk4_asm import NAMES
@@ -18,21 +19,13 @@ from mk4_link import link, BASE, HEADER
 ROOT = Path(__file__).resolve().parents[1]
 LO, HI = 0x4ce000, 0x580000
 LAYOUT = Path(__file__).with_name('mk4_import_layout.json')
+LUA_LAYOUT = Path(__file__).with_name('mk4_lua_layout.json')
 
 
-def export(image, destination):
-    layout = json.loads(LAYOUT.read_text())
-    names = {int(a,16):name for a,name in layout['names'].items()}
-    for row in layout['exports']:
-        names.setdefault(row['address'], 'data_' + format(row['address'], '06x'))
-    used = set()
-    for address, name in sorted(names.items()):
-        if name in used:
-            name = name + "_" + str(len(used))
-            names[address] = name
-        used.add(name)
+def decode_scripts(image, roots):
+    """Decode the shared corpus once, retaining instruction ownership for aliases."""
     rows = {}
-    for root in layout['roots']:
+    for root in roots:
         for character in range(16):
             for row in script_program(image, root, character)['instructions']:
                 if 'operands' not in row:
@@ -46,6 +39,114 @@ def export(image, destination):
             at=a+4*i
             if at in owners:raise ValueError('Overlapping instructions')
             owners[at]=a;code[at]=int(v,16)
+    return rows, code, owners
+
+
+def export_lua(image, destination, check=False):
+    """Feed retail words into the existing Lua translator, with named entry boundaries.
+
+    The metadata owns names/organization only. All operations, operands, loops,
+    branches and fall-through come from the hash-checked executable. Temporary
+    assembly is translator input, never an additional maintained script source.
+    """
+    from mk4_asm_to_lua import translate
+    from retail_moves import EXE_SHA256
+
+    layout = json.loads(LUA_LAYOUT.read_text())
+    if layout['exe_sha256'] != EXE_SHA256:
+        raise ValueError('Lua entry map targets another retail revision')
+    rows, code, owners = decode_scripts(image, json.loads(LAYOUT.read_text())['roots'])
+    entries = {}
+    for module in layout['modules'].values():
+        for name, address in module['entries'].items():
+            address = int(address, 16)
+            if address not in owners:
+                raise ValueError(f'Lua entry {name} at {address:#x} is not a decoded script word')
+            entries.setdefault(address, []).append(name)
+    native_source = (ROOT / 'scripts/mk4/native.inc').read_text()
+    natives = {}
+    for name, value in re.findall(r'^\.equ (MK4_NATIVE_\w+) (0x[0-9a-f]+)$', native_source, re.M):
+        natives.setdefault(int(value, 16), name)
+
+    def operand(address, row, index):
+        value = int(row['operands'][index], 16)
+        op = int(row['opcode'], 16)
+        if 'clip' in row and index == 0:
+            return f'clip({row["clip"]})'
+        if op in (0x2f, 0x33, 0x3c, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f) or (op in (0x36, 0x43, 0x55) and index == 1):
+            if value * 4 not in entries:
+                raise ValueError(f'Unnamed script target at {address:#x}: {value * 4:#x}')
+            return f'word({entries[value * 4][0]})'
+        if (op in (0x32, 0x35, 0x36, 0x38, 0x43, 0x55) and index == 0) or (op == 0x40 and index == 1):
+            # Unnamed native IDs remain explicit, as in the original translation.
+            return natives.get(value, hex(value))
+        return hex(value)
+
+    with TemporaryDirectory(prefix='mk4-lua-export-') as temporary:
+        project = Path(temporary)
+        (project / 'code').mkdir()
+        (project / 'native.inc').write_text(native_source)
+        (project / 'tables.asm').write_text('.section data\nMK4_DATA_ANIMATION_TABLE:\n.zero 7344\n')
+        program = ['.section script']
+        aliases = []
+        addresses = sorted(a for a in rows if owners[a] == a)
+        modules = list(layout['modules'].items())
+        assigned = set()
+        previous = None
+        for i, (name, module) in enumerate(modules):
+            start = int(module['start'], 16)
+            end = int(modules[i + 1][1]['start'], 16) if i + 1 < len(modules) else HI
+            lines = [f'; {name.replace("_", " ").capitalize()}.']
+            for address in addresses:
+                if not start <= address < end:
+                    continue
+                assigned.add(address)
+                if previous is not None and address != previous:
+                    lines.append('  .zero 4')
+                for entry in entries.get(address, []):
+                    lines.extend([f'; Retail script {address:#010x} in MK4/MK-4.EXE.', entry + ':'])
+                row = rows[address]
+                args = [hex(row['inline'])] + [operand(address, row, n) for n in range(len(row['operands']))]
+                lines.append('  ' + NAMES[int(row['opcode'], 16)] + ' ' + ', '.join(args))
+                previous = address + 4 * (1 + len(row['operands']))
+            (project / 'code' / (name + '.asm')).write_text('\n'.join(lines) + '\n')
+            program.append(f'.include "code/{name}.asm"')
+        if assigned != set(addresses):
+            raise ValueError('Lua module boundaries do not cover the decoded corpus')
+        for address, names in entries.items():
+            owner = owners[address]
+            if owner != address:
+                if owner not in entries:
+                    raise ValueError(f'Embedded entry at {address:#x} has no named instruction owner')
+                for name in names:
+                    aliases.extend([f'.alias {name} {entries[owner][0]} + {address - owner}', f'.export {name} {name}'])
+        (project / 'program.asm').write_text('\n'.join(program) + '\n')
+        (project / 'exports.inc').write_text('\n'.join(aliases) + '\n')
+        source = project / 'project.asm'
+        source.write_text('.include "native.inc"\n.include "tables.asm"\n.include "program.asm"\n.include "exports.inc"\n')
+        statistics, changed = translate(source, destination, check, provenance='MK4/MK-4.EXE by tools/import_mk4_data.py --lua')
+    # Shared runtime helpers are authored once; fighter behavior is generated.
+    helper = Path(destination) / 'mk4.lua'
+    text = (ROOT / 'scripts/lua/mk4.lua').read_text()
+    if not helper.exists() or helper.read_text() != text:
+        changed.append(str(helper))
+        if not check:
+            helper.write_text(text)
+    return statistics, changed
+
+
+def export(image, destination):
+    layout = json.loads(LAYOUT.read_text())
+    names = {int(a,16):name for a,name in layout['names'].items()}
+    for row in layout['exports']:
+        names.setdefault(row['address'], 'data_' + format(row['address'], '06x'))
+    used = set()
+    for address, name in sorted(names.items()):
+        if name in used:
+            name = name + "_" + str(len(used))
+            names[address] = name
+        used.add(name)
+    rows, code, owners = decode_scripts(image, layout['roots'])
     # Typed relocation sites. Packed pointers come directly from original fixups.
     refs = {a:('word',value*4) for a,value in image.fixups.items() if value and a not in code}
     def raw(at):
@@ -186,8 +287,23 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--exe',type=Path,default=ROOT/'MK4/MK-4.EXE')
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--lua', action='store_true', help='generate the named Lua modules instead of the flat research import')
+    p.add_argument('--check', action='store_true', help='compare Lua output without writing (requires --lua)')
     args=p.parse_args()
-    if args.output.exists():p.error('Destination exists; import into a new directory and review')
-    export(RetailImage(args.exe),args.output)
+    if args.check and not args.lua:
+        p.error('--check requires --lua')
+    if not args.lua and args.output.exists():p.error('Destination exists; import into a new directory and review')
+    try:
+        image = RetailImage(args.exe)
+        if args.lua:
+            statistics, changed = export_lua(image, args.output, args.check)
+            print(f'Exported {statistics["functions"]} streams from {statistics["instructions"]} retail instructions.')
+            if args.check and changed:
+                p.exit(1, 'Lua modules differ from the retail export:\n  ' + '\n  '.join(changed) + '\n')
+            print('Lua modules match the retail export.' if args.check else f'Lua program written to {args.output}.')
+        else:
+            export(image,args.output)
+    except (OSError, ValueError, KeyError) as exc:
+        p.exit(1, str(exc) + '\n')
 
 if __name__=='__main__':main()

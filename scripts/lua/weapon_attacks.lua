@@ -1,11 +1,11 @@
--- Weapon attack playback and contact recovery.
--- Translated from scripts/mk4/code/weapon_attacks.asm by tools/mk4_asm_to_lua.py; edit as Lua.
+-- Weapon attacks.
+-- Generated from MK4/MK-4.EXE by tools/import_mk4_data.py --lua. Do not edit; regenerate with make scripts-export.
 -- Operations: scripts/lua/README.md. Natives use their stable IDs (scripts/mk4/native.inc).
 local mk4 = mk4
 local native, labels = mk4.native_ids, mk4.labels
 local S = mk4.module()
 
--- Catalog: jarek.weapon_back_hp (upper); cage.weapon_upper (upper strike).
+-- Retail script 0x004ec4f0 in MK4/MK-4.EXE.
 function S.jarek_weapon_back_hp_upper()
   mk4.open_clip(0, 226)
   mk4.double_to(16)
@@ -15,7 +15,7 @@ function S.jarek_weapon_back_hp_upper()
   mk4.tail(native.CAGE_WEAPON_UPPER_CONTACT)
 end
 
--- Catalog: kai.draw_weapon (back strike).
+-- Retail script 0x004ec5a8 in MK4/MK-4.EXE.
 function S.kai_draw_weapon_back_strike()
   mk4.open_clip(0, 226)
   mk4.double_to(16)
@@ -25,14 +25,14 @@ function S.kai_draw_weapon_back_strike()
   mk4.tail(native.KAI_WEAPON_BACK_STRIKE_CONTACT)
 end
 
--- Catalog: reptile.weapon_back_hp (flurry startup).
+-- Retail script 0x004ec640 in MK4/MK-4.EXE.
 function S.reptile_weapon_back_hp_flurry_startup()
   mk4.open_clip(0, 248)
   mk4.forward_to(8)
   mk4.tail(native.REPTILE_WEAPON_FLURRY)
 end
 
--- Catalog: liu_kang.sword_hp (repeat program).
+-- Retail script 0x004ec680 in MK4/MK-4.EXE.
 function S.liu_kang_sword_hp_repeat_program()
   mk4.attack_selector(0x30f)
   mk4.schedule_motion(6, 6, 0x11eb)
@@ -43,6 +43,7 @@ function S.liu_kang_sword_hp_repeat_program()
   return S.liu_kang_sword_hp_repeat_program_prefixed_sample_1()
 end
 
+-- Retail script 0x004ec6a4 in MK4/MK-4.EXE.
 function S.liu_kang_sword_hp_repeat_program_prefixed_sample_1()
   mk4.prefixed_sample(0, 216)
   mk4.weapon_query(15)
@@ -62,13 +63,14 @@ function S.liu_kang_sword_hp_repeat_program_prefixed_sample_1()
   return S.liu_kang_sword_hp_repeat_program_prefixed_sample_1()
 end
 
+-- Retail script 0x004ec6f4 in MK4/MK-4.EXE.
 function S.liu_kang_sword_hp_repeat_program_action_recovery_1()
   mk4.action_recovery()
   mk4.forward_count(5)
   mk4.tail(native.LIU_KANG_LIU_SCRIPT_SWORD_BLEND)
 end
 
--- Catalog: sonya.weapon_back_hp (attacker); kitana.weapon_back_hp (attacker).
+-- Retail script 0x004ec7a0 in MK4/MK-4.EXE.
 function S.sonya_weapon_back_hp_attacker()
   mk4.open_clip(0, 228)
   mk4.forward_to(6)
@@ -77,6 +79,7 @@ function S.sonya_weapon_back_hp_attacker()
   mk4.tail(native.LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT)
 end
 
+-- Retail script 0x004ec7c0 in MK4/MK-4.EXE.
 function S.sword_back_high_punch_hit_recovery()
   mk4.forward_to(24)
   mk4.playback_pair(15)
@@ -86,12 +89,13 @@ function S.sword_back_high_punch_hit_recovery()
   return mk4.ready()
 end
 
+-- Retail script 0x004ec7d8 in MK4/MK-4.EXE.
 function S.sword_back_high_punch_block_recovery()
   mk4.forward()
   return mk4.ready()
 end
 
--- Catalog: sonya.weapon_back_lp (attacker); liu_kang.sword_back_lp (attacker); cage.weapon_back_lp (back LP) (also shared by other catalog entries).
+-- Retail script 0x004ec7f0 in MK4/MK-4.EXE.
 function S.sword_attack()
   mk4.open_clip(0, 227)
   mk4.double_to(16)
@@ -101,7 +105,7 @@ function S.sword_attack()
   mk4.tail(native.CAGE_WEAPON_BACK_LP_CONTACT)
 end
 
--- Catalog: scorpion.sword_back_lp (attacker); shinnok.weapon_followup (follow-up HP).
+-- Retail script 0x004ec8b0 in MK4/MK-4.EXE.
 function S.sword_back_lp_script()
   mk4.play_clip(9, 237)
   mk4.sound_c(34)
@@ -130,7 +134,7 @@ function S.sword_back_lp_script()
   mk4.tail(native.RETURN_TO_PLAYER_OR_CPU_CONTROL)
 end
 
--- Catalog: scorpion.sword_back_hp (attacker).
+-- Retail script 0x004ec918 in MK4/MK-4.EXE.
 function S.sword_back_hp_script()
   mk4.play_clip(8, 238)
   mk4.sound_c(34)
@@ -159,6 +163,7 @@ function S.sword_back_hp_script()
   return S.sword_back_hp_script_action_recovery_1()
 end
 
+-- Retail script 0x004ec974 in MK4/MK-4.EXE.
 function S.sword_back_hp_script_action_recovery_1()
   mk4.action_recovery()
   mk4.landing()
@@ -166,6 +171,7 @@ function S.sword_back_hp_script_action_recovery_1()
   mk4.tail(native.RETURN_TO_PLAYER_OR_CPU_CONTROL)
 end
 
+-- Retail script 0x004ecba8 in MK4/MK-4.EXE.
 function S.shared_action_recovery_entry()
   mk4.action_recovery()
   mk4.forward()

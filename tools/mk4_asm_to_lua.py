@@ -8,8 +8,8 @@ Mid-instruction entry points (aliases such as `high_kick + 64`, which the
 wordcode executes as no-ops before the following stream) become functions
 that own the stream after the no-op words.
 
-This produced the editable Lua sources of the migration; it remains a research
-tool for assembled original words (for example an import of the executable).
+This is the shared translation backend for import_mk4_data.py --lua and for
+research imports of assembled original words.
 `--check` compares an existing Lua tree with a translation instead of writing.
 """
 import argparse
@@ -265,7 +265,7 @@ class Module:
         self.entries = []
 
 
-def translate(project, output_dir, check=False):
+def translate(project, output_dir, check=False, provenance=None):
     project = Path(project)
     instructions, guards, labels_at, symbols, script_begin, script_end = parse(project)
     by_address = {i.address: i for i in instructions}
@@ -439,6 +439,7 @@ def translate(project, output_dir, check=False):
     if emitted != len(instructions):
         raise ValueError(f'{len(instructions) - emitted} instructions are reachable from no entry or were emitted twice')
     for alias, target in alias_targets.items():
+        statistics['functions'] += 1
         module = modules[by_address[symbols[target]].module] if symbols[target] in by_address else None
         if module is None:
             raise ValueError(f'alias {alias} continues into a non-instruction')
@@ -457,8 +458,10 @@ def translate(project, output_dir, check=False):
             if raw.strip().startswith(';'):
                 source_comment = raw.strip()[1:].strip()
                 break
+        origin = (f'-- Generated from {provenance}. Do not edit; regenerate with make scripts-export.' if provenance else
+                  f'-- Translated from scripts/mk4/code/{name}.asm by tools/mk4_asm_to_lua.py; edit as Lua.')
         header = [f'-- {source_comment}' if source_comment else f'-- {name}',
-                  f'-- Translated from scripts/mk4/code/{name}.asm by tools/mk4_asm_to_lua.py; edit as Lua.',
+                  origin,
                   '-- Operations: scripts/lua/README.md. Natives use their stable IDs (scripts/mk4/native.inc).',
                   'local mk4 = mk4',
                   'local native, labels = mk4.native_ids, mk4.labels',

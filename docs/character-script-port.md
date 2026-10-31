@@ -19,8 +19,10 @@ research/import evidence only. See [source format](../scripts/README.md).
 
 ## Workflow
 
-1. Build edited scripts and tables with `make scripts`; normal builds do this
-   automatically. Inspect the existing inventory and unresolved boundary:
+1. Regenerate fighter Lua with `make scripts-export` when decoder or entry
+   metadata changes. Build checked-in scripts and tables with `make scripts`;
+   normal builds do the linking automatically without the EXE. Inspect the
+   existing inventory and unresolved boundary:
 
    ```sh
    python3 tools/compile_retail.py --character NAME --inventory
@@ -43,13 +45,16 @@ research/import evidence only. See [source format](../scripts/README.md).
    own source path. Keep actor/model identity separate from native
    implementation identity.
 
-4. Keep script behaviour in the Lua scripts. Do not translate authored waits,
+4. Generate script behaviour from retail words with `tools/import_mk4_data.py --lua`.
+   `tools/mk4_lua_layout.json` owns only entry names, addresses and module boundaries.
+   Do not hand-write fighter Lua or translate authored waits,
    loops, branches, animation commands or balance into C rows or handwritten
    move logic. Native routines may contain their own original control flow;
    keep their engine adaptation shared and within existing state/context
    boundaries. Do not add per-fighter C folders, configuration or copied
-   native variants. A new script is a new function in a module; a table or
-   export refers to it by name after `make scripts`.
+   native variants. Name new decoded entries in the metadata and include their
+   roots in the import layout, then regenerate; tables and exports refer to
+   generated functions by name after `make scripts`.
 
 5. Remove obsolete C adapters, copied data and private modules when their last
    callers migrate. Do not add per-fighter coverage declarations or fighter

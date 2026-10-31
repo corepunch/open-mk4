@@ -1,6 +1,6 @@
 # Lua as the MK4 script VM
 
-Status: Lua is the script runtime. The game, the viewer self-test and every
+Status: Lua is the script runtime. The game and every
 test that runs a match open the Lua program next to the data package; the
 word interpreter, the assembly code modules and the package instruction
 bitmap are removed. `scripts/mk4/program.asm` is generated from the Lua
@@ -60,9 +60,14 @@ why the two can be compared tick for tick.
 
 ## Translation
 
-`tools/mk4_asm_to_lua.py` reads the project through the linker and writes
-one Lua module per assembly module, `program.lua` listing them in link
-order:
+`make scripts-export` runs `tools/import_mk4_data.py --lua`: the existing
+decoder reads the hash-checked retail EXE, and `tools/mk4_lua_layout.json`
+supplies only established entry names, original addresses and module boundaries.
+The exporter feeds temporary assembly into `tools/mk4_asm_to_lua.py`, the same
+translation backend used for the migration. No instruction source or move
+logic is duplicated in metadata. It writes one Lua module per shared capability
+and `program.lua` listing them in link order, and copies the shared API helpers.
+Temporary assembly is removed at exit; checked-in Lua is used by normal builds.
 
 | Wordcode | Lua |
 | --- | --- |
@@ -77,12 +82,24 @@ order:
 | embedded entry (`high_kick + 64`, `… + 4`) | its own function owning the stream after the no-op words |
 | no-op opcodes | omitted |
 
-All 3,309 instructions and 612 labels translate; with the eight embedded
-entries that gives 621 functions in 6,179 lines. `make lua-scripts-check`
-re-translates and compares, so the assembly and the Lua cannot drift while
-both exist. The operation reference is `scripts/lua/README.md`.
+All 3,309 instructions and 621 function names (including embedded entries and
+aliases) are reproduced. `make lua-scripts-check` re-exports and compares
+without writing; it also runs in `make scripts-check`. Regeneration preserves
+every executable Lua statement from the migration, including cross-module
+fall-through and entries inside no-op operand words. Source-address comments
+replace the old references to removed assembly files. The operation reference
+is `scripts/lua/README.md`.
 
-## The gate
+Address evidence: mk4decomp's `src/engine/fight_script_vm.c` has the packed
+word fetch, native boundaries, loop/repeat and roster selection. Its upstream
+VM entry `0x459510`, fetch `0x45c020` and handler table `0x4e8970` differ from
+this EXE's `0x4594b0`, `0x45bfc0` and `0x4e3988`. The local dispatch listing
+confirms those fetch/table references; the existing decoder uses the local
+addresses. Entry metadata was recovered from the named assembly in `196eaf9`
+and aligned with the byte-verified flat retail import: every instruction
+layout and typed operand agreed. No upstream implementation was copied.
+
+## Original migration gate (historical)
 
 `tests/test_lua_vm.c` runs each scenario twice, with the Lua runtime
 disabled and enabled, and hashes the whole `Battle` after every tick (only
@@ -177,6 +194,6 @@ signed overflow in `game/native/attacks.c` (the orbit release heading,
 5. The repository rules in `AGENTS.md`, `ARCHITECTURE.md`, `scripts/README.md`
    and `docs/character-script-port.md` describe the Lua runtime.
 
-`tools/mk4_asm_to_lua.py` remains as the research translator for assembled
-original words (for example an import of the executable); it has no input in
-the project tree any more.
+`tools/mk4_asm_to_lua.py` remains the shared translation backend for the
+exporter and for assembled research imports. No maintained assembly code
+modules are needed to regenerate the Lua program.

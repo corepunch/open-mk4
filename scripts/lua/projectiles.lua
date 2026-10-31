@@ -1,11 +1,11 @@
--- Projectile casting streams; native services own projectile lifetimes.
--- Translated from scripts/mk4/code/projectiles.asm by tools/mk4_asm_to_lua.py; edit as Lua.
+-- Projectiles.
+-- Generated from MK4/MK-4.EXE by tools/import_mk4_data.py --lua. Do not edit; regenerate with make scripts-export.
 -- Operations: scripts/lua/README.md. Natives use their stable IDs (scripts/mk4/native.inc).
 local mk4 = mk4
 local native, labels = mk4.native_ids, mk4.labels
 local S = mk4.module()
 
--- Catalog: reiko.star (throw); noob_saibot.star (throw).
+-- Retail script 0x004ed038 in MK4/MK-4.EXE.
 function S.reiko_star()
   mk4.sound_c(100)
   mk4.prefixed_to(13, 437)
@@ -24,7 +24,7 @@ function S.reiko_star()
   return mk4.ready()
 end
 
--- Catalog: jax.missile (cast).
+-- Retail script 0x004ed090 in MK4/MK-4.EXE.
 function S.jax_missile()
   mk4.prefixed_to(10, 29)
   mk4.sound_c(93)
@@ -34,7 +34,7 @@ function S.jax_missile()
   return mk4.ready()
 end
 
--- Catalog: cage.high_orb (caster); cage.low_orb (caster).
+-- Retail script 0x004ed0d8 in MK4/MK-4.EXE.
 function S.cast_orb()
   mk4.sound_c(95)
   mk4.open_clip(0, 28)
@@ -47,7 +47,7 @@ function S.cast_orb()
   return mk4.ready()
 end
 
--- Catalog: jarek.blade (throw).
+-- Retail script 0x004ed118 in MK4/MK-4.EXE.
 function S.jarek_blade()
   mk4.sound_c(103)
   if mk4.fast_start() then
@@ -57,6 +57,7 @@ function S.jarek_blade()
   return S.jarek_blade_spawn_1()
 end
 
+-- Retail script 0x004ed12c in MK4/MK-4.EXE.
 function S.jarek_blade_spawn_1()
   mk4.spawn(0x4e, native.JAREK_BLADE_SPAWN)
   mk4.forward_to(17)
@@ -75,14 +76,14 @@ function S.jarek_blade_spawn_1()
   return mk4.ready()
 end
 
--- Catalog: tanya.weapon_lp (boomerang throw).
+-- Retail script 0x004ed190 in MK4/MK-4.EXE.
 function S.boomerang_start()
   mk4.sound_c(33)
   mk4.play_clip(7, 229)
   mk4.tail(native.TANYA_BOOMERANG_RELEASE)
 end
 
--- Catalog: reptile.acid_spit (selected stream).
+-- Retail script 0x004ed1e8 in MK4/MK-4.EXE.
 function S.reptile_acid_spit()
   mk4.play_clip(11, 25)
   mk4.call(native.REPTILE_SCRIPT_HEAD_OPEN)
@@ -105,7 +106,7 @@ function S.reptile_acid_spit()
   return mk4.ready()
 end
 
--- Catalog: tanya.fireball (caster); kitana.shadow_low (shadow low playback); noob_saibot.shadow_low (shadow low playback).
+-- Retail script 0x004ed268 in MK4/MK-4.EXE.
 function S.tanya_fireball_caster()
   mk4.prefixed_finish(26)
   mk4.sound_a(33)
@@ -124,7 +125,7 @@ function S.tanya_fireball_caster()
   return mk4.ready()
 end
 
--- Catalog: tanya.air_fireball (caster); kitana.shadow_up (shadow up playback); noob_saibot.shadow_up (shadow up playback).
+-- Retail script 0x004ed2c0 in MK4/MK-4.EXE.
 function S.air_fireball()
   mk4.sound_a(33)
   mk4.block_sound_alt()
@@ -134,7 +135,7 @@ function S.air_fireball()
   mk4.tail(native.FIREBALL_FALL)
 end
 
--- Catalog: kai.ground_skull (cast hop).
+-- Retail script 0x004ed2f8 in MK4/MK-4.EXE.
 function S.kai_ground_skull()
   mk4.prefixed_finish(22)
   mk4.sound_c(51)
@@ -142,14 +143,14 @@ function S.kai_ground_skull()
   mk4.tail(native.KAI_GROUND_SKULL_SPAWN)
 end
 
--- Catalog: kai.rising_skull (cast).
+-- Retail script 0x004ed330 in MK4/MK-4.EXE.
 function S.kai_rising_skull()
   mk4.prefixed_to(7, 21)
   mk4.sound_c(51)
   mk4.tail(native.KAI_RISING_SKULL_SPAWN)
 end
 
--- Catalog: kai.rising_skull (cast loop).
+-- Retail script 0x004ed348 in MK4/MK-4.EXE.
 function S.kai_rising_skull_spawn()
   mk4.playback_pair(4)
   mk4.forward_to(6)
@@ -170,7 +171,7 @@ function S.kai_rising_skull_spawn()
   mk4.tail(native.KAI_RISING_SKULL_FINISH)
 end
 
--- Catalog: quan_chi.skull (caster).
+-- Retail script 0x004ed3a0 in MK4/MK-4.EXE.
 function S.quan_chi_skull()
   mk4.open_clip(0, 23)
   if mk4.fast_start() then
@@ -180,7 +181,7 @@ function S.quan_chi_skull()
   mk4.tail(native.QUAN_CHI_SCRIPT_SKULL_RELEASE)
 end
 
--- Catalog: quan_chi.skull (release recovery).
+-- Retail script 0x004ed3c0 in MK4/MK-4.EXE.
 function S.quan_chi_skull_release()
   mk4.sound_c(56)
   mk4.forward_to(23)
@@ -193,13 +194,14 @@ function S.quan_chi_skull_release()
   return mk4.ready()
 end
 
+-- Retail script 0x004ed3e4 in MK4/MK-4.EXE.
 function S.quan_chi_skull_release_cursor_set_1()
   mk4.cursor_set(5)
   mk4.double_to(17)
   mk4.tail(native.QUAN_CHI_SCRIPT_SKULL_RELEASE)
 end
 
--- Catalog: fujin.crossbow_lp (shot recovery).
+-- Retail script 0x004ed408 in MK4/MK-4.EXE.
 function S.fujin_crossbow_lp_shot_recovery()
   mk4.forward_to(8)
   mk4.playback_pair(4)
@@ -210,7 +212,7 @@ function S.fujin_crossbow_lp_shot_recovery()
   mk4.tail(native.FUJIN_BOW_FINISH)
 end
 
--- Catalog: scorpion.spear (attacker).
+-- Retail script 0x004ed448 in MK4/MK-4.EXE.
 function S.scorpion_spear()
   mk4.sound_c(5)
   if mk4.fast_start() then
@@ -225,6 +227,7 @@ function S.scorpion_spear()
   return mk4.ready()
 end
 
+-- Retail script 0x004ed47c in MK4/MK-4.EXE.
 function S.scorpion_spear_open_clip_1()
   mk4.open_clip(9, 14)
   mk4.double_count(16)
@@ -235,7 +238,7 @@ function S.scorpion_spear_open_clip_1()
   return mk4.ready()
 end
 
--- Catalog: scorpion.spear (return).
+-- Retail script 0x004ed4a8 in MK4/MK-4.EXE.
 function S.scorpion_spear_return()
   mk4.forward_count(19)
   mk4.native_return(71)
@@ -245,7 +248,7 @@ function S.scorpion_spear_return()
   return S.sonya_ring()
 end
 
--- Catalog: sonya.ring (startup and recovery); kitana.ring (startup and recovery).
+-- Retail script 0x004ed4c0 in MK4/MK-4.EXE.
 function S.sonya_ring()
   mk4.sound_indexed(17)
   mk4.open_clip(0, 15)
@@ -257,6 +260,7 @@ function S.sonya_ring()
   return S.sonya_ring_spawn_1()
 end
 
+-- Retail script 0x004ed4dc in MK4/MK-4.EXE.
 function S.sonya_ring_spawn_1()
   mk4.spawn(0x44, native.SONYA_RING_OBJECT)
   mk4.spawn(0x26, native.SONYA_SCRIPT_RING_FLASH)
@@ -273,12 +277,13 @@ function S.sonya_ring_spawn_1()
   return mk4.ready()
 end
 
+-- Retail script 0x004ed520 in MK4/MK-4.EXE.
 function S.sonya_ring_double_to_1()
   mk4.double_to(15)
   return S.sonya_ring_spawn_1()
 end
 
--- Catalog: sub_zero.ice (attacker).
+-- Retail script 0x004ed588 in MK4/MK-4.EXE.
 function S.sub_zero_ice()
   mk4.sound_indexed(4)
   mk4.open_clip(0, 16)
@@ -289,6 +294,7 @@ function S.sub_zero_ice()
   return S.sub_zero_ice_sound_c_1()
 end
 
+-- Retail script 0x004ed5a0 in MK4/MK-4.EXE.
 function S.sub_zero_ice_sound_c_1()
   mk4.sound_c(0)
   mk4.spawn(0x42, native.ICE_PROJECTILE_TASK)
@@ -302,7 +308,7 @@ function S.sub_zero_ice_sound_c_1()
   return mk4.ready()
 end
 
--- Catalog: raiden.lightning (startup and recovery).
+-- Retail script 0x004ed5f0 in MK4/MK-4.EXE.
 function S.raiden_lightning()
   mk4.sound_indexed(20)
   mk4.sound_c(43)
@@ -314,6 +320,7 @@ function S.raiden_lightning()
   return S.raiden_lightning_spawn_1()
 end
 
+-- Retail script 0x004ed614 in MK4/MK-4.EXE.
 function S.raiden_lightning_open_clip_1()
   mk4.open_clip(0, 17)
   mk4.double_to(4)
@@ -321,6 +328,7 @@ function S.raiden_lightning_open_clip_1()
   return S.raiden_lightning_spawn_1()
 end
 
+-- Retail script 0x004ed624 in MK4/MK-4.EXE.
 function S.raiden_lightning_spawn_1()
   mk4.spawn(0x41, native.RAIDEN_LIGHTNING_OBJECT)
   mk4.wait(1)
@@ -332,7 +340,7 @@ function S.raiden_lightning_spawn_1()
   return mk4.ready()
 end
 
--- Catalog: liu_kang.low_fireball (low).
+-- Retail script 0x004ed678 in MK4/MK-4.EXE.
 function S.liu_kang_low_fireball_low()
   mk4.open_clip(0, 19)
   mk4.double_to(20)
@@ -351,7 +359,7 @@ function S.liu_kang_low_fireball_low()
   return mk4.ready()
 end
 
--- Catalog: liu_kang.high_fireball (high).
+-- Retail script 0x004ed6c0 in MK4/MK-4.EXE.
 function S.liu_kang_high_fireball_high()
   mk4.open_clip(0, 18)
   mk4.double_to(20)
@@ -366,7 +374,7 @@ function S.liu_kang_high_fireball_high()
   return mk4.ready()
 end
 
--- Catalog: liu_kang.air_fireball (air).
+-- Retail script 0x004ed6f8 in MK4/MK-4.EXE.
 function S.liu_kang_air_fireball_air()
   mk4.clip(20)
   mk4.sound_a(33)
@@ -377,13 +385,13 @@ function S.liu_kang_air_fireball_air()
   mk4.tail(native.LIU_KANG_LIU_SCRIPT_AIR_RETURN)
 end
 
--- Catalog: fujin.crossbow_followup (short shot).
+-- Retail script 0x004ed788 in MK4/MK-4.EXE.
 function S.fujin_crossbow_followup_short_shot()
   mk4.forward_to(8)
   return mk4.finish()
 end
 
--- Catalog: goro.fireball (clip 592 launch program).
+-- Retail script 0x004ed790 in MK4/MK-4.EXE.
 function S.goro_fireball()
   mk4.open_clip(0, 592)
   mk4.forward_to(14)
@@ -400,12 +408,14 @@ function S.goro_fireball()
   return mk4.ready()
 end
 
+-- Retail script 0x004ed7f0 in MK4/MK-4.EXE.
 function S.shared_open_clip_entry()
   mk4.open_clip(0, 27)
   mk4.double_to(17)
   return S.jarek_blade_spawn_1()
 end
 
+-- Retail script 0x004ed818 in MK4/MK-4.EXE.
 function S.shared_double_to_entry()
   mk4.double_to(15)
   return S.sub_zero_ice_sound_c_1()

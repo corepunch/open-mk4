@@ -23,7 +23,7 @@ SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools")
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: lua-test input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: lua-test lua-scripts-check scripts-export input-test script-runtime-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: build/mk4.data build/mk4_linked.h build/mk4_symbols.lua
@@ -40,7 +40,11 @@ build/mk4_symbols.lua: tools/mk4_lua_symbols.py tools/mk4_link.py tools/mk4_asm.
 build/mk4_linked.h: build/mk4.data
 	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data $@
 
-scripts-check: scripts-audit scripts
+scripts-export:
+	python3 tools/import_mk4_data.py --lua --output scripts/lua
+lua-scripts-check:
+	python3 tools/import_mk4_data.py --lua --check --output scripts/lua
+scripts-check: scripts-audit scripts lua-scripts-check
 	python3 tests/test_mk4_link.py
 	python3 tools/check_native_addresses.py
 scripts-audit:

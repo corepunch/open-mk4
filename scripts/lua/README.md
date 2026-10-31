@@ -1,9 +1,9 @@
 # MK4 actor scripts in Lua
 
-`scripts/lua/` holds the fighter scripts as Lua 5.4 source: one function per
-retail script label, grouped in the modules the assembly was translated from.
+`scripts/lua/` holds generated fighter scripts as Lua 5.4 source: one function
+per retail script label, grouped by shared capability.
 `program.lua` lists the modules in link order; `mk4.lua` holds the shared
-helpers and is loaded first. The game, the viewer self-test and every test
+helpers and is loaded first. The game and every test
 that runs a match open this program next to the linked data package.
 
 The runtime is `game/lua/script_lua.c`. It owns one Lua state, runs each
@@ -21,26 +21,47 @@ runtime). `make lua-test` runs every scenario family in
 every tick; it also reports which functions and operations the families
 reached.
 
-## Writing a script
+## Regenerating scripts
+
+```sh
+make scripts-export       # decode MK4/MK-4.EXE and write the Lua modules
+make lua-scripts-check    # compare without writing; also in scripts-check
+make scripts             # link checked-in Lua labels and data; no EXE needed
+```
+
+Do not hand-write fighter behavior. `tools/import_mk4_data.py --lua` uses the
+existing retail decoder and `tools/mk4_asm_to_lua.py` translator. All waits,
+loops, branches, clips and native calls come from the hash-checked executable.
+`tools/mk4_lua_layout.json` stores only the established entry names, original
+addresses and module boundaries, including embedded no-op entries. Generated
+comments identify source addresses. New decoded entries need names in this
+map and roots in the import layout; implement any missing shared operation or
+native service once in C, then regenerate. `mk4.lua` remains the shared helper
+source, authored once for the runtime API.
+
+To inspect a fresh export or another executable path:
+
+```sh
+python3 tools/import_mk4_data.py --lua --exe MK4/MK-4.EXE --output /tmp/mk4-lua
+```
+
+Normal builds use the checked-in generated files and restore the linked data
+package and symbol map automatically. Exporting is explicit and needs the
+supported retail EXE; it is never a normal build dependency.
+
+## Reading a generated script
 
 ```lua
 local mk4 = mk4
 local native, labels = mk4.native_ids, mk4.labels
 local S = mk4.module()
 
--- Catalog: scorpion.low_kick (Scorpion attacker).
-function S.low_kick_clip_67()
-  mk4.call(native.AVOID_CLEAR)
-  mk4.attack_selector(0x6)
+-- Retail script 0x004e5c80 in MK4/MK-4.EXE.
+function S.high_kick_clip_71()
+  mk4.attack_selector(0x2)
   mk4.sound_a(1)
-  mk4.open_clip(0, 67)
-  for _, pose in ipairs {0, 2, 4, 6, 8, 10, 12} do
-    mk4.prefixed_sample(pose)
-    mk4.wait(1)
-  end
-  ...
-  mk4.wait_branch(5, 8) -- miss ticks, hit ticks
-  mk4.tail(native.LOW_KICK_NARROW_REVERSE_RETURN)
+  mk4.prefixed_to(10, 71)
+  mk4.tail(native.KICK_CONTACT_NARROW)
 end
 
 return S
@@ -65,9 +86,8 @@ return S
 Data tables, command lists, reaction tables and natives reach a script by
 its linked address: `tools/mk4_script_labels.py` gives every function defined
 here a label, `tools/mk4_lua_symbols.py` maps the labels to the addresses the
-linker assigned, and the runtime resolves entries through that map. Adding a
-function to a module is enough for `word(name)` in a table or `MK4_SCRIPT_…`
-exports in `scripts/mk4/exports.inc` to refer to it after `make scripts`.
+linker assigned, and the runtime resolves entries through that map. Tables
+and exports refer to generated function names after `make scripts`.
 
 ## Operations
 

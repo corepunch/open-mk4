@@ -159,6 +159,13 @@ is a new shared operation in `script_lua.c` (documented in
 shared capability modules under `game/native/`. Generated per-fighter C,
 header or include modules are forbidden.
 
+Fighter Lua is generated from the hash-checked retail EXE with
+`make scripts-export` (`tools/import_mk4_data.py --lua`); do not hand-write it.
+`tools/mk4_lua_layout.json` holds entry names/addresses and module boundaries,
+not behavior. `make lua-scripts-check` compares without writing and is part
+of `make scripts-check`. Normal builds use checked-in Lua and need no EXE.
+Shared Lua API helpers in `scripts/lua/mk4.lua` remain authored runtime code.
+
 Data tables stay in `scripts/mk4/tables/`. Every Lua script function keeps a
 linked label (`scripts/mk4/program.asm` is generated from the Lua modules), so
 tables, command lists, reaction tables and natives refer to scripts by linked
