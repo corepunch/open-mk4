@@ -73,14 +73,13 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
     }
   }
   /* Retail 490350 toggles group +0x34 bit 0; 4b8140 tests it and calls
-   * 4bd0d0 to negate the first matrix row. Reflect the
-   * right-facing pose along the fight axis; a half-turn also reverses
-   * depth and exposes the opposite side of the stance. Keep arena yaw
+   * 4bd0d0 to negate the first matrix row. Use the chest-visible,
+   * left-facing pose and reflect it for right-facing fighters. Keep arena yaw
    * separate so joints, normals and geometry share the same reflection. */
-  float yaw = front + 1.570796326794897f;
+  float yaw = front - 1.570796326794897f;
   float c = cosf(yaw), s = sinf(yaw);
   float facing = fighter->facing < 0 ? -1.f : 1.f;
-  Mat3 stance = {{facing * c, 0, facing * s, 0, 1, 0, -s, 0, c}};
+  Mat3 stance = {{-facing * c, 0, -facing * s, 0, 1, 0, -s, 0, c}};
   float arena_yaw = atan2f(-facing * (float)fighter->heading[1], facing * (float)fighter->heading[0]);
   c = cosf(arena_yaw);
   s = sinf(arena_yaw);

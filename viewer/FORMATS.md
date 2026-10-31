@@ -62,10 +62,10 @@ initial head direction; animation does not rotate the camera to follow it.
 Fighter facing is a reflection, separate from arena rotation. In the supplied
 EXE, 0x490350 toggles group +0x34 bit 0; the joint transform path at 0x4b8140
 tests that bit and calls 0x4bd0d0, which negates the first three s16 matrix
-elements. `fighter_turn` reflects the right-facing stance along the fight axis
+elements. `fighter_turn` reflects the chest-visible left-facing stance along the fight axis
 before applying arena yaw, shared by meshes, normals, joint attachments and
 joint bounds. Character and arena selection use the same side-on stance with
-the right preview mirrored toward the left preview.
+the left preview mirrored toward the right preview, keeping both chests toward the camera.
 
 ## Independent checks
 

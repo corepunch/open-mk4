@@ -291,8 +291,8 @@ static void draw_mode(Canvas *canvas, const Assets *assets, const FrontendMenu *
 
 /* Fit the complete idle envelope and anchor its feet to the platform. Gallery
  * rendering has UI margins; keep those outside the requested model rectangle. */
-static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, bool mirrored, double seconds) {
-  const float yaw = 1.570796326794897f; /* Match the arena's right-facing stance; P2 reflects it. */
+static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, bool facing_left, double seconds) {
+  const float yaw = -1.570796326794897f; /* Chest-visible left-facing stance; P1 reflects it. */
   static Bounds bounds_cache[MK4_ROSTER_COUNT];
   static bool cached[MK4_ROSTER_COUNT];
   const Character *character = roster_character(assets, roster);
@@ -309,7 +309,7 @@ static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect 
   int fitted = mini(bounds.h, (int)((float)bounds.w * height / width));
   Rect gallery = {bounds.x - 19, bounds.y + bounds.h - fitted - 30, bounds.w + 38, fitted + 76};
   double frame = fmod(seconds * 24.0, (double)clip->frames.count);
-  if (mirrored) {
+  if (!facing_left) {
     draw_character_mirrored(canvas, character, clip, frame, gallery, model, yaw);
   } else {
     draw_character(canvas, character, clip, frame, gallery, model, yaw, false, false);
