@@ -129,6 +129,27 @@ static void fighter_render_snapshots(const Assets *assets) {
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(isfinite(rendered[i].position.x) && isfinite(rendered[i].rotation.m[0]), "Cross-animation render snapshot must remain finite");
   }
+  /* A loop or script branch selects endpoints, not all intervening samples.
+   * Exercise both directions inside one clip, including its wrap boundary. */
+  FighterAnimationFrame *previous = &g_battle.previous_animation.fighters[0];
+  FighterAnimationFrame *current = &g_battle.current_animation.fighters[0];
+  current->clip = previous->clip;
+  const Clip *clip = &assets->clips.data[current->clip];
+  const int samples[][2] = {{(int)clip->frames.count - 1, 0}, {0, (int)clip->frames.count - 1}, {1, 7}};
+  for (size_t pair = 0; pair < sizeof samples / sizeof *samples; ++pair) {
+    previous->sample = samples[pair][0];
+    current->sample = samples[pair][1];
+    pose_blend_frames(model, clip, previous->sample, clip, current->sample, .5f, target);
+    fighter_render_pose(&g_battle, assets, fighter, .5, rendered);
+    for (size_t i = 0; i < model->bones.count; ++i) {
+      check(fabsf(rendered[i].position.x - target[i].position.x) < .0001f && fabsf(rendered[i].position.y - target[i].position.y) < .0001f &&
+                fabsf(rendered[i].position.z - target[i].position.z) < .0001f,
+          "Same-clip loops and branches must blend selected poses without visiting skipped samples");
+      for (size_t k = 0; k < 9; ++k) {
+        check(fabsf(rendered[i].rotation.m[k] - target[i].rotation.m[k]) < .0001f, "Same-clip transitions must interpolate endpoint joint angles");
+      }
+    }
+  }
 }
 
 static void sound_samples(void) {

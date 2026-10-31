@@ -38,6 +38,30 @@ static void check_roster(void) {
   }
 }
 
+static void check_jump_over_facing(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    fight(1.5f);
+    Fighter *jumper = &g_battle.fighters[slot];
+    Fighter *other = &g_battle.fighters[1 - slot];
+    int direction = slot == 0 ? 1 : -1;
+    InputFrame input[2] = {0};
+    input[slot].held = BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(slot == 0 ? BUTTON_RIGHT : BUTTON_LEFT);
+    battle_step(input);
+    bool crossed_in_air = false;
+    for (int tick = 0; tick < 180; ++tick) {
+      battle_step((InputFrame[2]){0});
+      crossed_in_air |= fighter_airborne(jumper) && direction * (jumper->body.pos[AXIS_X] - other->body.pos[AXIS_X]) > 0;
+      if (fighter_airborne(jumper)) {
+        check(jumper->facing == direction, "Crossing must not reverse the jumper's facing in midair");
+      }
+    }
+    check(crossed_in_air, "Directional jump must cross over the opponent");
+    check(!fighter_airborne(jumper), "Crossing jump must land");
+    check(jumper->facing == -direction && other->facing == direction, "Both fighters must face each other after a jump swaps sides");
+    check(jumper->heading[0] * jumper->facing > 0 && other->heading[0] * other->facing > 0, "Render headings must follow the switched facing");
+  }
+}
+
 static const mframe_t scene_actor_rows[3] = {{0}};
 static const mmove_t scene_actor_phase = {.firstframe = 0, .lastframe = 2, .frame = scene_actor_rows, .endfunc = battle_scene_actor_stop};
 
@@ -89,6 +113,7 @@ int main(void) {
   battle_init(&image, 0, 4);
   check_roster();
   check_independent_scene_actor_lifetime();
+  check_jump_over_facing();
   battle_init(&image, 0, 4);
   advance_ticks(89, NULL);
   check(g_battle.phase == PHASE_READY, "Countdown ends too soon");

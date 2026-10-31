@@ -127,12 +127,9 @@ void fighter_render_pose(const Battle *battle, const Assets *assets, const Fight
   const Clip *from_clip = &assets->clips.data[from->clip];
   const Clip *to_clip = &assets->clips.data[to->clip];
   float fraction = (float)fmax(0., fmin(1., interpolation));
-  if (from->clip == to->clip) {
-    double sample = from->sample + (to->sample - from->sample) * fraction;
-    pose(ch, to_clip, sample, output);
-  } else {
-    pose_blend_frames(ch, from_clip, from->sample, to_clip, to->sample, fraction, output);
-  }
+  /* Sample indices are authored selections, not a continuous timeline.
+   * Loops and branches within one clip must not scrub through skipped poses. */
+  pose_blend_frames(ch, from_clip, from->sample, to_clip, to->sample, fraction, output);
 }
 
 /* Joint positions include animation root translation, as in 4b8140.
