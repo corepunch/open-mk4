@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "native/actions.h"
 #include "script/vm.h"
@@ -203,6 +204,7 @@ void action_scene_join_victory(Fighter *fighter) {
 
 /*475690/4756f0 share facing, orientation and horizontal origin with the
  * captured peer. Retail words bind the scene's victim animations. */
+
 void action_scene_reaction(Fighter *fighter) {
   Fighter *owner = fighter_peer(fighter);
   uint32_t entry = mk4_reaction_target(battle_data(), (unsigned)fighter->reaction);
@@ -214,22 +216,7 @@ void action_scene_reaction(Fighter *fighter) {
   fighter->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   owner->flags |= FF_PAIRED;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
-  uint32_t script;
-  switch (entry) {
-    case native_raiden_fatality_2_scene_victim:
-      script = fn_raiden_fatality_2_victim;
-      break;
-    case native_tanya_fatality_2_victim_reaction_186:
-      script = fn_tanya_fatality_2_victim_scene;
-      break;
-    case native_sonya_fatality_2_scene_victim:
-      script = fn_sonya_fatality_2_victim;
-      break;
-    default:
-      require(false, "Unexpected native scene reaction");
-      return;
-  }
-  script_vm_enter(fighter, script, fighter_ready);
+  script_native_continue(fighter, entry, false, fighter_ready);
 }
 
 /* Native467fc0 owns only the attacker's small rewind/advance cycle. */

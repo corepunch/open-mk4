@@ -5,6 +5,7 @@
 #include "mk4_program.h"
 #include "native/helpers.h"
 #include "native/actions.h"
+#include <stdio.h>
 
 static void resume_script_return(Fighter *fighter);
 
@@ -41,6 +42,12 @@ void script_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next) {
 static _Noreturn void vm_error(const Fighter *fighter, const char *message) {
   fatal("Retail VM at %08x (%s, next %08x): %s", fighter->execution.script.instruction, script_vm_entry_name(fighter->execution.script.instruction),
       fighter->execution.script.pc, message);
+}
+
+static _Noreturn void vm_native_error(const Fighter *fighter, const char *reason, uint32_t reference) {
+  char message[256];
+  snprintf(message, sizeof message, "%s: %s (reference %u)", reason, script_native_name(reference), reference);
+  vm_error(fighter, message);
 }
 
 static uint32_t fetch(Fighter *fighter) {
@@ -581,7 +588,7 @@ void script_vm_step(Fighter *fighter) {
       case MK4_OP_CALL: {
         uint32_t address = fetch(fighter);
         if (!vm->dispatch(fighter, address, opcode == MK4_OP_TAIL ? MK4_TAIL : MK4_CALL, 0)) {
-          vm_error(fighter, "unreviewed native binding");
+          vm_native_error(fighter, "unreviewed native binding", address);
         }
         break;
       }
@@ -628,7 +635,7 @@ void script_vm_step(Fighter *fighter) {
         unsigned type = fetch(fighter);
         uint32_t address = fetch(fighter);
         if (!vm->dispatch(fighter, address, MK4_SPAWN, type)) {
-          vm_error(fighter, "unreviewed task binding");
+          vm_native_error(fighter, "unreviewed task binding", address);
         }
         break;
       }
@@ -651,7 +658,7 @@ void script_vm_step(Fighter *fighter) {
         uint32_t target = fetch(fighter);
         uint64_t continuation = fighter->execution.generation;
         if (!vm->dispatch(fighter, address, MK4_PREDICATE, opcode == MK4_OP_PREDICATE_ARGUMENT ? arg : 0)) {
-          vm_error(fighter, "unreviewed predicate binding");
+          vm_native_error(fighter, "unreviewed predicate binding", address);
         }
         if (!vm->active || fighter->execution.generation != continuation || fighter->pending != NULL) {
           return;
@@ -712,7 +719,7 @@ void script_vm_step(Fighter *fighter) {
       case MK4_OP_HANDLER: {
         uint32_t address = fetch(fighter);
         if (!vm->dispatch(fighter, address, MK4_PHYSICS, 0)) {
-          vm_error(fighter, "unreviewed physics binding");
+          vm_native_error(fighter, "unreviewed physics binding", address);
         }
         break;
       }

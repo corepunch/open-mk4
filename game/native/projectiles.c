@@ -23,13 +23,9 @@ static void cage_projectile_orb_step(Projectile *projectile) {
     return;
   }
   projectile->vel[AXIS_Y] += projectile->gravity;
-  for (int axis = 0; axis < 3; ++axis) {
-    projectile->pos[axis] += projectile->vel[axis];
-  }
+  mk4_projectile_move(projectile);
   /* 497375 ->49bc00: squared arena radius plus twelve square units. */
-  int64_t x = projectile->pos[AXIS_X], z = projectile->pos[AXIS_Z];
-  int64_t radius = g_battle.arena_radius;
-  if (x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE) {
+  if (mk4_projectile_outside_arena(projectile)) {
     projectile->kind = 0;
     return;
   }
@@ -294,9 +290,7 @@ static void goro_projectile_fireball_step(Projectile *projectile) {
     projectile->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    projectile->pos[axis] += projectile->vel[axis];
-  }
+  mk4_projectile_move(projectile);
   if (battle_projectile_contact(projectile, &goro_projectile_fireball_record) != CONTACT_MISS) {
     projectile->kind = 0;
   }
@@ -452,9 +446,7 @@ static void jarek_projectile_blade_step(Projectile *projectile) {
     return;
   }
   if (projectile->phase == JAREK_PROJECTILE_BLADE_STUCK) {
-    for (int axis = 0; axis < 3; ++axis) {
-      projectile->pos[axis] += projectile->vel[axis];
-    }
+    mk4_projectile_move(projectile);
     /* Every third visit 4978e0 places the blade two velocity steps short
      * of the victim, retaining its height and heading. */
     if (projectile->ticks % 3 == 1 && projectile->ticks <= 30) {
@@ -612,18 +604,14 @@ static void jax_projectile_missile_step(Projectile *object) {
     object->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    object->pos[axis] += object->vel[axis];
-  }
+  mk4_projectile_move(object);
   const Fighter *victim = fighter_opponent(&g_battle.fighters[object->owner]);
   if (victim->action != ACTION_CODE_2001 && battle_projectile_contact(object, &jax_projectile_missile_record) != CONTACT_MISS) {
     battle_sound(SOUND_C, 0x5e);
     object->kind = 0;
     return;
   }
-  int64_t x = object->pos[AXIS_X], z = object->pos[AXIS_Z];
-  int64_t radius = g_battle.arena_radius;
-  if (x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE) {
+  if (mk4_projectile_outside_arena(object)) {
     object->kind = 0;
   }
 }
@@ -685,7 +673,7 @@ enum {
 
 bool kai_can_rising_skull(const Fighter *fighter) {
   /* 45eb40: 48e3f0 slot 3 elapsed since the last completed cast >= 0x30. */
-  return g_battle.ticks >= fighter->skull_ready;
+  return mk4_special_elapsed(fighter, 3, KAI_SKULL_SKULL_COOLDOWN);
 }
 
 bool kai_can_ground_skull(const Fighter *fighter) {
@@ -704,9 +692,7 @@ static void kai_skull_skull_impact(Projectile *object) {
 }
 
 static void kai_skull_skull_move(Projectile *object) {
-  for (int axis = 0; axis < 3; ++axis) {
-    object->pos[axis] += object->vel[axis];
-  }
+  mk4_projectile_move(object);
 }
 
 static void kai_skull_skull_relocate(Projectile *object, q16 vel_y, q16 pitch) {
@@ -811,7 +797,7 @@ void kai_rising_skull_spawn(Fighter *fighter) {
 
 void kai_rising_skull_finish(Fighter *fighter) {
   /* 499470: 48e3a0 stamps slot 3 for 45eb40, then 46f650. */
-  fighter->skull_ready = g_battle.ticks + KAI_SKULL_SKULL_COOLDOWN;
+  mk4_special_stamp(fighter, 3);
   mk4_mmove_thrown_finish(fighter);
 }
 
@@ -892,9 +878,7 @@ static void liu_kang_projectile_fireball_projectile(Projectile *p) {
     p->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    p->pos[axis] += p->vel[axis];
-  }
+  mk4_projectile_move(p);
   Fighter *owner = &g_battle.fighters[p->owner];
   bool low = p->phase != 0;
   if ((low || fighter_peer(owner)->action != ACTION_CODE_2001) &&
@@ -1019,9 +1003,7 @@ static void quan_chi_skull_skull_step(Projectile *skull) {
     skull->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    skull->pos[axis] += skull->vel[axis];
-  }
+  mk4_projectile_move(skull);
   skull->angle[2] = quan_chi_skull_skull_roll(skull);
   if (skull->phase == QUAN_CHI_SKULL_SKULL_BITE) {
     if (skull->lifetime == QUAN_CHI_SKULL_SKULL_ESCAPE_TICKS + 1) {
@@ -1036,9 +1018,7 @@ static void quan_chi_skull_skull_step(Projectile *skull) {
     quan_chi_skull_skull_bite(skull);
     return;
   }
-  int64_t x = skull->pos[AXIS_X], z = skull->pos[AXIS_Z];
-  int64_t radius = g_battle.arena_radius;
-  if (x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE) {
+  if (mk4_projectile_outside_arena(skull)) {
     skull->kind = 0; /* 499c00 frees the object directly. */
     return;
   }
@@ -1145,9 +1125,7 @@ static void reiko_star_star_step(Projectile *star) {
     star->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    star->pos[axis] += star->vel[axis];
-  }
+  mk4_projectile_move(star);
   star->angle[AXIS_Z] = (star->angle[AXIS_Z] + 0xb333) % 0x6487e;
 }
 
@@ -1284,13 +1262,9 @@ static void reptile_projectile_acid_step(Projectile *acid) {
     acid->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    acid->pos[axis] += acid->vel[axis];
-  }
+  mk4_projectile_move(acid);
   /* 498a90 -> 49bc00: squared arena radius plus twelve square units. */
-  int64_t x = acid->pos[AXIS_X], z = acid->pos[AXIS_Z];
-  int64_t radius = g_battle.arena_radius;
-  if (x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE) {
+  if (mk4_projectile_outside_arena(acid)) {
     acid->kind = 0;
     return;
   }
@@ -1432,15 +1406,12 @@ void sub_zero_ice_projectile(Projectile *p) {
     p->kind = 0;
     return;
   }
-  for (int i = 0; i < 3; ++i) {
-    p->pos[i] += p->vel[i];
-  }
+  mk4_projectile_move(p);
   Fighter *owner = &g_battle.fighters[p->owner];
   if (fighter_peer(owner)->action != ACTION_CODE_2001 && battle_projectile_contact(p, &ice_projectile_record) != CONTACT_MISS) {
     p->kind = 0;
   }
-  int64_t radius2 = (int64_t)g_battle.arena_radius * g_battle.arena_radius + (int64_t)0xc0000 * Q16_ONE;
-  if ((int64_t)p->pos[AXIS_X] * p->pos[AXIS_X] + (int64_t)p->pos[AXIS_Z] * p->pos[AXIS_Z] > radius2) {
+  if (mk4_projectile_outside_arena(p)) {
     p->kind = 0;
   }
   if (p->kind != 0) {

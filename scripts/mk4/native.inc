@@ -1,16 +1,15 @@
-; Symbolic native imports. Functions are linked by the C compiler; no retail code addresses.
-; Fields describe typed call roles. A declaration without a role is retained data only.
-.native native_air_attack_land_or_finish, tail=action_air_land
-.native native_air_contact_begin
+; Symbolic native imports and typed C bindings. No retail code addresses.
+.native native_air_attack_land_or_finish, tail=action_air_land, continuation=action_air_land
+.native native_air_contact_begin, continuation_arg=air_contact_begin, parameter=dat_air_low_punch_contact_row
 .native native_air_diagonal_alt_tail, tail=action_air_diagonal_alt_tail
 .native native_air_diagonal_high_kick, entry=action_air_diagonal_high_kick
-.native native_air_diagonal_kick_clip_55_reverse
-.native native_air_diagonal_kick_clip_56_reverse
-.native native_air_diagonal_kick_clip_57_reverse
-.native native_air_diagonal_kick_contact_hold
-.native native_air_diagonal_kick_query_30
-.native native_air_diagonal_kick_query_31
-.native native_air_diagonal_kick_query_32
+.native native_air_diagonal_kick_clip_55_reverse, script=air_diagonal_kick_clip_55_reverse, prepare=action_air_prepare_reverse
+.native native_air_diagonal_kick_clip_56_reverse, script=air_diagonal_kick_clip_56_reverse, prepare=action_air_prepare_reverse
+.native native_air_diagonal_kick_clip_57_reverse, script=air_diagonal_kick_clip_57_reverse, prepare=action_air_prepare_reverse
+.native native_air_diagonal_kick_contact_hold, script=air_diagonal_kick_contact_hold, prepare=action_air_prepare_script
+.native native_air_diagonal_kick_query_30, continuation_arg=action_air_contact_clear, parameter=dat_air_diagonal_kick_query_30_row
+.native native_air_diagonal_kick_query_31, continuation_arg=action_air_contact_clear, parameter=dat_air_diagonal_kick_query_31_row
+.native native_air_diagonal_kick_query_32, continuation_arg=action_air_contact_clear, parameter=dat_air_diagonal_kick_query_32_row
 .native native_air_diagonal_low_kick, entry=action_air_diagonal_low_kick
 .native native_air_diagonal_tail, tail=action_air_diagonal_tail
 .native native_air_diagonal_wide_tail, tail=action_air_diagonal_wide_tail
@@ -19,8 +18,8 @@
 .native native_air_flip_getup, tail=action_air_flip_getup
 .native native_air_flip_release, tail=action_air_flip_release
 .native native_air_high_punch, entry=action_air_high_punch
-.native native_air_high_punch_contact_window
-.native native_air_high_punch_miss_reverse
+.native native_air_high_punch_contact_window, continuation_arg=action_air_contact_high, parameter=dat_air_high_punch_contact_row
+.native native_air_high_punch_miss_reverse, script=air_high_punch_miss_reverse, prepare=action_air_prepare_reverse
 .native native_air_hp_tail, tail=action_air_hp_tail
 .native native_air_kick, entry=action_air_kick
 .native native_air_lift_fall, tail=action_air_lift_fall
@@ -29,18 +28,18 @@
 .native native_air_lk_alt_tail, tail=action_air_lk_alt_tail
 .native native_air_lk_tail, tail=action_air_lk_tail
 .native native_air_lk_wide_tail, tail=action_air_lk_wide_tail
-.native native_air_low_kick_clip_58_reverse
-.native native_air_low_kick_clip_59_reverse
-.native native_air_low_kick_clip_60_reverse
-.native native_air_low_kick_contact_hold
+.native native_air_low_kick_clip_58_reverse, script=air_low_kick_clip_58_reverse, prepare=action_air_prepare_reverse_clear
+.native native_air_low_kick_clip_59_reverse, script=air_low_kick_clip_59_reverse, prepare=action_air_prepare_reverse_clear
+.native native_air_low_kick_clip_60_reverse, script=air_low_kick_clip_60_reverse, prepare=action_air_prepare_reverse_clear
+.native native_air_low_kick_contact_hold, script=air_low_kick_contact_hold, prepare=action_air_prepare_script
 .native native_air_low_kick_land, tail=action_air_land
 .native native_air_low_punch, entry=action_air_low_punch
-.native native_air_low_punch_miss_reverse
+.native native_air_low_punch_miss_reverse, script=air_low_punch_miss_reverse, prepare=action_air_prepare_reverse
 .native native_air_lp_tail, tail=action_air_lp_tail
 .native native_air_slam_end, tail=action_air_slam_end
 .native native_air_slam_fall, tail=action_air_slam_fall
-.native native_air_straight_kick_land, tail=action_air_land
-.native native_air_straight_kick_miss_reverse
+.native native_air_straight_kick_land, tail=action_air_land, continuation=action_air_land
+.native native_air_straight_kick_miss_reverse, script=cage_air_kick_narrow_miss_reversal, prepare=action_air_prepare_script
 .native native_air_straight_land, tail=action_air_straight_land
 .native native_air_straight_tail, tail=action_air_straight_tail
 .native native_air_straight_wide_tail, tail=action_air_straight_wide_tail
@@ -55,11 +54,11 @@
 .native native_air_victim_lift, throw_reaction=action_air_victim_lift
 .native native_avoid_clear, call=mk4_script_avoid_clear
 .native native_avoid_set, call=mk4_script_avoid_set
-.native native_battle_react, reaction=action_record_reaction
+.native native_battle_react, reaction=action_record_reaction, script=raiden_staff_hp_staff_victim, prepare=action_prepare_battle_react
 .native native_bicycle_capture, reaction=action_bicycle_capture
 .native native_bicycle_cycle, tail=action_bicycle_cycle
 .native native_bicycle_release, reaction=action_bicycle_release
-.native native_bicycle_victim_front_getup, reaction=action_record_reaction
+.native native_bicycle_victim_front_getup, reaction=action_record_reaction, script=sonya_bicycle_victim, finish=action_getup_front
 .native native_block_cycle, tail=action_block_cycle
 .native native_block_push_0_13_no_wall_recoil, engine_reaction=react_block
 .native native_block_push_0_15, engine_reaction=react_block
@@ -94,12 +93,12 @@
 .native native_cage_first_victim_206, tail=cage_first_victim_206
 .native native_cage_first_victim_59, tail=cage_first_victim_59
 .native native_cage_groin_punch, entry=cage_groin_punch
-.native native_cage_groin_punch_victim_reaction, reaction=action_aux_reaction
+.native native_cage_groin_punch_victim_reaction, reaction=action_aux_reaction, script=groin_punch_groin_victim, prepare=action_prepare_cage_groin_punch_victim_reaction
 .native native_cage_high_orb, entry=cage_high_orb
 .native native_cage_jab_recovery, tail_script=cage_jab_recovery, tail_finish=inherit
 .native native_cage_jab_repeat, tail_script=cage_jab_repeat, tail_finish=inherit
 .native native_cage_jab_second_punch, tail_script=cage_jab_second_punch, tail_finish=inherit
-.native native_cage_lk_throw_entry
+.native native_cage_lk_throw_entry, script=cage_lk_throw_startup
 .native native_cage_lk_throw_owner_return, tail=action_lk_return
 .native native_cage_lk_throw_paired_continuation, tail_script=cage_lk_throw_damage, tail_finish=inherit
 .native native_cage_lk_throw_release, tail_script=cage_lk_throw_release, tail_finish=inherit
@@ -117,28 +116,28 @@
 .native native_cage_second_victim_finish, tail=cage_second_victim_finish
 .native native_cage_second_victim_hit, engine_reaction=cage_second_victim_hit
 .native native_cage_shadow_victim, engine_reaction=cage_shadow_victim
-.native native_cage_weapon_back_hp_entry
+.native native_cage_weapon_back_hp_entry, weapon=action_cage_weapon_back_hp_entry
 .native native_cage_weapon_back_lp_contact, tail_reference=action_weapon_contact
-.native native_cage_weapon_back_lp_entry
+.native native_cage_weapon_back_lp_entry, weapon_entry=action_liu_kang_sword_back_low_punch
 .native native_cage_weapon_lp_entry
-.native native_cage_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_cage_weapon_reaction_entry, reaction=action_weapon_reaction, script=reptile_weapon_reaction_reaction_144, prepare=action_prepare_weapon_clip_189_launch_half_damage
 .native native_cage_weapon_upper_contact, tail_reference=action_weapon_contact
-.native native_cage_weapon_upper_entry
+.native native_cage_weapon_upper_entry, weapon_entry=action_cage_weapon_back_upper
 .native native_can_fan_finish, gate=mk4_can_fan_finish
 .native native_can_finish_close, gate=action_can_finish_close
 .native native_can_finish_range, gate=action_can_finish_range
 .native native_can_player_pair_air_throw, gate=mk4_can_air_throw
 .native native_can_sidestep, gate=mk4_can_sidestep
 .native native_can_spike_finish, gate=mk4_can_spike_finish
-.native native_cartwheel_victim_impact, reaction=action_record_reaction
-.native native_cartwheel_victim_recoil, reaction=action_record_reaction
-.native native_cartwheel_victim_scaled_impact, reaction=action_record_reaction
+.native native_cartwheel_victim_impact, reaction=action_record_reaction, script=sonya_cartwheel_victim, prepare=action_prepare_cartwheel_victim_impact
+.native native_cartwheel_victim_recoil, reaction=action_record_reaction, script=sonya_cartwheel_victim
+.native native_cartwheel_victim_scaled_impact, reaction=action_record_reaction, script=sonya_cartwheel_victim, prepare=action_prepare_cartwheel_victim_scaled_impact
 .native native_close_high_kick, entry=action_close_high_kick
 .native native_close_high_kick_tail, tail=action_close_high_kick_tail
 .native native_close_high_punch, entry=action_close_high_punch
 .native native_close_high_punch_tail, tail=action_close_high_punch_tail
 .native native_combo_high_punch_tail, tail=action_combo_high_punch_tail
-.native native_combo_hp_entry
+.native native_combo_hp_entry, script=sub_zero_combo_hp_attacker
 .native native_contact_query_a
 .native native_contact_query_b
 .native native_contact_query_d, predicate_result=raiden_script_torpedo_query
@@ -149,13 +148,13 @@
 .native native_crouch_low_punch, entry=action_crouch_low_punch
 .native native_crouch_return, tail=action_crouch_return
 .native native_disarm_self, call=mk4_script_disarm_self
-.native native_disarm_wall_recoil_fall, reaction=action_launch_reaction
+.native native_disarm_wall_recoil_fall, reaction=action_launch_reaction, script=guard_airborne_fall
 .native native_dispatch_opponent_reaction, handler_checked=action_script_release_reaction
 .native native_disturb_resting_weapons, call_global=action_disturb_resting_weapons
 .native native_face_peer_and_resume_script, handler=action_face_peer
 .native native_face_peer_orient_group, physics=action_face_peer
-.native native_fall_reaction_with_effects, reaction=action_launch_reaction
-.native native_fall_without_disarm, reaction=action_launch_reaction
+.native native_fall_reaction_with_effects, reaction=action_launch_reaction, script=fall_reaction_effects
+.native native_fall_without_disarm, reaction=action_launch_reaction, script=guard_airborne_fall
 .native native_fan_female_victim_owner_cycle, tail=action_fan_cycle
 .native native_fan_finish, entry=action_fan_finish
 .native native_fan_male_victim_owner_cycle, tail=action_fan_cycle
@@ -170,8 +169,8 @@
 .native native_fireball_fall, tail=action_fireball_fall
 .native native_fireball_spawn, spawn=action_fireball_spawn, task=75
 .native native_flip_facing, call=action_flip_facing
-.native native_forward_fall_context_sound, reaction=action_branch_reaction
-.native native_forward_fall_context_sound_alias, reaction=action_branch_reaction
+.native native_forward_fall_context_sound, reaction=action_branch_reaction, script=forward_fall_grounded, alternate_script=forward_fall_airborne, finish=action_getup_front
+.native native_forward_fall_context_sound_alias, reaction=action_branch_reaction, script=forward_fall_grounded, alternate_script=forward_fall_airborne, finish=action_getup_front
 .native native_fujin_bolt_victim, engine_reaction=fujin_bolt_victim
 .native native_fujin_bow_finish, tail=fujin_bow_finish
 .native native_fujin_can_dive, gate=fujin_can_dive
@@ -179,9 +178,9 @@
 .native native_fujin_can_wind, gate=fujin_can_wind
 .native native_fujin_can_wind_grab, gate=fujin_can_wind_grab
 .native native_fujin_can_wind_slam, gate=fujin_can_wind_slam
-.native native_fujin_crossbow_followup_entry
-.native native_fujin_crossbow_hp_entry
-.native native_fujin_crossbow_lp_entry
+.native native_fujin_crossbow_followup_entry, weapon_entry=action_bow_followup_strike
+.native native_fujin_crossbow_hp_entry, weapon_entry=action_bow_high_punch
+.native native_fujin_crossbow_lp_entry, weapon=action_fujin_crossbow_lp_entry
 .native native_fujin_dive, entry=fujin_dive
 .native native_fujin_dive_contact, tail=fujin_dive_contact
 .native native_fujin_dive_land, tail=fujin_dive_land
@@ -192,7 +191,7 @@
 .native native_fujin_grab_control_start, tail=fujin_grab_control_start
 .native native_fujin_grab_victim, engine_reaction=fujin_grab_victim
 .native native_fujin_high_kick_contact_recovery
-.native native_fujin_lk_throw_entry
+.native native_fujin_lk_throw_entry, script=fujin_lk_throw_startup
 .native native_fujin_second_blood, spawn=fujin_second_blood, task=38
 .native native_fujin_second_burst, tail=fujin_second_burst
 .native native_fujin_second_fatality, entry=fujin_second_fatality
@@ -211,15 +210,15 @@
 .native native_getup_back, tail=action_getup_back
 .native native_getup_front, tail=action_getup_front
 .native native_getup_roll_flip, tail=action_getup_roll_flip
-.native native_goro_air_hp_recovery_callback
-.native native_goro_air_kick_recovery_callback
-.native native_goro_air_lp_recovery_callback
+.native native_goro_air_hp_recovery_callback, continuation_arg=air_punch_contact, parameter=1
+.native native_goro_air_kick_recovery_callback, continuation_arg=air_punch_contact, parameter=0
+.native native_goro_air_lp_recovery_callback, script=air_low_punch_contact_hold, prepare=action_air_prepare_script
 .native native_goro_fireball, entry=goro_fireball
 .native native_goro_fireball_spawn, spawn=goro_fireball_spawn, task=83
 .native native_goro_kick_victim, engine_reaction=goro_kick_victim
-.native native_goro_kick_victim_disarm, reaction=action_aux_reaction
+.native native_goro_kick_victim_disarm, reaction=action_aux_reaction, script=goro_kick_victim
 .native native_goro_leap_stomp, entry=goro_leap_stomp
-.native native_goro_lk_throw_entry
+.native native_goro_lk_throw_entry, script=goro_lk_throw_startup
 .native native_goro_lp_throw_five_phase_sequence, tail_script=goro_lp_throw_repeated_damage, tail_finish=inherit
 .native native_goro_quake_stomp, entry=goro_quake_stomp
 .native native_goro_quake_victim, engine_reaction=goro_quake_victim
@@ -233,13 +232,13 @@
 .native native_goro_script_uppercut_victim_slide, tail=goro_script_uppercut_victim_slide
 .native native_goro_special_kick, entry=goro_special_kick
 .native native_goro_special_punch, entry=goro_special_punch
-.native native_goro_special_punch_189_entry, reaction=action_script_reaction
+.native native_goro_special_punch_189_entry, reaction=action_script_reaction, script=goro_special_punch_189_victim
 .native native_goro_special_uppercut, entry=goro_special_uppercut
-.native native_goro_special_uppercut_192_entry, reaction=action_scaled_reaction
+.native native_goro_special_uppercut_192_entry, reaction=action_scaled_reaction, script=goro_special_uppercut_192_victim, prepare=action_prepare_goro_special_uppercut_192_entry
 .native native_goro_stomp_hold_separation, physics=goro_stomp_hold_separation
 .native native_goro_stomp_victim, engine_reaction=goro_stomp_victim
 .native native_goro_victim_getup, tail=goro_victim_getup
-.native native_grounded_tumble_hold_return, reaction=action_tumble_reaction
+.native native_grounded_tumble_hold_return, reaction=action_tumble_reaction, script=grounded_tumble_hold_return
 .native native_guard_fall, reaction=action_guard_fall
 .native native_handstand_exit, entry=action_handstand_exit
 .native native_handstand_front, tail_script=handstand_front, tail_finish=inherit, entry=action_handstand_front
@@ -252,7 +251,7 @@
 .native native_high_kick_narrow_contact_recovery
 .native native_high_kick_reverse_return, tail=script_vm_reverse_return
 .native native_high_punch, entry=action_high_punch
-.native native_hit_clip_132_or_air_forward_fall, reaction=action_branch_reaction
+.native native_hit_clip_132_or_air_forward_fall, reaction=action_branch_reaction, script=grounded_hit_clip_132_back_getup, alternate_script=forward_fall_airborne, alternate_finish=action_getup_front
 .native native_hit_clip_324_with_boss_stagger, reaction=action_impact_reaction
 .native native_hit_clip_325_with_damage_stagger, reaction=action_impact_reaction
 .native native_hit_stagger_action_1013, reaction=action_stagger_entry
@@ -272,7 +271,7 @@
 .native native_jarek_first_victim_end, tail=jarek_first_victim_end
 .native native_jarek_first_victim_impact, tail=jarek_first_victim_impact
 .native native_jarek_first_victim_rip, tail=jarek_first_victim_rip
-.native native_jarek_lk_throw_entry
+.native native_jarek_lk_throw_entry, script=jarek_lk_throw_startup
 .native native_jarek_lk_throw_owner_return, tail=action_lk_return
 .native native_jarek_quake, entry=jarek_quake
 .native native_jarek_quake_tail, tail=jarek_quake_tail
@@ -284,16 +283,16 @@
 .native native_jarek_weapon_back_lp_entry
 .native native_jarek_weapon_hp_entry
 .native native_jarek_weapon_lp_entry
-.native native_jarek_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_jarek_weapon_reaction_entry, reaction=action_weapon_reaction, script=jarek_weapon_reaction_knife_victim, prepare=action_prepare_jarek_weapon_reaction_entry
 .native native_jax_air_throw_command_gate, gate=mk4_can_air_throw
 .native native_jax_axe_back_hp_entry
-.native native_jax_axe_back_lp_entry
+.native native_jax_axe_back_lp_entry, weapon_entry=action_axe_back_low_punch
 .native native_jax_axe_hp_entry
 .native native_jax_axe_lp_entry
 .native native_jax_can_dash_punch, gate=jax_can_dash_punch
 .native native_jax_can_fatality_1, gate=jax_can_fatality_1
 .native native_jax_can_missile, gate=jax_can_missile
-.native native_jax_combo_hp_entry
+.native native_jax_combo_hp_entry, script=jax_combo_hp_attacker
 .native native_jax_dash_punch, entry=jax_dash_punch
 .native native_jax_dash_punch_contact, tail=jax_dash_punch_contact
 .native native_jax_dash_punch_roll_getup, tail=action_getup_roll
@@ -344,7 +343,7 @@
 .native native_kai_handstand_rear_contact, tail=kai_handstand_rear_contact
 .native native_kai_handstand_spin_begin, tail=kai_handstand_spin_begin
 .native native_kai_handstand_victim_tail, tail=kai_handstand_victim_tail
-.native native_kai_lk_throw_entry
+.native native_kai_lk_throw_entry, script=kai_lk_throw_startup
 .native native_kai_lunge_kick_contact, tail=kai_lunge_kick_contact
 .native native_kai_lunge_kick_entry, entry=kai_lunge_kick
 .native native_kai_rising_skull, entry=kai_rising_skull
@@ -357,27 +356,27 @@
 .native native_kai_second_victim, engine_reaction=kai_second_victim
 .native native_kai_second_victim_fall, tail=kai_second_victim_fall
 .native native_kai_weapon_back_strike_contact, tail_reference=action_weapon_contact
-.native native_kai_weapon_back_strike_frontend
+.native native_kai_weapon_back_strike_frontend, weapon_entry=action_kai_weapon_back_strike
 .native native_kai_weapon_followup_entry
 .native native_kai_weapon_high_punch_frontend
-.native native_kai_weapon_high_punch_victim_context_sound, reaction=action_weapon_reaction
-.native native_kai_weapon_high_punch_victim_impact_sound, reaction=action_weapon_reaction
+.native native_kai_weapon_high_punch_victim_context_sound, reaction=action_weapon_reaction, script=kai_draw_weapon_hp_victim, prepare=action_prepare_kai_weapon_high_punch_victim_context_sound
+.native native_kai_weapon_high_punch_victim_impact_sound, reaction=action_weapon_reaction, script=kai_draw_weapon_hp_victim, prepare=action_prepare_kai_weapon_high_punch_victim_context_sound
 .native native_kai_weapon_low_punch_frontend
 .native native_kick_contact_default, tail=action_kick_contact_default
 .native native_kick_contact_narrow, tail=action_kick_contact_narrow
 .native native_kick_contact_wide, tail=action_kick_contact_wide
-.native native_kick_stagger_60_percent_damage, reaction=action_stagger_reaction
-.native native_kitana_combo_hp_entry
-.native native_knockdown_stagger_half_damage, reaction=action_stagger_reaction
-.native native_knockdown_stagger_half_damage_alias, reaction=action_stagger_reaction
+.native native_kick_stagger_60_percent_damage, reaction=action_stagger_reaction, script=kick_hit_crouching_stagger, prepare=action_prepare_kick_stagger_60_percent_damage
+.native native_kitana_combo_hp_entry, script=kitana_combo_high_punch_attacker
+.native native_knockdown_stagger_half_damage, reaction=action_stagger_reaction, script=knockdown_stagger_clip_311, prepare=action_prepare_knockdown_stagger_half_damage_alias
+.native native_knockdown_stagger_half_damage_alias, reaction=action_stagger_reaction, script=knockdown_stagger_clip_311, prepare=action_prepare_knockdown_stagger_half_damage_alias
 .native native_land, tail=mk4_land
 .native native_landing_motion, physics=mk4_script_landing_motion
-.native native_launch_clip_131_back_getup, reaction=action_launch_reaction
-.native native_launch_clip_131_native_finish_back_getup, reaction=action_launch_reaction
-.native native_launch_clip_131_no_impact, reaction=action_aux_reaction
-.native native_launch_clip_131_shake_impact, reaction=action_aux_reaction
-.native native_launch_clip_179_action_100a, reaction=action_branch_reaction
-.native native_lightning_victim_friction, reaction=action_record_reaction
+.native native_launch_clip_131_back_getup, reaction=action_launch_reaction, script=launch_clip_131_back_getup
+.native native_launch_clip_131_native_finish_back_getup, reaction=action_launch_reaction, script=launch_clip_131_native_finish_back_getup
+.native native_launch_clip_131_no_impact, reaction=action_aux_reaction, script=launch_clip_131_no_impact
+.native native_launch_clip_131_shake_impact, reaction=action_aux_reaction, script=launch_clip_131_shake_impact
+.native native_launch_clip_179_action_100a, reaction=action_branch_reaction, script=launch_clip_179_flip_getup, prepare=action_prepare_launch_clip_179_action_100a
+.native native_lightning_victim_friction, reaction=action_record_reaction, script=raiden_lightning_victim, prepare=action_prepare_lightning_victim_friction
 .native native_liu_air_fireball_object, spawn=liu_kang_liu_script_spawn_air, task=64
 .native native_liu_finisher_projectile, spawn=liu_kang_liu_script_fatal_spawn, task=38
 .native native_liu_high_fireball_object, spawn=liu_kang_liu_script_spawn_high, task=64
@@ -386,7 +385,7 @@
 .native native_liu_kang_bicycle_script, tail=liu_kang_bicycle_script
 .native native_liu_kang_can_bicycle, gate=liu_kang_can_bicycle
 .native native_liu_kang_can_first_fatality, gate=liu_kang_can_first_fatality
-.native native_liu_kang_fireball_reaction_entry, reaction=action_script_reaction
+.native native_liu_kang_fireball_reaction_entry, reaction=action_script_reaction, script=sonya_ring_victim
 .native native_liu_kang_first_fatality, entry=liu_kang_first_fatality
 .native native_liu_kang_flying_kick, entry=liu_kang_flying_kick
 .native native_liu_kang_flying_kick_land, tail=liu_kang_liu_script_land
@@ -401,16 +400,16 @@
 .native native_liu_kang_liu_script_lk_thrown_tail, tail=liu_kang_liu_script_lk_thrown_tail
 .native native_liu_kang_liu_script_sword_blend, tail=liu_kang_liu_script_sword_blend
 .native native_liu_kang_liu_script_sword_gate, predicate_result=liu_kang_liu_script_sword_gate
-.native native_liu_kang_lk_throw_entry
+.native native_liu_kang_lk_throw_entry, script=liu_kang_lk_throw_startup
 .native native_liu_kang_lk_throw_retreat, tail_script=liu_kang_lk_throw_retreat, tail_finish=inherit
-.native native_liu_kang_lk_throw_victim_reaction_80, throw_reaction=action_lk_victim
+.native native_liu_kang_lk_throw_victim_reaction_80, throw_reaction=action_lk_victim, script=liu_kang_lk_throw_victim, finish=mk4_mmove_thrown_finish, prepare=action_prepare_lk_victim
 .native native_liu_kang_low_fireball, entry=liu_kang_low_fireball
 .native native_liu_kang_second_fatality, entry=liu_kang_second_fatality
 .native native_liu_kang_sword_back_high_punch_contact, tail_reference=action_weapon_contact
-.native native_liu_kang_sword_back_hp_entry
+.native native_liu_kang_sword_back_hp_entry, weapon_entry=action_liu_kang_sword_back_high_punch
 .native native_liu_low_fireball_object, spawn=liu_kang_liu_script_spawn_low, task=64
-.native native_liu_weapon_high_punch
-.native native_liu_weapon_low_punch
+.native native_liu_weapon_high_punch, weapon=action_liu_weapon_high_punch
+.native native_liu_weapon_low_punch, weapon=action_liu_weapon_low_punch
 .native native_lk_branch_continue, tail=action_lk_branch_continue
 .native native_lk_jump_back, tail=action_lk_jump_back
 .native native_lk_pause_long, tail=action_lk_pause_long
@@ -420,8 +419,8 @@
 .native native_lk_throw_rock_release, tail_script=lk_throw_rock_release, tail_finish=fighter_ready
 .native native_lk_throw_rock_repeat_one, tail_script=lk_throw_rock_repeat_one, tail_finish=fighter_ready
 .native native_lk_throw_rock_repeat_two, tail_script=lk_throw_rock_repeat_two, tail_finish=fighter_ready
-.native native_lk_victim_clip_203_recovery, throw_reaction=action_lk_victim
-.native native_lk_victim_effect_slide, throw_reaction=action_lk_victim
+.native native_lk_victim_clip_203_recovery, throw_reaction=action_lk_victim, continuation=action_lk_victim_clip_203_recovery
+.native native_lk_victim_effect_slide, throw_reaction=action_lk_victim, continuation=action_lk_victim_effect_slide
 .native native_lk_victim_return, tail=action_lk_victim_return
 .native native_low_kick_narrow_reverse_return, tail=script_vm_reverse_return
 .native native_low_kick_reverse_return, tail=script_vm_reverse_return
@@ -435,13 +434,13 @@
 .native native_lp_throw_owner_ready, tail=action_throw_ready
 .native native_lp_throw_victim_adjust_return, tail=action_throw_ready
 .native native_lp_two_speed_slide_double_flip_roll_getup, tail=action_getup_roll
-.native native_lp_victim_impact_release, throw_reaction=action_lp_victim
-.native native_lp_victim_rebased_table_release, throw_reaction=action_lp_victim
-.native native_lp_victim_slide_release, throw_reaction=action_lp_victim
-.native native_lp_victim_sliding_impact_release, throw_reaction=action_lp_victim
-.native native_lp_victim_table_release, throw_reaction=action_lp_victim
-.native native_lp_victim_two_speed_slide_release, throw_reaction=action_lp_victim
-.native native_lp_victim_weapon_scatter_release, throw_reaction=action_lp_victim
+.native native_lp_victim_impact_release, throw_reaction=action_lp_victim, script=lp_victim_impact_release, finish=mk4_mmove_thrown_finish
+.native native_lp_victim_rebased_table_release, throw_reaction=action_lp_victim, continuation_arg=native_animation_table, parameter=dat_animation_rows_lp_victim_rebased_release
+.native native_lp_victim_slide_release, throw_reaction=action_lp_victim, script=lp_victim_slide_release, finish=mk4_mmove_thrown_finish
+.native native_lp_victim_sliding_impact_release, throw_reaction=action_lp_victim, script=lp_victim_sliding_impact_release, finish=mk4_mmove_thrown_finish
+.native native_lp_victim_table_release, throw_reaction=action_lp_victim, continuation_arg=native_animation_table, parameter=dat_animation_rows_lp_victim_table_release
+.native native_lp_victim_two_speed_slide_release, throw_reaction=action_lp_victim, script=lp_victim_two_speed_slide_release, finish=mk4_mmove_thrown_finish
+.native native_lp_victim_weapon_scatter_release, throw_reaction=action_lp_victim, continuation_arg=native_animation_table, parameter=dat_animation_rows_lp_victim_weapon_scatter_release
 .native native_mmove_air_getup, tail=mk4_mmove_air_getup
 .native native_mmove_lk_blend_return, tail=mk4_mmove_lk_blend_return
 .native native_mmove_lk_owner_ready, tail=mk4_mmove_lk_owner_ready
@@ -451,32 +450,32 @@
 .native native_normal_low_punch, entry=action_normal_low_punch
 .native native_pair_release, tail=action_pair_release
 .native native_pair_wait, reaction=pair_wait
-.native native_press_air_contact_high_punch
-.native native_press_close_kick_high_kick
-.native native_press_close_kick_high_punch
-.native native_press_close_punch_combo_high_punch
-.native native_press_combo_punch_high_kick
-.native native_press_combo_punch_high_punch
-.native native_press_crouching_block
-.native native_press_crouching_high_kick
-.native native_press_crouching_high_punch
-.native native_press_crouching_low_kick
-.native native_press_crouching_low_punch
-.native native_press_diagonal_air_high_kick
-.native native_press_diagonal_air_high_punch
-.native native_press_diagonal_air_low_kick
-.native native_press_diagonal_air_low_punch
-.native native_press_followup_high_kick
-.native native_press_followup_low_kick
-.native native_press_followup_low_punch
-.native native_press_standing_block
-.native native_press_standing_high_kick
-.native native_press_standing_high_punch
-.native native_press_standing_low_kick
-.native native_press_standing_low_punch
-.native native_press_straight_air_high_punch
-.native native_press_straight_air_kick
-.native native_press_straight_air_low_punch
+.native native_press_air_contact_high_punch, button=action_button_close_punch_combo_high_punch
+.native native_press_close_kick_high_kick, button=action_button_combo_punch_high_kick
+.native native_press_close_kick_high_punch, button=action_button_close_punch_combo_high_punch
+.native native_press_close_punch_combo_high_punch, button=action_button_close_punch_combo_high_punch
+.native native_press_combo_punch_high_kick, button=action_button_combo_punch_high_kick
+.native native_press_combo_punch_high_punch, button=action_button_close_punch_combo_high_punch
+.native native_press_crouching_block, button=action_button_standing_block
+.native native_press_crouching_high_kick, button=action_button_crouching_high_kick
+.native native_press_crouching_high_punch, button=action_button_crouching_high_punch
+.native native_press_crouching_low_kick, button=action_button_crouching_low_kick
+.native native_press_crouching_low_punch, button=action_button_crouching_low_punch
+.native native_press_diagonal_air_high_kick, air_input=3
+.native native_press_diagonal_air_high_punch, air_input=1
+.native native_press_diagonal_air_low_kick, air_input=4
+.native native_press_diagonal_air_low_punch, air_input=2
+.native native_press_followup_high_kick, button=action_button_combo_punch_high_kick
+.native native_press_followup_low_kick, button=action_button_standing_low_kick
+.native native_press_followup_low_punch, button=action_button_followup_low_punch
+.native native_press_standing_block, button=action_button_standing_block
+.native native_press_standing_high_kick, button=action_button_standing_high_kick
+.native native_press_standing_high_punch, button=action_button_standing_high_punch
+.native native_press_standing_low_kick, button=action_button_standing_low_kick
+.native native_press_standing_low_punch, button=action_button_standing_low_punch
+.native native_press_straight_air_high_punch, air_input=1
+.native native_press_straight_air_kick, air_input=5
+.native native_press_straight_air_low_punch, air_input=2
 .native native_quan_chi_can_first_fatality, gate=quan_chi_can_first_fatality
 .native native_quan_chi_fatality_1_owner_beat, tail_script=quan_chi_fatality_1_owner_beat, tail_finish=inherit
 .native native_quan_chi_fatality_beat, tail=quan_chi_fatality_beat
@@ -487,7 +486,7 @@
 .native native_quan_chi_first_fatality, entry=quan_chi_first_fatality
 .native native_quan_chi_flip_kick, entry=quan_chi_flip_kick
 .native native_quan_chi_flip_reaction, engine_reaction=quan_chi_flip_reaction
-.native native_quan_chi_lk_throw_entry
+.native native_quan_chi_lk_throw_entry, script=quan_chi_lk_throw_startup
 .native native_quan_chi_script_flip_kick_tail, tail=quan_chi_script_flip_kick_tail
 .native native_quan_chi_script_skull_release, tail=quan_chi_script_skull_release
 .native native_quan_chi_script_stomp_victim, tail=quan_chi_script_stomp_victim
@@ -497,16 +496,16 @@
 .native native_quan_chi_steal_reaction, engine_reaction=quan_chi_steal_reaction
 .native native_quan_chi_stomp_reaction, engine_reaction=quan_chi_stomp_reaction
 .native native_quan_chi_teleport_stomp, entry=quan_chi_teleport_stomp
-.native native_quan_chi_weapon_back_hp_entry
+.native native_quan_chi_weapon_back_hp_entry, weapon=action_quan_chi_weapon_back_hp_entry
 .native native_quan_chi_weapon_hp_entry
 .native native_quan_chi_weapon_steal, entry=quan_chi_weapon_steal
 .native native_raiden_can_teleport, gate=raiden_can_teleport
 .native native_raiden_fatality_2_held_pose, tail_script=raiden_fatality_2_held_pose, tail_finish=inherit
-.native native_raiden_fatality_2_scene_victim, reaction=action_scene_reaction
+.native native_raiden_fatality_2_scene_victim, reaction=action_scene_reaction, script=raiden_fatality_2_victim
 .native native_raiden_first_fatality, entry=raiden_first_fatality
 .native native_raiden_lightning, entry=raiden_lightning
 .native native_raiden_lightning_object, spawn=raiden_script_lightning_spawn, task=65
-.native native_raiden_lk_throw_entry
+.native native_raiden_lk_throw_entry, script=raiden_lk_throw_startup
 .native native_raiden_script_first_end, tail=raiden_script_first_end
 .native native_raiden_script_first_release, tail=raiden_script_first_release
 .native native_raiden_script_second_blend, tail=raiden_script_second_blend
@@ -536,20 +535,20 @@
 .native native_react_kick_hit, engine_reaction=react_kick_hit
 .native native_react_scepter_freeze, engine_reaction=react_scepter_freeze
 .native native_react_weapon_followup, engine_reaction=react_weapon_followup
-.native native_reaction_clip_127_friction, reaction=action_script_reaction
+.native native_reaction_clip_127_friction, reaction=action_script_reaction, script=reaction_clip_127_friction, prepare=action_prepare_reaction_clip_127_friction
 .native native_reaction_clip_129_getup, tail_script=reaction_clip_129_wait_landing_tail_1_operand_1, tail_finish=mk4_script_thrown_ready
 .native native_reaction_clip_129_startup, tail_script=reaction_clip_129_startup, tail_finish=mk4_script_thrown_ready
 .native native_reaction_clip_129_wait_landing, tail_script=reaction_clip_129_wait_landing, tail_finish=mk4_script_thrown_ready
-.native native_reaction_clip_132_native_finish, reaction=action_script_reaction
-.native native_reaction_clip_180_slide_hold, reaction=action_script_reaction
-.native native_reaction_clip_311_short_slide, reaction=action_script_reaction
-.native native_reaction_clip_326_short_slide, reaction=action_script_reaction
+.native native_reaction_clip_132_native_finish, reaction=action_script_reaction, script=reaction_clip_132_native_finish
+.native native_reaction_clip_180_slide_hold, reaction=action_script_reaction, script=reaction_clip_180_slide_hold, prepare=action_prepare_reaction_clip_180_slide_hold
+.native native_reaction_clip_311_short_slide, reaction=action_script_reaction, script=reaction_clip_311_short_slide
+.native native_reaction_clip_326_short_slide, reaction=action_script_reaction, script=reaction_clip_326_short_slide
 .native native_reaction_fall, tail=action_reaction_fall, reaction=action_reaction_fall
 .native native_reaction_fall_return, reaction=reaction_fall_return
 .native native_reaction_finish, tail=action_reaction_finish
 .native native_reaction_getup_back, tail=action_reaction_getup_back
-.native native_reaction_park_task, reaction=action_aux_reaction
-.native native_rear_hit_turn_and_launch, reaction=action_aux_reaction
+.native native_reaction_park_task, reaction=action_aux_reaction, script=reaction_park_task
+.native native_rear_hit_turn_and_launch, reaction=action_aux_reaction, script=rear_hit_launch_clip_129, prepare=action_prepare_rear_hit_turn_and_launch
 .native native_recoil_land, tail=action_recoil_land
 .native native_reiko_can_first_fatality, gate=reiko_can_first_fatality
 .native native_reiko_can_flip_kick, gate=reiko_can_flip_kick
@@ -573,7 +572,7 @@
 .native native_reiko_leg_tear_left_arm_finish, tail=reiko_first_piece_end
 .native native_reiko_leg_tear_right_arm_finish, tail=reiko_first_piece_end
 .native native_reiko_leg_tear_victim_finish, tail=reiko_first_piece_end
-.native native_reiko_lk_throw_entry
+.native native_reiko_lk_throw_entry, script=reiko_lk_throw_startup
 .native native_reiko_orbit, entry=reiko_orbit
 .native native_reiko_second_fatality, entry=reiko_second_fatality
 .native native_reiko_second_stars, spawn=reiko_second_stars, task=0
@@ -589,7 +588,7 @@
 .native native_reptile_can_invisibility, gate=reptile_can_invisibility
 .native native_reptile_can_spit, gate=reptile_can_spit
 .native native_reptile_dash_entry, entry=reptile_dash
-.native native_reptile_dash_victim_scaled, reaction=action_scaled_reaction
+.native native_reptile_dash_victim_scaled, reaction=action_scaled_reaction, script=reptile_dash_victim, prepare=action_prepare_reptile_dash_victim_scaled
 .native native_reptile_fatality_1, entry=reptile_fatality_1
 .native native_reptile_fatality_2, entry=reptile_fatality_2
 .native native_reptile_first_owner_bite, tail=reptile_first_owner_bite
@@ -599,7 +598,7 @@
 .native native_reptile_first_victim_collapse, tail=reptile_first_victim_collapse
 .native native_reptile_first_victim_shake, tail=reptile_first_victim_shake
 .native native_reptile_invisibility, entry=reptile_invisibility
-.native native_reptile_lk_throw_entry
+.native native_reptile_lk_throw_entry, script=reptile_lk_throw_startup
 .native native_reptile_reaction_40, engine_reaction=reptile_reaction_40
 .native native_reptile_roll_entry, entry=reptile_roll
 .native native_reptile_script_acid_drool, call=reptile_script_acid_drool
@@ -613,17 +612,17 @@
 .native native_reptile_second_melt, tail=reptile_second_melt
 .native native_reptile_second_victim, engine_reaction=reptile_second_victim
 .native native_reptile_weapon_alternate_high_punch
-.native native_reptile_weapon_back_hp_entry
-.native native_reptile_weapon_back_lp_entry
+.native native_reptile_weapon_back_hp_entry, weapon_entry=action_reptile_weapon_flurry
+.native native_reptile_weapon_back_lp_entry, weapon_entry=action_reptile_weapon_back_low_punch
 .native native_reptile_weapon_flurry, tail=reptile_weapon_flurry
 .native native_reptile_weapon_hp_entry
 .native native_reptile_weapon_lp_entry
-.native native_reptile_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_reptile_weapon_reaction_entry, reaction=action_weapon_reaction, script=kai_draw_weapon_back_victim
 .native native_reptile_weapon_stagger_tail, tail=reptile_weapon_stagger_tail
-.native native_reptile_weapon_victim_keep_weapon, reaction=action_weapon_reaction
+.native native_reptile_weapon_victim_keep_weapon, reaction=action_weapon_reaction, script=reptile_weapon_reaction_reaction_137
 .native native_restore_motion, call=mk4_script_restore_motion
 .native native_return_to_player_or_cpu_control, tail=action_controller_return
-.native native_ring_projectile_victim, reaction=action_record_reaction
+.native native_ring_projectile_victim, reaction=action_record_reaction, script=sonya_ring_victim
 .native native_roundhouse, entry=action_roundhouse
 .native native_roundhouse_start, tail=action_roundhouse_start
 .native native_roundhouse_tail, tail=action_roundhouse_tail
@@ -641,7 +640,7 @@
 .native native_scorpion_can_spear, gate=scorpion_can_spear
 .native native_scorpion_can_teleport, gate=scorpion_can_teleport
 .native native_scorpion_fire, entry=scorpion_fire
-.native native_scorpion_lk_throw_entry
+.native native_scorpion_lk_throw_entry, script=scorpion_lk_throw_startup
 .native native_scorpion_script_beast_attack, tail=scorpion_script_beast_attack
 .native native_scorpion_script_beast_begin, tail=scorpion_script_beast_begin
 .native native_scorpion_script_beast_gore, spawn=scorpion_script_beast_gore, task=0
@@ -682,7 +681,7 @@
 .native native_shinnok_first_victim_held, tail=shinnok_first_victim_held
 .native native_shinnok_first_victim_squeeze, tail=shinnok_first_victim_squeeze
 .native native_shinnok_hand_squeeze_cycle, tail=shinnok_first_squeeze_cycle
-.native native_shinnok_lk_throw_entry
+.native native_shinnok_lk_throw_entry, script=shinnok_lk_throw_startup
 .native native_shinnok_morph_cage, entry=shinnok_morph_cage
 .native native_shinnok_morph_fujin, entry=shinnok_morph_fujin
 .native native_shinnok_morph_jarek, entry=shinnok_morph_jarek
@@ -709,7 +708,7 @@
 .native native_shinnok_weapon_back_lp_entry
 .native native_shinnok_weapon_hp_entry
 .native native_shinnok_weapon_lp_entry
-.native native_shinnok_weapon_reaction_entry, reaction=action_weapon_reaction
+.native native_shinnok_weapon_reaction_entry, reaction=action_weapon_reaction, script=shinnok_weapon_reaction_lp_victim
 .native native_shinnok_weapon_sweep_finish, tail=shinnok_weapon_sweep_finish
 .native native_shinnok_weapon_sweep_getup, tail=shinnok_weapon_sweep_getup
 .native native_sidestep, entry=mk4_sidestep
@@ -720,14 +719,14 @@
 .native native_sonya_can_first_fatality, gate=sonya_can_first_fatality
 .native native_sonya_can_leg_grab, gate=sonya_can_leg_grab
 .native native_sonya_cartwheel, entry=sonya_cartwheel
-.native native_sonya_crouch_high_kick_victim_keep_weapon, reaction=action_record_reaction
+.native native_sonya_crouch_high_kick_victim_keep_weapon, reaction=action_record_reaction, script=sonya_crouch_hk_victim
 .native native_sonya_draw_weapon_hp_slash
 .native native_sonya_draw_weapon_lp_slash
-.native native_sonya_fatality_2_scene_victim, reaction=action_scene_reaction
+.native native_sonya_fatality_2_scene_victim, reaction=action_scene_reaction, script=sonya_fatality_2_victim
 .native native_sonya_first_fatality, entry=sonya_first_fatality
 .native native_sonya_leg_grab, entry=sonya_leg_grab
-.native native_sonya_leg_grab_victim_recovery, throw_reaction=action_lk_victim
-.native native_sonya_lk_throw_entry
+.native native_sonya_leg_grab_victim_recovery, throw_reaction=action_lk_victim, script=sonya_leg_grab_victim_recovery, finish=mk4_mmove_thrown_finish, prepare=action_prepare_lk_victim
+.native native_sonya_lk_throw_entry, script=sonya_lk_throw_startup
 .native native_sonya_ring, entry=sonya_ring
 .native native_sonya_ring_object, spawn=sonya_script_ring_spawn, task=68
 .native native_sonya_script_cartwheel_tail, tail=sonya_script_cartwheel_tail
@@ -744,27 +743,27 @@
 .native native_sonya_script_square_wave_tail, tail=sonya_script_square_wave_tail
 .native native_sonya_second_fatality, entry=sonya_second_fatality
 .native native_sonya_square_wave, entry=sonya_square_wave
-.native native_sonya_weapon_back_hp_entry
-.native native_sonya_weapon_high_punch_victim_position, reaction=action_record_reaction
+.native native_sonya_weapon_back_hp_entry, weapon_entry=action_sonya_weapon_back_high_punch
+.native native_sonya_weapon_high_punch_victim_position, reaction=action_record_reaction, script=sonya_weapon_hp_victim, prepare=action_prepare_sonya_weapon_high_punch_victim_position
 .native native_sonya_weapon_hp_entry
-.native native_sonya_weapon_low_punch_victim_context_sound, reaction=action_weapon_reaction
-.native native_sonya_weapon_low_punch_victim_impact_sound, reaction=action_record_reaction
+.native native_sonya_weapon_low_punch_victim_context_sound, reaction=action_weapon_reaction, script=sonya_weapon_lp_victim, prepare=action_prepare_sonya_weapon_low_punch_victim_context_sound
+.native native_sonya_weapon_low_punch_victim_impact_sound, reaction=action_record_reaction, script=sonya_weapon_lp_victim, prepare=action_prepare_sonya_weapon_low_punch_victim_impact_sound
 .native native_sonya_weapon_lp_entry
-.native native_spear_hit_victim_60_percent_damage, reaction=action_aux_reaction
+.native native_spear_hit_victim_60_percent_damage, reaction=action_aux_reaction, script=scorpion_spear_victim_hit, prepare=action_prepare_spear_hit_victim_60_percent_damage
 .native native_spear_task, spawn=scorpion_script_spawn_spear, task=67
 .native native_spear_wait, reaction=spear_wait
 .native native_spike_finish, entry=action_spike_finish
-.native native_square_wave_victim_face_peer, reaction=action_record_reaction
-.native native_staff_high_punch_weapon_victim, reaction=action_record_reaction
+.native native_square_wave_victim_face_peer, reaction=action_record_reaction, prepare=action_prepare_square_wave_victim_face_peer
+.native native_staff_high_punch_weapon_victim, reaction=action_record_reaction, script=raiden_staff_hp_weapon_victim
 .native native_stage_complete, tail=action_stage_complete
 .native native_stage_impale, tail=action_stage_impale
 .native native_stage_owner, tail=action_stage_owner
 .native native_stage_victim, reaction=action_stage_victim
-.native native_stagger_clip_134, reaction=action_stagger_reaction
-.native native_stagger_clip_134_impact, reaction=action_stagger_reaction
-.native native_stagger_clip_311_keep_weapon, reaction=action_stagger_reaction
-.native native_stagger_shake_60_percent_damage, reaction=action_stagger_reaction
-.native native_stagger_stance_select_disarm, reaction=action_stagger_reaction
+.native native_stagger_clip_134, reaction=action_stagger_reaction, script=stagger_clip_134_friction, alternate_script=crouch_stagger_clip_254, prepare=action_prepare_stagger_clip_134
+.native native_stagger_clip_134_impact, reaction=action_stagger_reaction, script=stagger_clip_134_friction_impact, alternate_script=crouch_stagger_clip_254, prepare=action_prepare_stagger_clip_134
+.native native_stagger_clip_311_keep_weapon, reaction=action_stagger_reaction, script=stagger_clip_311_hold
+.native native_stagger_shake_60_percent_damage, reaction=action_stagger_reaction, script=stagger_clip_134_shake, prepare=action_prepare_stagger_shake_60_percent_damage
+.native native_stagger_stance_select_disarm, reaction=action_stagger_reaction, script=kai_handstand_reaction_standing_stagger, alternate_script=crouch_reaction_script, prepare=action_prepare_stagger_stance_select_disarm
 .native native_stagger_tail, tail=action_stagger_tail
 .native native_standing_block_hold, tail=action_controller_return
 .native native_sub_zero_can_clone, gate=sub_zero_can_clone
@@ -775,7 +774,7 @@
 .native native_sub_zero_draw_weapon_scepter_follow_up
 .native native_sub_zero_first_fatality, entry=sub_zero_first_fatality
 .native native_sub_zero_ice, entry=sub_zero_ice
-.native native_sub_zero_lk_throw_entry
+.native native_sub_zero_lk_throw_entry, script=sub_zero_lk_throw_startup
 .native native_sub_zero_lp_throw_owner_return, tail=action_throw_ready
 .native native_sub_zero_lp_throw_victim_getup, tail=action_getup_flip
 .native native_sub_zero_scepter_back_hp_entry
@@ -806,10 +805,10 @@
 .native native_sub_zero_slide_script, tail=sub_zero_slide_script
 .native native_sweep, entry=action_sweep
 .native native_sweep_advancing_tail, tail=action_sweep_advancing_tail
-.native native_sweep_knockdown_victim, reaction=action_script_reaction
+.native native_sweep_knockdown_victim, reaction=action_script_reaction, script=sweep_victim_recovery
 .native native_sweep_standard_tail, tail=action_sweep_standard_tail
-.native native_sword_back_hp
-.native native_sword_back_lp
+.native native_sword_back_hp, weapon_entry=action_sword_back_high_punch
+.native native_sword_back_lp, weapon_entry=action_sword_back_low_punch
 .native native_tanya_boomerang_release, tail=tanya_boomerang_release
 .native native_tanya_can_first_fatality, gate=tanya_can_first_fatality
 .native native_tanya_can_spin_kick, gate=tanya_can_spin_kick
@@ -818,7 +817,7 @@
 .native native_tanya_fatality_1, entry=tanya_fatality_1
 .native native_tanya_fatality_2, entry=tanya_fatality_2
 .native native_tanya_fatality_2_victim_collapse, tail_script=tanya_fatality_2_victim_collapse, tail_finish=inherit
-.native native_tanya_fatality_2_victim_reaction_186, reaction=action_scene_reaction
+.native native_tanya_fatality_2_victim_reaction_186, reaction=action_scene_reaction, script=tanya_fatality_2_victim_scene
 .native native_tanya_first_owner_53, tail=tanya_first_owner_53
 .native native_tanya_first_owner_drift, tail_script=tanya_first_owner_drift, tail_finish=fighter_ready
 .native native_tanya_first_owner_loop, tail=tanya_first_owner_loop
@@ -826,7 +825,7 @@
 .native native_tanya_first_victim_burst, tail=tanya_first_victim_burst
 .native native_tanya_first_victim_repeat, tail=tanya_first_victim_repeat
 .native native_tanya_first_victim_swell, tail=tanya_first_victim_swell
-.native native_tanya_lk_throw_entry
+.native native_tanya_lk_throw_entry, script=tanya_lk_throw_startup
 .native native_tanya_second_finish, tail=tanya_second_finish
 .native native_tanya_second_height, tail=tanya_second_height
 .native native_tanya_second_owner_cue, spawn=tanya_second_owner_cue, task=619
@@ -834,7 +833,7 @@
 .native native_tanya_spin_kick, entry=tanya_spin_kick
 .native native_tanya_weapon_back_hp_entry
 .native native_tanya_weapon_hp_entry
-.native native_tanya_weapon_lp_entry
+.native native_tanya_weapon_lp_entry, weapon_entry=action_boomerang_low_punch
 .native native_tanya_weapon_reaction_entry, engine_reaction=tanya_weapon_reaction
 .native native_tanya_weapon_reaction_reaction_170_entry, engine_reaction=tanya_weapon_reaction
 .native native_task_park_40_tick_loop, reaction=action_task_pause
@@ -842,7 +841,7 @@
 .native native_task_retire, tail=action_task_retire
 .native native_teleport, entry=action_teleport
 .native native_teleport_group_callback, physics=scorpion_script_teleport_motion
-.native native_teleport_punch_ground_or_air_victim, reaction=action_branch_reaction
+.native native_teleport_punch_ground_or_air_victim, reaction=action_branch_reaction, script=scorpion_teleport_punch_grounded_victim, alternate_script=teleport_punch_airborne_victim
 .native native_teleport_slam, entry=action_teleport_slam
 .native native_teleport_slam_drop, tail=action_teleport_slam_drop
 .native native_teleport_slam_fall, tail=action_teleport_slam_fall
@@ -854,13 +853,21 @@
 .native native_throw_victim_impact, tail_script=throw_victim_impact, tail_finish=mk4_mmove_thrown_finish
 .native native_throw_victim_stop_and_return, tail=mk4_mmove_thrown_finish
 .native native_torpedo_return, reaction=action_torpedo_return
-.native native_torpedo_victim_face_peer, reaction=action_record_reaction
-.native native_torpedo_victim_release_sound_and_shake, reaction=action_record_reaction
+.native native_torpedo_victim_face_peer, reaction=action_record_reaction, script=raiden_torpedo_contact, prepare=action_prepare_torpedo_victim_face_peer
+.native native_torpedo_victim_release_sound_and_shake, reaction=action_record_reaction, prepare=action_prepare_torpedo_victim_release_sound_and_shake
 .native native_touchable, call=mk4_script_touchable
-.native native_tumble_camera_side_negative, reaction=action_tumble_reaction
-.native native_tumble_camera_side_positive, reaction=action_tumble_reaction
-.native native_tumble_native_finish_back_getup, reaction=action_tumble_reaction
-.native native_uppercut_40_percent_damage, reaction=action_scaled_reaction
+.native native_tumble_camera_side_negative, reaction=action_tumble_reaction, script=tumble_camera_side_negative, finish=action_getup_back
+.native native_tumble_camera_side_positive, reaction=action_tumble_reaction, script=tumble_camera_side_positive, finish=action_getup_back
+.native native_tumble_native_finish_back_getup, reaction=action_tumble_reaction, script=tumble_native_finish_back_getup
+.native native_unresolved_air_diagonal_kick_clip_55_reverse
+.native native_unresolved_air_diagonal_kick_clip_56_reverse
+.native native_unresolved_air_diagonal_kick_clip_57_reverse
+.native native_unresolved_air_low_kick_clip_59_reverse
+.native native_unresolved_air_low_kick_clip_60_reverse
+.native native_unresolved_lp_victim_slide_release
+.native native_unresolved_reaction_clip_326_short_slide
+.native native_unresolved_weapon_clip_132_directional_fall_task_callback_1
+.native native_uppercut_40_percent_damage, reaction=action_scaled_reaction, script=goro_special_uppercut_192_victim, prepare=action_prepare_goro_special_uppercut_192_entry
 .native native_uppercut_default, tail=action_uppercut_default
 .native native_uppercut_delayed_voice_40_percent_damage, reaction=action_impact_reaction
 .native native_uppercut_entry
@@ -882,22 +889,12 @@
 .native native_weapon_air_low_punch_open, tail_selector=weapon_air_frames_native
 .native native_weapon_can_draw, gate=weapon_can_draw
 .native native_weapon_can_pickup, gate=weapon_can_pickup
-.native native_weapon_clip_132_directional_fall, reaction=action_scaled_reaction
-.native native_weapon_clip_189_launch_back_getup, reaction=action_aux_reaction
-.native native_weapon_clip_189_launch_half_damage, reaction=action_scaled_reaction
+.native native_weapon_clip_132_directional_fall, reaction=action_scaled_reaction, script=weapon_clip_132_directional_fall, prepare=action_prepare_weapon_clip_132_directional_fall
+.native native_weapon_clip_189_launch_back_getup, reaction=action_aux_reaction, script=weapon_clip_189_launch_back_getup
+.native native_weapon_clip_189_launch_half_damage, reaction=action_scaled_reaction, script=weapon_clip_189_launch_roll_getup, finish=action_getup_roll, prepare=action_prepare_weapon_clip_189_launch_half_damage
 .native native_weapon_draw, entry=action_weapon_draw
 .native native_weapon_draw_equip, tail=action_weapon_draw_equip
-.native native_weapon_low_punch_victim_roll_getup, reaction=action_weapon_reaction
+.native native_weapon_low_punch_victim_roll_getup, reaction=action_weapon_reaction, script=cage_weapon_reaction_lp_victim, finish=action_getup_roll
 .native native_weapon_pickup, entry=weapon_pickup
-.native native_weapon_sweep_grounded_victim, reaction=action_weapon_reaction
-.native native_weapon_tumble_back_getup, reaction=action_tumble_reaction
-
-; Retained, previously unsupported native boundaries; invocation fails explicitly.
-.native native_unresolved_air_low_kick_clip_59_reverse
-.native native_unresolved_air_low_kick_clip_60_reverse
-.native native_unresolved_air_diagonal_kick_clip_55_reverse
-.native native_unresolved_air_diagonal_kick_clip_56_reverse
-.native native_unresolved_air_diagonal_kick_clip_57_reverse
-.native native_unresolved_reaction_clip_326_short_slide
-.native native_unresolved_weapon_clip_132_directional_fall_task_callback_1
-.native native_unresolved_lp_victim_slide_release
+.native native_weapon_sweep_grounded_victim, reaction=action_weapon_reaction, script=shinnok_weapon_reaction_sweep_victim, prepare=action_prepare_weapon_sweep_grounded_victim
+.native native_weapon_tumble_back_getup, reaction=action_tumble_reaction, script=weapon_tumble_back_getup, finish=action_getup_back

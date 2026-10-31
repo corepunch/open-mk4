@@ -204,88 +204,37 @@ void action_block_cycle(Fighter *fighter) {
 
 void react_block(Fighter *fighter) {
   uint32_t entry = action_reaction_native(fighter);
-  q16 speed = 0;
-  unsigned repeat = 2, variant = 0;
-  bool recoil = true, stance = false;
-  switch (entry) {
-    case native_block_standing_push_0_06_no_wall_recoil:
-      speed = 0xf5c;
-      variant = 3;
-      stance = true;
-      recoil = false;
-      break;
-    case native_block_weapon_single_no_push:
-      repeat = 1;
-      variant = 0x10;
-      break;
-    case native_block_weapon_push_0_18:
-      speed = 0x2e14;
-      variant = 0x15;
-      break;
-    case native_block_weapon_standing_push_0_20:
-      speed = 0x3333;
-      variant = 0x16;
-      stance = true;
-      break;
-    case native_block_weapon_standing_push_0_25_triple:
-      speed = 0x4000;
-      repeat = 3;
-      variant = 0x17;
-      stance = true;
-      break;
-    case native_block_standing_push_0_25_triple:
-      speed = 0x4000;
-      repeat = 3;
-      variant = 7;
-      stance = true;
-      break;
-    case native_block_standing_push_0_20:
-      speed = 0x3333;
-      variant = 6;
-      stance = true;
-      break;
-    case native_block_standing_push_0_20_no_wall_recoil:
-      speed = 0x3333;
-      variant = 6;
-      stance = true;
-      recoil = false;
-      break;
-    case native_block_push_0_18:
-      speed = 0x2e14;
-      variant = 5;
-      break;
-    case native_block_push_0_15:
-      speed = 0x2666;
-      variant = 4;
-      break;
-    case native_block_standing_push_0_06:
-      speed = 0xf5c;
-      variant = 3;
-      stance = true;
-      break;
-    case native_block_single_push_0_24:
-      speed = 0x3d70;
-      repeat = 1;
-      variant = 1;
-      break;
-    case native_block_single_no_push_no_wall_recoil:
-      repeat = 1;
-      recoil = false;
-      break;
-    case native_block_push_0_13_no_wall_recoil:
-      speed = 0x2147;
-      variant = 5;
-      recoil = false;
-      break;
-    case native_block_single_no_push:
-      repeat = 1;
-      break;
-    case native_block_standing_no_physics:
-      recoil = false;
-      break;
-    default:
-      fatal("Unknown block native %08x", entry);
-  }
+
+  static const struct {
+    q16 speed;
+    unsigned repeat, variant;
+    bool recoil, stance;
+  } parameters[MK4_NATIVE_COUNT] = {
+      // clang-format off: Keep table entries on one row, including long rows.
+    [native_block_standing_push_0_06_no_wall_recoil] = {0xf5c, 2, 3, false, true},
+    [native_block_weapon_single_no_push] = {0, 1, 0x10, true, false},
+    [native_block_weapon_push_0_18] = {0x2e14, 2, 0x15, true, false},
+    [native_block_weapon_standing_push_0_20] = {0x3333, 2, 0x16, true, true},
+    [native_block_weapon_standing_push_0_25_triple] = {0x4000, 3, 0x17, true, true},
+    [native_block_standing_push_0_25_triple] = {0x4000, 3, 7, true, true},
+    [native_block_standing_push_0_20] = {0x3333, 2, 6, true, true},
+    [native_block_standing_push_0_20_no_wall_recoil] = {0x3333, 2, 6, false, true},
+    [native_block_push_0_18] = {0x2e14, 2, 5, true, false},
+    [native_block_push_0_15] = {0x2666, 2, 4, true, false},
+    [native_block_standing_push_0_06] = {0xf5c, 2, 3, true, true},
+    [native_block_single_push_0_24] = {0x3d70, 1, 1, true, false},
+    [native_block_single_no_push_no_wall_recoil] = {0, 1, 0, false, false},
+    [native_block_push_0_13_no_wall_recoil] = {0x2147, 2, 5, false, false},
+    [native_block_single_no_push] = {0, 1, 0, true, false},
+    [native_block_standing_no_physics] = {0, 2, 0, false, false},
+      // clang-format on
+  };
+
+  require(entry > 0 && entry < MK4_NATIVE_COUNT && parameters[entry].repeat != 0, "Invalid block native");
+  q16 speed = parameters[entry].speed;
+  unsigned repeat = parameters[entry].repeat, variant = parameters[entry].variant;
+  bool recoil = parameters[entry].recoil, stance = parameters[entry].stance;
+
   bool crouch = fighter->crouching;
   if (stance) {
     fighter_enter_stance(fighter, STANCE_STANDING);

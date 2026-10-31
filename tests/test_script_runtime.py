@@ -3,7 +3,8 @@ import subprocess
 
 for mode, message in {
     'opcode': 'unsupported opcode',
-    'native': 'unreviewed native binding',
+    'native': 'unreviewed native binding: <invalid native>',
+    'native_symbol': 'unreviewed native binding: native_unresolved_air_low_kick_clip_59_reverse',
     'sample': 'animation sample outside clip',
     'budget': 'instruction budget exhausted',
     'range': 'script cursor outside reviewed range',

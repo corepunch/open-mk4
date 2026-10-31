@@ -159,31 +159,7 @@ void action_lp_victim(Fighter *fighter) {
   mk4_script_roster_sound(fighter, 6);
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  switch (entry) {
-    case native_lp_victim_table_release:
-      native_animation_table(fighter, dat_animation_rows_lp_victim_table_release);
-      break;
-    case native_lp_victim_rebased_table_release:
-      native_animation_table(fighter, dat_animation_rows_lp_victim_rebased_release);
-      break;
-    case native_lp_victim_weapon_scatter_release:
-      native_animation_table(fighter, dat_animation_rows_lp_victim_weapon_scatter_release);
-      break;
-    case native_lp_victim_two_speed_slide_release:
-      script_vm_enter(fighter, fn_lp_victim_two_speed_slide_release, mk4_mmove_thrown_finish);
-      break;
-    case native_lp_victim_impact_release:
-      script_vm_enter(fighter, fn_lp_victim_impact_release, mk4_mmove_thrown_finish);
-      break;
-    case native_lp_victim_sliding_impact_release:
-      script_vm_enter(fighter, fn_lp_victim_sliding_impact_release, mk4_mmove_thrown_finish);
-      break;
-    case native_lp_victim_slide_release:
-      script_vm_enter(fighter, fn_lp_victim_slide_release, mk4_mmove_thrown_finish);
-      break;
-    default:
-      require(false, "Unexpected native LP victim entry");
-  }
+  script_native_continue(fighter, entry, false, mk4_mmove_thrown_finish);
 }
 
 void action_script_release_reaction(Fighter *fighter, int reaction) {
@@ -207,31 +183,31 @@ static void lk_inherited_finish(Fighter *fighter) {
   native_finish_clip(fighter, mk4_mmove_thrown_finish);
 }
 
-void action_lk_victim(Fighter *fighter) {
-  uint32_t entry = mk4_reaction_target(battle_data(), (unsigned)fighter->reaction);
+bool action_prepare_lk_victim(Fighter *fighter, bool alternate) {
+  (void)alternate;
+  victim_begin(fighter);
+  return true;
+}
+
+void action_lk_victim_clip_203_recovery(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   victim_begin(fighter);
-  switch (entry) {
-    case native_lk_victim_clip_203_recovery:
-      script_vm_bind_animation(fighter, dat_animation_clip_203, sample);
-      native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
-      break;
-    case native_liu_kang_lk_throw_victim_reaction_80:
-      script_vm_enter(fighter, fn_liu_kang_lk_throw_victim, mk4_mmove_thrown_finish);
-      break;
-    case native_sonya_leg_grab_victim_recovery:
-      script_vm_enter(fighter, fn_sonya_leg_grab_victim_recovery, mk4_mmove_thrown_finish);
-      break;
-    case native_lk_victim_effect_slide:
-      mk4_script_effect(fighter, 0);
-      script_vm_bind_animation(fighter, dat_animation_clip_169, 0);
-      script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_lk_victim_slide) * 4, 0);
-      fighter_set_speed(fighter, (q16)mk4_image_u32(battle_data(), dat_lk_victim_slide_speed));
-      native_play_rows(fighter, mini(fighter_move(fighter)->last, 26), 1, lk_impact_finish);
-      break;
-    default:
-      require(false, "Unexpected native LK victim entry");
-  }
+  script_vm_bind_animation(fighter, dat_animation_clip_203, sample);
+  native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
+}
+
+void action_lk_victim_effect_slide(Fighter *fighter) {
+  victim_begin(fighter);
+  mk4_script_effect(fighter, 0);
+  script_vm_bind_animation(fighter, dat_animation_clip_169, 0);
+  script_vm_bind_animation(fighter, mk4_image_u32(battle_data(), dat_animation_descriptor_lk_victim_slide) * 4, 0);
+  fighter_set_speed(fighter, (q16)mk4_image_u32(battle_data(), dat_lk_victim_slide_speed));
+  native_play_rows(fighter, mini(fighter_move(fighter)->last, 26), 1, lk_impact_finish);
+}
+
+void action_lk_victim(Fighter *fighter) {
+  uint32_t entry = mk4_reaction_target(battle_data(), (unsigned)fighter->reaction);
+  script_native_continue(fighter, entry, false, mk4_mmove_thrown_finish);
 }
 
 FighterFn action_throw_reaction(const Mk4Image *image, unsigned reaction) {
@@ -274,43 +250,6 @@ static void pair_edge_task(Fighter *fighter) {
 
 /* Each case is an original native routine's script-enter operand. Fighter
  * selection itself comes exclusively from the loaded4ddfb8 table. */
-static uint32_t lk_script(uint32_t native) {
-  switch (native) {
-    case native_cage_lk_throw_entry:
-      return fn_cage_lk_throw_startup;
-    case native_jarek_lk_throw_entry:
-      return fn_jarek_lk_throw_startup;
-    case native_tanya_lk_throw_entry:
-      return fn_tanya_lk_throw_startup;
-    case native_shinnok_lk_throw_entry:
-      return fn_shinnok_lk_throw_startup;
-    case native_reptile_lk_throw_entry:
-      return fn_reptile_lk_throw_startup;
-    case native_reiko_lk_throw_entry:
-      return fn_reiko_lk_throw_startup;
-    case native_quan_chi_lk_throw_entry:
-      return fn_quan_chi_lk_throw_startup;
-    case native_raiden_lk_throw_entry:
-      return fn_raiden_lk_throw_startup;
-    case native_kai_lk_throw_entry:
-      return fn_kai_lk_throw_startup;
-    case native_fujin_lk_throw_entry:
-      return fn_fujin_lk_throw_startup;
-    case native_scorpion_lk_throw_entry:
-      return fn_scorpion_lk_throw_startup;
-    case native_sonya_lk_throw_entry:
-      return fn_sonya_lk_throw_startup;
-    case native_liu_kang_lk_throw_entry:
-      return fn_liu_kang_lk_throw_startup;
-    case native_sub_zero_lk_throw_entry:
-      return fn_sub_zero_lk_throw_startup;
-    case native_goro_lk_throw_entry:
-      return fn_goro_lk_throw_startup;
-    default:
-      require(false, "Unimplemented native LK entry");
-      return 0;
-  }
-}
 
 void action_lk_throw(Fighter *fighter) {
   if (!mk4_can_ground_throw(fighter, true)) {
@@ -319,7 +258,7 @@ void action_lk_throw(Fighter *fighter) {
   }
   const Mk4Image *image = battle_data();
   uint32_t native = mk4_lk_target(image, (unsigned)fighter->roster);
-  uint32_t script = lk_script(native);
+  uint32_t script = script_native_script(native);
   action_throw_capture(fighter, ACTION_CODE_0501, native != native_sub_zero_lk_throw_entry);
   if (native == native_sub_zero_lk_throw_entry) {
     fighter_set_speed(fighter, -0x1999);

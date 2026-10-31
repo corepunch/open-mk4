@@ -945,12 +945,12 @@ static void jax_dash_punch_dash_query(Fighter *fighter);
 static void jax_dash_punch_dash_step_query(Fighter *fighter);
 
 bool jax_can_dash_punch(const Fighter *fighter) {
-  return g_battle.ticks >= fighter->dash_punch_ready;
+  return mk4_special_elapsed(fighter, 0xc, 60);
 }
 
 void jax_dash_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &jax_dash_punch_s_dash);
-  fighter->dash_punch_ready = g_battle.ticks + 60;
+  mk4_special_stamp(fighter, 0xc);
   script_vm_enter(fighter, fn_jax_dash_punch, fighter_ready);
 }
 
@@ -1885,7 +1885,7 @@ static const MoveDef tanya_spin_kick_spin = {.clip = 109, .last = 28, .flags = S
 /* 45e8d0: at least 60 ticks since stamp 0xd and an opponent combo count
  * of at most four (45ebb0/45f5b0). */
 bool tanya_can_spin_kick(const Fighter *fighter) {
-  return g_battle.ticks >= fighter->spin_kick_ready && fighter_opponent(fighter)->hits <= 4;
+  return mk4_special_elapsed(fighter, 0xd, 60) && fighter_opponent(fighter)->hits <= 4;
 }
 
 static int tanya_spin_kick_spin_next(int pose) {
@@ -1987,7 +1987,7 @@ void tanya_spin_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &tanya_spin_kick_spin);
   fighter->execution.cleanup = tanya_spin_kick_spin_cleanup;
-  fighter->spin_kick_ready = g_battle.ticks + 60;
+  mk4_special_stamp(fighter, 0xd);
   fighter->sample_override = 0;
   fighter_set_speed(fighter, 0x2666);
   native_begin(fighter, 1, 23, tanya_spin_kick_spin_recover);

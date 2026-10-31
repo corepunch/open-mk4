@@ -442,14 +442,24 @@ void mk4_script_effect(Fighter *fighter, int selector) {
   battle_particles(fighter, selector, 3, true);
 }
 
+void mk4_projectile_move(Projectile *object) {
+  for (int axis = 0; axis < 3; ++axis) {
+    object->pos[axis] += object->vel[axis];
+  }
+}
+
+bool mk4_projectile_outside_arena(const Projectile *object) {
+  int64_t x = object->pos[AXIS_X], z = object->pos[AXIS_Z];
+  int64_t radius = g_battle.arena_radius;
+  return x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE;
+}
+
 void mk4_script_projectile_step(Projectile *object, const AttackRecord *record, bool hits_crouching) {
   if (g_battle.contacts_off) {
     object->kind = 0;
     return;
   }
-  for (int axis = 0; axis < 3; ++axis) {
-    object->pos[axis] += object->vel[axis];
-  }
+  mk4_projectile_move(object);
   const Fighter *owner = &g_battle.fighters[object->owner];
   if ((hits_crouching || fighter_opponent(owner)->action != ACTION_CODE_2001) && battle_projectile_contact(object, record) != CONTACT_MISS) {
     object->kind = 0;

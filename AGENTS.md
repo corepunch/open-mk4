@@ -143,8 +143,9 @@ The target is one shared runtime for every fighter, with retail-loaded roster,
 input, action, stance and CPU tables. Do not add per-character C architecture
 or hand-authored fighter configuration. Retail native routines must have one
 shared implementation rather than copied fighter variants. Fighter bytecode
-and its native ID declarations belong in `fighters/`; shared streams are defined
-once in `fighters/shared.asm`. Native C services stay in shared capability
+belongs in `fighters/`; shared streams are defined once in `fighters/shared.asm`.
+Symbolic native imports and typed C bindings live in `scripts/mk4/native.inc`;
+retail code addresses stay in importer/research metadata. Native C services stay in shared capability
 modules; do not add per-fighter C dispatch architecture or coverage manifests. See `docs/research/shared-retail-runtime.md`.
 
 All 18 fighters use the shared C wordcode interpreter in `game/script/vm.c`.
@@ -155,7 +156,7 @@ services under `game/native/`, implemented once.
 
 `make scripts-export` (`tools/import_mk4_data.py --scripts --output .`) derives
 fighter bytecode from the hash-checked EXE. `tools/mk4_script_layout.json` keeps
-established entry names/addresses and native ABI identifiers;
+established entry names/addresses and original native locations;
 behavior is decoded by the existing tooling. Ownership follows established
 names and catalog usage, with ambiguous streams shared. Keep bare labels in
 assembly; cross-file branches use those same names. The linker exposes
@@ -172,7 +173,9 @@ records, with no export map or address-wrapper enum/header.
 fighter files. The linker emits `build/mk4.data`, `build/mk4_linked.h` and
 compiled diagnostic names, with executable-word membership and layout checks.
 Names such as `jax_fatality_2` remain visible in sources and runtime errors;
-linked offsets and stable native IDs are checked integers, never host pointers.
+linked offsets and compact native references are checked integers, never host pointers.
+The linker emits `build/mk4_natives.inc` with typed C function pointers; use
+symbolic imports and linked continuation parameters, not native-address switches.
 
 Start research with `tools/compile_retail.py --character NAME --inventory` and
 `--audit --summary`. Use bounded `tools/disassemble_retail.py --character NAME

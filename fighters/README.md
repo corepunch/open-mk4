@@ -26,6 +26,8 @@ unreachable streams reference natives whose implementation is still unavailable.
 
 Script-only native tails link directly to a script and its completion policy;
 they require no C trampoline. Native services live once under `game/native/`.
+Shared reaction, throw and air controllers obtain scripts, parameters and
+completion functions from the imports, without native-reference switches.
 Script labels and embedded aliases become `fn_<label>` in C automatically.
 Cross-file branches use bare script names. Regrouping inserts explicit jumps
 where needed to preserve original fall-through and operand entries.

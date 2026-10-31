@@ -196,6 +196,8 @@ def link(path):
     constants.update(MK4_DATA_IMAGE_BASE=BASE, MK4_DATA_IMAGE_END=pc,
                      SCRIPT_ADDRESS_BEGIN=script_begin, SCRIPT_ADDRESS_END=pc,
                      MK4_SCRIPT_BEGIN=script_begin, MK4_SCRIPT_END=pc)
+    # Validate native targets and signatures even when no C output was requested.
+    c_registry(natives, constants)
     # The host must be rebuilt if any exported offset changes. Content-only edits
     # retain this identity and can be selected with --data at runtime.
     identity = hashlib.sha256(json.dumps([constants, natives], sort_keys=True).encode()).digest()

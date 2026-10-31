@@ -17,12 +17,6 @@ static const MoveDef fall = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK, .ac
 static const MeshAnimation fireball_mesh = {
     .first = 261, .count = 10, .period = 2, .scale = 0xc000, .source = MESH_SHARED2, .offset = {7040, 6272, 0}, .additive = true};
 
-static void fireball_move(Projectile *projectile) {
-  for (int axis = 0; axis < 3; ++axis) {
-    projectile->pos[axis] += projectile->vel[axis];
-  }
-}
-
 /* 49c6b0 probes the C[0] contact before the step callback. 49c690's
  * standing waiter skips a victim in action 2001; 49c670's air waiter does not.
  * The 40fe40 burst particles and the 413760 trail are not replicated. */
@@ -50,13 +44,11 @@ static void fireball_step(Projectile *projectile) {
     projectile->kind = 0;
     return;
   }
-  fireball_move(projectile);
+  mk4_projectile_move(projectile);
   if (fireball_contact(projectile, false)) {
     return;
   }
-  int64_t x = projectile->pos[AXIS_X], z = projectile->pos[AXIS_Z];
-  int64_t radius = g_battle.arena_radius;
-  if (x * x + z * z > radius * radius + (int64_t)12 * Q16_ONE * Q16_ONE) {
+  if (mk4_projectile_outside_arena(projectile)) {
     projectile->kind = 0;
   }
 }
@@ -67,7 +59,7 @@ static void air_fireball_step(Projectile *projectile) {
     projectile->kind = 0;
     return;
   }
-  fireball_move(projectile);
+  mk4_projectile_move(projectile);
   if (fireball_contact(projectile, true)) {
     return;
   }

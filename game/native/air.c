@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "native/actions.h"
 #include "script/vm.h"
@@ -59,7 +60,7 @@ void action_air_diagonal_low_kick(Fighter *fighter) {
  * shared native controllers; waits, reverse clips and recovery branches remain
  * original script words. See mk4decomp five_block_dispatch_variants.c. */
 static void air_continue(Fighter *fighter, uint32_t target);
-static void air_contact_begin(Fighter *fighter, uint32_t row);
+void air_contact_begin(Fighter *fighter, uint32_t row);
 
 void action_air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
@@ -105,7 +106,7 @@ static void air_high_contact_end(Fighter *fighter) {
   air_script(fighter, fn_air_high_contact_end, false);
 }
 
-static void air_punch_contact(Fighter *fighter, bool high) {
+void air_punch_contact(Fighter *fighter, uint32_t high) {
   bool air_followup = fighter_height(fighter) > .8f || (high && fighter_airborne(fighter_opponent(fighter)));
   mk4_script_stop_body(fighter);
   fighter->action = ACTION_CODE_1006;
@@ -151,7 +152,7 @@ static void air_contact_query(Fighter *fighter) {
   }
 }
 
-static void air_contact_begin(Fighter *fighter, uint32_t row) {
+void air_contact_begin(Fighter *fighter, uint32_t row) {
   unsigned count = mk4_image_u32(battle_data(), row);
   require(count > 0 && count <= NATIVE_FRAME_CAPACITY, "Invalid native air contact budget");
   fighter->action_air_row = row;
@@ -191,78 +192,7 @@ static void air_open(Fighter *fighter, uint32_t row) {
 }
 
 static void air_continue(Fighter *fighter, uint32_t target) {
-  switch (target) {
-    case native_air_high_punch_contact_window:
-      fighter->sample_override = mini(9, fighter_move(fighter)->last);
-      air_contact_begin(fighter, dat_air_high_punch_contact_row);
-      return;
-    case native_air_contact_begin:
-      air_contact_begin(fighter, dat_air_low_punch_contact_row);
-      return;
-    case native_air_diagonal_kick_query_30:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, dat_air_diagonal_kick_query_30_row);
-      return;
-    case native_air_diagonal_kick_query_31:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, dat_air_diagonal_kick_query_31_row);
-      return;
-    case native_air_diagonal_kick_query_32:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, dat_air_diagonal_kick_query_32_row);
-      return;
-    case native_goro_air_hp_recovery_callback:
-      air_punch_contact(fighter, true);
-      return;
-    case native_goro_air_kick_recovery_callback:
-      air_punch_contact(fighter, false);
-      return;
-    case native_goro_air_lp_recovery_callback:
-      air_script(fighter, fn_air_low_punch_contact_hold, false);
-      return;
-    case native_air_low_kick_contact_hold:
-      air_script(fighter, fn_air_low_kick_contact_hold, false);
-      return;
-    case native_air_diagonal_kick_contact_hold:
-      air_script(fighter, fn_air_diagonal_kick_contact_hold, false);
-      return;
-    case native_air_high_punch_miss_reverse:
-      air_script(fighter, fn_air_high_punch_miss_reverse, true);
-      return;
-    case native_air_low_punch_miss_reverse:
-      air_script(fighter, fn_air_low_punch_miss_reverse, true);
-      return;
-    case native_air_low_kick_clip_58_reverse:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, fn_air_low_kick_clip_58_reverse, true);
-      return;
-    case native_air_low_kick_clip_59_reverse:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, fn_air_low_kick_clip_59_reverse, true);
-      return;
-    case native_air_low_kick_clip_60_reverse:
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, fn_air_low_kick_clip_60_reverse, true);
-      return;
-    case native_air_diagonal_kick_clip_55_reverse:
-      air_script(fighter, fn_air_diagonal_kick_clip_55_reverse, true);
-      return;
-    case native_air_diagonal_kick_clip_56_reverse:
-      air_script(fighter, fn_air_diagonal_kick_clip_56_reverse, true);
-      return;
-    case native_air_diagonal_kick_clip_57_reverse:
-      air_script(fighter, fn_air_diagonal_kick_clip_57_reverse, true);
-      return;
-    case native_air_straight_kick_miss_reverse:
-      air_script(fighter, fn_cage_air_kick_narrow_miss_reversal, false);
-      return;
-    case native_air_attack_land_or_finish:
-    case native_air_straight_kick_land:
-      action_air_land(fighter);
-      return;
-    default:
-      require(false, "Unsupported native air continuation");
-  }
+  script_native_continue(fighter, target, false, fighter_ready);
 }
 
 void action_air_hp_tail(Fighter *fighter) {
@@ -332,4 +262,31 @@ void action_air_straight_wide_tail(Fighter *fighter) {
     native_frame(fighter, visit, mini(first + visit, fighter_move(fighter)->last), air_wide_query);
   }
   native_play(fighter, true);
+}
+
+bool action_air_prepare_script(Fighter *fighter, bool alternate) {
+  (void)alternate;
+  fighter->body.on_land = NULL;
+  return true;
+}
+
+bool action_air_prepare_reverse(Fighter *fighter, bool alternate) {
+  (void)alternate;
+  fighter->body.on_land = action_air_land;
+  return true;
+}
+
+bool action_air_prepare_reverse_clear(Fighter *fighter, bool alternate) {
+  fighter->flags &= ~(unsigned)FF_BUSY;
+  return action_air_prepare_reverse(fighter, alternate);
+}
+
+void action_air_contact_clear(Fighter *fighter, uint32_t row) {
+  fighter->flags &= ~(unsigned)FF_BUSY;
+  air_contact_begin(fighter, row);
+}
+
+void action_air_contact_high(Fighter *fighter, uint32_t row) {
+  fighter->sample_override = mini(9, fighter_move(fighter)->last);
+  air_contact_begin(fighter, row);
 }

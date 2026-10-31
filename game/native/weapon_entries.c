@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "native/actions.h"
 #include "data/tables.h"
@@ -49,6 +50,52 @@ static const WeaponNative weapon_natives[] = {
 };
 // clang-format on
 
+static void weapon_native(Fighter *fighter, uint32_t address, bool back);
+
+void action_liu_weapon_high_punch(Fighter *fighter, bool back) {
+  if (back) {
+    action_liu_kang_sword_back_high_punch(fighter);
+  } else {
+    action_liu_kang_sword_high_punch(fighter);
+  }
+}
+
+void action_liu_weapon_low_punch(Fighter *fighter, bool back) {
+  if (mk4_can_ground_throw(fighter, false)) {
+    action_lp_throw(fighter);
+  } else if (back) {
+    weapon_native(fighter, native_cage_weapon_back_lp_entry, false);
+  } else {
+    action_liu_kang_sword_low_punch(fighter);
+  }
+}
+
+void action_quan_chi_weapon_back_hp_entry(Fighter *fighter, bool back) {
+  if (back) {
+    weapon_native(fighter, native_quan_chi_weapon_hp_entry, false);
+  } else {
+    weapon_start_encoded_strike(fighter, dat_weapon_clip_231_parameters, 0, 0x112, false);
+  }
+}
+
+void action_cage_weapon_back_hp_entry(Fighter *fighter, bool back) {
+  if (back) {
+    action_cage_weapon_back_upper(fighter);
+  } else {
+    weapon_start_encoded_strike(fighter, dat_weapon_clip_239_parameters, 0, 0x111, false);
+  }
+}
+
+void action_fujin_crossbow_lp_entry(Fighter *fighter, bool back) {
+  if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
+    action_lp_throw(fighter);
+  } else if (back) {
+    action_bow_back_strike(fighter);
+  } else {
+    action_bow_low_punch(fighter);
+  }
+}
+
 static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
   for (size_t i = 0; i < sizeof weapon_natives / sizeof *weapon_natives; ++i) {
     const WeaponNative *native = &weapon_natives[i];
@@ -77,89 +124,7 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
     weapon_start_encoded_strike(fighter, native->parameters, native->motion, action, native->motion != 0);
     return;
   }
-  switch (address) {
-    case native_liu_weapon_high_punch:
-      if (back) {
-        action_liu_kang_sword_back_high_punch(fighter);
-      } else {
-        action_liu_kang_sword_high_punch(fighter);
-      }
-      break;
-    case native_liu_weapon_low_punch:
-      if (mk4_can_ground_throw(fighter, false)) {
-        action_lp_throw(fighter);
-      } else if (back) {
-        weapon_native(fighter, native_cage_weapon_back_lp_entry, false);
-      } else {
-        action_liu_kang_sword_low_punch(fighter);
-      }
-      break;
-    case native_quan_chi_weapon_back_hp_entry:
-      if (back) {
-        weapon_native(fighter, native_quan_chi_weapon_hp_entry, false);
-      } else {
-        weapon_start_encoded_strike(fighter, dat_weapon_clip_231_parameters, 0, 0x112, false);
-      }
-      break;
-    case native_cage_weapon_back_hp_entry:
-      if (back) {
-        action_cage_weapon_back_upper(fighter);
-      } else {
-        weapon_start_encoded_strike(fighter, dat_weapon_clip_239_parameters, 0, 0x111, false);
-      }
-      break;
-    case native_fujin_crossbow_hp_entry:
-      action_bow_high_punch(fighter);
-      break;
-    case native_fujin_crossbow_lp_entry:
-      if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
-        action_lp_throw(fighter);
-      } else if (back) {
-        action_bow_back_strike(fighter);
-      } else {
-        action_bow_low_punch(fighter);
-      }
-      break;
-    case native_fujin_crossbow_followup_entry:
-      action_bow_followup_strike(fighter);
-      break;
-    case native_tanya_weapon_lp_entry:
-      action_boomerang_low_punch(fighter);
-      break;
-    case native_sword_back_lp:
-      action_sword_back_low_punch(fighter);
-      break;
-    case native_sword_back_hp:
-      action_sword_back_high_punch(fighter);
-      break;
-    case native_liu_kang_sword_back_hp_entry:
-      action_liu_kang_sword_back_high_punch(fighter);
-      break;
-    case native_cage_weapon_back_lp_entry:
-      action_liu_kang_sword_back_low_punch(fighter);
-      break;
-    case native_sonya_weapon_back_hp_entry:
-      action_sonya_weapon_back_high_punch(fighter);
-      break;
-    case native_kai_weapon_back_strike_frontend:
-      action_kai_weapon_back_strike(fighter);
-      break;
-    case native_cage_weapon_upper_entry:
-      action_cage_weapon_back_upper(fighter);
-      break;
-    case native_reptile_weapon_back_hp_entry:
-      action_reptile_weapon_flurry(fighter);
-      break;
-    case native_reptile_weapon_back_lp_entry:
-      action_reptile_weapon_back_low_punch(fighter);
-      break;
-    case native_jax_axe_back_lp_entry:
-      action_axe_back_low_punch(fighter);
-      break;
-    default:
-      require(false, "Unimplemented native weapon entry");
-      break;
-  }
+  script_native_weapon(fighter, address, back);
 }
 
 static void weapon_input(Fighter *fighter, unsigned button, bool back) {

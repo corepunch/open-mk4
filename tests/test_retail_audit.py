@@ -17,6 +17,18 @@ import check_native_addresses
 
 
 class AddressNamingTests(unittest.TestCase):
+    def test_native_addresses_and_switch_dispatch_are_rejected(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'game').mkdir()
+            source = root / 'game/native.c'
+            for text in ('enum { native_action = 0x44bcd0 };',
+                         'void run(int id) { switch (id) { case native_action: action(); } }',
+                         'const uint32_t native_action = 0x44bcd0;'):
+                source.write_text(text)
+                with patch.object(check_native_addresses, 'ROOT', root), redirect_stdout(StringIO()):
+                    self.assertTrue(check_native_addresses.main())
+
     def test_shared_asset_sources_are_checked_with_game_sources(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)

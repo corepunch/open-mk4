@@ -622,23 +622,18 @@ void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, in
 /* Local4958b0/495ae0/496770/496970 all query the loaded weapon bank.
  * The source pose is inherited from the script that tail-called this native. */
 void action_weapon_contact(Fighter *fighter, uint32_t address) {
-  unsigned selector, queries;
-  switch (address) {
-    case native_cage_weapon_upper_contact:
-    case native_kai_weapon_back_strike_contact:
-      selector = 33;
-      queries = 2;
-      break;
-    case native_liu_kang_sword_back_high_punch_contact:
-      selector = 10;
-      queries = 7;
-      break;
-    default:
-      require(address == native_cage_weapon_back_lp_contact, "Invalid native weapon contact entry");
-      selector = 11;
-      queries = 2;
-      break;
-  }
+  static const struct {
+    unsigned selector, queries;
+  } parameters[MK4_NATIVE_COUNT] = {
+      [native_cage_weapon_upper_contact] = {33, 2},
+      [native_kai_weapon_back_strike_contact] = {33, 2},
+      [native_liu_kang_sword_back_high_punch_contact] = {10, 7},
+      [native_cage_weapon_back_lp_contact] = {11, 2},
+  };
+
+  require(address > 0 && address < MK4_NATIVE_COUNT && parameters[address].queries != 0, "Invalid native weapon contact entry");
+  unsigned selector = parameters[address].selector, queries = parameters[address].queries;
+
   const Mk4Image *image = battle_data();
   AttackRecord record = script_vm_attack_record(image, mk4_image_u32(image, dat_weapon_attack_table + selector * 4) * 4);
   weapon_script_contact_tail(fighter, &record, (int)queries);

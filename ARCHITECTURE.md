@@ -133,7 +133,7 @@ The runtime has four concrete boundaries:
 | Module | Responsibility |
 | --- | --- |
 | `game/data/` | Validate and decode MK4 table formats and expose the bound match data. |
-| `game/script/` | Own actor script execution state and resolve typed native IDs to C services. |
+| `game/script/` | Own actor script execution state and resolve linked native references to typed C services. |
 | `game/runtime/` | Own actor execution lifetime and native frame playback. |
 | `game/native/` | Implement shared gameplay capabilities and native action entries. |
 

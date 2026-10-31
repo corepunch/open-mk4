@@ -21,6 +21,14 @@ typedef struct NativeSymbol {
   void (*tail_reference)(Fighter *fighter, uint32_t reference);
   uint32_t task, tail_script;
   bool tail_inherit;
+  uint32_t script, alternate_script;
+  FighterFn finish, alternate_finish;
+  bool (*prepare)(Fighter *fighter, bool alternate);
+  FighterFn continuation, weapon_entry;
+  void (*continuation_arg)(Fighter *fighter, uint32_t parameter);
+  uint32_t parameter, air_input;
+  FighterFn (*button)(Fighter *fighter, uint32_t reference);
+  void (*weapon)(Fighter *fighter, bool back);
 } NativeSymbol;
 
 #include "mk4_natives.inc"
@@ -32,6 +40,58 @@ static const NativeSymbol *symbol(uint32_t reference) {
 const char *script_native_name(uint32_t reference) {
   const NativeSymbol *native = symbol(reference);
   return native != NULL ? native->name : "<invalid native>";
+}
+
+uint32_t script_native_script(uint32_t reference) {
+  const NativeSymbol *native = symbol(reference);
+  require(native != NULL && native->script != 0, "Native has no linked script operand");
+  return native->script;
+}
+
+void script_native_continue(Fighter *fighter, uint32_t reference, bool alternate, FighterFn finish) {
+  const NativeSymbol *native = symbol(reference);
+  require(native != NULL, "Invalid native continuation reference");
+  if (native->continuation != NULL) {
+    native->continuation(fighter);
+    return;
+  }
+  if (native->continuation_arg != NULL) {
+    native->continuation_arg(fighter, native->parameter);
+    return;
+  }
+  if (native->prepare != NULL && !native->prepare(fighter, alternate)) {
+    return;
+  }
+  uint32_t script = alternate && native->alternate_script != 0 ? native->alternate_script : native->script;
+  require(script != 0, "Native has no linked script continuation");
+  if (alternate && native->alternate_finish != NULL) {
+    finish = native->alternate_finish;
+  } else if (native->finish != NULL) {
+    finish = native->finish;
+  }
+  script_vm_enter(fighter, script, finish);
+}
+
+FighterFn script_native_button(Fighter *fighter, uint32_t reference) {
+  const NativeSymbol *native = symbol(reference);
+  require(native != NULL && native->button != NULL, "Unlinked native button selector");
+  return native->button(fighter, reference);
+}
+
+int script_native_air_input(uint32_t reference) {
+  const NativeSymbol *native = symbol(reference);
+  return native != NULL ? (int)native->air_input - 1 : -1;
+}
+
+void script_native_weapon(Fighter *fighter, uint32_t reference, bool back) {
+  const NativeSymbol *native = symbol(reference);
+  require(native != NULL, "Invalid native weapon reference");
+  if (native->weapon != NULL) {
+    native->weapon(fighter, back);
+  } else {
+    require(native->weapon_entry != NULL, "Unlinked native weapon implementation");
+    native->weapon_entry(fighter);
+  }
 }
 
 FighterFn script_native_entry(uint32_t reference) {

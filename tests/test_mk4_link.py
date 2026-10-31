@@ -61,6 +61,27 @@ ready 0
         with self.assertRaisesRegex(ValueError, 'non-script symbol'):
             c_registry({'native_a': {'tail_script': 'data', 'tail_finish': 'inherit'}}, {'dat_data': BASE})
 
+    def test_native_continuation_links_and_parameters(self):
+        source = '''.native native_script, script=entry, alternate_script=alternate, prepare=prepare, finish=finish
+.native native_record, continuation_arg=consume_record, parameter=dat_record
+.section data
+record:
+.word 7
+.section script
+entry:
+ready 0
+alternate:
+ready 0
+'''
+        link(self.source(source))
+        for first, second, error in (('alternate_script=alternate', 'alternate_script=record', 'non-script'),
+                                     ('parameter=dat_record', 'parameter=dat_missing', 'parameter'),
+                                     ('parameter=dat_record', 'parameter=0x100000000', '32 bits'),
+                                     ('script=entry', 'script=entry, continuation=finish', 'Conflicting'),
+                                     ('continuation_arg=consume_record, parameter=dat_record', 'parameter=7', 'requires')):
+            with self.subTest(second=second), self.assertRaisesRegex(ValueError, error):
+                link(self.source(source.replace(first, second)))
+
     def test_table_and_script_references_follow_insertions(self):
         text = '''.section data
 table:

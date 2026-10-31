@@ -1376,6 +1376,8 @@ int main(int argc, char **argv) {
       put_word(fn_low_kick_clip_67, 0xff000000);
     } else if (strcmp(argv[1], "native") == 0) {
       put_word(fn_low_kick_clip_67_operand_1, 0x12345678);
+    } else if (strcmp(argv[1], "native_symbol") == 0) {
+      put_word(fn_low_kick_clip_67_operand_1, native_unresolved_air_low_kick_clip_59_reverse);
     } else if (strcmp(argv[1], "sample") == 0) {
       put_word(fn_low_kick_clip_67_prefixed_sample_1, 0x490000ff);
     } else if (strcmp(argv[1], "budget") == 0) {

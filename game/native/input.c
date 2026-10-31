@@ -1,3 +1,4 @@
+#include "script/bindings.h"
 #include "script/native_ids.h"
 #include "data/layout.h"
 #include "native/actions.h"
@@ -36,29 +37,11 @@ const Controls action_stances = {.stances = {
 
 /* Original thin controllers dispatch their0x80000..0x80004 action words. */
 static bool press_air_controller(Fighter *fighter, uint32_t target) {
-  unsigned action;
-  switch (target) {
-    case native_press_straight_air_high_punch:
-    case native_press_diagonal_air_high_punch:
-      action = 0;
-      break;
-    case native_press_straight_air_low_punch:
-    case native_press_diagonal_air_low_punch:
-      action = 1;
-      break;
-    case native_press_diagonal_air_high_kick:
-      action = 2;
-      break;
-    case native_press_diagonal_air_low_kick:
-      action = 3;
-      break;
-    case native_press_straight_air_kick:
-      action = 4;
-      break;
-    default:
-      return false;
+  int action = script_native_air_input(target);
+  if (action < 0) {
+    return false;
   }
-  uint32_t entry = mk4_action_target(battle_data(), 8, action);
+  uint32_t entry = mk4_action_target(battle_data(), 8, (unsigned)action);
   fighter_interrupt(fighter, script_native_entry(entry));
   return true;
 }
@@ -112,19 +95,7 @@ void action_combo_high_punch(Fighter *fighter) {
   unsigned slot = mk4_native_character_slot((unsigned)fighter->roster);
   uint32_t entry = mk4_image_u32(battle_data(), dat_combo_high_punch + slot * 4);
   uint32_t script;
-  switch (entry) {
-    case native_jax_combo_hp_entry:
-      script = fn_jax_combo_hp_attacker;
-      break;
-    case native_combo_hp_entry:
-      script = fn_sub_zero_combo_hp_attacker;
-      break;
-    case native_kitana_combo_hp_entry:
-      script = fn_kitana_combo_high_punch_attacker;
-      break;
-    default:
-      fatal("Unimplemented native combo entry %08x", entry);
-  }
+  script = script_native_script(entry);
   action_begin(fighter, S_PUNCH, ACTION_CODE_0108, false);
   script_vm_enter(fighter, script, fighter_ready);
 }
@@ -175,6 +146,121 @@ static void follow_crouch_hk(Fighter *fighter) {
 }
 
 /* Controllers46c210..46c740. Native weapon frontends remain transitional services. */
+FighterFn action_button_standing_high_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch) : normal_hp;
+  return entry;
+}
+
+FighterFn action_button_standing_low_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch) : action_entry(8);
+  return entry;
+}
+
+FighterFn action_button_standing_low_kick(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
+  return entry;
+}
+
+FighterFn action_button_standing_high_kick(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  entry = normal_hk_entry(fighter);
+  return entry;
+}
+
+FighterFn action_button_crouching_high_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)fighter;
+  (void)target;
+  {
+    uint32_t target = mk4_action_target(battle_data(), 1, 1);
+    entry = target == native_uppercut_entry ? action_uppercut : script_native_entry(target);
+  }
+  return entry;
+}
+
+FighterFn action_button_crouching_low_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
+    entry = action_sword_spin;
+  } else {
+    entry = crouch_entry(8);
+  }
+  return entry;
+}
+
+FighterFn action_button_crouching_high_kick(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  (void)fighter;
+  entry = crouch_entry(7);
+  return entry;
+}
+
+FighterFn action_button_crouching_low_kick(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  (void)fighter;
+  entry = crouch_entry(6);
+  return entry;
+}
+
+FighterFn action_button_standing_block(Fighter *fighter, uint32_t target) {
+  (void)target;
+  (void)fighter;
+  return NULL;
+}
+
+FighterFn action_button_close_punch_combo_high_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  const Fighter *peer = fighter_opponent(fighter);
+  bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
+  if (target == native_press_close_kick_high_punch && down && (peer->action == ACTION_CODE_4004 || peer->hits > 1)) {
+    entry = action_uppercut;
+  } else if (fighter->armed && fighter->weapon != NULL) {
+    weapon_followup_victim(fighter);
+    entry = fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch;
+  } else {
+    entry = target == native_press_close_punch_combo_high_punch ? action_combo_high_punch
+            : target == native_press_air_contact_high_punch     ? air_ground_hp
+                                                                : normal_hp;
+  }
+  return entry;
+}
+
+FighterFn action_button_followup_low_punch(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  (void)target;
+  if (fighter->armed && fighter->weapon != NULL) {
+    weapon_followup_victim(fighter);
+    entry = fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch;
+  } else {
+    entry = action_normal_low_punch;
+  }
+  return entry;
+}
+
+FighterFn action_button_combo_punch_high_kick(Fighter *fighter, uint32_t target) {
+  FighterFn entry = NULL;
+  const Fighter *peer = fighter_opponent(fighter);
+  bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
+  if (target != native_press_followup_high_kick && down && peer->hits > 1) {
+    entry = follow_crouch_hk;
+  } else if (target == native_press_close_kick_high_kick) {
+    entry = fighter_holds_back(fighter) ? action_roundhouse : action_high_kick;
+  } else {
+    entry = normal_hk_entry(fighter);
+  }
+  return entry;
+}
+
 void action_press_native_button(Fighter *fighter, uint32_t target) {
   if (target == 0 || press_air_controller(fighter, target)) {
     return;
@@ -187,86 +273,9 @@ void action_press_native_button(Fighter *fighter, uint32_t target) {
     fighter_interrupt(fighter, script_native_entry(target));
     return;
   }
-  const Fighter *peer = fighter_opponent(fighter);
-  bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
-  FighterFn entry = NULL;
-  switch (target) {
-    case native_press_standing_high_punch:
-      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch) : normal_hp;
-      break;
-    case native_press_standing_low_punch:
-      entry =
-          fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch) : action_entry(8);
-      break;
-    case native_press_standing_low_kick:
-      entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
-      break;
-    case native_press_standing_high_kick:
-      entry = normal_hk_entry(fighter);
-      break;
-    case native_press_crouching_high_punch:
-      /* The engine command matcher owns finish command gates before fallback. */
-      {
-        uint32_t target = mk4_action_target(battle_data(), 1, 1);
-        entry = target == native_uppercut_entry ? action_uppercut : script_native_entry(target);
-      }
-      break;
-    case native_press_crouching_low_punch:
-      if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
-        entry = action_sword_spin;
-      } else {
-        entry = crouch_entry(8);
-      }
-      break;
-    case native_press_crouching_high_kick:
-      entry = crouch_entry(7);
-      break;
-    case native_press_crouching_low_kick:
-      entry = crouch_entry(6);
-      break;
-    case native_press_standing_block:
-    case native_press_crouching_block:
-      /* Held-block movement/state ownership is handled by the simulation pump. */
-      return;
-    case native_press_close_punch_combo_high_punch:
-    case native_press_air_contact_high_punch:
-    case native_press_combo_punch_high_punch:
-    case native_press_close_kick_high_punch:
-      if (target == native_press_close_kick_high_punch && down && (peer->action == ACTION_CODE_4004 || peer->hits > 1)) {
-        entry = action_uppercut;
-      } else if (fighter->armed && fighter->weapon != NULL) {
-        weapon_followup_victim(fighter);
-        entry = fighter_holds_back(fighter) ? action_weapon_back_high_punch : action_weapon_high_punch;
-      } else {
-        entry = target == native_press_close_punch_combo_high_punch ? action_combo_high_punch
-                : target == native_press_air_contact_high_punch     ? air_ground_hp
-                                                                    : normal_hp;
-      }
-      break;
-    case native_press_followup_low_punch:
-      if (fighter->armed && fighter->weapon != NULL) {
-        weapon_followup_victim(fighter);
-        entry = fighter_holds_back(fighter) ? action_weapon_back_low_punch : action_weapon_low_punch;
-      } else {
-        entry = action_normal_low_punch;
-      }
-      break;
-    case native_press_combo_punch_high_kick:
-    case native_press_followup_high_kick:
-    case native_press_close_kick_high_kick:
-      if (target != native_press_followup_high_kick && down && peer->hits > 1) {
-        entry = follow_crouch_hk;
-      } else if (target == native_press_close_kick_high_kick) {
-        entry = fighter_holds_back(fighter) ? action_roundhouse : action_high_kick;
-      } else {
-        entry = normal_hk_entry(fighter);
-      }
-      break;
-    case native_press_followup_low_kick:
-      entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
-      break;
-    default:
-      fatal("Unimplemented retail button controller %08x", target);
+  FighterFn entry = script_native_button(fighter, target);
+  if (entry == NULL) {
+    return;
   }
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_interrupt(fighter, entry);

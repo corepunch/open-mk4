@@ -29,7 +29,7 @@ make scripts-check         # source/word verification, strict audits, native nam
 ```
 
 `tools/mk4_script_layout.json` preserves established entry names, original
-addresses and native IDs. Names and catalog usage determine
+addresses and original native locations. Names and catalog usage determine
 file ownership through tooling. All authored operations and operands come
 from the hash-checked EXE. No per-fighter C implementation or handwritten
 configuration is generated. Regrouping inserts explicit jumps for original
@@ -87,7 +87,7 @@ example:
 
 The first instruction word stores the opcode in its upper byte and an inline
 argument in its low 24 bits. Additional operands remain 32-bit words, retaining
-Q16 values and stable native identifiers. `word(label)` encodes a packed script
+Q16 values and linked native references. `word(label)` encodes a packed script
 or data reference; a plain label is a byte reference. `clip(N)` encodes the
 linked animation descriptor. Labels, exports and aliases resolve after layout;
 there are no fixed `.org` or `.expect` requirements.
@@ -108,6 +108,15 @@ Original native addresses exist only in importer/research metadata. The package
 layout identity includes binding signatures and implementation names, so a
 package cannot silently resolve through a differently linked native registry.
 Unsupported roles return a VM diagnostic; no integer is cast to a host pointer.
+
+Shared native controllers can use `script=label`, `alternate_script=label`,
+`finish=c_function` and `alternate_finish=c_function` instead of switching on
+native references. Optional `prepare=c_function` performs native setup before
+the script; returning false consumes the continuation. A native continuation
+uses `continuation=c_function` or `continuation_arg=c_function` with a checked
+`parameter` (a linked data symbol or a 32-bit value). Input and weapon selectors
+likewise bind typed callbacks. These bindings select existing shared services;
+fighter wordcode retains its waits, branches and animation commands.
 
 `.equ` defines private build-time constants; `.export_equ` additionally exposes
 a numeric constant to C. Neither is used to declare native implementations.

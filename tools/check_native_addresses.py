@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Report native, script and data address naming in the shared C runtime."""
+"""Reject retail code addresses and native dispatch switches in the runtime."""
 from pathlib import Path
 import re
 import sys
@@ -30,10 +30,11 @@ def category(address):
 
 def main():
     named = {'Native': set(), 'Script/data': set()}
-    # Native ABI constants live beside fighter bytecode and are exported to C.
+    obsolete = []
     for path in (ROOT / 'fighters').glob('*.asm'):
-        named['Native'].update(int(value, 16) for value in re.findall(
-            r'^\.(?:equ|export_equ) native_\w+ (0x[0-9a-f]+)$', path.read_text(), re.M))
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            if re.match(r'\.(?:equ|export_equ) native_', line):
+                obsolete.append((path.relative_to(ROOT), number, 'native constants must use symbolic imports'))
     literals = []
     vague = []
     paths = [path for directory in ('game', 'common') for path in (ROOT / directory).rglob('*')]
@@ -41,6 +42,8 @@ def main():
         if path.suffix not in ('.c', '.h', '.inc'):
             continue
         source = mask_c(path.read_text())
+        for match in re.finditer(r'\bcase\s+native_\w+\s*:', source):
+            obsolete.append((path.relative_to(ROOT), source.count('\n', 0, match.start()) + 1, 'native dispatch must use linked pointers or parameters'))
         for match in re.finditer(
                 r'\bn[0-9a-f]{6}_\w+|\bnative_(?:native_vm|vm_enter)_\w+|'
                 r'\bMK4_SCRIPT_(?:NATIVE_VM|LK_SCRIPT)_\w+|'
@@ -50,7 +53,7 @@ def main():
         allowed = set()
         for address, offset in address_definitions(source):
             group = category(address)
-            if group:
+            if group == 'Script/data':
                 named[group].add(address)
                 allowed.add(offset)
         for match in re.finditer(r'\b0x[0-9a-fA-F]+\b', source):
@@ -75,7 +78,10 @@ def main():
     print(f'Address-based/dispatcher placeholder labels: {len(vague)}.')
     for path, line, symbol in vague:
         print(f'{path}:{line}: replace placeholder {symbol} with a verified role name')
-    return bool(literals or vague)
+    print(f'Obsolete native declarations/dispatch switches: {len(obsolete)}.')
+    for path, line, message in obsolete:
+        print(f'{path}:{line}: {message}')
+    return bool(literals or vague or obsolete)
 
 
 if __name__ == '__main__':
