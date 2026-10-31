@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import struct
 import json
+import re
 import shutil
 import sys
 import unittest
@@ -59,6 +60,26 @@ return 0
             with self.subTest(body=body), self.assertRaises((ValueError, KeyError)):
                 link(self.source('.section data\ntable:\n.word 0\n.section script\nentry:\n'+body+'\n'))
 
+    def test_export_equ_matches_separate_definition_and_export(self):
+        source = '''.equ PRIVATE 7
+.export_equ NATIVE 0x496f80
+.export_equ DERIVED PRIVATE + 3
+.section data
+table:
+.word NATIVE, DERIVED
+.section script
+entry:
+call 0, NATIVE
+ready 0
+'''
+        expanded = re.sub(r'^\.export_equ (\w+) (.+)$', r'.equ \1 \2\n.export \1 \1', source, flags=re.M)
+        self.assertEqual(link(self.source(source)), link(self.source(expanded)))
+        for declaration in ('.equ NATIVE 1', '.alias NATIVE entry', '.export NATIVE entry', '.export_equ NATIVE 1'):
+            with self.subTest(declaration=declaration), self.assertRaisesRegex(ValueError, 'Duplicate'):
+                link(self.source(declaration + '\n' + source))
+        with self.assertRaisesRegex(ValueError, 'MISSING'):
+            link(self.source(source.replace('.export_equ DERIVED PRIVATE + 3', '.export_equ DERIVED MISSING')))
+
     def test_strings_comments_and_continued_operands(self):
         source = self.source(r'''.section data
 name:
@@ -114,6 +135,7 @@ return 0
             generated += [destination / 'scripts/mk4/program.asm', destination / 'game/script/opcodes.h']
             for path in generated:
                 self.assertEqual(path.read_bytes(), (ROOT / path.relative_to(destination)).read_bytes(), str(path))
+                self.assertNotRegex(path.read_text(), r'(?m)^\.export (\w+) \1$')
             self.assertGreater(verify_scripts(image, destination / 'scripts/mk4/project.asm'), 0)
             self.assertEqual(export_scripts(image, destination, check=True)[1], [])
             # A selector's embedded operand entry must continue into its
@@ -129,7 +151,7 @@ return 0
             module = destination / 'fighters/sonya.asm'
             original = module.read_text()
             self.assertIn('sonya_fatality_2_second_cycle:', original)
-            self.assertIn('.equ MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END ', original)
+            self.assertIn('.export_equ MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END ', original)
             self.assertIn('.export MK4_LINK_MK4_ADDRESSES_MK4_SCRIPT_SONYA_FATALITY_2_SECOND_CYCLE ', original)
             modified = original.replace('  wait 0xf', '  wait 0xe', 1)
             self.assertNotEqual(modified, original)

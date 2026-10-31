@@ -1,8 +1,7 @@
 ; Generated kitana bytecode and native IDs. Do not edit; run make scripts-export.
 ; The shared C VM executes these words; native IDs select shared C services.
 
-.equ MK4_NATIVE_KITANA_COMBO_HP_ENTRY 0x46c2b0
-.export MK4_NATIVE_KITANA_COMBO_HP_ENTRY MK4_NATIVE_KITANA_COMBO_HP_ENTRY
+.export_equ MK4_NATIVE_KITANA_COMBO_HP_ENTRY 0x46c2b0
 
 ; Retail source 0x004e6a28; branches use linked names.
 kitana_combo_high_punch_attacker:

@@ -101,6 +101,12 @@ start comments outside strings; a trailing backslash continues operands.
 Changing an instruction containing an embedded entry also requires checking
 that alias's offset and no-op operand interpretation.
 
+`.export_equ NAME value` defines a constant and exposes the same name to C in
+one line, for example `.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`.
+It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
+private constants and `.export C_NAME label` when the C interface name differs
+from its source label. These are build-time directives, not retail VM opcodes.
+
 The host loads one package; `--data PATH` selects a compatible one. The loader
 checks package shape, compiled layout identity and executable-word membership.
 Data and script addresses are checked indices, never host pointers. Script

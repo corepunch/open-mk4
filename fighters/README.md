@@ -26,6 +26,10 @@ see only exported identifiers through the generated header. Other bytecode
 can branch to the same definition by label. Native C implementations remain
 in shared capability modules under `game/native/`.
 
+Native constants use one build-time declaration, such as
+`.export_equ MK4_NATIVE_JAX_MISSILE 0x496f80`, to define the value and expose
+its existing name to C. No separate self-export line is needed.
+
 The instruction set and packing are the original MK4 word format. A mnemonic
 such as `wait 5` assembles to the original opcode/argument word. The interpreter
 keeps a cursor, wake tick, loop counter and native/playback state per actor;

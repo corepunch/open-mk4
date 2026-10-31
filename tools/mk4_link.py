@@ -48,16 +48,16 @@ def link(path):
                 section = kind
                 if kind == 'script':
                     script_begin = pc
-            elif line.startswith(('.equ ', '.alias ', '.export ')):
+            elif line.startswith(('.equ ', '.alias ', '.export ', '.export_equ ')):
                 directive, name, value = line.split(None, 2)
-                if directive == '.export':
+                if directive in ('.export', '.export_equ'):
                     if name in exports:
                         raise ValueError('Duplicate export ' + name)
-                    exports[name] = value
-                else:
+                    exports[name] = name if directive == '.export_equ' else value
+                if directive != '.export':
                     if name in symbols or name in aliases:
                         raise ValueError('Duplicate symbol ' + name)
-                    if directive == '.equ':
+                    if directive in ('.equ', '.export_equ'):
                         symbols[name] = evaluate(value, symbols)
                     else:
                         aliases[name] = value

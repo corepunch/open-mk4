@@ -121,7 +121,7 @@ def export_scripts(image, destination, check=False):
              for fighter in (*CHARACTERS, 'shared')}
     for name, value in native_ids.items():
         owner = named_owner([name]) or 'shared'
-        files[owner].extend([f'.equ {name} {value:#x}', f'.export {name} {name}'])
+        files[owner].append(f'.export_equ {name} {value:#x}')
     aliases = {}
     for address, labels in entries.items():
         owner = owners[address]
