@@ -103,7 +103,7 @@ void kai_script_stage_event(Fighter *fighter) {
 
 static void kai_armed_handstand_enter(Fighter *fighter) {
   weapon_followup_victim(fighter);
-  script_vm_enter(fighter, scr_kai_armed_handstand_enter, fighter_ready);
+  script_vm_enter(fighter, fn_kai_armed_handstand_enter, fighter_ready);
 }
 
 void kai_handstand_enter(Fighter *fighter) {
@@ -114,26 +114,26 @@ void kai_handstand_enter(Fighter *fighter) {
   if (fighter->armed) {
     kai_armed_handstand_enter(fighter);
   } else {
-    script_vm_enter(fighter, scr_kai_handstand_enter, fighter_ready);
+    script_vm_enter(fighter, fn_kai_handstand_enter, fighter_ready);
   }
 }
 
 void action_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->execution.cleanup = handstand_cleanup;
-  script_vm_enter(fighter, scr_handstand_exit, fighter_ready);
+  script_vm_enter(fighter, fn_handstand_exit, fighter_ready);
 }
 
 void action_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
   fighter->execution.cleanup = handstand_cleanup;
-  script_vm_enter(fighter, scr_handstand_front, fighter_ready);
+  script_vm_enter(fighter, fn_handstand_front, fighter_ready);
 }
 
 void action_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
   fighter->execution.cleanup = handstand_cleanup;
-  script_vm_enter(fighter, scr_handstand_rear, fighter_ready);
+  script_vm_enter(fighter, fn_handstand_rear, fighter_ready);
 }
 
 static void handstand_contact(Fighter *fighter) {
@@ -147,7 +147,7 @@ void kai_script_contact_b10_continuation(Fighter *fighter) {
   fighter->native_record_value = script_vm_attack_record(battle_data(), dat_handstand_front_attack_record);
   fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, scr_kai_contact_b10_continuation, fighter_ready);
+  native_script_end(fighter, fn_kai_contact_b10_continuation, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, frame == 1 ? 10 : 11, handstand_contact);
   }
@@ -159,7 +159,7 @@ void kai_handstand_rear_contact(Fighter *fighter) {
   fighter->native_record_value = script_vm_attack_record(battle_data(), dat_handstand_rear_attack_record);
   fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, scr_kai_handstand_rear_contact, fighter_ready);
+  native_script_end(fighter, fn_kai_handstand_rear_contact, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, 9 + frame, handstand_contact);
   }
@@ -228,7 +228,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
 void action_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
   fighter->execution.cleanup = handstand_cleanup;
-  script_vm_enter(fighter, scr_handstand_spin, fighter_ready);
+  script_vm_enter(fighter, fn_handstand_spin, fighter_ready);
 }
 
 void kai_handstand_victim_tail(Fighter *fighter) {
@@ -257,17 +257,17 @@ void kai_handstand_reaction(Fighter *fighter) {
       action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
   if (action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN) {
-    script_vm_enter(fighter, scr_kai_handstand_reaction_knockdown, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_kai_handstand_reaction_knockdown, mk4_mmove_thrown_finish);
   } else if (action_reaction_native(fighter) == MK4_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER) {
     fighter->body.physics = fighter_friction;
-    script_vm_enter(fighter, scr_kai_handstand_reaction_rear_stagger, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_kai_handstand_reaction_rear_stagger, mk4_mmove_thrown_finish);
   } else {
     mk4_script_shake(fighter, 0);
     if (crouch) {
       fighter->body.physics = fighter_friction;
-      script_vm_enter(fighter, scr_crouch_reaction_script, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, fn_crouch_reaction_script, mk4_mmove_thrown_finish);
     } else {
-      script_vm_enter(fighter, scr_kai_handstand_reaction_standing_stagger, mk4_mmove_thrown_finish);
+      script_vm_enter(fighter, fn_kai_handstand_reaction_standing_stagger, mk4_mmove_thrown_finish);
     }
   }
 }

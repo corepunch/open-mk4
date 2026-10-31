@@ -164,7 +164,7 @@ animation metadata, rigs, sound selectors and scene data. The generated
 `scripts/mk4/program.asm` includes fighter files. `make scripts` links tables
 and wordcode into one package, with executable-word membership and layout
 identity checks, and emits the C export header and compiled diagnostic names.
-Each executable script label or embedded alias becomes `scr_<label>` in C
+Each executable script label or embedded alias becomes `fn_<label>` in C
 automatically. Bare assembly names are the single source of naming; there are
 no script export alias maps or intermediate C enums. The prefix keeps script
 addresses distinct from native C functions with the same bare name.

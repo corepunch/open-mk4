@@ -121,17 +121,17 @@ guard:
 '''
         _, header, symbols = link(self.source(source))
         for name in ('entry', 'embedded'):
-            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
+            self.assertIn(f'#define fn_{name} 0x{symbols[name]:x}u', header)
         for name in ('table', 'data_alias', 'guard', 'LOOKALIKE'):
-            self.assertNotIn('#define scr_' + name + ' ', header)
+            self.assertNotIn('#define fn_' + name + ' ', header)
         self.assertNotIn('#define entry ', header)
         self.assertNotIn('MK4_LINK_', header)
         moved = source.replace('entry:\n', '.zero 12\nentry:\n')
         _, moved_header, moved_symbols = link(self.source(moved))
         self.assertNotEqual(header, moved_header)
-        self.assertIn(f'#define scr_entry 0x{moved_symbols["entry"]:x}u', moved_header)
+        self.assertIn(f'#define fn_entry 0x{moved_symbols["entry"]:x}u', moved_header)
         with self.assertRaisesRegex(ValueError, 'Duplicate script export'):
-            link(self.source(source + '.export scr_entry entry\n'))
+            link(self.source(source + '.export fn_entry entry\n'))
 
     def test_data_labels_and_fields_use_their_declared_section(self):
         source = '''.section data
@@ -153,9 +153,9 @@ ready 0
         _, header, symbols = link(self.source(source))
         for name in ('table', 'text', 'data_end', 'data_field', 'field_chain', 'byte_field', 'end_field'):
             self.assertIn(f'#define dat_{name} 0x{symbols[name]:x}u', header)
-            self.assertNotIn('#define scr_' + name + ' ', header)
+            self.assertNotIn('#define fn_' + name + ' ', header)
         for name in ('entry', 'code_alias'):
-            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
+            self.assertIn(f'#define fn_{name} 0x{symbols[name]:x}u', header)
             self.assertNotIn('#define dat_' + name + ' ', header)
         self.assertNotIn('#define dat_LOOKALIKE ', header)
         with self.assertRaisesRegex(ValueError, 'Duplicate data export'):
@@ -178,7 +178,7 @@ ready 0
         self.assertEqual(len(names), len(set(names)))
         self.assertTrue(all(name in symbols for name in names))
         for name in names:
-            self.assertIn(f'#define scr_{name} 0x{symbols[name]:x}u', header)
+            self.assertIn(f'#define fn_{name} 0x{symbols[name]:x}u', header)
         for name, value in layout['natives'].items():
             self.assertEqual(symbols[name], int(value, 16))
         self.assertGreater(verify_scripts(RetailImage(ROOT / 'MK4/MK-4.EXE'), ROOT / 'scripts/mk4/project.asm'), 0)

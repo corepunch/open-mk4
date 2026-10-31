@@ -169,7 +169,7 @@ def link(path):
             offset = address - BASE
             if not mask[offset // 32] & (1 << (offset // 4 % 8)):
                 continue
-            c_name = 'scr_' + name
+            c_name = 'fn_' + name
         else:
             if not BASE <= address <= script_begin:
                 continue

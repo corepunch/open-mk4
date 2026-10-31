@@ -117,7 +117,7 @@ static void react_jab_air(Fighter *fighter) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, scr_react_jab_air, action_controller_return);
+  hit_script(fighter, fn_react_jab_air, action_controller_return);
 }
 
 static void react_kick_air(Fighter *fighter) {
@@ -125,13 +125,13 @@ static void react_kick_air(Fighter *fighter) {
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   action_native_sound_list(dat_sound_knockdown_voice_list);
-  hit_script(fighter, scr_react_kick_air, action_getup_roll);
+  hit_script(fighter, fn_react_kick_air, action_getup_roll);
 }
 
 static void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, scr_jax_dash_punch_airborne_victim_168, action_getup_roll);
+  hit_script(fighter, fn_jax_dash_punch_airborne_victim_168, action_getup_roll);
 }
 
 static void react_kick_hit(Fighter *fighter) {
@@ -140,10 +140,10 @@ static void react_kick_hit(Fighter *fighter) {
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
     fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
-    hit_script(fighter, scr_kick_hit_crouching_stagger, action_controller_return);
+    hit_script(fighter, fn_kick_hit_crouching_stagger, action_controller_return);
     fighter->action = ACTION_CODE_4005;
   } else {
-    hit_script(fighter, scr_kick_hit_standing_stagger, action_controller_return);
+    hit_script(fighter, fn_kick_hit_standing_stagger, action_controller_return);
   }
 }
 
@@ -153,7 +153,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (crouch) {
     uint32_t physics = mk4_image_u32(battle_data(), dat_crouch_reaction_physics_word);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction callback");
-    hit_script(fighter, scr_crouch_reaction_script, action_controller_return);
+    hit_script(fighter, fn_crouch_reaction_script, action_controller_return);
     return;
   }
   fighter->hits = maxi(0, fighter->hits - 1);
@@ -162,7 +162,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (staggers) {
     battle_wall_recoil(fighter);
   }
-  hit_script(fighter, staggers ? scr_jab_hit_damage_stagger : scr_jab_hit_short_recovery, action_controller_return);
+  hit_script(fighter, staggers ? fn_jab_hit_damage_stagger : fn_jab_hit_short_recovery, action_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
@@ -194,7 +194,7 @@ void action_block_cycle(Fighter *fighter) {
     fighter->native_variant--;
   }
   if (fighter->native_variant > 0) {
-    script_vm_enter(fighter, scr_block_unarmed_pose_cycle, action_controller_return);
+    script_vm_enter(fighter, fn_block_unarmed_pose_cycle, action_controller_return);
   } else {
     mk4_script_stop_body(fighter);
     action_controller_return(fighter);
@@ -316,7 +316,7 @@ static void react_block(Fighter *fighter) {
     script_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
-    script_vm_enter(fighter, fighter->armed ? scr_block_armed_recovery : scr_block_unarmed_pose_cycle, action_controller_return);
+    script_vm_enter(fighter, fighter->armed ? fn_block_armed_recovery : fn_block_unarmed_pose_cycle, action_controller_return);
   }
 }
 
@@ -336,7 +336,7 @@ void action_thaw_land(Fighter *fighter) {
 static void frozen_thaw(Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   if (fighter_airborne(fighter)) {
-    script_vm_enter(fighter, scr_airborne_thaw_script, action_controller_return);
+    script_vm_enter(fighter, fn_airborne_thaw_script, action_controller_return);
   } else {
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
     neutral(fighter);

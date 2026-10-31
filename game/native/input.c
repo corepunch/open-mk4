@@ -114,13 +114,13 @@ void action_combo_high_punch(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case MK4_NATIVE_JAX_COMBO_HP_ENTRY:
-      script = scr_jax_combo_hp_attacker;
+      script = fn_jax_combo_hp_attacker;
       break;
     case MK4_NATIVE_COMBO_HP_ENTRY:
-      script = scr_sub_zero_combo_hp_attacker;
+      script = fn_sub_zero_combo_hp_attacker;
       break;
     case MK4_NATIVE_KITANA_COMBO_HP_ENTRY:
-      script = scr_kitana_combo_high_punch_attacker;
+      script = fn_kitana_combo_high_punch_attacker;
       break;
     default:
       fatal("Unimplemented native combo entry %08x", entry);
@@ -171,7 +171,7 @@ void action_normal_low_kick(Fighter *fighter) {
 static void follow_crouch_hk(Fighter *fighter) {
   int action = fighter->action;
   action_begin(fighter, S_KICK, action, false);
-  script_vm_enter(fighter, scr_follow_crouch_hk, fighter_ready);
+  script_vm_enter(fighter, fn_follow_crouch_hk, fighter_ready);
 }
 
 /* Controllers46c210..46c740. Native weapon frontends remain transitional services. */
@@ -370,7 +370,7 @@ static void knee_contact_finished(Fighter *fighter) {
 }
 
 static void knee_miss_finished(Fighter *fighter) {
-  script_vm_enter(fighter, scr_knee_miss_finished, fighter_ready);
+  script_vm_enter(fighter, fn_knee_miss_finished, fighter_ready);
 }
 
 void action_close_high_kick_tail(Fighter *fighter) {
@@ -389,7 +389,7 @@ void action_close_high_kick_tail(Fighter *fighter) {
 }
 
 static void knee_script(Fighter *fighter) {
-  script_vm_enter(fighter, scr_knee_script, fighter_ready);
+  script_vm_enter(fighter, fn_knee_script, fighter_ready);
 }
 
 void action_close_high_kick(Fighter *fighter) {

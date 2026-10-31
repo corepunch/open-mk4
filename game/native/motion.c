@@ -25,7 +25,7 @@ void fujin_dive_land(Fighter *fighter) {
 
 static void fujin_dive_dive_recoil(Fighter *fighter) {
   fighter->action = ACTION_CODE_1006;
-  script_vm_enter(fighter, scr_dive_recoil, fighter_ready);
+  script_vm_enter(fighter, fn_dive_recoil, fighter_ready);
 }
 
 static void fujin_dive_dive_query(Fighter *fighter) {
@@ -55,7 +55,7 @@ void fujin_dive(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &fujin_dive_dive);
   fighter->body.physics = fighter->body.on_land = NULL;
   fighter->execution.cleanup = fujin_dive_dive_cleanup;
-  script_vm_enter(fighter, scr_fujin_dive, fighter_ready);
+  script_vm_enter(fighter, fn_fujin_dive, fighter_ready);
 }
 
 /* Native service cluster: 47dae0. */
@@ -120,7 +120,7 @@ static void jarek_ball_recoil_wait(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   jarek_ball_ball_face(fighter);
-  script_vm_enter(fighter, scr_power_rewind, fighter_ready);
+  script_vm_enter(fighter, fn_power_rewind, fighter_ready);
 }
 
 /* 47d940: contact recoil shared by both balls. */
@@ -260,7 +260,7 @@ void jarek_ball_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &jarek_ball_victim_move);
   fighter->flags |= FF_REACTING;
-  script_vm_enter(fighter, scr_jarek_ball_victim, fighter_ready);
+  script_vm_enter(fighter, fn_jarek_ball_victim, fighter_ready);
 }
 
 /* Native service cluster: 478e20. */
@@ -304,7 +304,7 @@ void kai_lunge_kick_contact(Fighter *fighter) {
 
 void kai_lunge_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &kai_lunge_kick_lunge_kick);
-  script_vm_enter(fighter, scr_kai_lunge_kick, fighter_ready);
+  script_vm_enter(fighter, fn_kai_lunge_kick, fighter_ready);
 }
 
 /* Native service cluster: 47ee00. */
@@ -322,11 +322,11 @@ static void liu_kang_flying_kick_flying_query(Fighter *fighter) {
 
 static void liu_kang_flying_kick_flying_branch(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
-    script_vm_enter(fighter, scr_liu_kang_flying_kick_miss, fighter_ready);
+    script_vm_enter(fighter, fn_liu_kang_flying_kick_miss, fighter_ready);
   } else if (fighter->contact == CONTACT_BLOCK) {
-    script_vm_enter(fighter, scr_liu_kang_flying_kick_block, fighter_ready);
+    script_vm_enter(fighter, fn_liu_kang_flying_kick_block, fighter_ready);
   } else {
-    script_vm_enter(fighter, scr_liu_kang_flying_kick_hit, fighter_ready);
+    script_vm_enter(fighter, fn_liu_kang_flying_kick_hit, fighter_ready);
   }
 }
 
@@ -357,7 +357,7 @@ void liu_kang_flying_kick(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x170a;
   fighter->body.gravity = 0x106;
   battle_sound(SOUND_INDEXED, 0);
-  script_vm_enter(fighter, scr_liu_kang_flying_kick, fighter_ready);
+  script_vm_enter(fighter, fn_liu_kang_flying_kick, fighter_ready);
 }
 
 #undef RETAIL
@@ -435,7 +435,7 @@ void quan_chi_flip_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &quan_chi_flip_kick_s_flip_kick);
   fighter->execution.cleanup = quan_chi_flip_kick_flip_cleanup;
   fighter->body.physics = quan_chi_flip_kick_flip_decay;
-  script_vm_enter(fighter, scr_quan_chi_flip_kick, fighter_ready);
+  script_vm_enter(fighter, fn_quan_chi_flip_kick, fighter_ready);
 }
 
 /* 488c00: shared roll getup after the reaction-160 landing. */
@@ -448,7 +448,7 @@ void quan_chi_flip_reaction(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &quan_chi_flip_kick_s_flip_victim);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
-  script_vm_enter(victim, scr_quan_chi_flip_reaction, fighter_ready);
+  script_vm_enter(victim, fn_quan_chi_flip_reaction, fighter_ready);
 }
 
 /* Native service cluster: 484420. */
@@ -595,7 +595,7 @@ static void quan_chi_teleport_blocked_low(Fighter *fighter) {
 
 static void quan_chi_teleport_blocked_retract(Fighter *fighter) {
   fighter_upright(fighter);
-  script_vm_enter(fighter, scr_teleport_block_return, fighter_ready);
+  script_vm_enter(fighter, fn_teleport_block_return, fighter_ready);
 }
 
 static void quan_chi_teleport_blocked_fall(Fighter *fighter) {
@@ -740,7 +740,7 @@ void quan_chi_stomp_reaction(Fighter *victim) {
     victim->body.vel[AXIS_Y] = 0x1999;
     victim->body.gravity = 0x1999;
   }
-  script_vm_enter(victim, scr_quan_chi_stomp_reaction, fighter_ready);
+  script_vm_enter(victim, fn_quan_chi_stomp_reaction, fighter_ready);
 }
 
 /* Native service cluster: native_teleport. */
@@ -1015,7 +1015,7 @@ void reptile_dash(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &reptile_dash_dash);
   fighter->sample_override = 0;
-  script_vm_enter(fighter, scr_reptile_dash, fighter_ready);
+  script_vm_enter(fighter, fn_reptile_dash, fighter_ready);
 }
 
 static void reptile_dash_roll_probe(Fighter *fighter) {
@@ -1054,7 +1054,7 @@ void reptile_roll(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &reptile_dash_roll);
   fighter->sample_override = 0;
-  script_vm_enter(fighter, scr_reptile_roll, fighter_ready);
+  script_vm_enter(fighter, fn_reptile_roll, fighter_ready);
 }
 
 /* Reaction 40 (483550): disarm and VM 4e9620, clip 183 launch, landing
@@ -1063,7 +1063,7 @@ void reptile_reaction_40(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &reptile_dash_roll_victim);
   fighter->sample_override = 0;
-  script_vm_enter(fighter, scr_reptile_reaction_40, fighter_ready);
+  script_vm_enter(fighter, fn_reptile_reaction_40, fighter_ready);
 }
 
 /* 488b80: 490350 toggles the model mirror bit, which the pair-axis
@@ -1112,7 +1112,7 @@ void reptile_script_invisibility(Fighter *fighter) {
 
 void reptile_invisibility(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reptile_invisibility_invisibility);
-  script_vm_enter(fighter, scr_reptile_invisibility, fighter_ready);
+  script_vm_enter(fighter, fn_reptile_invisibility, fighter_ready);
 }
 
 /* Native service cluster: 47fcf0, 480040, 484c00. */
@@ -1150,7 +1150,7 @@ static void scorpion_teleport_teleport_pause(Fighter *fighter) {
 }
 
 static void scorpion_teleport_teleport_block_return(Fighter *fighter) {
-  script_vm_enter(fighter, scr_teleport_block_return, fighter_ready);
+  script_vm_enter(fighter, fn_teleport_block_return, fighter_ready);
 }
 
 static void scorpion_teleport_teleport_query(Fighter *fighter) {
@@ -1229,7 +1229,7 @@ void scorpion_teleport(Fighter *fighter) {
   fighter->native_signal = false;
   fighter->flags |= FF_TELEPORTING;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? -1 : 1;
-  script_vm_enter(fighter, scr_scorpion_teleport, fighter_ready);
+  script_vm_enter(fighter, fn_scorpion_teleport, fighter_ready);
 }
 
 void scorpion_script_teleport_motion(Fighter *fighter) {
@@ -1243,7 +1243,7 @@ void scorpion_script_teleport_motion(Fighter *fighter) {
 }
 
 void scorpion_script_teleport_victim_tail(Fighter *victim) {
-  script_vm_enter(victim, scr_scorpion_teleport_victim_tail, mk4_script_thrown_ready);
+  script_vm_enter(victim, fn_scorpion_teleport_victim_tail, mk4_script_thrown_ready);
 }
 
 /* Native service cluster: native_morph. */
@@ -1384,7 +1384,7 @@ void sonya_square_wave(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_JUMP, &sonya_square_wave_s_square_wave);
   fighter->execution.cleanup = sonya_special_cleanup;
-  script_vm_enter(fighter, scr_sonya_square_wave, fighter_ready);
+  script_vm_enter(fighter, fn_sonya_square_wave, fighter_ready);
 }
 
 static void sonya_square_wave_square_victim_drop(Fighter *victim) {
@@ -1643,10 +1643,10 @@ static void sub_zero_slide_slide_contact(Fighter *fighter) {
   }
   fighter->script_phase = 1;
   if (contact == CONTACT_BLOCK) {
-    script_vm_enter(fighter, scr_sub_zero_slide_block, fighter_ready);
+    script_vm_enter(fighter, fn_sub_zero_slide_block, fighter_ready);
   } else {
     fighter->slide_ready = g_battle.ticks + 64;
-    script_vm_enter(fighter, scr_sub_zero_slide_hit, fighter_ready);
+    script_vm_enter(fighter, fn_sub_zero_slide_hit, fighter_ready);
   }
 }
 
@@ -1665,7 +1665,7 @@ void sub_zero_slide(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &sub_zero_slide_s_slide);
   fighter->sample_override = 0;
   fighter->execution.cleanup = sub_zero_slide_slide_cleanup;
-  script_vm_enter(fighter, scr_sub_zero_slide, fighter_ready);
+  script_vm_enter(fighter, fn_sub_zero_slide, fighter_ready);
 }
 
 void sub_zero_script_breath_slide(Fighter *fighter) {
@@ -1768,5 +1768,5 @@ void tanya_drill_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &tanya_drill_kick_drill);
   fighter->execution.cleanup = tanya_drill_kick_drill_cleanup;
-  script_vm_enter(fighter, scr_tanya_drill_kick, fighter_ready);
+  script_vm_enter(fighter, fn_tanya_drill_kick, fighter_ready);
 }

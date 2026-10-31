@@ -22,8 +22,8 @@ of receiving invented script copies.
 
 For example, `sonya_fatality_2_second_cycle` and
 `MK4_NATIVE_SONYA_SCRIPT_SECOND_CYCLE_END` are both in `sonya.asm`. The linker
-automatically exposes each script label to C as `scr_<label>`: for example,
-`quan_chi_lk_throw_startup` becomes `scr_quan_chi_lk_throw_startup`. There is
+automatically exposes each script label to C as `fn_<label>`: for example,
+`quan_chi_lk_throw_startup` becomes `fn_quan_chi_lk_throw_startup`. There is
 no separate script export declaration or JSON name mapping. Other bytecode
 branches to the bare label. Native C implementations remain
 in shared capability modules under `game/native/`.

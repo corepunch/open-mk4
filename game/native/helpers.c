@@ -275,7 +275,7 @@ void action_throw_capture(Fighter *fighter, int action, bool align) {
 
 /* Native42c590's capture and original4de798 selector. No fighter clip seed. */
 static void lp_throw_script(Fighter *fighter) {
-  script_vm_enter(fighter, scr_lp_throw_script, fighter_ready);
+  script_vm_enter(fighter, fn_lp_throw_script, fighter_ready);
 }
 
 void action_lp_throw(Fighter *fighter) {
@@ -523,7 +523,7 @@ void mk4_mmove_lk_owner_ready(Fighter *fighter) {
 /* Native488b40/488b70 selects the original side-getup record. */
 void mk4_mmove_side_getup(Fighter *fighter) {
   if (fighter->health <= 0) {
-    script_vm_enter(fighter, scr_mmove_side_getup, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_mmove_side_getup, mk4_mmove_thrown_finish);
     return;
   }
   mk4_mmove_getup(fighter, dat_getup_descriptor_side_getup);

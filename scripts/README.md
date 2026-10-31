@@ -106,11 +106,11 @@ It replaces `.equ NAME value` followed by `.export NAME NAME`. Use `.equ` for
 private constants. These are build-time directives, not retail VM opcodes.
 
 Script labels and executable embedded aliases automatically become C constants
-with the `scr_` prefix. Assembly uses `quan_chi_lk_throw_startup` directly;
-C uses `scr_quan_chi_lk_throw_startup` from `mk4_linked.h`. No script `.export`
+with the `fn_` prefix. Assembly uses `quan_chi_lk_throw_startup` directly;
+C uses `fn_quan_chi_lk_throw_startup` from `mk4_linked.h`. No script `.export`
 line, intermediate C enum or redundant JSON export mapping is needed. Native
 function names remain distinct from script addresses, even when the bare names
-match.
+match. `fn_` constants are VM entry addresses, not C function pointers.
 
 Data labels and field aliases automatically become `dat_<label>` constants
 in C, for example `animation_table` becomes `dat_animation_table`. Field

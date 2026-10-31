@@ -597,7 +597,7 @@ static void script_strike_query(Fighter *fighter) {
         fighter->action = ACTION_CODE_1006;
       }
       script_vm_enter(
-          fighter, result == CONTACT_BLOCK ? scr_sword_back_high_punch_block_recovery : scr_sword_back_high_punch_hit_recovery, mk4_mmove_thrown_finish);
+          fighter, result == CONTACT_BLOCK ? fn_sword_back_high_punch_block_recovery : fn_sword_back_high_punch_hit_recovery, mk4_mmove_thrown_finish);
     } else {
       script_strike_recover(fighter);
     }

@@ -36,32 +36,32 @@ static bool jax_throws_slam_continue(Fighter *fighter) {
 
 void jax_lp_slam_first(Fighter *fighter) {
   if (!jax_throws_slam_continue(fighter)) {
-    script_vm_enter(fighter, scr_slam_first_release_script, fighter_ready);
+    script_vm_enter(fighter, fn_slam_first_release_script, fighter_ready);
     return;
   }
   /* 42c83f saves the victim group position in task +5c..+64. */
   memcpy(fighter->saved_motion, fighter_opponent(fighter)->body.pos, sizeof fighter->saved_motion);
-  script_vm_enter(fighter, scr_slam_first_script, fighter_ready);
+  script_vm_enter(fighter, fn_slam_first_script, fighter_ready);
 }
 
 void jax_lp_slam_second(Fighter *fighter) {
   if (jax_throws_slam_continue(fighter)) {
-    script_vm_enter(fighter, scr_slam_second_script, fighter_ready);
+    script_vm_enter(fighter, fn_slam_second_script, fighter_ready);
   } else {
-    script_vm_enter(fighter, scr_slam_second_release_script, fighter_ready);
+    script_vm_enter(fighter, fn_slam_second_release_script, fighter_ready);
   }
 }
 
 void jax_lp_slam_third(Fighter *fighter) {
   if (!jax_throws_slam_continue(fighter)) {
-    script_vm_enter(fighter, scr_slam_first_release_script, fighter_ready);
+    script_vm_enter(fighter, fn_slam_first_release_script, fighter_ready);
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   memcpy(victim->body.pos, fighter->saved_motion, sizeof victim->body.pos);
   fighter->sample_override = JAX_THROWS_SLAM_START;
   victim->sample_override = JAX_THROWS_SLAM_START;
-  script_vm_enter(fighter, scr_slam_first_script, fighter_ready);
+  script_vm_enter(fighter, fn_slam_first_script, fighter_ready);
 }
 
 /* 42c9f0 blends into the stance (48fde0, 0xccc) and returns via 470420. */
@@ -120,7 +120,7 @@ static void sub_zero_throws_thrown_finish(Fighter *victim) {
 static void sub_zero_throws_lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
-  script_vm_enter(victim, scr_lk_thrown_release, fighter_ready);
+  script_vm_enter(victim, fn_lk_thrown_release, fighter_ready);
 }
 
 void sub_zero_lk_thrown_script(Fighter *victim) {

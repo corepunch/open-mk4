@@ -108,7 +108,7 @@ static void recoil_retract(Fighter *fighter) {
     fighter->body.spin[axis] = 0;
   }
   action_face_peer(fighter);
-  script_vm_enter(fighter, scr_teleport_block_return, fighter_ready);
+  script_vm_enter(fighter, fn_teleport_block_return, fighter_ready);
 }
 
 static void recoil_gate(Fighter *fighter) {
@@ -155,7 +155,7 @@ void action_teleport_slam(Fighter *fighter) {
     teleport_blocked(fighter);
   } else {
     action_face_peer(fighter);
-    mk4_air_pair_frames(fighter, &s_slam, &s_slammed, scr_teleport_slam, action_slam_released_fall);
+    mk4_air_pair_frames(fighter, &s_slam, &s_slammed, fn_teleport_slam, action_slam_released_fall);
   }
 }
 
@@ -168,7 +168,7 @@ static void slam_fall_physics(Fighter *fighter) {
 /* 47c360: install 47c4d0, then 4e8310 advances the pair to sample 27. */
 void action_teleport_slam_fall(Fighter *fighter) {
   fighter->body.physics = slam_fall_physics;
-  script_vm_enter(fighter, scr_teleport_slam_fall, fighter_ready);
+  script_vm_enter(fighter, fn_teleport_slam_fall, fighter_ready);
 }
 
 static void slam_land(Fighter *fighter) {
@@ -208,5 +208,5 @@ void action_teleport_slam_drop(Fighter *fighter) {
 
 void action_teleport(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_teleport);
-  script_vm_enter(fighter, scr_teleport, fighter_ready);
+  script_vm_enter(fighter, fn_teleport, fighter_ready);
 }

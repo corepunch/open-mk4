@@ -13,7 +13,7 @@ names/addresses and native IDs. Tooling groups streams by existing
 names and catalog usage; ambiguous/shared streams remain single definitions.
 Each fighter file carries its bytecode and relevant native ABI declarations,
 with symbolic cross-file references. Bare labels and executable embedded
-aliases become C constants named `scr_<label>` directly, without separate
+aliases become C constants named `fn_<label>` directly, without separate
 script export mappings or intermediate enums.
 Data labels and field aliases likewise become `dat_<label>` in C; keep field
 aliases beside their records rather than in a separate exports file.

@@ -19,7 +19,7 @@ void action_cage_weapon_back_upper(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &cage_weapon_upper);
   fighter->execution.cleanup = cage_weapon_weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  script_vm_enter(fighter, scr_jarek_weapon_back_hp_upper, fighter_ready);
+  script_vm_enter(fighter, fn_jarek_weapon_back_hp_upper, fighter_ready);
 }
 
 /* Native service cluster: 49a480. */
@@ -118,10 +118,10 @@ void fujin_bow_finish(Fighter *fighter) {
 static void fujin_weapon_bow_fire(Fighter *fighter) {
   fujin_weapon_bow_spawn(fighter);
   if (fighter->native_variant >= 3) {
-    script_vm_enter(fighter, scr_fujin_crossbow_followup_short_shot, fujin_bow_followup_next);
+    script_vm_enter(fighter, fn_fujin_crossbow_followup_short_shot, fujin_bow_followup_next);
   } else if (fighter->native_variant == 0) {
     fighter->action = 0x1016;
-    script_vm_enter(fighter, scr_fujin_crossbow_lp_shot_recovery, fighter_ready);
+    script_vm_enter(fighter, fn_fujin_crossbow_lp_shot_recovery, fighter_ready);
   } else {
     fujin_bow_finish(fighter);
   }
@@ -196,7 +196,7 @@ void fujin_bolt_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_HIT, &fujin_weapon_bolt_victim);
   fighter->flags |= FF_REACTING;
   fighter->execution.cleanup = fujin_weapon_bow_cleanup;
-  script_vm_enter(fighter, scr_fujin_bolt_victim, fighter_ready);
+  script_vm_enter(fighter, fn_fujin_bolt_victim, fighter_ready);
 }
 
 /* Native service cluster: native_weapon. */
@@ -219,7 +219,7 @@ void action_kai_weapon_back_strike(Fighter *fighter) {
   fighter->execution.cleanup = kai_weapon_weapon_cleanup;
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  script_vm_enter(fighter, scr_kai_draw_weapon_back_strike, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, fn_kai_draw_weapon_back_strike, mk4_mmove_thrown_finish);
 }
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
@@ -363,7 +363,7 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
     native_schedule_speed(fighter, (q16)mk4_image_u32(image, dat_sword_back_low_punch_speed),
         maxi(0, (int)mk4_image_u32(image, dat_sword_back_low_punch_speed_delay) - 1), (int)mk4_image_u32(image, dat_sword_back_low_punch_speed_duration));
     fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
-    script_vm_enter(fighter, scr_sword_attack, fighter_ready);
+    script_vm_enter(fighter, fn_sword_attack, fighter_ready);
     return;
   }
   require(index >= 0 && index <= 2, "Invalid native weapon strike selection");
@@ -394,7 +394,7 @@ void action_liu_kang_sword_high_punch(Fighter *fighter) {
   fighter->weapon_strike = NULL;
   fighter->sample_override = 0;
   fighter->execution.cleanup = liu_kang_weapon_sword_cleanup;
-  script_vm_enter(fighter, scr_liu_kang_sword_hp_repeat_program, fighter_ready);
+  script_vm_enter(fighter, fn_liu_kang_sword_hp_repeat_program, fighter_ready);
 }
 
 void action_liu_kang_sword_low_punch(Fighter *fighter) {
@@ -454,11 +454,11 @@ void action_axe_back_low_punch(Fighter *fighter) {
 }
 
 static void axe_followup_first_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, false, (ScriptContinuation){scr_cage_power_victim, mk4_script_thrown_ready});
+  weapon_axe_reaction(fighter, false, (ScriptContinuation){fn_cage_power_victim, mk4_script_thrown_ready});
 }
 
 static void axe_followup_second_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, true, (ScriptContinuation){scr_sonya_cartwheel_victim, mk4_script_thrown_ready});
+  weapon_axe_reaction(fighter, true, (ScriptContinuation){fn_sonya_cartwheel_victim, mk4_script_thrown_ready});
 }
 
 /* Native service cluster: 482280, 482790, 495db0. */
@@ -584,7 +584,7 @@ void action_reptile_weapon_flurry(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &reptile_weapon_flurry_start);
   fighter->execution.cleanup = reptile_weapon_weapon_cleanup;
   fighter->sample_override = 0;
-  script_vm_enter(fighter, scr_reptile_weapon_back_hp_flurry_startup, fighter_ready);
+  script_vm_enter(fighter, fn_reptile_weapon_back_hp_flurry_startup, fighter_ready);
 }
 
 static void reptile_weapon_back_low_recover(Fighter *fighter) {
@@ -670,7 +670,7 @@ static void sword_back_attack(Fighter *fighter, bool hp) {
   }
   fighter_start_move(fighter, S_PUNCH, hp ? &s_sword_back_hp : &s_sword_back_lp);
   fighter->sample_override = 0;
-  script_vm_enter(fighter, hp ? scr_sword_back_hp_script : scr_sword_back_lp_script, fighter_ready);
+  script_vm_enter(fighter, hp ? fn_sword_back_hp_script : fn_sword_back_lp_script, fighter_ready);
 }
 
 void action_sword_back_high_punch(Fighter *fighter) {
@@ -717,7 +717,7 @@ void action_sword_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
   fighter->execution.cleanup = mk4_script_stop_body;
-  script_vm_enter(fighter, scr_sword_spin_script, fighter_ready);
+  script_vm_enter(fighter, fn_sword_spin_script, fighter_ready);
 }
 
 #undef SWORD_MOVE
@@ -730,7 +730,7 @@ void shinnok_weapon_sweep_getup(Fighter *fighter) {
     fighter_execution_finish(fighter, NULL);
     return;
   }
-  script_vm_enter(fighter, scr_shinnok_weapon_sweep_getup, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, fn_shinnok_weapon_sweep_getup, mk4_mmove_thrown_finish);
 }
 
 /* 4830a0/483160 resumes clip197 at zero and finishes before controller
@@ -753,7 +753,7 @@ void action_sonya_weapon_back_high_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &sonya_weapon_s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
   fighter->execution.cleanup = sonya_special_cleanup;
-  script_vm_enter(fighter, scr_sonya_weapon_back_hp_attacker, fighter_ready);
+  script_vm_enter(fighter, fn_sonya_weapon_back_hp_attacker, fighter_ready);
 }
 
 #undef RETAIL
@@ -901,7 +901,7 @@ void tanya_boomerang_release(Fighter *fighter) {
 static void tanya_weapon_boomerang_start(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &tanya_weapon_boomerang_throw);
   fighter->native_variant = fighter_holds_back(fighter);
-  script_vm_enter(fighter, scr_boomerang_start, fighter_ready);
+  script_vm_enter(fighter, fn_boomerang_start, fighter_ready);
 }
 
 /* 495610: 46dbb0's LP throw gate first, then T2[0x16]/[0x17]. */
@@ -930,10 +930,10 @@ void tanya_weapon_reaction(Fighter *fighter) {
   if (action_reaction_native(fighter) == MK4_NATIVE_TANYA_WEAPON_REACTION_ENTRY) {
     fighter_start_move(fighter, S_HIT, &tanya_weapon_victim_hit);
     fighter->flags |= FF_REACTING;
-    script_vm_enter(fighter, scr_tanya_weapon_reaction_reaction_169_victim, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_tanya_weapon_reaction_reaction_169_victim, mk4_mmove_thrown_finish);
   } else {
     fighter_start_move(fighter, S_KNOCKDOWN, &tanya_weapon_victim_fall);
     fighter->flags |= FF_REACTING;
-    script_vm_enter(fighter, scr_tanya_weapon_reaction_reaction_170_victim, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_tanya_weapon_reaction_reaction_170_victim, mk4_mmove_thrown_finish);
   }
 }

@@ -39,22 +39,20 @@ void action_stagger_reaction(Fighter *fighter) {
         uint32_t physics = mk4_image_u32(battle_data(), dat_crouch_reaction_physics_word);
         require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown crouch reaction motion callback");
       }
-      script = crouch ? scr_crouch_reaction_script : scr_kai_handstand_reaction_standing_stagger;
+      script = crouch ? fn_crouch_reaction_script : fn_kai_handstand_reaction_standing_stagger;
       break;
     case MK4_NATIVE_STAGGER_CLIP_311_KEEP_WEAPON:
-      script = scr_stagger_clip_311_hold;
+      script = fn_stagger_clip_311_hold;
       break;
     case MK4_NATIVE_STAGGER_CLIP_134:
     case MK4_NATIVE_STAGGER_CLIP_134_IMPACT:
       mk4_script_disarm_self(fighter);
       action_native_sound_list(dat_sound_list_stagger_reaction);
-      script = crouch                                 ? scr_crouch_stagger_clip_254
-               : entry == MK4_NATIVE_STAGGER_CLIP_134 ? scr_stagger_clip_134_friction
-                                                      : scr_stagger_clip_134_friction_impact;
+      script = crouch ? fn_crouch_stagger_clip_254 : entry == MK4_NATIVE_STAGGER_CLIP_134 ? fn_stagger_clip_134_friction : fn_stagger_clip_134_friction_impact;
       break;
     case MK4_NATIVE_STAGGER_SHAKE_60_PERCENT_DAMAGE:
       fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
-      script = scr_stagger_clip_134_shake;
+      script = fn_stagger_clip_134_shake;
       break;
     case MK4_NATIVE_KNOCKDOWN_STAGGER_HALF_DAMAGE_ALIAS:
     case MK4_NATIVE_KNOCKDOWN_STAGGER_HALF_DAMAGE:
@@ -62,13 +60,13 @@ void action_stagger_reaction(Fighter *fighter) {
       mk4_script_disarm_self(fighter);
       stagger_voice(fighter);
       fighter->action = ACTION_CODE_4003;
-      script = scr_knockdown_stagger_clip_311;
+      script = fn_knockdown_stagger_clip_311;
       break;
     case MK4_NATIVE_KICK_STAGGER_60_PERCENT_DAMAGE:
       fighter->action = 0x4002;
       stagger_voice(fighter);
       fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
-      script = scr_kick_hit_crouching_stagger;
+      script = fn_kick_hit_crouching_stagger;
       break;
     default:
       require(false, "Unexpected shared stagger native");
@@ -91,16 +89,16 @@ void action_launch_reaction(Fighter *fighter) {
   switch (entry) {
     case MK4_NATIVE_DISARM_WALL_RECOIL_FALL:
     case MK4_NATIVE_FALL_WITHOUT_DISARM:
-      script = scr_guard_airborne_fall;
+      script = fn_guard_airborne_fall;
       break;
     case MK4_NATIVE_LAUNCH_CLIP_131_BACK_GETUP:
-      script = scr_launch_clip_131_back_getup;
+      script = fn_launch_clip_131_back_getup;
       break;
     case MK4_NATIVE_LAUNCH_CLIP_131_NATIVE_FINISH_BACK_GETUP:
-      script = scr_launch_clip_131_native_finish_back_getup;
+      script = fn_launch_clip_131_native_finish_back_getup;
       break;
     case MK4_NATIVE_FALL_REACTION_WITH_EFFECTS:
-      script = scr_fall_reaction_effects;
+      script = fn_fall_reaction_effects;
       break;
     default:
       require(false, "Unexpected shared launch native");
@@ -121,7 +119,7 @@ void action_reaction_finish(Fighter *fighter) {
 
 void action_reaction_fall(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
-  script_vm_enter(fighter, scr_reaction_fall, mk4_script_thrown_ready);
+  script_vm_enter(fighter, fn_reaction_fall, mk4_script_thrown_ready);
 }
 
 /* Native4826e0 selects impact audio from the captured attacker weapon. */
@@ -157,21 +155,21 @@ void action_tumble_reaction(Fighter *fighter) {
   FighterFn finish = mk4_script_thrown_ready;
   switch (entry) {
     case MK4_NATIVE_TUMBLE_CAMERA_SIDE_POSITIVE:
-      script = scr_tumble_camera_side_positive;
+      script = fn_tumble_camera_side_positive;
       finish = action_getup_back;
       break;
     case MK4_NATIVE_TUMBLE_CAMERA_SIDE_NEGATIVE:
-      script = scr_tumble_camera_side_negative;
+      script = fn_tumble_camera_side_negative;
       finish = action_getup_back;
       break;
     case MK4_NATIVE_TUMBLE_NATIVE_FINISH_BACK_GETUP:
-      script = scr_tumble_native_finish_back_getup;
+      script = fn_tumble_native_finish_back_getup;
       break;
     case MK4_NATIVE_GROUNDED_TUMBLE_HOLD_RETURN:
-      script = scr_grounded_tumble_hold_return;
+      script = fn_grounded_tumble_hold_return;
       break;
     case MK4_NATIVE_WEAPON_TUMBLE_BACK_GETUP:
-      script = scr_weapon_tumble_back_getup;
+      script = fn_weapon_tumble_back_getup;
       finish = action_getup_back;
       break;
     default:
@@ -221,34 +219,34 @@ void action_script_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case MK4_NATIVE_REACTION_CLIP_311_SHORT_SLIDE:
-      script = scr_reaction_clip_311_short_slide;
+      script = fn_reaction_clip_311_short_slide;
       break;
     case MK4_NATIVE_REACTION_CLIP_326_SHORT_SLIDE:
-      script = scr_reaction_clip_326_short_slide;
+      script = fn_reaction_clip_326_short_slide;
       break;
     case MK4_NATIVE_GORO_SPECIAL_PUNCH_189_ENTRY:
-      script = scr_goro_special_punch_189_victim;
+      script = fn_goro_special_punch_189_victim;
       break;
     case MK4_NATIVE_REACTION_CLIP_180_SLIDE_HOLD: {
       uint32_t physics = mk4_image_u32(battle_data(), dat_reaction_clip_180_friction_callback);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native reaction motion callback");
-      script = scr_reaction_clip_180_slide_hold;
+      script = fn_reaction_clip_180_slide_hold;
       break;
     }
     case MK4_NATIVE_REACTION_CLIP_132_NATIVE_FINISH:
-      script = scr_reaction_clip_132_native_finish;
+      script = fn_reaction_clip_132_native_finish;
       break;
     case MK4_NATIVE_SWEEP_KNOCKDOWN_VICTIM:
-      script = scr_sweep_victim_recovery;
+      script = fn_sweep_victim_recovery;
       break;
     case MK4_NATIVE_REACTION_CLIP_127_FRICTION: {
       uint32_t physics = mk4_image_u32(battle_data(), dat_reaction_clip_127_friction_row);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native recoil motion callback");
-      script = scr_reaction_clip_127_friction;
+      script = fn_reaction_clip_127_friction;
       break;
     }
     case MK4_NATIVE_LIU_KANG_FIREBALL_REACTION_ENTRY:
-      script = scr_sonya_ring_victim;
+      script = fn_sonya_ring_victim;
       break;
     default:
       require(false, "Unexpected script reaction native");
@@ -278,22 +276,22 @@ void action_scaled_reaction(Fighter *fighter) {
       Fighter *attacker = fighter_peer(fighter);
       attacker->run_energy = 0;
       attacker->run_delay = 60;
-      script = scr_goro_special_uppercut_192_victim;
+      script = fn_goro_special_uppercut_192_victim;
       break;
     }
     case MK4_NATIVE_WEAPON_CLIP_189_LAUNCH_HALF_DAMAGE:
       fighter->damage_scale = MK4_DAMAGE_SCALE_50_PERCENT;
-      script = scr_weapon_clip_189_launch_roll_getup;
+      script = fn_weapon_clip_189_launch_roll_getup;
       finish = action_getup_roll;
       break;
     case MK4_NATIVE_REPTILE_DASH_VICTIM_SCALED:
       fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
       action_native_sound_list(dat_sound_random_grunt_list);
-      script = scr_reptile_dash_victim;
+      script = fn_reptile_dash_victim;
       break;
     case MK4_NATIVE_WEAPON_CLIP_132_DIRECTIONAL_FALL:
       weapon_impact_voice(fighter);
-      script = scr_weapon_clip_132_directional_fall;
+      script = fn_weapon_clip_132_directional_fall;
       break;
     default:
       require(false, "Unexpected scaled reaction native");
@@ -316,21 +314,21 @@ void action_branch_reaction(Fighter *fighter) {
   switch (entry) {
     case MK4_NATIVE_FORWARD_FALL_CONTEXT_SOUND_ALIAS:
     case MK4_NATIVE_FORWARD_FALL_CONTEXT_SOUND:
-      script = airborne ? scr_forward_fall_airborne : scr_forward_fall_grounded;
+      script = airborne ? fn_forward_fall_airborne : fn_forward_fall_grounded;
       finish = action_getup_front;
       break;
     case MK4_NATIVE_HIT_CLIP_132_OR_AIR_FORWARD_FALL:
-      script = airborne ? scr_forward_fall_airborne : scr_grounded_hit_clip_132_back_getup;
+      script = airborne ? fn_forward_fall_airborne : fn_grounded_hit_clip_132_back_getup;
       if (airborne) {
         finish = action_getup_front;
       }
       break;
     case MK4_NATIVE_LAUNCH_CLIP_179_ACTION_100A:
       fighter->action = 0x100a;
-      script = scr_launch_clip_179_flip_getup;
+      script = fn_launch_clip_179_flip_getup;
       break;
     case MK4_NATIVE_TELEPORT_PUNCH_GROUND_OR_AIR_VICTIM:
-      script = airborne ? scr_teleport_punch_airborne_victim : scr_scorpion_teleport_punch_grounded_victim;
+      script = airborne ? fn_teleport_punch_airborne_victim : fn_scorpion_teleport_punch_grounded_victim;
       break;
     default:
       require(false, "Unexpected branching reaction native");
@@ -372,29 +370,29 @@ void action_weapon_reaction(Fighter *fighter) {
     case MK4_NATIVE_KAI_WEAPON_HIGH_PUNCH_VICTIM_CONTEXT_SOUND:
     case MK4_NATIVE_KAI_WEAPON_HIGH_PUNCH_VICTIM_IMPACT_SOUND:
       reaction_position(fighter, 0x1cccc, -0x8000);
-      script = scr_kai_draw_weapon_hp_victim;
+      script = fn_kai_draw_weapon_hp_victim;
       break;
     case MK4_NATIVE_REPTILE_WEAPON_REACTION_ENTRY:
-      script = scr_kai_draw_weapon_back_victim;
+      script = fn_kai_draw_weapon_back_victim;
       break;
     case MK4_NATIVE_JAREK_WEAPON_REACTION_ENTRY:
       reaction_position(fighter, 0x1b333, 0);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = scr_jarek_weapon_reaction_knife_victim;
+      script = fn_jarek_weapon_reaction_knife_victim;
       break;
     case MK4_NATIVE_REPTILE_WEAPON_VICTIM_KEEP_WEAPON:
-      script = scr_reptile_weapon_reaction_reaction_137;
+      script = fn_reptile_weapon_reaction_reaction_137;
       break;
     case MK4_NATIVE_CAGE_WEAPON_REACTION_ENTRY:
       fighter->damage_scale = MK4_DAMAGE_SCALE_50_PERCENT;
-      script = scr_reptile_weapon_reaction_reaction_144;
+      script = fn_reptile_weapon_reaction_reaction_144;
       break;
     case MK4_NATIVE_SHINNOK_WEAPON_REACTION_ENTRY:
-      script = scr_shinnok_weapon_reaction_lp_victim;
+      script = fn_shinnok_weapon_reaction_lp_victim;
       break;
     case MK4_NATIVE_WEAPON_LOW_PUNCH_VICTIM_ROLL_GETUP:
-      script = scr_cage_weapon_reaction_lp_victim;
+      script = fn_cage_weapon_reaction_lp_victim;
       finish = action_getup_roll;
       break;
     case MK4_NATIVE_SONYA_WEAPON_LOW_PUNCH_VICTIM_CONTEXT_SOUND:
@@ -402,13 +400,13 @@ void action_weapon_reaction(Fighter *fighter) {
         fighter->body.gravity = 0x28f;
         fighter->body.vel[AXIS_Y] = 0x1999;
       }
-      script = scr_sonya_weapon_lp_victim;
+      script = fn_sonya_weapon_lp_victim;
       break;
     case MK4_NATIVE_WEAPON_SWEEP_GROUNDED_VICTIM:
       action_native_sound_list(dat_sound_random_grunt_list);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = scr_shinnok_weapon_reaction_sweep_victim;
+      script = fn_shinnok_weapon_reaction_sweep_victim;
       break;
     default:
       require(false, "Unexpected weapon reaction native");
@@ -453,11 +451,11 @@ void action_impact_reaction(Fighter *fighter) {
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  uint32_t script = entry == MK4_NATIVE_IMPACT_WALL_COUNTER_60_PERCENT_DAMAGE      ? scr_impact_reaction
-                    : entry == MK4_NATIVE_UPPERCUT_DELAYED_VOICE_40_PERCENT_DAMAGE ? scr_uppercut_victim_recovery
-                    : stagger                                                      ? scr_jab_hit_damage_stagger
-                    : entry == MK4_NATIVE_HIT_CLIP_325_WITH_DAMAGE_STAGGER         ? scr_hit_clip_325_recovery
-                                                                                   : scr_hit_clip_324_recovery;
+  uint32_t script = entry == MK4_NATIVE_IMPACT_WALL_COUNTER_60_PERCENT_DAMAGE      ? fn_impact_reaction
+                    : entry == MK4_NATIVE_UPPERCUT_DELAYED_VOICE_40_PERCENT_DAMAGE ? fn_uppercut_victim_recovery
+                    : stagger                                                      ? fn_jab_hit_damage_stagger
+                    : entry == MK4_NATIVE_HIT_CLIP_325_WITH_DAMAGE_STAGGER         ? fn_hit_clip_325_recovery
+                                                                                   : fn_hit_clip_324_recovery;
   script_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
@@ -509,9 +507,9 @@ void action_stagger_entry(Fighter *fighter) {
   if (airborne) {
     if (entry == MK4_NATIVE_HIT_STAGGER_WITH_PARTICLES) {
       mk4_script_indexed_sound(fighter, 1);
-      script_vm_enter(fighter, scr_reaction_fall_return, action_controller_return);
+      script_vm_enter(fighter, fn_reaction_fall_return, action_controller_return);
     } else {
-      script_vm_enter(fighter, scr_guard_airborne_fall, mk4_script_thrown_ready);
+      script_vm_enter(fighter, fn_guard_airborne_fall, mk4_script_thrown_ready);
     }
     return;
   }
@@ -519,14 +517,14 @@ void action_stagger_entry(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   uint32_t physics = mk4_image_u32(battle_data(), dat_stagger_entry);
   require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native stagger callback");
-  script_vm_enter(fighter, scr_stagger_entry_2, mk4_script_thrown_ready);
+  script_vm_enter(fighter, fn_stagger_entry_2, mk4_script_thrown_ready);
 }
 
 void action_snare_reaction(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_4000};
   fighter_start_move(fighter, S_HIT, &move);
   fighter->flags |= FF_NO_GUARD;
-  script_vm_enter(fighter, scr_snare_reaction, mk4_script_thrown_ready);
+  script_vm_enter(fighter, fn_snare_reaction, mk4_script_thrown_ready);
 }
 
 /*45b1f0/480f80 installs the loaded reaction on the captured peer.
@@ -550,13 +548,13 @@ void action_bicycle_release(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_100B};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   if (air) {
-    script_vm_enter(fighter, scr_raiden_torpedo_air_release, mk4_script_thrown_ready);
+    script_vm_enter(fighter, fn_raiden_torpedo_air_release, mk4_script_thrown_ready);
   } else {
     mk4_script_stop_body(fighter);
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
     uint32_t physics = mk4_image_u32(battle_data(), dat_bicycle_release);
     require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native release callback");
-    script_vm_enter(fighter, scr_raiden_torpedo_ground_release, mk4_script_thrown_ready);
+    script_vm_enter(fighter, fn_raiden_torpedo_ground_release, mk4_script_thrown_ready);
   }
 }
 
@@ -564,7 +562,7 @@ void action_bicycle_release(Fighter *fighter) {
 static void reaction_fall_return(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  script_vm_enter(fighter, scr_reaction_fall_return, mk4_mmove_thrown_finish);
+  script_vm_enter(fighter, fn_reaction_fall_return, mk4_mmove_thrown_finish);
 }
 
 void action_spear_arrival(Fighter *fighter) {
@@ -573,7 +571,7 @@ void action_spear_arrival(Fighter *fighter) {
   fighter->flags |= FF_NO_GUARD | FF_REACTING;
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  script_vm_enter(fighter, scr_spear_arrival, fighter_ready);
+  script_vm_enter(fighter, fn_spear_arrival, fighter_ready);
 }
 
 static bool spear_arrived(const Fighter *fighter) {
@@ -591,7 +589,7 @@ void action_pair_release(Fighter *fighter) {
   fighter->paired_release = NULL;
   fighter->capture_action = 0;
   if (fighter_airborne(fighter)) {
-    script_vm_enter(fighter, scr_pair_release, mk4_mmove_thrown_finish);
+    script_vm_enter(fighter, fn_pair_release, mk4_mmove_thrown_finish);
   } else {
     action_controller_return(fighter);
   }
@@ -628,7 +626,7 @@ void action_bicycle_capture(Fighter *fighter) {
   fighter->paired_release = action_pair_release;
   fighter->script_phase = 0;
   fighter->flags |= FF_PAIRED | FF_REACTING;
-  script_vm_enter(fighter, scr_bicycle_capture, action_pair_release);
+  script_vm_enter(fighter, fn_bicycle_capture, action_pair_release);
 }
 
 static void torpedo_return_hold(Fighter *fighter) {
@@ -657,20 +655,20 @@ void action_record_reaction(Fighter *fighter) {
   switch (entry) {
     case MK4_NATIVE_BATTLE_REACT:
       battle_react(fighter_peer(fighter), 161);
-      script = scr_raiden_staff_hp_staff_victim;
+      script = fn_raiden_staff_hp_staff_victim;
       break;
     case MK4_NATIVE_STAFF_HIGH_PUNCH_WEAPON_VICTIM:
-      script = scr_raiden_staff_hp_weapon_victim;
+      script = fn_raiden_staff_hp_weapon_victim;
       break;
     case MK4_NATIVE_LIGHTNING_VICTIM_FRICTION: {
       uint32_t physics = mk4_image_u32(battle_data(), dat_record_reaction);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native record callback");
-      script = scr_raiden_lightning_victim;
+      script = fn_raiden_lightning_victim;
       break;
     }
     case MK4_NATIVE_TORPEDO_VICTIM_FACE_PEER:
       action_face_peer(fighter);
-      script = scr_raiden_torpedo_contact;
+      script = fn_raiden_torpedo_contact;
       break;
     case MK4_NATIVE_TORPEDO_VICTIM_RELEASE_SOUND_AND_SHAKE:
       battle_sound(SOUND_A, 0x2a);
@@ -678,11 +676,11 @@ void action_record_reaction(Fighter *fighter) {
       action_bicycle_release(fighter);
       return;
     case MK4_NATIVE_SONYA_CROUCH_HIGH_KICK_VICTIM_KEEP_WEAPON:
-      script = scr_sonya_crouch_hk_victim;
+      script = fn_sonya_crouch_hk_victim;
       break;
     case MK4_NATIVE_SONYA_WEAPON_HIGH_PUNCH_VICTIM_POSITION:
       reaction_position(fighter, 0x1b333, -0x1999);
-      script = scr_sonya_weapon_hp_victim;
+      script = fn_sonya_weapon_hp_victim;
       break;
     case MK4_NATIVE_SONYA_WEAPON_LOW_PUNCH_VICTIM_IMPACT_SOUND:
       battle_sound(SOUND_C, 8);
@@ -690,13 +688,13 @@ void action_record_reaction(Fighter *fighter) {
         fighter->body.gravity = 0x28f;
         fighter->body.vel[AXIS_Y] = 0x1999;
       }
-      script = scr_sonya_weapon_lp_victim;
+      script = fn_sonya_weapon_lp_victim;
       break;
     case MK4_NATIVE_RING_PROJECTILE_VICTIM:
-      script = scr_sonya_ring_victim;
+      script = fn_sonya_ring_victim;
       break;
     case MK4_NATIVE_BICYCLE_VICTIM_FRONT_GETUP:
-      script = scr_sonya_bicycle_victim;
+      script = fn_sonya_bicycle_victim;
       finish = action_getup_front;
       break;
     case MK4_NATIVE_SQUARE_WAVE_VICTIM_FACE_PEER:
@@ -706,14 +704,14 @@ void action_record_reaction(Fighter *fighter) {
     case MK4_NATIVE_CARTWHEEL_VICTIM_SCALED_IMPACT:
       mk4_script_effect(fighter, 9);
       fighter->damage_scale = MK4_DAMAGE_SCALE_40_PERCENT;
-      script = scr_sonya_cartwheel_victim;
+      script = fn_sonya_cartwheel_victim;
       break;
     case MK4_NATIVE_CARTWHEEL_VICTIM_IMPACT:
       mk4_script_effect(fighter, 0);
-      script = scr_sonya_cartwheel_victim;
+      script = fn_sonya_cartwheel_victim;
       break;
     case MK4_NATIVE_CARTWHEEL_VICTIM_RECOIL:
-      script = scr_sonya_cartwheel_victim;
+      script = fn_sonya_cartwheel_victim;
       break;
     default:
       require(false, "Unexpected record reaction native");
@@ -739,30 +737,30 @@ void action_aux_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case MK4_NATIVE_WEAPON_CLIP_189_LAUNCH_BACK_GETUP:
-      script = scr_weapon_clip_189_launch_back_getup;
+      script = fn_weapon_clip_189_launch_back_getup;
       break;
     case MK4_NATIVE_REAR_HIT_TURN_AND_LAUNCH:
       action_face_peer(fighter);
       fighter->body.angle[AXIS_Y] += 0x32492;
-      script = scr_rear_hit_launch_clip_129;
+      script = fn_rear_hit_launch_clip_129;
       break;
     case MK4_NATIVE_GORO_KICK_VICTIM_DISARM:
-      script = scr_goro_kick_victim;
+      script = fn_goro_kick_victim;
       break;
     case MK4_NATIVE_LAUNCH_CLIP_131_SHAKE_IMPACT:
-      script = scr_launch_clip_131_shake_impact;
+      script = fn_launch_clip_131_shake_impact;
       break;
     case MK4_NATIVE_REACTION_PARK_TASK:
-      script = scr_reaction_park_task;
+      script = fn_reaction_park_task;
       break;
     case MK4_NATIVE_LAUNCH_CLIP_131_NO_IMPACT:
-      script = scr_launch_clip_131_no_impact;
+      script = fn_launch_clip_131_no_impact;
       break;
     case MK4_NATIVE_SPEAR_HIT_VICTIM_60_PERCENT_DAMAGE:
       fighter->damage_scale = MK4_DAMAGE_SCALE_60_PERCENT;
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = scr_scorpion_spear_victim_hit;
+      script = fn_scorpion_spear_victim_hit;
       break;
     case MK4_NATIVE_CAGE_GROIN_PUNCH_VICTIM_REACTION: {
       fighter->action = 0x1014;
@@ -770,7 +768,7 @@ void action_aux_reaction(Fighter *fighter) {
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
       uint32_t physics = mk4_image_u32(battle_data(), dat_aux_reaction);
       require(script_native_dispatch(fighter, physics, MK4_PHYSICS, 0), "Unknown native impact friction callback");
-      script = scr_groin_punch_groin_victim;
+      script = fn_groin_punch_groin_victim;
       break;
     }
     default:
@@ -810,7 +808,7 @@ void action_guard_fall(Fighter *fighter) {
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_CODE_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  script_vm_enter(fighter, airborne ? scr_guard_airborne_fall : scr_guard_grounded_stagger, mk4_script_thrown_ready);
+  script_vm_enter(fighter, airborne ? fn_guard_airborne_fall : fn_guard_grounded_stagger, mk4_script_thrown_ready);
 }
 
 FighterFn action_reaction_entry(const Mk4Image *image, unsigned reaction) {

@@ -159,12 +159,12 @@ void action_fireball_fall(Fighter *fighter) {
 void action_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &cast);
-  script_vm_enter(fighter, scr_tanya_fireball_caster, fighter_ready);
+  script_vm_enter(fighter, fn_tanya_fireball_caster, fighter_ready);
 }
 
 /* Command flag 0x10 and 45ef20 require an airborne fighter with gravity. */
 void action_air_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &air_cast);
-  script_vm_enter(fighter, scr_air_fireball, fighter_ready);
+  script_vm_enter(fighter, fn_air_fireball, fighter_ready);
 }

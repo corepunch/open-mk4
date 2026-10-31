@@ -3,7 +3,7 @@
 #include "mk4_linked.h"
 
 /* Verified MK4 record sizes. Labels come directly from the linker as dat_*
- * and scr_* constants; packed references are word offsets, never pointers. */
+ * and fn_* constants; packed references are word offsets, never pointers. */
 enum {
   MK4_ANIMATION_DESCRIPTOR_SIZE = 12,
   MK4_ANIMATION_FRAME_COUNT_OFFSET = 4,

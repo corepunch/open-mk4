@@ -160,7 +160,7 @@ behavior is decoded by the existing tooling. Ownership follows established
 names and catalog usage, with ambiguous streams shared. Keep bare labels in
 assembly; cross-file branches use those same names. The linker exposes
 script labels and executable embedded aliases to C
-as `scr_<label>` automatically; do not add script export mappings or wrapper
+as `fn_<label>` automatically; do not add script export mappings or wrapper
 enums. Explicit jumps preserve original fall-through after regrouping.
 `make scripts-source-check` compares without writing and is part of
 `make scripts-check`. Normal builds use checked-in wordcode and need no EXE.

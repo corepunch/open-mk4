@@ -212,7 +212,7 @@ void action_weapon_equip(Fighter *fighter) {
 
 void action_weapon_draw_equip(Fighter *fighter) {
   action_weapon_equip(fighter);
-  script_vm_enter(fighter, scr_shinnok_draw_weapon_equip, fighter_ready);
+  script_vm_enter(fighter, fn_shinnok_draw_weapon_equip, fighter_ready);
 }
 
 void action_weapon_draw(Fighter *fighter) {
@@ -233,7 +233,7 @@ void action_weapon_draw(Fighter *fighter) {
     weapon_native(fighter, target, false);
   } else {
     weapon_draw(fighter, weapon_definition((unsigned)fighter->roster));
-    script_vm_enter(fighter, scr_cage_draw_weapon_draw, fighter_ready);
+    script_vm_enter(fighter, fn_cage_draw_weapon_draw, fighter_ready);
   }
 }
 
