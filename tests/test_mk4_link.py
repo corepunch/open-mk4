@@ -218,6 +218,31 @@ ready 0
         with self.assertRaisesRegex(ValueError, 'Duplicate data export'):
             link(self.source(source + '.export dat_table table\n'))
 
+    def test_cpu_policy_records_match_retail_after_native_relocation(self):
+        image = RetailImage(ROOT / 'MK4/MK-4.EXE')
+        layout = json.loads((ROOT / 'tools/mk4_import_layout.json').read_text())
+        locations = {name: int(address, 16) for address, name in layout['names'].items()}
+        natives = {int(address, 16): name for name, address in json.loads(SCRIPT_LAYOUT.read_text())['natives'].items()}
+        package, _, symbols = link(ROOT / 'scripts/mk4/project.asm')
+
+        def linked_word(name, offset):
+            return struct.unpack_from('<I', package, HEADER.size + symbols[name] - BASE + offset)[0]
+
+        for name in ('cpu_choices_close', 'cpu_choices_near', 'cpu_choices_medium', 'cpu_choices_far'):
+            original = locations[name]
+            count = image.word(original)
+            self.assertEqual(linked_word(name, 0), count)
+            for i in range(count):
+                offset = (i + 1) * 4
+                self.assertEqual(linked_word(name, offset), symbols[natives[image.word(original + offset)]])
+        for name, end, stride in (('cpu_near_attacks', 'cpu_near_attacks_end', 8),
+                                  ('cpu_reaction_weights', 'cpu_reaction_weights_end', 4)):
+            for offset in range(0, locations[end] - locations[name], stride):
+                self.assertEqual(linked_word(name, offset), image.word(locations[name] + offset))
+                if stride == 8:
+                    target = image.word(locations[name] + offset + 4)
+                    self.assertEqual(linked_word(name, offset + 4), symbols[natives[target]])
+
     def test_imported_data_and_wordcode_evidence(self):
         self.assertEqual({op:count for op,count in OPS.values()}, {op:row[1] for op,row in SCRIPT_OPS.items()})
         with TemporaryDirectory() as temp:

@@ -526,20 +526,50 @@ unresolved_throw_parameters_085:
 unresolved_throw_parameters_086:
   .word 0x242, 0x243, 0x244, 0x245, 0xfff70000, 0xc
   .word 0x4, 0xffff8000, 0xe8000, 0x1, 0x147, 0xfe700000
-  .word 0x7, 0x438e70, 0x438e80, 0x437d10, 0x437c60, 0x437dc0
-  .word 0x437ea0, 0x436d20, 0x8, 0x436d20, 0x438e60, 0x438e70
-  .word 0x438e80, 0x437d10, 0x437c60, 0x437dc0, 0x437ea0
+; Counted CPU policy rows, read by game/data/tables.c. Repeated callbacks retain their weight.
+cpu_choices_far:
+  .word 0x7 ; count
+  .word native_cpu_pick_special_2
+  .word native_cpu_pick_projectile
+  .word native_cpu_pick_forward_flip
+  .word native_cpu_pick_forward_flip_alternate
+  .word native_cpu_pick_projectile_approach
+  .word native_cpu_pick_close_punch
+  .word native_cpu_pick_footwork
+cpu_choices_medium:
+  .word 0x8 ; count
+  .word native_cpu_pick_footwork
+  .word native_cpu_pick_special_1
+  .word native_cpu_pick_special_2
+  .word native_cpu_pick_projectile
+  .word native_cpu_pick_forward_flip
+  .word native_cpu_pick_forward_flip_alternate
+  .word native_cpu_pick_projectile_approach
+  .word native_cpu_pick_close_punch
   .zero 4
-  .word 0x5, 0x436d20, 0x438e50, 0x438000, 0x437820, 0x437770
-  .word 0x5, 0x437690, 0x437b00, 0x437bb0, 0x437910, 0x437ea0
-  .word 0x4, 0x437b00, 0x437910, 0x437ea0, 0x437bb0
+cpu_choices_near:
+  .word 0x5 ; count
+  .word native_cpu_pick_footwork
+  .word native_cpu_pick_special_near
+  .word native_cpu_pick_near_attack
+  .word native_cpu_pick_high_kick
+  .word native_cpu_pick_low_kick
+cpu_choices_close:
+  .word 0x5 ; count
+  .word native_cpu_pick_back_flip
+  .word native_cpu_pick_throw
+  .word native_cpu_pick_throw_or_close
+  .word native_cpu_pick_uppercut
+  .word native_cpu_pick_close_punch
+; Retained neighboring CPU policies; the range reader stops at the count above.
+  .word 0x4, native_cpu_pick_throw, native_cpu_pick_uppercut, native_cpu_pick_close_punch, native_cpu_pick_throw_or_close
   .zero 4
-  .word 0x3, 0x436c70, 0x436c70, 0x438bf0, 0x8, 0x437b00
-  .word 0x437910, 0x437ea0, 0x437bb0, 0x436d20, 0x436b10, 0x436bc0
+  .word 0x3, 0x436c70, 0x436c70, 0x438bf0, 0x8, native_cpu_pick_throw
+  .word native_cpu_pick_uppercut, native_cpu_pick_close_punch, native_cpu_pick_throw_or_close, native_cpu_pick_footwork, 0x436b10, 0x436bc0
   .word 0x436b10
   .zero 4
-  .word 0x9, 0x436b10, 0x436bc0, 0x436b10, 0x438e70, 0x438e80
-  .word 0x437d10, 0x437c60, 0x437ea0, 0x436d20, 0x40000, 0x4000c
+  .word 0x9, 0x436b10, 0x436bc0, 0x436b10, native_cpu_pick_special_2, native_cpu_pick_projectile
+  .word native_cpu_pick_forward_flip, native_cpu_pick_forward_flip_alternate, native_cpu_pick_close_punch, native_cpu_pick_footwork, 0x40000, 0x4000c
   .word 0x40007, 0x20001, 0x40002, 0x1002b, 0x200002, 0x200002
   .word 0x4000b, 0x4001e, 0x40018, 0x20009, 0x40014, 0x1002c
   .word 0x4001b
@@ -561,7 +591,7 @@ unresolved_throw_parameters_086:
   .word 0x4360e0, 0x4362e0, 0x435ec0, 0x436180, 0x4361b0, 0x435f90
   .word 0x4362a0, 0x435f70, 0x435ec0, 0x435ec0, 0x435ec0
   .zero 4
-  .word 0x2, 0x438ef0, 0x438f10
+  .word 0x2, native_cpu_attack_low_kick, native_cpu_attack_sweep
   .zero 4
   .word 0x4365f0, 0x1e, 0x4335e0
   .zero 4
@@ -577,11 +607,11 @@ unresolved_throw_parameters_086:
   .zero 4
   .word 0x439530, 0x32, 0x4335e0
   .zero 4
-  .word 0x4395e0, 0x20, 0x438e80
+  .word 0x4395e0, 0x20, native_cpu_pick_projectile
   .zero 4
   .word 0x4395e0, 0x20, 0x4373c0
   .zero 4
-  .word 0x437400, 0x20, 0x438e80
+  .word 0x437400, 0x20, native_cpu_pick_projectile
   .zero 4
   .word 0x200001, 0x4000c, 0x40005, 0x200001, 0x40001, 0x200001
   .word 0x200001, 0x4000e, 0x4000b, 0x200001, 0x40016, 0x200001

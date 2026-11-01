@@ -192,6 +192,7 @@ typedef struct CpuMoves {
 typedef struct CpuState {
   int plan, timer, seen_action, rest, phase;
   q16 target;
+  uint32_t continuation; /* selected linked native; invoked after approach */
   uint64_t weapon_tick;
   bool finish_chosen;
 } CpuState;

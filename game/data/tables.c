@@ -100,6 +100,35 @@ uint32_t mk4_cpu_target(const Mk4Image *image, unsigned character, unsigned dist
   return mk4_action_target(image, (word >> 16) & 255u, word & 255u);
 }
 
+/* HitReactionStateCluster / PackedAdvanceCallTailJmp: a count followed by
+ * native callbacks. Duplicate entries are intentional selection weights. */
+Mk4CpuChoices mk4_cpu_choices(const Mk4Image *image, Mk4CpuRange range) {
+  static const uint32_t tables[] = {dat_cpu_choices_close, dat_cpu_choices_near, dat_cpu_choices_medium, dat_cpu_choices_far};
+  require(range >= MK4_CPU_CLOSE && range <= MK4_CPU_FAR, "Invalid CPU distance band");
+  uint32_t table = tables[range];
+  Mk4CpuChoices choices = {.count = mk4_image_u32(image, table)};
+  require(choices.count > 0 && choices.count <= sizeof choices.targets / sizeof *choices.targets, "Invalid counted CPU choice table");
+  for (unsigned i = 0; i < choices.count; ++i) {
+    choices.targets[i] = mk4_image_u32(image, table + (i + 1) * 4);
+  }
+  return choices;
+}
+
+/* Local 438000 selects one of five distance/callback pairs, then 438630
+ * approaches until strictly inside that distance before invoking the callback. */
+Mk4CpuApproach mk4_cpu_approach(const Mk4Image *image, unsigned index) {
+  require(index < (dat_cpu_near_attacks_end - dat_cpu_near_attacks) / 8, "Invalid CPU approach row");
+  uint32_t row = dat_cpu_near_attacks + index * 8;
+  Mk4CpuApproach approach = {(q16)mk4_image_u32(image, row), mk4_image_u32(image, row + 4)};
+  require(approach.distance > 0 && approach.target != 0, "Invalid CPU approach parameters");
+  return approach;
+}
+
+Mk4CpuWeights mk4_cpu_weights(const Mk4Image *image) {
+  return (Mk4CpuWeights){(int32_t)mk4_image_u32(image, dat_cpu_reaction_weights), (int32_t)mk4_image_u32(image, dat_cpu_reaction_weights + 4),
+      (int32_t)mk4_image_u32(image, dat_cpu_reaction_weights + 8), (int32_t)mk4_image_u32(image, dat_cpu_reaction_weights + 12)};
+}
+
 int mk4_stance_clip(const Mk4Image *image, unsigned character, bool walking) {
   uint32_t packed = mk4_image_u32(image, (walking ? dat_walk_animation_table : dat_idle_animation_table) + mk4_character_slot(character) * 4);
   require(packed >= dat_animation_table / 4 && packed < (dat_animation_table + MK4_CLIP_COUNT * MK4_ANIMATION_DESCRIPTOR_SIZE) / 4 &&

@@ -949,7 +949,15 @@
     "0x4fc8f8": "animation_clip_586_frame_count",
     "0x4e6c14": "unresolved_dispatch_and_motion_018",
     "0x4e6694": "unresolved_dispatch_and_motion_017",
-    "0x4d0008": "unresolved_retained_frontend_001"
+    "0x4d0008": "unresolved_retained_frontend_001",
+    "0x4df478": "cpu_choices_far",
+    "0x4df498": "cpu_choices_medium",
+    "0x4df4c0": "cpu_choices_near",
+    "0x4df4d8": "cpu_choices_close",
+    "0x4dfdd0": "cpu_near_attacks",
+    "0x4dfdf8": "cpu_near_attacks_end",
+    "0x4ee82c": "cpu_reaction_weights",
+    "0x4ee83c": "cpu_reaction_weights_end"
   },
   "roots": [
     5057520,

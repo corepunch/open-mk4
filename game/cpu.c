@@ -81,68 +81,118 @@ enum {
   PLAN_THROW_OR_CLOSE,
   PLAN_APPROACH_PROJECTILE,
   PLAN_CROUCH_COUNTER,
-  PLAN_WAIT_CLONE
+  PLAN_WAIT_CLONE,
+  PLAN_APPROACH_NATIVE
 };
 
-typedef struct CpuChoice {
-  int action;
-  q16 target;
-  bool run;
-} CpuChoice;
-
-/* 433630: use the exact repeated entries in 4df478/498/4c0/4d8.
- * 438e50/60/70/80 select character-owned action rows through 439960. */
-// clang-format off: Keep table entries on one row, including long rows.
-static const CpuChoice far_choices[] = {
-  {CPU_SPECIAL_2, 0, false},
-  {CPU_PROJECTILE, 0, false},
-  {PLAN_FORWARD_FLIP, 0x20000, true},
-  {PLAN_FORWARD_FLIP, 0x20000, true},
-  {CPU_PROJECTILE, -1, true},
-  {CPU_CLOSE_HP, 0xb333, true},
-  {PLAN_FOOTWORK, 0x20000, true},
-};
-static const CpuChoice medium_choices[] = {
-  {PLAN_FOOTWORK, 0x20000, true},
-  {CPU_SPECIAL_1, 0, false},
-  {CPU_SPECIAL_2, 0, false},
-  {CPU_PROJECTILE, 0, false},
-  {PLAN_FORWARD_FLIP, 0x20000, true},
-  {PLAN_FORWARD_FLIP, 0x20000, true},
-  {CPU_PROJECTILE, -1, true},
-  {CPU_CLOSE_HP, 0xb333, true},
-};
-static const CpuChoice near_choices[] = {
-  {PLAN_FOOTWORK, 0x20000, true},
-  {CPU_SPECIAL_NEAR, 0, false},
-  {PLAN_FORWARD_FLIP, 0, false},
-  {CPU_HIGH_KICK, 0x13333, true},
-  {CPU_LOW_KICK, 0x13333, true},
-};
-static const CpuChoice close_choices[] = {
-  {PLAN_BACK_FLIP, 0, false},
-  {CPU_THROW, 0xb333, true},
-  {PLAN_THROW_OR_CLOSE, 0xb333, true},
-  {CPU_UPPERCUT, 0xcccc, true},
-  {CPU_CLOSE_HP, 0xb333, true},
-};
-// clang-format on
-
-static void choose(Fighter *fighter, const CpuChoice *choices, int count) {
-  const CpuChoice *choice = &choices[battle_random((uint32_t)count)];
-  fighter->cpu.plan = choice->action + 1;
+/* Original choice callbacks have one shared implementation each. The loaded
+ * counted rows select them through the normal typed native registry; file or
+ * fighter ownership never supplies an AI policy. */
+static void plan(Fighter *fighter, int action, q16 target, int timer) {
+  fighter->cpu.plan = action + 1;
   fighter->cpu.phase = 0;
-  fighter->cpu.target = choice->target < 0 ? 0x18000 + (q16)battle_random(0x20000) : choice->target;
-  fighter->cpu.timer = choice->run ? 30 : 0;
+  fighter->cpu.target = target;
+  fighter->cpu.timer = timer;
+  fighter->cpu.continuation = 0;
+}
+
+void cpu_pick_footwork(Fighter *fighter) {
+  plan(fighter, PLAN_FOOTWORK, 0x20000, 30);
+}
+
+void cpu_pick_back_flip(Fighter *fighter) {
+  plan(fighter, PLAN_BACK_FLIP, 0, 0);
+}
+
+void cpu_pick_low_kick(Fighter *fighter) {
+  plan(fighter, CPU_LOW_KICK, 0x13333, 30);
+}
+
+void cpu_pick_high_kick(Fighter *fighter) {
+  plan(fighter, CPU_HIGH_KICK, 0x13333, 30);
+}
+
+void cpu_pick_uppercut(Fighter *fighter) {
+  plan(fighter, CPU_UPPERCUT, 0xcccc, 30);
+}
+
+void cpu_pick_throw(Fighter *fighter) {
+  plan(fighter, CPU_THROW, 0xb333, 30);
+}
+
+void cpu_pick_throw_or_close(Fighter *fighter) {
+  plan(fighter, PLAN_THROW_OR_CLOSE, 0xb333, 30);
+}
+
+void cpu_pick_forward_flip(Fighter *fighter) {
+  plan(fighter, PLAN_FORWARD_FLIP, 0x20000, 30);
+}
+
+void cpu_pick_close_punch(Fighter *fighter) {
+  plan(fighter, CPU_CLOSE_HP, 0xb333, 30);
+}
+
+void cpu_pick_special_near(Fighter *fighter) {
+  plan(fighter, CPU_SPECIAL_NEAR, 0, 0);
+}
+
+void cpu_pick_special_1(Fighter *fighter) {
+  plan(fighter, CPU_SPECIAL_1, 0, 0);
+}
+
+void cpu_pick_special_2(Fighter *fighter) {
+  plan(fighter, CPU_SPECIAL_2, 0, 0);
+}
+
+void cpu_pick_projectile(Fighter *fighter) {
+  plan(fighter, CPU_PROJECTILE, 0, 0);
+}
+
+void cpu_pick_projectile_approach(Fighter *fighter) {
+  plan(fighter, CPU_PROJECTILE, 0x18000 + (q16)battle_random(0x20000), 30);
+}
+
+void cpu_attack_close_counter(Fighter *fighter) {
+  plan(fighter, PLAN_THROW_OR_CLOSE, 0, 0);
+}
+
+void cpu_attack_sweep(Fighter *fighter) {
+  plan(fighter, CPU_SWEEP, 0, 0);
+}
+
+void cpu_attack_high_kick(Fighter *fighter) {
+  plan(fighter, CPU_HIGH_KICK, 0, 0);
+}
+
+void cpu_attack_low_kick(Fighter *fighter) {
+  plan(fighter, CPU_LOW_KICK, 0, 0);
+}
+
+void cpu_attack_uppercut(Fighter *fighter) {
+  plan(fighter, CPU_UPPERCUT, 0, 0);
+}
+
+/* Local 438000 is an approach/attack selector, not a forward flip. */
+void cpu_pick_near_attack(Fighter *fighter) {
+  unsigned count = (dat_cpu_near_attacks_end - dat_cpu_near_attacks) / 8;
+  Mk4CpuApproach approach = mk4_cpu_approach(battle_data(), battle_random(count));
+  plan(fighter, PLAN_APPROACH_NATIVE, approach.distance, 30);
+  fighter->cpu.continuation = approach.target;
+}
+
+static void choose(Fighter *fighter, Mk4CpuRange range) {
+  Mk4CpuChoices choices = mk4_cpu_choices(battle_data(), range);
+  script_native_entry(choices.targets[battle_random(choices.count)])(fighter);
 }
 
 /* 4398c0, parameters 4ee82c: 25 + level*10 + adaptive progress*40
  * + rank*100, capped at 975/1000. Opponent wins join progress in arcade
  * adaptive mode. Local play can leave those context values at zero. */
 static bool reacts(Fighter *fighter) {
-  int progress = g_battle.cpu_progress + (g_battle.cpu_adaptive ? fighter_opponent(fighter)->wins : 0);
-  int chance = mini(975, 25 + g_battle.cpu_level * 10 + progress * 40 + g_battle.cpu_rank * 100);
-  return battle_chance(chance);
+  Mk4CpuWeights weights = mk4_cpu_weights(battle_data());
+  int64_t progress = (int64_t)g_battle.cpu_progress + (g_battle.cpu_adaptive ? fighter_opponent(fighter)->wins : 0);
+  int64_t chance = weights.base + (int64_t)g_battle.cpu_level * weights.level + progress * weights.progress + (int64_t)g_battle.cpu_rank * weights.rank;
+  return battle_chance(chance < 0 ? 0 : chance > 975 ? 975 : (int)chance);
 }
 
 static void flip(Fighter *fighter, bool back) {
@@ -284,6 +334,7 @@ static void finish(Fighter *fighter) {
       action = g_battle.arena == 0 ? CPU_FINISH_SPIKE : g_battle.arena == 8 ? CPU_FINISH_FAN : battle_chance(600) ? CPU_FINISH_2 : CPU_FINISH_1;
     }
     cpu->plan = action + 1;
+    cpu->continuation = 0;
     cpu->target = finish_distance(fighter, action);
     cpu->timer = 240;
   }
@@ -298,6 +349,7 @@ void battle_cpu_step(Fighter *fighter) {
     if (fighter->flags & FF_REACTING) {
       fighter->cpu.plan = 0;
       fighter->cpu.rest = 0;
+      fighter->cpu.continuation = 0;
     }
     return;
   }
@@ -314,9 +366,12 @@ void battle_cpu_step(Fighter *fighter) {
   } else if (g_battle.phase != PHASE_FIGHT) {
     return;
   } else {
-    if (respond(fighter) && fighter->pending != NULL) {
-      cpu->plan = 0;
-      return;
+    if (respond(fighter)) {
+      cpu->continuation = 0;
+      if (fighter->pending != NULL || fighter_airborne(fighter)) {
+        cpu->plan = 0;
+        return;
+      }
     }
     if (fighter_airborne(fighter)) {
       return;
@@ -345,13 +400,13 @@ void battle_cpu_step(Fighter *fighter) {
         return;
       }
       if (distance < Q16_ONE) {
-        choose(fighter, close_choices, 5);
+        choose(fighter, MK4_CPU_CLOSE);
       } else if (distance < 2 * Q16_ONE) {
-        choose(fighter, near_choices, 5);
+        choose(fighter, MK4_CPU_NEAR);
       } else if (distance < 3 * Q16_ONE) {
-        choose(fighter, medium_choices, 8);
+        choose(fighter, MK4_CPU_MEDIUM);
       } else {
-        choose(fighter, far_choices, 7);
+        choose(fighter, MK4_CPU_FAR);
       }
     }
   }
@@ -407,13 +462,24 @@ void battle_cpu_step(Fighter *fighter) {
     cpu->target = 0;
     action = PLAN_FORWARD_FLIP;
   }
-  if (distance > cpu->target && cpu->target > 0) {
+  if (distance >= cpu->target && cpu->target > 0) {
     if (cpu->timer-- > 0) {
       fighter->held = BUTTON_BIT(fighter->facing > 0 ? BUTTON_RIGHT : BUTTON_LEFT) | BUTTON_BIT(BUTTON_RUN);
       return;
     }
     cpu->plan = 0;
+    cpu->continuation = 0;
     return;
+  }
+  if (action == PLAN_APPROACH_NATIVE) {
+    uint32_t continuation = cpu->continuation;
+    cpu->plan = 0;
+    cpu->continuation = 0;
+    script_native_entry(continuation)(fighter);
+    if (cpu->plan == 0) {
+      return;
+    }
+    action = cpu->plan - 1;
   }
   cpu->plan = 0;
   if (action == PLAN_FORWARD_FLIP || action == PLAN_BACK_FLIP) {

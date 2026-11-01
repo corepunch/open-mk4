@@ -458,6 +458,89 @@ static void data_tables(void) {
   }
 }
 
+static Fighter *cpu_policy_setup(q16 distance) {
+  Fighter *actor = setup(0, 2);
+  actor->human = false;
+  actor->body.pos[AXIS_X] = 0;
+  fighter_peer(actor)->body.pos[AXIS_X] = distance;
+  g_battle.cpu_level = 5;
+  g_battle.random[0] = g_battle.random[1] = 0;
+  return actor;
+}
+
+static void cpu_loaded_policy(void) {
+  /* Mutate the shared source tables, not a fighter's timing or balance.
+   * Each distance band must read its current count and linked callback. */
+  static const uint32_t tables[] = {dat_cpu_choices_close, dat_cpu_choices_near, dat_cpu_choices_medium, dat_cpu_choices_far};
+  static const q16 distances[] = {Q16_ONE / 2, Q16_ONE + Q16_ONE / 2, 2 * Q16_ONE + Q16_ONE / 2, 4 * Q16_ONE};
+  for (unsigned i = 0; i < sizeof tables / sizeof *tables; ++i) {
+    Fighter *actor = cpu_policy_setup(distances[i]);
+    uint32_t count = mk4_image_u32(&image, tables[i]), first = mk4_image_u32(&image, tables[i] + 4);
+    put_word(tables[i], 1);
+    put_word(tables[i] + 4, native_cpu_pick_projectile);
+    FighterFn expected = script_native_entry(mk4_cpu_target(&image, (unsigned)actor->roster, 3));
+    battle_cpu_step(actor);
+    check(actor->pending == expected, "CPU range selection must use the loaded counted callback row and roster action target");
+    put_word(tables[i], count);
+    put_word(tables[i] + 4, first);
+  }
+
+  Fighter *actor = cpu_policy_setup(Q16_ONE + Q16_ONE / 2);
+  uint32_t count = mk4_image_u32(&image, dat_cpu_choices_near), first = mk4_image_u32(&image, dat_cpu_choices_near + 4);
+  put_word(dat_cpu_choices_near, 1);
+  put_word(dat_cpu_choices_near + 4, native_cpu_pick_near_attack);
+  uint32_t distance = mk4_image_u32(&image, dat_cpu_near_attacks), callback = mk4_image_u32(&image, dat_cpu_near_attacks + 4);
+  put_word(dat_cpu_near_attacks, Q16_ONE);
+  put_word(dat_cpu_near_attacks + 4, native_cpu_pick_projectile);
+  battle_cpu_step(actor);
+  check(actor->pending == NULL && actor->cpu.target == Q16_ONE && actor->cpu.continuation == native_cpu_pick_projectile &&
+            (actor->held & BUTTON_BIT(BUTTON_RIGHT)),
+      "near selection must retain its loaded approach distance and callback instead of substituting a flip");
+  put_word(dat_cpu_near_attacks + 4, native_cpu_pick_special_2);
+  fighter_peer(actor)->body.pos[AXIS_X] = Q16_ONE;
+  battle_cpu_step(actor);
+  check(actor->pending == NULL, "retail approach must remain active at the exact target distance");
+  fighter_peer(actor)->body.pos[AXIS_X] = Q16_ONE / 2;
+  battle_cpu_step(actor);
+  check(actor->pending == script_native_entry(mk4_cpu_target(&image, (unsigned)actor->roster, 3)) && actor->cpu.continuation == 0,
+      "arrival must dispatch the retained callback rather than reread the source row");
+  for (unsigned interrupted = 0; interrupted < 2; ++interrupted) {
+    actor = cpu_policy_setup(Q16_ONE + Q16_ONE / 2);
+    battle_cpu_step(actor);
+    if (interrupted) {
+      actor->flags |= FF_REACTING;
+    } else {
+      actor->cpu.timer = 0;
+    }
+    battle_cpu_step(actor);
+    check(actor->cpu.plan == 0 && actor->cpu.continuation == 0 && actor->pending == NULL,
+        "timeout or a hit must retire the approach without invoking its retained callback");
+  }
+  put_word(dat_cpu_near_attacks, distance);
+  put_word(dat_cpu_near_attacks + 4, callback);
+  put_word(dat_cpu_choices_near + 4, native_cpu_pick_projectile);
+
+  uint32_t weights[4];
+  for (unsigned i = 0; i < 4; ++i) {
+    weights[i] = mk4_image_u32(&image, dat_cpu_reaction_weights + i * 4);
+    put_word(dat_cpu_reaction_weights + i * 4, 0);
+  }
+  for (unsigned enabled = 0; enabled < 2; ++enabled) {
+    actor = cpu_policy_setup(Q16_ONE + Q16_ONE / 2);
+    fighter_peer(actor)->action = ACTION_CODE_0100;
+    put_word(dat_cpu_reaction_weights, enabled ? 1000 : 0);
+    battle_cpu_step(actor);
+    FighterFn projectile = script_native_entry(mk4_cpu_target(&image, (unsigned)actor->roster, 3));
+    check(actor->pending != NULL && (enabled ? actor->pending == action_sweep : actor->pending == projectile),
+        "CPU reaction probability must use the loaded weights and preserve the normal decision path when the gate fails");
+  }
+  for (unsigned i = 0; i < 4; ++i) {
+    put_word(dat_cpu_reaction_weights + i * 4, weights[i]);
+  }
+  put_word(dat_cpu_choices_near, count);
+  put_word(dat_cpu_choices_near + 4, first);
+}
+
 static int cleanup_calls;
 
 static void cleanup_once(Fighter *fighter) {
@@ -1492,6 +1575,10 @@ int main(int argc, char **argv) {
       Fighter *actor = setup(0, 2);
       native_hold(actor, 1, NULL);
       native_address_end(actor, fn_low_kick_clip_67);
+    } else if (strcmp(argv[1], "cpu_choices") == 0) {
+      Fighter *actor = cpu_policy_setup(4 * Q16_ONE);
+      put_word(dat_cpu_choices_far, 0);
+      battle_cpu_step(actor);
     } else if (strcmp(argv[1], "range") == 0) {
       Fighter *owner = setup(0, 2);
       put_word(dat_unresolved_stance_and_queries_010, 0x1f000000);
@@ -1516,6 +1603,7 @@ int main(int argc, char **argv) {
   native_cursor_return();
   native_shared_record();
   data_tables();
+  cpu_loaded_policy();
   reaction_native_table();
   native_getup_entries();
   native_weapon_parameters();

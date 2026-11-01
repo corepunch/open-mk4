@@ -126,6 +126,25 @@ menu animation time and seeds menu selection randomness; menu code does not
 call SDL. Mapping is fixed for now; configuration and timestamped event replay
 are separate features.
 
+## CPU decision boundary
+
+`game/cpu.c` owns one cooperative controller state per fighter. The shared data
+reader loads the original counted close/near/medium/far choice rows, preserving
+their ordering and repeated callback weights. Named imports in
+`scripts/mk4/native.inc` link those callbacks to shared C implementations;
+selection uses the same typed registry as the rest of the engine. Fighter
+specials still resolve through live roster/action tables.
+
+The near approach selector loads one of the original five distance/callback
+pairs and retains that linked callback until strictly inside its target range.
+Arrival consumes it once; timeout, a replacement response or a hit retires it.
+Reaction probability reads the original base, progress/adaptive, difficulty
+and rank coefficients from the package, retaining the native 975/1000 cap.
+Table mutation and malformed-count fixtures validate this data boundary.
+The response controller remains partial: opponent-action handling, weapon and
+boss-specific policies, and movement scheduling are portable C adaptations,
+not an exhaustive reconstruction of the original AI task graph.
+
 ## MK4 script and action runtime
 
 The runtime has four concrete boundaries:

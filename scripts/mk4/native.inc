@@ -142,6 +142,27 @@
 .native native_contact_query_b
 .native native_contact_query_d, predicate_result=raiden_script_torpedo_query
 .native native_context, handler_arg=mk4_script_context
+.native native_cpu_attack_close_counter, entry=cpu_attack_close_counter
+.native native_cpu_attack_high_kick, entry=cpu_attack_high_kick
+.native native_cpu_attack_low_kick, entry=cpu_attack_low_kick
+.native native_cpu_attack_sweep, entry=cpu_attack_sweep
+.native native_cpu_attack_uppercut, entry=cpu_attack_uppercut
+.native native_cpu_pick_back_flip, entry=cpu_pick_back_flip
+.native native_cpu_pick_close_punch, entry=cpu_pick_close_punch
+.native native_cpu_pick_footwork, entry=cpu_pick_footwork
+.native native_cpu_pick_forward_flip, entry=cpu_pick_forward_flip
+.native native_cpu_pick_forward_flip_alternate, entry=cpu_pick_forward_flip
+.native native_cpu_pick_high_kick, entry=cpu_pick_high_kick
+.native native_cpu_pick_low_kick, entry=cpu_pick_low_kick
+.native native_cpu_pick_near_attack, entry=cpu_pick_near_attack
+.native native_cpu_pick_projectile, entry=cpu_pick_projectile
+.native native_cpu_pick_projectile_approach, entry=cpu_pick_projectile_approach
+.native native_cpu_pick_special_1, entry=cpu_pick_special_1
+.native native_cpu_pick_special_2, entry=cpu_pick_special_2
+.native native_cpu_pick_special_near, entry=cpu_pick_special_near
+.native native_cpu_pick_throw, entry=cpu_pick_throw
+.native native_cpu_pick_throw_or_close, entry=cpu_pick_throw_or_close
+.native native_cpu_pick_uppercut, entry=cpu_pick_uppercut
 .native native_crouch_high_kick, entry=action_crouch_high_kick
 .native native_crouch_low_kick, entry=action_crouch_low_kick
 .native native_crouch_low_kick_tail, tail=action_crouch_low_kick_tail
@@ -866,7 +887,6 @@
 .native native_unresolved_air_low_kick_clip_60_reverse
 .native native_unresolved_lp_victim_slide_release
 .native native_unresolved_reaction_clip_326_short_slide
-.native native_weapon_fall_finish_getup, tail=action_reaction_getup_back
 .native native_uppercut_40_percent_damage, reaction=action_scaled_reaction, script=goro_special_uppercut_192_victim, prepare=action_prepare_goro_special_uppercut_192_entry
 .native native_uppercut_default, tail=action_uppercut_default
 .native native_uppercut_delayed_voice_40_percent_damage, reaction=action_impact_reaction
@@ -894,6 +914,7 @@
 .native native_weapon_clip_189_launch_half_damage, reaction=action_scaled_reaction, script=weapon_clip_189_launch_roll_getup, finish=action_getup_roll, prepare=action_prepare_weapon_clip_189_launch_half_damage
 .native native_weapon_draw, entry=action_weapon_draw
 .native native_weapon_draw_equip, tail=action_weapon_draw_equip
+.native native_weapon_fall_finish_getup, tail=action_reaction_getup_back
 .native native_weapon_low_punch_victim_roll_getup, reaction=action_weapon_reaction, script=cage_weapon_reaction_lp_victim, finish=action_getup_roll
 .native native_weapon_pickup, entry=weapon_pickup
 .native native_weapon_sweep_grounded_victim, reaction=action_weapon_reaction, script=shinnok_weapon_reaction_sweep_victim, prepare=action_prepare_weapon_sweep_grounded_victim

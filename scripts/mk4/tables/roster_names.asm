@@ -210,8 +210,13 @@ roster_name_table_row_17:
   .zero 8
   .word 0xfffb0000
   .zero 8
-  .word 0x503308, 0x503340, 0x50335c, 0x19, 0x28, 0xa
-  .word 0x64, 0x80, 0x80
+  .word 0x503308, 0x503340, 0x50335c
+; CPU reaction coefficients: base, progress/adaptive, difficulty, rank.
+cpu_reaction_weights:
+  .word 0x19, 0x28, 0xa
+  .word 0x64
+cpu_reaction_weights_end:
+  .word 0x80, 0x80
   .zero 4
   .word 0xffff
   .zero 12

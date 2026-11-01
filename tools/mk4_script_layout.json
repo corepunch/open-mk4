@@ -1580,6 +1580,27 @@
     "native_unresolved_air_diagonal_kick_clip_57_reverse": "0x46e630",
     "native_unresolved_reaction_clip_326_short_slide": "0x433c00",
     "native_weapon_fall_finish_getup": "0x482f90",
-    "native_unresolved_lp_victim_slide_release": "0x485a70"
+    "native_unresolved_lp_victim_slide_release": "0x485a70",
+    "native_cpu_pick_special_2": "0x438e70",
+    "native_cpu_pick_projectile": "0x438e80",
+    "native_cpu_pick_forward_flip": "0x437d10",
+    "native_cpu_pick_forward_flip_alternate": "0x437c60",
+    "native_cpu_pick_projectile_approach": "0x437dc0",
+    "native_cpu_pick_close_punch": "0x437ea0",
+    "native_cpu_pick_footwork": "0x436d20",
+    "native_cpu_pick_special_1": "0x438e60",
+    "native_cpu_pick_special_near": "0x438e50",
+    "native_cpu_pick_near_attack": "0x438000",
+    "native_cpu_pick_high_kick": "0x437820",
+    "native_cpu_pick_low_kick": "0x437770",
+    "native_cpu_pick_back_flip": "0x437690",
+    "native_cpu_pick_throw": "0x437b00",
+    "native_cpu_pick_throw_or_close": "0x437bb0",
+    "native_cpu_pick_uppercut": "0x437910",
+    "native_cpu_attack_close_counter": "0x439050",
+    "native_cpu_attack_sweep": "0x438f10",
+    "native_cpu_attack_high_kick": "0x438f00",
+    "native_cpu_attack_low_kick": "0x438ef0",
+    "native_cpu_attack_uppercut": "0x438ec0"
   }
 }

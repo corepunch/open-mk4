@@ -61,7 +61,9 @@ preserves original table names/locations and discovered script roots.
 | --- | --- |
 | Fighter rigs, resources and scale | `roster.asm` |
 | Player/button routing and command lists | `command_tables.asm` |
-| CPU choices and finisher selection | `cpu_finishers.asm` |
+| CPU range choices | `throw_parameters.asm` |
+| CPU special rows, near approach callbacks and finishers | `cpu_finishers.asm` |
+| CPU reaction probability coefficients | `roster_names.asm` |
 | Contact bounds, reactions and damage | `attack_records.asm`, `contact_geometry.asm` |
 | Weapon inventory and playback parameters | `weapons.asm` |
 | Idle/walk clips and query routing | `stance_and_queries.asm` |

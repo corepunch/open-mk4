@@ -30,6 +30,27 @@ typedef struct Mk4Command {
   unsigned flags, window;
 } Mk4Command;
 
+typedef enum Mk4CpuRange {
+  MK4_CPU_CLOSE,
+  MK4_CPU_NEAR,
+  MK4_CPU_MEDIUM,
+  MK4_CPU_FAR
+} Mk4CpuRange;
+
+typedef struct Mk4CpuChoices {
+  unsigned count;
+  uint32_t targets[16]; /* Bounded reader capacity, not a copied policy row. */
+} Mk4CpuChoices;
+
+typedef struct Mk4CpuApproach {
+  q16 distance;
+  uint32_t target;
+} Mk4CpuApproach;
+
+typedef struct Mk4CpuWeights {
+  int base, progress, level, rank;
+} Mk4CpuWeights;
+
 /* Addresses refer to the checked local image, never host function pointers. */
 unsigned mk4_terminated_rows(const Mk4Image *image, uint32_t table, unsigned stride, unsigned limit);
 bool mk4_index_list_contains(const Mk4Image *image, uint32_t table, unsigned value, unsigned limit);
@@ -41,6 +62,9 @@ uint32_t mk4_action_target(const Mk4Image *image, unsigned flags, unsigned actio
 Mk4CommandCursor mk4_command_cursor(const Mk4Image *image, unsigned character, unsigned player, Button button, bool released);
 bool mk4_command_next(const Mk4Image *image, Mk4CommandCursor *cursor, Mk4Command *command);
 uint32_t mk4_cpu_target(const Mk4Image *image, unsigned character, unsigned distance);
+Mk4CpuChoices mk4_cpu_choices(const Mk4Image *image, Mk4CpuRange range);
+Mk4CpuApproach mk4_cpu_approach(const Mk4Image *image, unsigned index);
+Mk4CpuWeights mk4_cpu_weights(const Mk4Image *image);
 int mk4_stance_clip(const Mk4Image *image, unsigned character, bool walking);
 uint32_t mk4_finish_target(const Mk4Image *image, unsigned character, bool second);
 q16 mk4_cpu_finish_distance(const Mk4Image *image, unsigned character, bool second);

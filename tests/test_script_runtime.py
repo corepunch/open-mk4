@@ -22,6 +22,10 @@ assert result.returncode != 0 and 'Invalid native address continuation' in resul
 
 print('PASS: malformed VM streams and script/native completion type errors rejected')
 
+result = subprocess.run(['build/test-script-runtime', 'cpu_choices'], capture_output=True, text=True, timeout=10)
+assert result.returncode != 0 and 'Invalid counted CPU choice table' in result.stderr, result.stderr
+print('PASS: malformed CPU policy tables rejected before selection')
+
 # The shared loader validates package length, layout identity and script membership.
 from pathlib import Path
 from tempfile import TemporaryDirectory
