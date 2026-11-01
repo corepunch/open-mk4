@@ -1320,6 +1320,47 @@ static void native_scene_script_handoff(void) {
   }
   check(script_seen && !peer->execution.script.active && peer->execution.frames == NULL && peer->scene.clips == NULL,
       "native scene blends must transfer to original script playback and consume its retirement continuation");
+  for (int slot = 0; slot < 2; ++slot) {
+    owner = setup(slot, 2);
+    peer = fighter_peer(owner);
+    g_battle.phase = PHASE_FINISH;
+    g_battle.winner = slot;
+    peer->action = 0x1009;
+    script_native_entry(native_scorpion_beast_fatality)(owner);
+    for (int visit = 0; visit < 1024 && g_battle.phase != PHASE_MATCH_OVER; ++visit) {
+      tick();
+      if (owner->execution.script.active || peer->execution.script.active) {
+        check(g_battle.phase == PHASE_FATALITY, "scene join must wait for both actor tasks to retire");
+      }
+    }
+    check(g_battle.phase == PHASE_MATCH_OVER && owner->appearance == APPEARANCE_BEAST && !owner->execution.script.active && !peer->execution.script.active &&
+              owner->execution.frames == NULL && peer->execution.frames == NULL,
+        "parked scene actors must join the battle result on either player side");
+    int owner_sample = fighter_sample(owner), peer_sample = fighter_sample(peer);
+    for (int visit = 0; visit < 4; ++visit) {
+      tick();
+    }
+    check(fighter_sample(owner) == owner_sample && fighter_sample(peer) == peer_sample, "scene completion must preserve both parked final poses");
+  }
+  const uint32_t completed_scenes[] = {native_sub_zero_second_fatality, native_spike_finish};
+  for (unsigned i = 0; i < sizeof completed_scenes / sizeof *completed_scenes; ++i) {
+    for (int slot = 0; slot < 2; ++slot) {
+      owner = setup(slot, 0);
+      peer = fighter_peer(owner);
+      g_battle.phase = PHASE_FINISH;
+      g_battle.winner = slot;
+      g_battle.ko_winner = slot + 1;
+      peer->health = 0;
+      peer->action = 0x1009;
+      script_native_entry(completed_scenes[i])(owner);
+      bool victim_playback = false;
+      for (int visit = 0; visit < 1024 && g_battle.phase != PHASE_MATCH_OVER; ++visit) {
+        tick();
+        victim_playback |= peer->execution.script.active;
+      }
+      check(victim_playback && g_battle.phase == PHASE_MATCH_OVER, "scene contact and victory handoffs must reach the battle result on either side");
+    }
+  }
 }
 
 static void native_throw_selection(void) {

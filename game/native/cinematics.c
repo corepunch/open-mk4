@@ -1692,10 +1692,12 @@ void scorpion_script_burn_victim_end(Fighter *victim) {
   fighter_execution_finish(victim, scorpion_fatality_finish_scene);
 }
 
-/* Both scene actors have parked their frame programs; the parked poses
- * remain while the finisher completes. */
+/* The retail task-pause tails retire playback while retaining the final
+ * sample. Join that lifetime boundary, not the old authored phase counter. */
 static void scorpion_fatality_beast_watch(Fighter *fighter) {
-  if (fighter->script_phase == 9 && fighter_peer(fighter)->script_phase == 9) {
+  const Fighter *peer = fighter_peer(fighter);
+  if (!fighter->execution.script.active && fighter->execution.frames == NULL && fighter->pending == NULL && !peer->execution.script.active &&
+      peer->execution.frames == NULL && peer->pending == NULL) {
     battle_end_finisher();
   }
 }
@@ -2157,6 +2159,7 @@ void sub_zero_script_breath_shatter(Fighter *fighter) {
 
 /* Native services: freezing-breath finisher. */
 void sub_zero_second_fatality_script(Fighter *fighter) {
+  action_scene_join_victory(fighter);
   script_vm_enter(fighter_peer(fighter), fn_sub_zero_fatality_2_victim, fighter_ready);
   script_vm_enter(fighter, fn_sub_zero_fatality_2_breath, fighter_ready);
 }

@@ -382,6 +382,11 @@ bool mk4_begin_stage_finish(Fighter *fighter, int id) {
   fighter_start_move((Fighter *)fighter_opponent(fighter), S_KNOCKDOWN, &scene_move);
   mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, 0);
   mk4_script_scene_pose((Fighter *)fighter_opponent(fighter), id == FINISH_FAN ? 416 : 13, 0);
+  if (id == FINISH_SPIKE) {
+    /* The original spike stream launches its victim through query_a 18.
+     * Keep the actor input-locked, but let that scene-owned contact land. */
+    ((Fighter *)fighter_opponent(fighter))->flags &= ~(unsigned)FF_UNTOUCHABLE;
+  }
   return true;
 }
 
