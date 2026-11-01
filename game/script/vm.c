@@ -79,6 +79,7 @@ void script_vm_return(Fighter *fighter) {
 }
 
 void script_vm_reset(Fighter *fighter) {
+  fighter->execution.script_requested = false;
   if (fighter->execution.script.active) {
     if (fighter->execution.script.blend_ticks > 0 || fighter->execution.script.interpolated_play) {
       fighter->blend_duration = 0;
@@ -285,7 +286,7 @@ void script_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, ui
   script_vm_start_at(fighter, image, begin, begin, end, next, native);
 }
 
-void script_vm_step(Fighter *fighter) {
+static void run_script(Fighter *fighter, unsigned *remaining) {
   ScriptVm *vm = &fighter->execution.script;
   if (!vm->active || g_battle.ticks < vm->wake) {
     return;
@@ -372,8 +373,12 @@ void script_vm_step(Fighter *fighter) {
       return;
     }
   }
-  for (int budget = 0; budget < 128; ++budget) {
+  for (;;) {
     vm->instruction = vm->pc;
+    if (*remaining == 0) {
+      vm_error(fighter, "instruction budget exhausted without yielding");
+    }
+    (*remaining)--;
     uint32_t word = fetch(fighter);
     unsigned opcode = word >> 24, arg = word & 255u;
     switch (opcode) {
@@ -860,12 +865,41 @@ void script_vm_step(Fighter *fighter) {
       default:
         vm_error(fighter, "unsupported opcode");
     }
-    if (!vm->active || vm->parked || fighter->pending != NULL) {
+    if (!vm->active || vm->parked || fighter->pending != NULL || fighter->execution.script_requested) {
       return;
     }
     if (vm->play_ticks > 0 || vm->blend_ticks > 0 || vm->interpolated_play || g_battle.ticks < vm->wake) {
       return;
     }
   }
-  vm_error(fighter, "instruction budget exhausted without yielding");
+}
+
+/* Retail native tails (local 459890) jump through the fetched target, while
+ * tagged returns re-enter the dispatcher through an explicit continuation.
+ * Keep those transfers on one portable actor pump and one instruction budget.
+ * This state belongs to the pump, not the replaceable ScriptVm phase. */
+void script_vm_step(Fighter *fighter) {
+  ActionExecution *execution = &fighter->execution;
+  if (execution->pumping_script) {
+    execution->script_requested = true;
+    return;
+  }
+  execution->pumping_script = true;
+  unsigned remaining = 128;
+  do {
+    execution->script_requested = false;
+    unsigned before = remaining;
+    run_script(fighter, &remaining);
+    /* A native wake callback can request another pass without fetching a
+     * word. It still consumes work, so zero-wait native cycles are bounded. */
+    if (execution->script_requested && remaining == before) {
+      if (remaining == 0) {
+        execution->script.instruction = execution->script.pc;
+        vm_error(fighter, "instruction budget exhausted without yielding");
+      }
+      remaining--;
+    }
+  } while (execution->script_requested && execution->script.active && fighter->pending == NULL);
+  execution->script_requested = false;
+  execution->pumping_script = false;
 }

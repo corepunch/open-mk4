@@ -151,6 +151,18 @@ is restored from the pre-Lua implementation; no new instruction dialect or
 per-fighter interpreter exists. `game/script/opcodes.h` is generated from the
 existing decoder schema so C dispatch uses names such as `MK4_OP_WAIT`.
 
+Script/native tail transfers and typed returns re-enter one iterative dispatch
+pump per actor. They do not recursively call another C interpreter. A phase
+replacement requests another pass in the same actor visit; the pump retains
+one 128-step budget across those transfers, including native wake callbacks
+that re-enter without fetching a word. A native callback finishes its setup
+before the successor runs; entry from outside dispatch remains immediate.
+Waits retain their existing wake ticks.
+Cancellation discards a requested pass while retaining any pending replacement.
+Dispatch ownership lives outside the replaceable script phase. This follows
+the local EXE's `459890` indirect native jump and explicit tagged continuation
+boundary; it does not reproduce the original task stack or global scratch.
+
 `fighters/<name>.asm` groups named bytecode, embedded entry aliases. Native imports in `scripts/mk4/native.inc` name
 typed C implementations; the linker assigns compact references and emits the
 host pointer registry. Original native addresses stay in importer/research metadata. `fighters/shared.asm` defines
@@ -197,7 +209,9 @@ returns, a generation counter and one cleanup callback.
 `game/runtime/execution.c` provides the shared actor step, phase reset and
 action cancellation boundary. Phase changes retain cleanup; cancellation
 detaches and invokes it once. The shared 60 Hz actor pump advances that state
-on one thread; script tasks resume from it and never from worker threads.
+on one thread; player tasks in fight and result phases and independent scene
+actors use that same step boundary. Script tasks resume from it and never
+from worker threads.
 Typed script returns remain distinct from typed native completions. Starting a
 new phase or interrupting one invalidates stale callbacks and clears the old
 script cursor and pending execution state. Script tasks require no C stacks or GC.

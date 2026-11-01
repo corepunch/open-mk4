@@ -290,19 +290,18 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
   } else {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
-    if (fighter->execution.script.active) {
-      script_vm_step(fighter);
-    } else if (fighter->execution.frames != NULL) {
-      fighter_step_mmove(fighter);
-
-    } else if (state->flags & SF_ATTACK) {
-      int total = state->startup + state->active + state->recovery;
-      if (fighter->ticks >= total)
-        fighter_enter_state(fighter, fighter_airborne(fighter) ? S_JUMP : S_IDLE);
-    } else if (state->flags & SF_REACTION) {
-      bool landed = !(state->flags & SF_WAIT_LAND) || !fighter_airborne(fighter);
-      if (fighter->ticks >= state->recovery && landed)
-        fighter_enter_state(fighter, S_IDLE);
+    if (!fighter_execution_step(fighter)) {
+      if (state->flags & SF_ATTACK) {
+        int total = state->startup + state->active + state->recovery;
+        if (fighter->ticks >= total) {
+          fighter_enter_state(fighter, fighter_airborne(fighter) ? S_JUMP : S_IDLE);
+        }
+      } else if (state->flags & SF_REACTION) {
+        bool landed = !(state->flags & SF_WAIT_LAND) || !fighter_airborne(fighter);
+        if (fighter->ticks >= state->recovery && landed) {
+          fighter_enter_state(fighter, S_IDLE);
+        }
+      }
     }
   }
   if (locked(fighter) || fighter->pending != NULL)
@@ -722,11 +721,7 @@ static void battle_tick(const InputFrame input[2]) {
         fighter->ticks++;
         /* Finisher presentation may keep a retail pose loop after the
          * result; the next round or reset cancels its frame program. */
-        if (fighter->execution.script.active) {
-          script_vm_step(fighter);
-        } else if (fighter->execution.frames != NULL) {
-          fighter_step_mmove(fighter);
-        }
+        fighter_execution_step(fighter);
         if (g_battle.phase == PHASE_MATCH_OVER && fighter->scene.clips != NULL) {
           scene_step(fighter);
         }

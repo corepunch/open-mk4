@@ -434,6 +434,9 @@ typedef struct ActionExecution {
   const mmove_t *frames;
   int frame, nextframe;
   bool hold;
+  /* Dispatch ownership survives script/native phase resets. Re-entry requests
+   * another pass of the current actor pump instead of nesting C interpreters. */
+  bool pumping_script, script_requested;
   FighterFn cleanup;
   uint64_t last_tick, generation;
   unsigned result;

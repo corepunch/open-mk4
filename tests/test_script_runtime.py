@@ -7,6 +7,9 @@ for mode, message in {
     'native_symbol': 'unreviewed native binding: native_unresolved_air_low_kick_clip_59_reverse',
     'sample': 'animation sample outside clip',
     'budget': 'instruction budget exhausted',
+    'native_budget': 'instruction budget exhausted',
+    'return_budget': 'instruction budget exhausted',
+    'continuation_budget': 'instruction budget exhausted',
     'range': 'script cursor outside reviewed range',
 }.items():
     result = subprocess.run(['build/test-script-runtime', mode], capture_output=True,

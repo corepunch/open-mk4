@@ -465,6 +465,82 @@ static void cleanup_once(Fighter *fighter) {
   cleanup_calls++;
 }
 
+static unsigned handoff_remaining, handoff_depth, handoff_max_depth;
+static bool handoff_returns, handoff_interrupt;
+
+static bool handoff_native(Fighter *fighter, uint32_t reference, ScriptNativeKind kind, unsigned argument);
+
+static void handoff_next(Fighter *fighter) {
+  const uint32_t base = dat_unresolved_stance_and_queries_010;
+  handoff_depth++;
+  if (handoff_depth > handoff_max_depth) {
+    handoff_max_depth = handoff_depth;
+  }
+  bool again = --handoff_remaining != 0;
+  script_vm_start_at(fighter, &image, again ? base : base + 8, base, base + 16, again && handoff_returns ? handoff_next : control_end, handoff_native);
+  if (handoff_interrupt) {
+    fighter_interrupt(fighter, control_end);
+  }
+  handoff_depth--;
+}
+
+static bool handoff_native(Fighter *fighter, uint32_t reference, ScriptNativeKind kind, unsigned argument) {
+  (void)argument;
+  if (reference != 1 || kind != MK4_TAIL) {
+    return false;
+  }
+  handoff_next(fighter);
+  return true;
+}
+
+static Fighter *start_handoffs(unsigned count, bool returns, bool interrupt) {
+  Fighter *actor = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(actor, S_KICK, &locked);
+  const uint32_t base = dat_unresolved_stance_and_queries_010;
+  const uint32_t words[] = {returns ? 0x30000000 : 0x32000000, 1, 0x34000002, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  handoff_remaining = count;
+  handoff_depth = handoff_max_depth = 0;
+  handoff_returns = returns;
+  handoff_interrupt = interrupt;
+  control_finished = cleanup_calls = 0;
+  actor->execution.cleanup = cleanup_once;
+  script_vm_start(actor, &image, base, base + sizeof words, returns ? handoff_next : control_end, handoff_native);
+  return actor;
+}
+
+static void iterative_script_handoffs(void) {
+  /* Retail tails and tagged returns transfer control rather than nesting a
+   * host interpreter call. The same budget must span native re-entry. */
+  for (int returns = 0; returns < 2; ++returns) {
+    Fighter *actor = start_handoffs(96, returns != 0, false);
+    check(handoff_remaining == 0 && handoff_max_depth == 1, "script/native handoffs must run iteratively in the same actor visit");
+    check(control_finished == 0 && cleanup_calls == 0 && actor->execution.script.wake == g_battle.ticks + 2,
+        "handoffs must preserve cleanup and suspend at the successor's wait");
+    tick();
+    check(control_finished == 0, "handoff successor resumed before its wait expired");
+    tick();
+    check(control_finished == 1 && cleanup_calls == 1 && !actor->execution.script.active, "handoff successor must complete and clean once");
+  }
+  Fighter *actor = start_handoffs(1, false, true);
+  check(!actor->execution.script.active && actor->pending == control_end && cleanup_calls == 1,
+      "interruption must discard a queued script handoff and keep the pending replacement");
+  tick();
+  check(control_finished == 1 && cleanup_calls == 1, "interrupted handoff must not resume or clean the replacement twice");
+}
+
+static void handoff_without_words(Fighter *fighter) {
+  if (--handoff_remaining == 0) {
+    fighter_execution_cancel(fighter);
+    return;
+  }
+  script_vm_wait_native(fighter, 0, handoff_without_words);
+  script_vm_step(fighter);
+}
+
 static unsigned predicate_argument;
 
 static bool predicate_native(Fighter *fighter, uint32_t address, ScriptNativeKind kind, unsigned argument) {
@@ -1403,6 +1479,15 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "budget") == 0) {
       put_word(fn_low_kick_clip_67, 0x3a0000ff);
       put_word(fn_low_kick_clip_67_operand_1, 0x3b000000);
+    } else if (strcmp(argv[1], "native_budget") == 0 || strcmp(argv[1], "return_budget") == 0) {
+      start_handoffs(256, strcmp(argv[1], "return_budget") == 0, false);
+      check(false, "script handoffs bypassed the instruction budget");
+    } else if (strcmp(argv[1], "continuation_budget") == 0) {
+      Fighter *actor = start_handoffs(1, false, false);
+      handoff_remaining = 256;
+      script_vm_wait_native(actor, 0, handoff_without_words);
+      script_vm_step(actor);
+      check(false, "native wake callbacks bypassed the instruction budget");
     } else if (strcmp(argv[1], "callback") == 0) {
       Fighter *actor = setup(0, 2);
       native_hold(actor, 1, NULL);
@@ -1421,6 +1506,7 @@ int main(int argc, char **argv) {
   behavior();
   runtime_words();
   control_flow();
+  iterative_script_handoffs();
   playback_modes();
   native_handoff();
   native_address_identity();

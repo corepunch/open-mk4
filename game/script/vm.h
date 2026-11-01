@@ -7,6 +7,8 @@ void script_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first);
 void script_vm_repeat(Fighter *fighter, uint32_t entry, unsigned count, uint32_t after);
 void script_vm_repeat_next(Fighter *fighter);
 void script_vm_enter_then(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish);
+/* Outside dispatch, enter immediately. Native re-entry replaces the phase and
+ * runs it after the current callback returns, within the same actor visit. */
 void script_vm_enter(Fighter *fighter, uint32_t entry, FighterFn finish);
 
 /* Caller supplies a reviewed contiguous script range and
